@@ -1,0 +1,15 @@
+﻿{
+  "applications": {
+    "Acme.ProductSelling.Web": {
+      "type": "dotnet-project",
+      "launchUrl": "https://localhost:44393",
+      "path": "../../../src/Acme.ProductSelling.Web/Acme.ProductSelling.Web.csproj",
+      "kubernetesService": ".*-web$",
+      "healthCheckEndpoint": "/health-status",
+      "healthUiEndpoint": "/health-ui",
+      "execution": {
+        "order": 2
+      }
+    }
+  }
+}

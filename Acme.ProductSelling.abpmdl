@@ -1,0 +1,105 @@
+{
+  "template": "app",
+  "imports": {
+    "Volo.Abp.LeptonXLiteTheme": {
+      "version": "4.1.0",
+      "isInstalled": true
+    },
+    "Volo.Abp.Account": {
+      "version": "9.1.0",
+      "isInstalled": true
+    },
+    "Volo.Abp.OpenIddict": {
+      "version": "9.1.0",
+      "isInstalled": true
+    },
+    "Volo.Abp.Identity": {
+      "version": "9.1.0",
+      "isInstalled": true
+    },
+    "Volo.Abp.TenantManagement": {
+      "version": "9.1.0",
+      "isInstalled": true
+    },
+    "Volo.Abp.SettingManagement": {
+      "version": "9.1.0",
+      "isInstalled": true
+    },
+    "Volo.Abp.PermissionManagement": {
+      "version": "9.1.0",
+      "isInstalled": true
+    },
+    "Volo.Abp.FeatureManagement": {
+      "version": "9.1.0",
+      "isInstalled": true
+    }
+  },
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {}
+    }
+  },
+  "packages": {
+    "Acme.ProductSelling.Application": {
+      "path": "src/Acme.ProductSelling.Application/Acme.ProductSelling.Application.abppkg",
+      "folder": "src"
+    },
+    "Acme.ProductSelling.Application.Tests": {
+      "path": "test/Acme.ProductSelling.Application.Tests/Acme.ProductSelling.Application.Tests.abppkg",
+      "folder": "test"
+    },
+    "Acme.ProductSelling.Domain.Shared": {
+      "path": "src/Acme.ProductSelling.Domain.Shared/Acme.ProductSelling.Domain.Shared.abppkg",
+      "folder": "src"
+    },
+    "Acme.ProductSelling.Application.Contracts": {
+      "path": "src/Acme.ProductSelling.Application.Contracts/Acme.ProductSelling.Application.Contracts.abppkg",
+      "folder": "src"
+    },
+    "Acme.ProductSelling.HttpApi": {
+      "path": "src/Acme.ProductSelling.HttpApi/Acme.ProductSelling.HttpApi.abppkg",
+      "folder": "src"
+    },
+    "Acme.ProductSelling.HttpApi.Client": {
+      "path": "src/Acme.ProductSelling.HttpApi.Client/Acme.ProductSelling.HttpApi.Client.abppkg",
+      "folder": "src"
+    },
+    "Acme.ProductSelling.Web": {
+      "path": "src/Acme.ProductSelling.Web/Acme.ProductSelling.Web.abppkg",
+      "folder": "src"
+    },
+    "Acme.ProductSelling.Web.Tests": {
+      "path": "test/Acme.ProductSelling.Web.Tests/Acme.ProductSelling.Web.Tests.abppkg",
+      "folder": "test"
+    },
+    "Acme.ProductSelling.EntityFrameworkCore.Tests": {
+      "path": "test/Acme.ProductSelling.EntityFrameworkCore.Tests/Acme.ProductSelling.EntityFrameworkCore.Tests.abppkg",
+      "folder": "test"
+    },
+    "Acme.ProductSelling.EntityFrameworkCore": {
+      "path": "src/Acme.ProductSelling.EntityFrameworkCore/Acme.ProductSelling.EntityFrameworkCore.abppkg",
+      "folder": "src"
+    },
+    "Acme.ProductSelling.TestBase": {
+      "path": "test/Acme.ProductSelling.TestBase/Acme.ProductSelling.TestBase.abppkg",
+      "folder": "test"
+    },
+    "Acme.ProductSelling.Domain.Tests": {
+      "path": "test/Acme.ProductSelling.Domain.Tests/Acme.ProductSelling.Domain.Tests.abppkg",
+      "folder": "test"
+    },
+    "Acme.ProductSelling.HttpApi.Client.ConsoleTestApp": {
+      "path": "test/Acme.ProductSelling.HttpApi.Client.ConsoleTestApp/Acme.ProductSelling.HttpApi.Client.ConsoleTestApp.abppkg",
+      "folder": "test"
+    },
+    "Acme.ProductSelling.DbMigrator": {
+      "path": "src/Acme.ProductSelling.DbMigrator/Acme.ProductSelling.DbMigrator.abppkg",
+      "folder": "src"
+    },
+    "Acme.ProductSelling.Domain": {
+      "path": "src/Acme.ProductSelling.Domain/Acme.ProductSelling.Domain.abppkg",
+      "folder": "src"
+    }
+  }
+}
