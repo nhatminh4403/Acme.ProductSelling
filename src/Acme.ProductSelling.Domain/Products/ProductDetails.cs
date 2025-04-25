@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Acme.ProductSelling.Products
 {
-    internal class ProductDetails 
+    public class ProductDetails 
     {
     }
 }

@@ -11,8 +11,16 @@ public class ProductSellingPermissionDefinitionProvider : PermissionDefinitionPr
     {
         var myGroup = context.AddGroup(ProductSellingPermissions.GroupName);
 
-        //Define your own permissions here. Example:
-        //myGroup.AddPermission(ProductSellingPermissions.MyPermission1, L("Permission:MyPermission1"));
+        var productsPermission = myGroup.AddPermission(ProductSellingPermissions.Products.Default, L("Permission:Products"));
+        productsPermission.AddChild(ProductSellingPermissions.Products.Create, L("Permission:Products.Create"));
+        productsPermission.AddChild(ProductSellingPermissions.Products.Edit, L("Permission:Products.Edit"));
+        productsPermission.AddChild(ProductSellingPermissions.Products.Delete, L("Permission:Products.Delete"));
+
+
+        var categoriesPermission = myGroup.AddPermission(ProductSellingPermissions.Categories.Default, L("Permission:Categories"));
+        categoriesPermission.AddChild(ProductSellingPermissions.Categories.Create, L("Permission:Categories.Create"));
+        categoriesPermission.AddChild(ProductSellingPermissions.Categories.Edit, L("Permission:Categories.Edit"));
+        categoriesPermission.AddChild(ProductSellingPermissions.Categories.Delete, L("Permission:Categories.Delete"));
     }
 
     private static LocalizableString L(string name)

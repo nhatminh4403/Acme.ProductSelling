@@ -14,6 +14,8 @@ using Volo.Abp.SettingManagement.EntityFrameworkCore;
 using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
+using Acme.ProductSelling.Products;
+using Acme.ProductSelling.Categories;
 
 namespace Acme.ProductSelling.EntityFrameworkCore;
 
@@ -54,6 +56,8 @@ public class ProductSellingDbContext :
     // Tenant Management
     public DbSet<Tenant> Tenants { get; set; }
     public DbSet<TenantConnectionString> TenantConnectionStrings { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<Product> Products { get; set; }
 
     #endregion
 
@@ -87,5 +91,18 @@ public class ProductSellingDbContext :
         //    b.ConfigureByConvention(); //auto configure for the base class props
         //    //...
         //});
+        builder.Entity<Category>(b =>
+        {
+            b.ToTable("Categories");
+            b.Property(c => c.Name).IsRequired().HasMaxLength(100);
+            b.HasMany(c => c.Products).WithOne(p => p.Category).HasForeignKey(p => p.CategoryId);
+        });
+        builder.Entity<Product>(b =>
+        {
+            b.ToTable("Products");
+            b.Property(p => p.ProductName).IsRequired().HasMaxLength(100);
+            b.Property(p => p.Price).HasColumnType("decimal(18,2)");
+            b.HasOne(p => p.Category).WithMany(c => c.Products).HasForeignKey(p => p.CategoryId);
+        });
     }
 }

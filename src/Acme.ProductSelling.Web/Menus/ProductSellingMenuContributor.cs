@@ -25,7 +25,7 @@ public class ProductSellingMenuContributor : IMenuContributor
         var l = context.GetLocalizer<ProductSellingResource>();
 
         //Home
-        context.Menu.AddItem(
+        /*context.Menu.AddItem(
             new ApplicationMenuItem(
                 ProductSellingMenus.Home,
                 l["Menu:Home"],
@@ -34,7 +34,7 @@ public class ProductSellingMenuContributor : IMenuContributor
                 order: 1
             )
         );
-
+*/
 
         //Administration
         var administration = context.Menu.GetAdministration();
