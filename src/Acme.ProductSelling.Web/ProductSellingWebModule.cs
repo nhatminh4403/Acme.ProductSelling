@@ -50,6 +50,8 @@ using Volo.Abp.OpenIddict;
 using Volo.Abp.Security.Claims;
 using Volo.Abp.SettingManagement.Web;
 using Volo.Abp.Studio.Client.AspNetCore;
+using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic;
+using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic.Bundling;
 
 namespace Acme.ProductSelling.Web;
 
@@ -60,7 +62,7 @@ namespace Acme.ProductSelling.Web;
     typeof(AbpAutofacModule),
     typeof(AbpStudioClientAspNetCoreModule),
     typeof(AbpIdentityWebModule),
-    typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
+    typeof(AbpAspNetCoreMvcUiBasicThemeModule),
     typeof(AbpAccountWebOpenIddictModule),
     typeof(AbpTenantManagementWebModule),
     typeof(AbpFeatureManagementWebModule),
@@ -162,7 +164,7 @@ public class ProductSellingWebModule : AbpModule
         Configure<AbpBundlingOptions>(options =>
         {
             options.StyleBundles.Configure(
-                LeptonXLiteThemeBundles.Styles.Global,
+                BasicThemeBundles.Styles.Global,
                 bundle =>
                 {
                     bundle.AddFiles("/global-scripts.js");

@@ -20,5 +20,20 @@
     <PackageReference Include="Volo.Abp.Account.Application.Contracts" Version="9.1.0" />
     <PackageReference Include="Volo.Abp.TenantManagement.Application.Contracts" Version="9.1.0" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Specifications\Case\" />
+    <Folder Include="Specifications\CpuCooler\" />
+    <Folder Include="Specifications\Gpu\" />
+    <Folder Include="Specifications\Headset\" />
+    <Folder Include="Specifications\Keyboard\" />
+    <Folder Include="Specifications\Laptop\" />
+    <Folder Include="Specifications\Monitor\" />
+    <Folder Include="Specifications\Motherboard\" />
+    <Folder Include="Specifications\Mouse\" />
+    <Folder Include="Specifications\Storage\" />
+    <Folder Include="Specifications\Ram\" />
+    <Folder Include="Specifications\Psu\" />
+  </ItemGroup>
 
 </Project>

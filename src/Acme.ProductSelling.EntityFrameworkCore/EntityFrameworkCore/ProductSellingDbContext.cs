@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
@@ -16,6 +16,7 @@ using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Specifications;
 
 namespace Acme.ProductSelling.EntityFrameworkCore;
 
@@ -56,9 +57,25 @@ public class ProductSellingDbContext :
     // Tenant Management
     public DbSet<Tenant> Tenants { get; set; }
     public DbSet<TenantConnectionString> TenantConnectionStrings { get; set; }
+
+
+
+    //Model Management
     public DbSet<Category> Categories { get; set; }
     public DbSet<Product> Products { get; set; }
-
+    public DbSet<MonitorSpecification> MonitorSpecifications { get; set; }
+    public DbSet<MouseSpecification> MouseSpecifications { get; set; }
+    public DbSet<LaptopSpecification> LaptopSpecifications { get; set; }
+    public DbSet<CpuSpecification> CpuSpecifications { get; set; }
+    public DbSet<GpuSpecification> GpuSpecifications { get; set; }
+    public DbSet<RamSpecification> RamSpecifications { get; set; }
+    public DbSet<MotherboardSpecification> MotherboardSpecifications { get; set; }
+    public DbSet<StorageSpecification> StorageSpecifications { get; set; }
+    public DbSet<PsuSpecification> PsuSpecifications { get; set; }
+    public DbSet<CaseSpecification> CaseSpecifications { get; set; }
+    public DbSet<CpuCoolerSpecification> CpuCoolerSpecifications { get; set; }
+    public DbSet<KeyboardSpecification> KeyboardSpecifications { get; set; }
+    public DbSet<HeadsetSpecification> HeadsetSpecifications { get; set; }
     #endregion
 
     public ProductSellingDbContext(DbContextOptions<ProductSellingDbContext> options)
@@ -82,7 +99,7 @@ public class ProductSellingDbContext :
         builder.ConfigureOpenIddict();
         builder.ConfigureTenantManagement();
         builder.ConfigureBlobStoring();
-        
+
         /* Configure your own tables/entities inside here */
 
         //builder.Entity<YourEntity>(b =>
@@ -103,6 +120,33 @@ public class ProductSellingDbContext :
             b.Property(p => p.ProductName).IsRequired().HasMaxLength(100);
             b.Property(p => p.Price).HasColumnType("decimal(18,2)");
             b.HasOne(p => p.Category).WithMany(c => c.Products).HasForeignKey(p => p.CategoryId);
+            b.HasOne(p => p.MonitorSpecification).WithOne().HasForeignKey<Product>(p => p.MonitorSpecificationId).IsRequired(false);
+            b.HasOne(p => p.MouseSpecification).WithOne().HasForeignKey<Product>(p => p.MouseSpecificationId).IsRequired(false);
+            b.HasOne(p => p.LaptopSpecification).WithOne().HasForeignKey<Product>(p => p.LaptopSpecificationId).IsRequired(false); // Giả sử có
+            b.HasOne(p => p.CpuSpecification).WithOne().HasForeignKey<Product>(p => p.CpuSpecificationId).IsRequired(false);
+            b.HasOne(p => p.GpuSpecification).WithOne().HasForeignKey<Product>(p => p.GpuSpecificationId).IsRequired(false);
+            b.HasOne(p => p.RamSpecification).WithOne().HasForeignKey<Product>(p => p.RamSpecificationId).IsRequired(false);
+            b.HasOne(p => p.MotherboardSpecification).WithOne().HasForeignKey<Product>(p => p.MotherboardSpecificationId).IsRequired(false);
+            b.HasOne(p => p.StorageSpecification).WithOne().HasForeignKey<Product>(p => p.StorageSpecificationId).IsRequired(false);
+            b.HasOne(p => p.PsuSpecification).WithOne().HasForeignKey<Product>(p => p.PsuSpecificationId).IsRequired(false);
+            b.HasOne(p => p.CaseSpecification).WithOne().HasForeignKey<Product>(p => p.CaseSpecificationId).IsRequired(false);
+            b.HasOne(p => p.CpuCoolerSpecification).WithOne().HasForeignKey<Product>(p => p.CpuCoolerSpecificationId).IsRequired(false);
+            b.HasOne(p => p.KeyboardSpecification).WithOne().HasForeignKey<Product>(p => p.KeyboardSpecificationId).IsRequired(false);
+            b.HasOne(p => p.HeadsetSpecification).WithOne().HasForeignKey<Product>(p => p.HeadsetSpecificationId).IsRequired(false);
         });
+
+
+
+
+        builder.Entity<CpuSpecification>(b => { b.ToTable("AppCpuSpecifications"); /* Cấu hình cột nếu cần */ });
+        builder.Entity<GpuSpecification>(b => { b.ToTable("AppGpuSpecifications"); b.Property(s => s.Length).HasColumnType("decimal(18,2)"); });
+        builder.Entity<RamSpecification>(b => { b.ToTable("AppRamSpecifications"); });
+        builder.Entity<MotherboardSpecification>(b => { b.ToTable("AppMotherboardSpecifications"); });
+        builder.Entity<StorageSpecification>(b => { b.ToTable("AppStorageSpecifications"); });
+        builder.Entity<PsuSpecification>(b => { b.ToTable("AppPsuSpecifications"); });
+        builder.Entity<CaseSpecification>(b => { b.ToTable("AppCaseSpecifications"); b.Property(s => s.MaxGpuLength).HasColumnType("decimal(18,2)"); b.Property(s => s.MaxCpuCoolerHeight).HasColumnType("decimal(18,2)"); });
+        builder.Entity<CpuCoolerSpecification>(b => { b.ToTable("AppCpuCoolerSpecifications"); b.Property(s => s.Height).HasColumnType("decimal(18,2)"); });
+        builder.Entity<KeyboardSpecification>(b => { b.ToTable("AppKeyboardSpecifications"); });
+        builder.Entity<HeadsetSpecification>(b => { b.ToTable("AppHeadsetSpecifications"); });
     }
 }
