@@ -6,7 +6,7 @@ using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Products
 {
-    [Authorize(ProductSellingPermissions.Products.Default)]
+    [AllowAnonymous]
     public class IndexModel : AbpPageModel
     {
         public void OnGet()

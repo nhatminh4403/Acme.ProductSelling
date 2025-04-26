@@ -1,11 +1,11 @@
 ﻿$(function () { // Đảm bảo DOM đã load xong
 
     // Tham chiếu đến service API tự động tạo bởi ABP
-    var categoryService = volo.abp.proxyClient.abp.application.category;
+    //var categoryService = volo.abp.proxyClient.abp.application.category;
     // Hoặc nếu dùng CrudAppService thì có thể là:
-    // var categoryService = myProjectName.categories.category; // Kiểm tra lại namespace chính xác trong file proxy JS
+     var categoryService = acme.productSelling.categories.category; // Kiểm tra lại namespace chính xác trong file proxy JS
 
-    var l = abp.localization.getResource('ProductSellingResource'); // Lấy resource localization cho JS
+    var l = abp.localization.getResource('ProductSelling'); // Lấy resource localization cho JS
 
     var createModal = new abp.ModalManager(abp.appPath + 'Categories/CreateModal'); // Đường dẫn đến Create Modal Page
     var editModal = new abp.ModalManager(abp.appPath + 'Categories/EditModal');   // Đường dẫn đến Edit Modal Page
@@ -59,11 +59,9 @@
                     data: "name"     // Tên thuộc tính trong CategoryDto trả về từ API
                 },
                 {
-                    title: l('CreationTime'), // Key "CreationTime"
-                    data: "creationTime",
-                    dataFormat: "datetime" // Định dạng ngày giờ
-                }
-                // Thêm các cột khác nếu cần
+                    title: l('Name'), 
+                    data: "description"     
+                },
             ]
         })
     );
@@ -85,3 +83,34 @@
     });
 
 });
+/*
+
+$(function () {
+    var l = abp.localization.getResource('CategoriesT');
+
+    var dataTable = $('#CategoriesTable').DataTable(
+        abp.libs.datatables.normalizeConfiguration({
+            serverSide: true,
+            paging: true,
+            order: [[1, "asc"]],
+            searching: false,
+            scrollX: true,
+            ajax: abp.libs.datatables.createAjax(acme.bookStore.books.book.getList),
+            columnDefs: [
+                {
+                    title: l('Name'),
+                    data: "name"
+                },
+                {
+                    title: l('Description'),
+                    data: "type",
+                    render: function (data) {
+                        return l('Enum:BookType.' + data);
+                    }
+                },
+                
+               
+            ]
+        })
+    );
+});*/

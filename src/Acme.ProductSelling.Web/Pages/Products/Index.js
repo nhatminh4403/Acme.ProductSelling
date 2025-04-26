@@ -1,7 +1,7 @@
 ﻿$(function () {
     // Namespace có thể khác tùy theo tên dự án của bạn
-    var productService = myProjectName.products.product; // Proxy client cho ProductAppService
-    var l = abp.localization.getResource('ProductSellingResource');
+    var productService = acme.productSelling.products.product; // Proxy client cho ProductAppService
+    var l = abp.localization.getResource('ProductSelling');
 
     var createModal = new abp.ModalManager(abp.appPath + 'Products/CreateModal');
     var editModal = new abp.ModalManager(abp.appPath + 'Products/EditModal');
@@ -45,7 +45,11 @@
                 },
                 {
                     title: l('Name'), // Key localization "Name"
-                    data: "name"
+                    data: "productName"
+                },
+                {
+                    title: l('Description'), // Key localization "Name"
+                    data: "description"
                 },
                 {
                     title: l('Category'), // Key localization "Category" (đã thêm ở bước trước)
@@ -61,10 +65,9 @@
                     }
                 },
                 {
-                    title: l('CreationTime'),
-                    data: "creationTime",
-                    dataFormat: "datetime"
-                }
+                    title: l('Stock'), // Key localization "Name"
+                    data: "stockCount"
+                },
             ]
         })
     );
