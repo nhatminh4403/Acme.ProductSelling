@@ -6,6 +6,7 @@ using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Categories
 {
+    
     public class CreateModalModel : AbpPageModel
     {
         [BindProperty]

@@ -17,18 +17,19 @@
             columnDefs: [
                 {
                     title: l('Actions'),
+                    visible: abp.auth.isGranted('ProductSelling.Products.Edit') || abp.auth.isGranted('ProductSelling.Products.Delete'), // Hiện cột này nếu có quyền Edit hoặc Delete
                     rowAction: {
                         items: [
                             {
                                 text: l('Edit'),
-                                visible: abp.auth.isGranted('ProductSellingPermissions.Products.Edit'),
+                                visible: abp.auth.isGranted('ProductSelling.Products.Edit'),
                                 action: function (data) {
                                     editModal.open({ id: data.record.id });
                                 }
                             },
                             {
                                 text: l('Delete'),
-                                visible: abp.auth.isGranted('ProductSellingPermissions.Products.Delete'),
+                                visible: abp.auth.isGranted('ProductSelling.Products.Delete'),
                                 confirmMessage: function (data) {
                                     return l('ProductDeletionConfirmationMessage', data.record.name); // Key: "Are you sure..."
                                 },

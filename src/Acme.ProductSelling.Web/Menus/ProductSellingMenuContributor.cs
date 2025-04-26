@@ -27,7 +27,7 @@ public class ProductSellingMenuContributor : IMenuContributor
         //Home
         context.Menu.AddItem(
             new ApplicationMenuItem(
-                  ProductSellingMenus.Home,
+                ProductSellingMenus.Home,
                 l["Menu:Home"],
                 "~/",
                 icon: "fa fa-home",

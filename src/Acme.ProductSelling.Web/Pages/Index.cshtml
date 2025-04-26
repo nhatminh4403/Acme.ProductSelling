@@ -1,17 +1,14 @@
 ﻿@page
-@model Acme.ProductSelling.Web.Pages.IndexModel
 @using Acme.ProductSelling.Web.Menus
 @using Volo.Abp.AspNetCore.Mvc.UI.Layout
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Acme.ProductSelling.Localization
+@using Microsoft.Extensions.Localization
 @using Volo.Abp.Users
 @inject IPageLayout PageLayout
-@inject IHtmlLocalizer<ProductSellingResource> L
+@inject IStringLocalizer<ProductSellingResource> L
 @inject ICurrentUser CurrentUser
-@{
-    ViewBag.PageTitle = L["Home"];
-    PageLayout.Content.MenuItemName = ProductSellingMenus.Home;
-}
+@model Acme.ProductSelling.Web.Pages.IndexModel
 
 @section styles {
     <abp-style src="/Pages/Index.css" />
@@ -19,7 +16,8 @@
 
 
 @{
-    ViewData["Title"] = L["HomePage"]; // Hoặc L["Store"]
+    ViewData["Title"] = L["Menu:Home"]; // Hoặc L["Store"]
+    // PageLayout.Content.MenuItemName = ProductSellingMenus.Home;
 }
 
 <div class="container mt-4">

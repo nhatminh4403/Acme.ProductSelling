@@ -8,31 +8,17 @@
     Layout = null; @* Không sử dụng layout cho modal *@
 }
 @* Sử dụng form động của ABP hoặc định nghĩa input thủ công *@
-<abp-dynamic-form abp-model="Category" asp-page="/Categories/CreateModal">
-    @* Trỏ đến Model và PageHandler của modal này *@
-    <abp-modal>
-        <abp-modal-header title="@L["CreateCategory"].Value"></abp-modal-header>
-        <abp-modal-body>
-            @* Nếu không dùng dynamic-form, định nghĩa input ở đây *@
-            @* <abp-form-content /> Tag helper để render các input dựa trên DTO nếu dùng dynamic-form *@
 
-            @* Ví dụ định nghĩa input thủ công: *@
-            <abp-input asp-for="Category.Name" label="@L["Name"].Value" />
-
-        </abp-modal-body>
-        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer> @* Các nút mặc định Cancel và Save *@
-    </abp-modal>
-</abp-dynamic-form>
-
-@* Hoặc không dùng abp-dynamic-form: *@
-@*
 <form method="post" asp-page="/Categories/CreateModal">
     <abp-modal>
         <abp-modal-header title="@L["CreateCategory"].Value"></abp-modal-header>
         <abp-modal-body>
-             <abp-input asp-for="Category.Name" label="@L["Name"].Value" />
+            @* Dropdown chọn Category *@
+            <abp-input asp-for="Category.Name" label="@L["Description"]" type="textarea" />
+
+            <abp-input asp-for="Category.Description" label="@L["Description"]" type="textarea" />
+
         </abp-modal-body>
         <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
     </abp-modal>
 </form>
-*@
