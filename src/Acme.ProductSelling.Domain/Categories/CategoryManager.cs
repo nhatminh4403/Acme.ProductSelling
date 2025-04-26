@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Domain.Services;
@@ -17,7 +14,7 @@ namespace Acme.ProductSelling.Categories
         }
 
 
-        public async Task<Category> CreateAsync(string name, string description)
+        public async Task<Category> CreateAsync(string name, string description,SpecificationType specificationType)
         {
             Check.NotNullOrWhiteSpace(name, nameof(name));
             // Kiểm tra xem Category đã tồn tại chưa
@@ -27,7 +24,7 @@ namespace Acme.ProductSelling.Categories
                 throw new Exception($"Category with name '{name}' already exists.");
             }
             // Tạo Category mới
-            return new Category(GuidGenerator.Create(), name, description);
+            return new Category(GuidGenerator.Create(), name, description,specificationType);
 
         }
         public async Task<Category> UpdateAsync(Guid id, string name, string description)

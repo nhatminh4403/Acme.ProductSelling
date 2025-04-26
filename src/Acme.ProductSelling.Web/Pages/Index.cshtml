@@ -41,7 +41,7 @@
                                 <span class="fw-bold fs-5 text-danger">@product.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</span> @* Định dạng tiền tệ *@
                             </p>
                             @* Nút xem chi tiết *@
-                            <a asp-page="/ProductDetail" asp-route-id="@product.Id" class="btn btn-outline-primary btn-sm mt-2">@L["ViewDetails"]</a>
+                            <a asp-page="/products" asp-route-id="@product.Id" class="btn btn-outline-primary btn-sm mt-2">@L["ViewDetails"]</a>
                             @* (Optional) Nút thêm vào giỏ hàng - cần logic phức tạp hơn *@
                             @* <button class="btn btn-primary btn-sm mt-1">@L["AddToCart"]</button> *@
                         </div>

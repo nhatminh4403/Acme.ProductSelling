@@ -80,6 +80,9 @@ namespace Acme.ProductSelling.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("SpecificationType")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Categories", (string)null);
@@ -257,8 +260,21 @@ namespace Acme.ProductSelling.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("IncludedFans")
-                        .HasColumnType("int");
+                    b.Property<string>("CoolingSupport")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DriveBays")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FanSupport")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FrontPanelPorts")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Material")
                         .IsRequired()
@@ -269,6 +285,13 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<decimal>("MaxGpuLength")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<float>("MaxPsuLength")
+                        .HasColumnType("real");
+
+                    b.Property<string>("RadiatorSupport")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SupportedMbFormFactor")
                         .IsRequired()
@@ -284,6 +307,10 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CoolerType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -294,12 +321,22 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<decimal?>("Height")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("LedLighting")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("NoiseLevel")
+                        .HasColumnType("int");
+
                     b.Property<int?>("RadiatorSize")
                         .HasColumnType("int");
 
                     b.Property<string>("SupportedSockets")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TdpSupport")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -380,22 +417,39 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Connectivity")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DriverSize")
+                    b.Property<int>("DriverSize")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Frequency")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("HasMicrophone")
                         .HasColumnType("bit");
 
+                    b.Property<int>("Impedance")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsNoiseCancelling")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsSurroundSound")
                         .HasColumnType("bit");
+
+                    b.Property<string>("MicrophoneType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Sensitivity")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -475,13 +529,24 @@ namespace Acme.ProductSelling.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("LaptopSpecifications");
+                    b.ToTable("AppLaptopSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.MonitorSpecification", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Brightness")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ColorGamut")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PanelType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RefreshRate")
                         .HasColumnType("int");
@@ -493,12 +558,18 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<int>("ResponseTime")
                         .HasColumnType("int");
 
+                    b.Property<int>("ResponseTimeMs")
+                        .HasColumnType("int");
+
                     b.Property<float>("ScreenSize")
                         .HasColumnType("real");
 
+                    b.Property<bool>("VesaMount")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
-                    b.ToTable("MonitorSpecifications");
+                    b.ToTable("AppMonitorSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.MotherboardSpecification", b =>
@@ -547,18 +618,37 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("BacklightColor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("ButtonCount")
                         .HasColumnType("int");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Connectivity")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Dpi")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsWireless")
-                        .HasColumnType("bit");
+                    b.Property<int>("PollingRate")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SensorType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Weight")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("MouseSpecifications");
+                    b.ToTable("AppMouseSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.PsuSpecification", b =>

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Acme.ProductSelling.Categories
+﻿namespace Acme.ProductSelling.Categories
 {
     public enum SpecificationType
     {
@@ -12,15 +6,15 @@ namespace Acme.ProductSelling.Categories
         Monitor,
         Mouse,
         Laptop,
-        CPU,         
-        GPU,         
-        RAM,         
-        Motherboard,  
-        Storage,    
-        PSU,          
-        Case,         
-        CPUCooler,   
-        Keyboard,    
+        CPU,
+        GPU,
+        RAM,
+        Motherboard,
+        Storage,
+        PSU,
+        Case,
+        CPUCooler,
+        Keyboard,
         Headset
     }
 }

@@ -137,9 +137,13 @@ public class ProductSellingDbContext :
 
 
 
+        builder.Entity<MonitorSpecification>(b => { b.ToTable("AppMonitorSpecifications"); });
+        builder.Entity<MouseSpecification>(b => { b.ToTable("AppMouseSpecifications"); });
+        builder.Entity<LaptopSpecification>(b => { b.ToTable("AppLaptopSpecifications"); /* Cấu hình cột nếu cần */ });
 
         builder.Entity<CpuSpecification>(b => { b.ToTable("AppCpuSpecifications"); /* Cấu hình cột nếu cần */ });
-        builder.Entity<GpuSpecification>(b => { b.ToTable("AppGpuSpecifications"); b.Property(s => s.Length).HasColumnType("decimal(18,2)"); });
+        builder.Entity<GpuSpecification>(b => { b.ToTable("AppGpuSpecifications");
+            b.Property(s => s.Length).HasColumnType("decimal(18,2)"); });
         builder.Entity<RamSpecification>(b => { b.ToTable("AppRamSpecifications"); });
         builder.Entity<MotherboardSpecification>(b => { b.ToTable("AppMotherboardSpecifications"); });
         builder.Entity<StorageSpecification>(b => { b.ToTable("AppStorageSpecifications"); });

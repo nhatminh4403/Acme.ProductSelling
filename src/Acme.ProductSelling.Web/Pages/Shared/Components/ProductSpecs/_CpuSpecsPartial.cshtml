@@ -1,0 +1,20 @@
+﻿@model Acme.ProductSelling.Specifications.CpuSpecificationDto
+@using Microsoft.Extensions.Localization
+@using Acme.ProductSelling.Localization
+@inject IStringLocalizer<ProductSellingResource> L
+
+<h5>@L["CPU Details"]</h5>
+<dl class="row mt-3">
+    <dt class="col-sm-4">@L["Socket"]</dt>
+    <dd class="col-sm-8">@Model.Socket</dd>
+    <dt class="col-sm-4">@L["CoresThreads"]</dt>
+    <dd class="col-sm-8">@Model.CoreCount / @Model.ThreadCount</dd>
+    <dt class="col-sm-4">@L["BaseBoostClock"]</dt>
+    <dd class="col-sm-8">@Model.BaseClock GHz / @Model.BoostClock GHz</dd>
+    <dt class="col-sm-4">@L["L3Cache"]</dt>
+    <dd class="col-sm-8">@Model.L3Cache MB</dd>
+    <dt class="col-sm-4">@L["TDP"]</dt>
+    <dd class="col-sm-8">@Model.Tdp W</dd>
+    <dt class="col-sm-4">@L["IntegratedGraphics"]</dt>
+    <dd class="col-sm-8">@L[Model.HasIntegratedGraphics ? "Yes" : "No"]</dd>
+</dl>

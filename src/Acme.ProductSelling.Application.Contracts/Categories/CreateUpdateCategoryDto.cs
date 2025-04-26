@@ -14,5 +14,7 @@ namespace Acme.ProductSelling.Categories
 
         [Required]
         public string Description { get; set; } = string.Empty;
+
+
     }
 }

@@ -46,7 +46,17 @@
                 },
                 {
                     title: l('Name'), // Key localization "Name"
-                    data: "productName"
+                    data: "productName",
+                    render: function (data, type, row) {
+                        // data: Giá trị của cột 'productName'
+                        // type: Kiểu render (thường là 'display')
+                        // row: Toàn bộ dữ liệu của dòng hiện tại (chứa cả 'id')
+
+                        // Tạo thẻ <a> với href đến trang chi tiết
+                        // Sử dụng row.id để lấy ID của sản phẩm
+                        var detailUrl = abp.appPath + 'products/' + row.id; // Tạo URL đúng
+                        return '<a href="' + detailUrl + '">' + data + '</a>'; // Trả về HTML của link
+                    }
                 },
                 {
                     title: l('Description'), // Key localization "Name"
