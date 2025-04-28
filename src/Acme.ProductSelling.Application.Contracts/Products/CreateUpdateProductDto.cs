@@ -19,6 +19,10 @@ namespace Acme.ProductSelling.Products
         [Required]
         [Range(0, 999999)]
         public int StockCount { get; set; }
+
+        [Required]
+        public string ImageUrl { get; set; } = string.Empty;
+
         [Required]
         public Guid CategoryId { get; set; }
 
