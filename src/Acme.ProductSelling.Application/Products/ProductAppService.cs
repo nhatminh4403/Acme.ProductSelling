@@ -3,10 +3,14 @@ using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Specifications;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.ObjectMapping;
 
 namespace Acme.ProductSelling.Products
 {
@@ -379,7 +383,31 @@ namespace Acme.ProductSelling.Products
 
             return dto;
         }
-        
 
+        public virtual async Task<PagedResultDto<ProductDto>> GetListByCategoryAsync(GetProductsByCategoryInput input)
+        {
+
+            var queryable = await Repository.GetQueryableAsync();
+            queryable = queryable.Include(p => p.Category); 
+
+            queryable = queryable.Where(p => p.CategoryId == input.CategoryId);
+
+
+            var totalCount = await AsyncExecuter.CountAsync(queryable);
+
+            queryable = queryable
+                .OrderBy(input.Sorting ?? nameof(Product.ProductName)) 
+                .PageBy(input); 
+
+
+            var products = await AsyncExecuter.ToListAsync(queryable);
+
+            var productDtos = ObjectMapper.Map<List<Product>, List<ProductDto>>(products);
+
+            return new PagedResultDto<ProductDto>(
+                totalCount,
+                productDtos
+            );
+        }
     }
 }

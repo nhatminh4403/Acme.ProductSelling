@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Acme.ProductSelling.Categories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,6 @@ namespace Acme.ProductSelling.Products
                                                             PagedAndSortedResultRequestDto,
                                                             CreateUpdateProductDto>
     {
-
+        Task<PagedResultDto<ProductDto>> GetListByCategoryAsync(GetProductsByCategoryInput input);
     }
 }

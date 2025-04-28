@@ -1,4 +1,4 @@
-/* Getting-Started */
+﻿/* Getting-Started */
 .starting-content {
     position: relative;
     z-index: 2;
@@ -13,3 +13,9 @@
     z-index: 1;
 }
 /* Getting-Started End */
+.category-sidebar-menu .list-group-item.category-menu-item {
+
+    padding-top: 0.4rem; /* << Điều chỉnh giá trị này nhỏ hơn */
+    padding-bottom: 0.4rem; /* << Điều chỉnh giá trị này nhỏ hơn */
+    
+}

@@ -1,0 +1,90 @@
+﻿@model List<Acme.ProductSelling.Categories.CategoryLookupDto>
+@using Microsoft.Extensions.Localization
+@using Acme.ProductSelling.Localization
+@inject IStringLocalizer<ProductSellingResource> L
+
+@{
+    var categories = Model;
+}
+
+@if(categories != null || categories.Any()) {
+
+    <ul class="dropdown-menu category-hover-menu" aria-labelledby="navbarDropdownCategories">
+        @foreach (var category in categories)
+        {
+            <!-- Electronics with Mega Menu (2 Rows) -->
+            <li class="has-submenu">
+                <a asp-page="/Products/ProductsByCategory" asp-route-CategoryId="@category.Id" class="category-link">
+                    @category.Name <i class="bi bi-chevron-right"></i>
+                </a>
+                <div class="submenu dropdown-menu mega-menu">
+                    <div class="container-fluid">
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <h6>TV & Home Theater</h6>
+                                <ul>
+                                    <li><a href="#">Televisions</a></li>
+                                    <li><a href="#">Projectors</a></li>
+                                    <li><a href="#">Soundbars</a></li>
+                                    <li><a href="#">Streaming</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <h6>Computers & Tablets</h6>
+                                <ul>
+                                    <li><a href="#">Laptops</a></li>
+                                    <li><a href="#">Desktops</a></li>
+                                    <li><a href="#">Tablets</a></li>
+                                    <li><a href="#">Monitors</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <h6>Computer Accessories</h6>
+                                <ul>
+                                    <li><a href="#">Keyboards</a></li>
+                                    <li><a href="#">Printers</a></li>
+                                    <li><a href="#">Storage</a></li>
+                                    <li><a href="#">Networking</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h6>Audio</h6>
+                                <ul>
+                                    <li><a href="#">Headphones</a></li>
+                                    <li><a href="#">Speakers</a></li>
+                                    <li><a href="#">Hi-Fi</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <h6>Cell Phones</h6>
+                                <ul>
+                                    <li><a href="#">Smartphones</a></li>
+                                    <li><a href="#">Accessories</a></li>
+                                    <li><a href="#">Wearables</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <h6>Featured</h6><a href="#">
+                                    <img src="~/images/getting-started/bg-01.png"
+                                         alt="Offer" class="img-fluid rounded">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        }
+        <li>
+            <hr class="dropdown-divider">
+        </li>
+        <li><a class="dropdown-item" href="/categories">All Categories</a></li>
+    </ul>
+}
+
+
+
+

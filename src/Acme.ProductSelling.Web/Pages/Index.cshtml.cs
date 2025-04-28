@@ -1,7 +1,11 @@
-﻿using Acme.ProductSelling.Localization;
+﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Products;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 
@@ -15,13 +19,18 @@ public class IndexModel : ProductSellingPageModel
     public PagedResultDto<ProductDto> ProductList { get; set; } // Giữ danh sách sản phẩm
     private readonly IStringLocalizer<ProductSellingResource> _localizer;
     private readonly IProductAppService _productAppService;
-    public  int PageSize = 30; // Ví dụ: 9 sản phẩm/trang
+    private readonly ICategoryAppService _categoryAppService;
+    private readonly ICategoryRepository _categoryRepository;
 
-    public IndexModel(IProductAppService productAppService, 
-        IStringLocalizer<ProductSellingResource> localizer)
+    public PagedResultDto<CategoryDto> CategoryList { get; set; } 
+    public int PageSize = 30; 
+
+    public IndexModel(IProductAppService productAppService, ICategoryAppService categoryAppService,
+        IStringLocalizer<ProductSellingResource> localizer, ICategoryRepository categoryRepository)
     {
         _productAppService = productAppService;
         _localizer = localizer;
+        _categoryRepository = categoryRepository;
     }
 
     public async Task OnGetAsync()
@@ -34,8 +43,21 @@ public class IndexModel : ProductSellingPageModel
             Sorting = "ProductName" // Sắp xếp theo tên (hoặc trường khác)
         };
         ViewData["Title"] = _localizer["Menu:Home"];
-        // Gọi service để lấy danh sách sản phẩm phân trang
         ProductList = await _productAppService.GetListAsync(input);
+
+        var categoryLookup = await _categoryRepository.GetListAsync();
+
+        // Map the List<Category> to PagedResultDto<CategoryDto>
+        CategoryList = new PagedResultDto<CategoryDto>
+        {
+            Items = categoryLookup.Select(category => new CategoryDto
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Description = category.Description
+            }).ToList(),
+            TotalCount = categoryLookup.Count
+        };
     }
 
 }

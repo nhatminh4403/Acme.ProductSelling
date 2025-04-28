@@ -27,16 +27,13 @@ namespace Acme.ProductSelling.Web.Pages.Products
         {
             try
             {
-                // Chỉ cần gọi GetAsync, nó sẽ trả về ProductDto đã đầy đủ thông tin spec
                 Product = await _productAppService.GetAsync(Id);
                 return Page();
             }
             catch (EntityNotFoundException)
             {
-                // Xử lý trường hợp không tìm thấy sản phẩm
                 return NotFound();
             }
-            // Có thể thêm các catch khác nếu cần
         }
     }
 }

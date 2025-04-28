@@ -20,7 +20,65 @@
 }
 
 <div class="container mt-4">
-    <h1 class="mb-4">@L["Products"]</h1>
+    <div class="row">
+        <div class="col-lg-3 pe-lg-1 d-none d-lg-block">
+            <div class="list-group category-sidebar-menu border">
+                @if (Model.CategoryList != null)
+                {
+                    foreach (var category in Model.CategoryList.Items)
+                    {
+
+                        <div class="list-group-item list-group-item-action category-menu-item has-megamenu">
+                            <a asp-page="/Products/ProductsByCategory" asp-route-CategoryId="@category.Id" 
+                            class="d-flex justify-content-between align-items-center text-decoration-none text-dark">
+                                <span>@*<i class="bi bi-@GetCategoryIcon(category.Id) me-2"></i> *@ @category.Name</span>
+                                <i class="bi bi-chevron-right small"></i>
+                            </a>
+                        </div>
+
+                    }
+                }
+
+            </div>
+        </div>
+
+        <div class="col-lg-9 ps-lg-1">
+
+            <div id="mainBannerCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#mainBannerCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#mainBannerCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#mainBannerCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="https://file.hstatic.net/200000722513/file/thang_04_laptop_acer.png" class="d-block w-100" alt="Banner 1">
+                        
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://file.hstatic.net/200000722513/file/thang_04_laptop_rtx_50series_800x400.jpg" class="d-block w-100" alt="Banner 2">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://file.hstatic.net/200000722513/file/gearvn-festival-505-slider.jpg" class="d-block w-100" alt="Banner 3">
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#mainBannerCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#mainBannerCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="container mt-4">
+
 
     @if (Model.ProductList != null && Model.ProductList.Items.Any())
     {
@@ -41,9 +99,9 @@
                                 <span class="fw-bold fs-5 text-danger">@product.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</span> @* Định dạng tiền tệ *@
                             </p>
                             @* Nút xem chi tiết *@
-                            <a asp-page="/Products/ProductDetail" asp-route-id="@product.Id" class="btn btn-outline-primary btn-sm mt-2">@L["ViewDetails"]</a>
-                            @* (Optional) Nút thêm vào giỏ hàng - cần logic phức tạp hơn *@
-                            @* <button class="btn btn-primary btn-sm mt-1">@L["AddToCart"]</button> *@
+                            <a asp-page="/Products/ProductDetail" asp-route-id="@product.Id"
+                               class="btn btn-outline-primary btn-sm mt-2">@L["ViewDetails"]</a>
+
                         </div>
                     </div>
                 </div>

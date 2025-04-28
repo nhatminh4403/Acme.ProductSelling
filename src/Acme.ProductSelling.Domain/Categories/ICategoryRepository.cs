@@ -12,5 +12,7 @@ namespace Acme.ProductSelling.Categories
         Task<Category> FindByNameAsync(string name);
 
         Task<List<Category>> GetListAsync();
+
+        Task<Category> GetByIdAsync(Guid id);
     }
 }

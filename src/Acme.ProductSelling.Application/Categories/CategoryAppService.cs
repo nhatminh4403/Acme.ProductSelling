@@ -32,12 +32,20 @@ namespace Acme.ProductSelling.Categories
         }
 
 
-        [AllowAnonymous] // Ai cũng có thể gọi để lấy danh sách cho dropdown
+        [AllowAnonymous] 
         public async Task<ListResultDto<CategoryLookupDto>> GetCategoryLookupAsync()
         {
             var categories = await Repository.GetListAsync();
             return new ListResultDto<CategoryLookupDto>(
                 ObjectMapper.Map<List<Category>, List<CategoryLookupDto>>(categories)
+            );
+        }
+        [AllowAnonymous]
+        public async Task<ListResultDto<CategoryDto>> GetAsync()
+        {
+            var categories = await Repository.GetListAsync();
+            return new ListResultDto<CategoryDto>(
+                ObjectMapper.Map<List<Category>, List<CategoryDto>>(categories)
             );
         }
     }
