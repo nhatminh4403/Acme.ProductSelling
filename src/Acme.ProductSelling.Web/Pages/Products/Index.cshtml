@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "/products"
 @model Acme.ProductSelling.Web.Pages.Products.IndexModel
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
@@ -8,6 +8,7 @@
 @inject IAuthorizationService AuthorizationService
 @{
     ViewData["Title"] = L["Products"]; // Key localization "Products"
+    Layout = "/Views/Shared/_Layout.cshtml"; // Đặt layout cho trang này
 }
 @section scripts {
     <abp-script src="/Pages/Products/Index.js" /> @* Link JS *@

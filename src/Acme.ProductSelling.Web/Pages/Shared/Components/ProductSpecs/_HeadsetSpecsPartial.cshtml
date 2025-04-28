@@ -1,0 +1,13 @@
+﻿@model Acme.ProductSelling.Specifications.HeadsetSpecificationDto
+@using Microsoft.Extensions.Localization
+@using Acme.ProductSelling.Localization
+@inject IStringLocalizer<ProductSellingResource> L
+<h5>@L["Headset Details"]</h5>
+<dl class="row mt-3">
+    <dt class="col-sm-4">@L["Connectivity"]</dt>
+    <dd class="col-sm-8">@Model.Connectivity</dd>
+    <dt class="col-sm-4">@L["HasMicrophone"]</dt>
+    <dd class="col-sm-8">@L[Model.HasMicrophone ? "Yes" : "No"]</dd>
+    <dt class="col-sm-4">@L["IsSurroundSound"]</dt>
+    <dd class="col-sm-8">@L[Model.HasMicrophone ? "Yes" : "No"]</dd>
+</dl>

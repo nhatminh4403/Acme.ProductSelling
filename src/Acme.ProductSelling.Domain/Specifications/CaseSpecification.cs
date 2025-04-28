@@ -20,7 +20,5 @@ namespace Acme.ProductSelling.Specifications
         public string RadiatorSupport { get; set; } // "Up to 360mm"
         public string DriveBays { get; set; } // "3 x 3.5\" + 2 x 2.5\""
         public string FrontPanelPorts { get; set; } // "USB 3.0, USB-C, Audio"
-
-
     }
 }

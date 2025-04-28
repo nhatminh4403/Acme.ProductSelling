@@ -17,7 +17,7 @@ namespace Acme.ProductSelling
         private readonly IRepository<Category, Guid> _categoryRepository;
         private readonly CategoryManager _categoryManager;
 
-
+        private readonly IRepository<LaptopSpecification, Guid> _laptopSpecRepository;
         private readonly IRepository<MonitorSpecification, Guid> _monitorSpecRepository;
         private readonly IRepository<MouseSpecification, Guid> _mouseSpecRepository;
         private readonly IRepository<CpuSpecification, Guid> _cpuSpecRepository;
@@ -46,6 +46,7 @@ namespace Acme.ProductSelling
             IRepository<CpuCoolerSpecification, Guid> cpuCoolerSpecRepository,
             IRepository<KeyboardSpecification, Guid> keyboardSpecRepository,
             IRepository<HeadsetSpecification, Guid> headsetSpecRepository,
+                     IRepository<LaptopSpecification, Guid> laptopSpecRepository,
              IGuidGenerator guidGenerator)
         {
             _productRepository = productRepository;
@@ -63,12 +64,17 @@ namespace Acme.ProductSelling
             _cpuCoolerSpecRepository = cpuCoolerSpecRepository;
             _keyboardSpecRepository = keyboardSpecRepository;
             _headsetSpecRepository = headsetSpecRepository;
+            _laptopSpecRepository = laptopSpecRepository;
             _guidGenerator = guidGenerator;
         }
         public async Task SeedAsync(DataSeedContext context)
         {
             // --- Seed Categories ---
             // Chỉ seed nếu chưa có Category nào trong DB
+            if (await _categoryRepository.GetCountAsync() > 0)
+            {
+                return; // Không cần seed nếu đã có Category
+            }
 
             var monitors = await _categoryRepository.InsertAsync(
                                                      await _categoryManager.CreateAsync("Monitors", "Displays", SpecificationType.Monitor));
@@ -123,7 +129,7 @@ namespace Acme.ProductSelling
                      Description = "Powerful 8-core CPU",
                      StockCount = 50,
                      CpuSpecificationId = cpuSpec1.Id,
-                     
+
                  },
                  autoSave: true
              );
@@ -298,7 +304,7 @@ namespace Acme.ProductSelling
                 Material = "Steel, Tempered Glass",
                 Color = "Black",
                 FanSupport = "Up to 6 x 120mm or 4 x 140mm",
-                
+
             };
             await _caseSpecRepository.InsertAsync(caseSpec1, autoSave: true); // Lưu spec trước
             var productCase1 = new Product
@@ -362,9 +368,75 @@ namespace Acme.ProductSelling
             };
             await _productRepository.InsertAsync(productHeadset1, autoSave: true);
 
+            var laptopSpec1 = new LaptopSpecification
+            {
+                //ScreenSize = 15.6f,
+                //Resolution = "1920x1080",
+                //Processor = "Intel Core i7-12700H",
+                //RamSize = 16,
+                //StorageType = "SSD",
+                //StorageCapacity = 512,
+                //GpuType = "Integrated",
+                BatteryLife = "3 hours 30 minutes",
+                Weight = "2.5Kg",
+                //Color = "Black",
+                Warranty = "1 year",
+                Storage = "NVMe SSD",
+                /*                CoolingSystem = "Air",
+                                Ports = "USB-C, HDMI, Audio Jack",*/
+                GraphicsCard = "NVIDIA GeForce RTX 3060",
+                CPU = "Intel Core i7-12700H",
+                /*                ScreenType = "IPS",
+                                ScreenRefreshRate = 144,
+                                ScreenBrightness = 300,
+                                ScreenAspectRatio = "16:9",
+                                ScreenColorGamut = "sRGB 100%",
+                                ScreenResponseTime = 3,*/
+                Display = "Anti-glare",
+                /*                ScreenContrastRatio = "1000:1",
+                                ScreenColorDepth = 8,
+                                ScreenViewingAngle = 178,
+                                ScreenHDR = "HDR 400",
+                                ScreenAdaptiveSync = "G-Sync Compatible",
+                                ScreenFlickerFree = true,
+                                ScreenBlueLightFilter = true,
+                                ScreenTouch = false,
+                                ScreenAntiReflective = true,
+                                ScreenAntiGlare = true,*/
+                RAM = "DDR4",
+                OperatingSystem = "Windows 11 Home",
 
+            };
+            await _laptopSpecRepository.InsertAsync(laptopSpec1, autoSave: true); // Lưu spec trước
+            var productLaptop1 = new Product
+            {
+                Price = 25000000,
+                ProductName = "ASUS ROG Zephyrus G14",
+                Description = "Powerful gaming laptop",
+                StockCount = 10,
+                CategoryId = laptops.Id,
+                // Gán FK cho spec
+                LaptopSpecificationId = laptopSpec1.Id // Gán FK
+            };
+            await _productRepository.InsertAsync(productLaptop1, autoSave: true);
+            // --- Seed Products ---
+            // Chỉ seed nếu chưa có Product nào trong DB
+            if (await _productRepository.GetCountAsync() <= 0)
+            {
+                await _productRepository.InsertAsync(productCpu1);
+                await _productRepository.InsertAsync(productGpu1);
+                await _productRepository.InsertAsync(productRam1);
+                await _productRepository.InsertAsync(productStorage1);
+                await _productRepository.InsertAsync(productMouse1);
+                await _productRepository.InsertAsync(productMonitor1);
+                await _productRepository.InsertAsync(productPsu1);
+                await _productRepository.InsertAsync(productCase1);
+                await _productRepository.InsertAsync(productCpuCooler1);
+                await _productRepository.InsertAsync(productHeadset1);
+                await _productRepository.InsertAsync(productLaptop1);
+                await _productRepository.InsertAsync(keyboardProduct1);
 
-
+            }
         }
     }
 }

@@ -1,0 +1,28 @@
+﻿@model Acme.ProductSelling.Specifications.LaptopSpecificationDto
+@using Microsoft.Extensions.Localization
+@using Acme.ProductSelling.Localization
+@inject IStringLocalizer<ProductSellingResource> L
+
+<h5>@L["Laptop Details"]</h5>
+<dl class="row mt-3">
+    <dt class="col-sm-4">@L["RAM"]</dt>
+    <dd class="col-sm-8">@Model.RAM</dd>
+    <dt class="col-sm-4">@L["CPU"]</dt>
+    <dd class="col-sm-8">@Model.CPU</dd>
+    <dt class="col-sm-4">@L["Display"]</dt>
+    <dd class="col-sm-8">@Model.Display</dd>
+    <dt class="col-sm-4">@L["BatteryLife"]</dt>
+    <dd class="col-sm-8">@Model.BatteryLife</dd>
+    <dt class="col-sm-4">@L["Weight"]</dt>
+    <dd class="col-sm-8">@Model.Weight</dd>
+
+    <dt class="col-sm-4">@L["GraphicsCard"]</dt>
+    <dd class="col-sm-8">@Model.GraphicsCard</dd>
+    <dt class="col-sm-4">@L["Warranty"]</dt>
+    <dd class="col-sm-8">@Model.Warranty</dd>
+    <dt class="col-sm-4">@L["Storage"]</dt>
+    <dd class="col-sm-8">@Model.Storage</dd>
+    <dt class="col-sm-4">@L["OperatingSystem"]</dt>
+    <dd class="col-sm-8">@Model.OperatingSystem</dd>
+
+</dl>

@@ -1,0 +1,20 @@
+﻿@model Acme.ProductSelling.Specifications.GpuSpecificationDto
+@using Microsoft.Extensions.Localization
+@using Acme.ProductSelling.Localization
+@inject IStringLocalizer<ProductSellingResource> L
+
+<h5>@L["GPU Details"]</h5>
+<dl class="row mt-3">
+    <dt class="col-sm-4">@L["Chipset"]</dt>
+    <dd class="col-sm-8">@Model.Chipset</dd>
+    <dt class="col-sm-4">@L["Memory"]</dt>
+    <dd class="col-sm-8">@Model.MemorySize GB @Model.MemoryType</dd>
+    <dt class="col-sm-4">@L["BoostClock"]</dt>
+    <dd class="col-sm-8">@Model.BoostClock MHz</dd> @* Hoặc đơn vị khác *@
+    <dt class="col-sm-4">@L["Interface"]</dt>
+    <dd class="col-sm-8">@Model.Interface</dd>
+    <dt class="col-sm-4">@L["RecommendedPSU"]</dt>
+    <dd class="col-sm-8">@Model.RecommendedPsu W</dd>
+    <dt class="col-sm-4">@L["Length"]</dt>
+    <dd class="col-sm-8">@Model.Length mm</dd>
+</dl>

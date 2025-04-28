@@ -1,0 +1,20 @@
+﻿@model Acme.ProductSelling.Specifications.RamSpecificationDto
+@using Microsoft.Extensions.Localization
+@using Acme.ProductSelling.Localization
+@inject IStringLocalizer<ProductSellingResource> L
+
+<h5>@L["RAM Details"]</h5>
+<dl class="row mt-3">
+    <dt class="col-sm-4">@L["Type"]</dt>
+    <dd class="col-sm-8">@Model.RamType</dd>
+    <dt class="col-sm-4">@L["Capacity"]</dt>
+    <dd class="col-sm-8">@Model.Capacity GB (@Model.ModuleCount modules)</dd>
+    <dt class="col-sm-4">@L["Speed"]</dt>
+    <dd class="col-sm-8">@Model.Speed MT/s</dd>
+    <dt class="col-sm-4">@L["Timing"]</dt>
+    <dd class="col-sm-8">@Model.Timing</dd>
+    <dt class="col-sm-4">@L["Voltage"]</dt>
+    <dd class="col-sm-8">@Model.Voltage V</dd>
+    <dt class="col-sm-4">@L["RGB"]</dt>
+    <dd class="col-sm-8">@L[Model.HasRGB ? "Yes" : "No"]</dd>
+</dl>

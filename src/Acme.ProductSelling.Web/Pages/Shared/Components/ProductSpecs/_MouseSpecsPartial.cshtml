@@ -1,0 +1,25 @@
+﻿@model Acme.ProductSelling.Specifications.MouseSpecificationDto
+@using Microsoft.Extensions.Localization
+@using Acme.ProductSelling.Localization
+@inject IStringLocalizer<ProductSellingResource> L
+
+<h5>@L["Mouse Details"]</h5>
+<dl class="row mt-3">
+    <dt class="col-sm-4">@L["DPI"]</dt>
+    <dd class="col-sm-8">@Model.Dpi</dd>
+    <dt class="col-sm-4">@L["ButtonCount"]</dt>
+    <dd class="col-sm-8">@Model.ButtonCount</dd>
+    <dt class="col-sm-4">@L["PollingRate"]</dt>
+    <dd class="col-sm-8">@Model.PollingRate Hz</dd>
+    <dt class="col-sm-4">@L["SensorType"]</dt>
+    <dd class="col-sm-8">@Model.SensorType</dd>
+    <dt class="col-sm-4">@L["Weight"]</dt>
+    <dd class="col-sm-8">@Model.Weight g</dd>
+    <dt class="col-sm-4">@L["Connectivity"]</dt>
+    <dd class="col-sm-8">@Model.Connectivity</dd>
+    <dt class="col-sm-4">@L["Color"]</dt>
+    <dd class="col-sm-8">@Model.Color</dd>
+    <dt class="col-sm-4">@L["BacklightColor"]</dt>
+    <dd class="col-sm-8">@Model.BacklightColor</dd>
+</dl>
+

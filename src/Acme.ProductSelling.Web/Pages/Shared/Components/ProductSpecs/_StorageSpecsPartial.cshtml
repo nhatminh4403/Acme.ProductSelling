@@ -1,0 +1,25 @@
+﻿@model Acme.ProductSelling.Specifications.StorageSpecificationDto
+@using Microsoft.Extensions.Localization
+@using Acme.ProductSelling.Localization
+@inject IStringLocalizer<ProductSellingResource> L
+
+<h5>@L["Storage Details"]</h5>
+<dl class="row mt-3">
+    <dt class="col-sm-4">@L["StorageType"]</dt>
+    <dd class="col-sm-8">@Model.StorageType</dd>
+    <dt class="col-sm-4">@L["Interface"]</dt>
+    <dd class="col-sm-8">@Model.Interface</dd>
+    <dt class="col-sm-4">@L["Capacity"]</dt>
+    <dd class="col-sm-8">@Model.Capacity GB</dd>
+    <dt class="col-sm-4">@L["ReadSpeed"]</dt>
+    <dd class="col-sm-8">@Model.ReadSpeed MB/s</dd>
+    <dt class="col-sm-4">@L["WriteSpeed"]</dt>
+    <dd class="col-sm-8">@Model.WriteSpeed MB/s</dd>
+    <dt class="col-sm-4">@L["FormFactor"]</dt>
+    <dd class="col-sm-8">@Model.FormFactor</dd>
+    @if (Model.Rpm.HasValue)
+    {
+        <dt class="col-sm-4">@L["RPM"]</dt>
+        <dd class="col-sm-8">@Model.Rpm.Value RPM</dd>
+    }
+</dl>

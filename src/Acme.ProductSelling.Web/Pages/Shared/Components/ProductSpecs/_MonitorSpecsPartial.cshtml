@@ -1,0 +1,26 @@
+﻿@model Acme.ProductSelling.Specifications.MonitorSpecificationDto
+@using Microsoft.Extensions.Localization
+@using Acme.ProductSelling.Localization
+@inject IStringLocalizer<ProductSellingResource> L
+
+    <h5>@L["Monitor Details"]</h5>
+<dl class="row mt-3">
+    <dt class="col-sm-4">@L["RefreshRate"]</dt>
+    <dd class="col-sm-8">@Model.RefreshRate Hz</dd>
+    <dt class="col-sm-4">@L["Resolution"]</dt>
+    <dd class="col-sm-8">@Model.Resolution</dd>
+    <dt class="col-sm-4">@L["ScreenSize"]</dt>
+    <dd class="col-sm-8">@Model.ScreenSize inches</dd>
+    <dt class="col-sm-4">@L["ResponseTime"]</dt>
+    <dd class="col-sm-8">@Model.ResponseTime ms</dd>
+    <dt class="col-sm-4">@L["PanelType"]</dt>
+    <dd class="col-sm-8">@Model.PanelType</dd>
+    <dt class="col-sm-4">@L["ResponseTimeMs"]</dt>
+    <dd class="col-sm-8">@Model.ResponseTimeMs ms</dd>
+    <dt class="col-sm-4">@L["ColorGamut"]</dt>
+    <dd class="col-sm-8">@Model.ColorGamut</dd>
+    <dt class="col-sm-4">@L["Brightness"]</dt>
+    <dd class="col-sm-8">@Model.Brightness nits</dd>
+    <dt class="col-sm-4">@L["VesaMount"]</dt>
+    <dd class="col-sm-8">@L[Model.VesaMount ? "Yes" : "No"]</dd>
+</dl>

@@ -1,0 +1,22 @@
+﻿@model Acme.ProductSelling.Specifications.CpuCoolerSpecificationDto
+@using Microsoft.Extensions.Localization
+@using Acme.ProductSelling.Localization
+@inject IStringLocalizer<ProductSellingResource> L
+
+<h5>@L["Details"]</h5>
+<dl class="row mt-3">
+    <dt class="col-sm-4">@L["CoolerType"]</dt>
+    <dd class="col-sm-8">@Model.CoolerType</dd>
+    <dt class="col-sm-4">@L["Color"]</dt>
+    <dd class="col-sm-8">@Model.Color</dd>
+    <dt class="col-sm-4">@L["FanSize"]</dt>
+    <dd class="col-sm-8">@Model.FanSize</dd>
+    <dt class="col-sm-4">@L["MaxGpuLength"]</dt>
+    <dd class="col-sm-8">@Model.NoiseLevel</dd>
+    <dd class="col-sm-8">@L["RadiatorSize"] </dd>
+    <dd class="col-sm-8">@Model.RadiatorSize</dd>
+    <dt class="col-sm-4">@L["NoiseLevel"]</dt>
+    <dd class="col-sm-8">@Model.NoiseLevel</dd>
+    <dt class="col-sm-4">@L["LedLighting"]</dt>
+    <dd class="col-sm-8">@Model.LedLighting</dd>
+</dl>
