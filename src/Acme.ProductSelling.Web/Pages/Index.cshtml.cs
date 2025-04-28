@@ -15,7 +15,7 @@ public class IndexModel : ProductSellingPageModel
     public PagedResultDto<ProductDto> ProductList { get; set; } // Giữ danh sách sản phẩm
     private readonly IStringLocalizer<ProductSellingResource> _localizer;
     private readonly IProductAppService _productAppService;
-    public  int PageSize = 9; // Ví dụ: 9 sản phẩm/trang
+    public  int PageSize = 30; // Ví dụ: 9 sản phẩm/trang
 
     public IndexModel(IProductAppService productAppService, 
         IStringLocalizer<ProductSellingResource> localizer)

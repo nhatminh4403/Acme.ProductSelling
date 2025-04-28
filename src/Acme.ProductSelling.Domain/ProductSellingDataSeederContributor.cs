@@ -419,24 +419,305 @@ namespace Acme.ProductSelling
                 LaptopSpecificationId = laptopSpec1.Id // Gán FK
             };
             await _productRepository.InsertAsync(productLaptop1, autoSave: true);
+
+            var intelCpuSpec = new CpuSpecification
+            {
+                Socket = "LGA1700",
+                CoreCount = 24,
+                ThreadCount = 32,
+                BaseClock = 3.0f,
+                BoostClock = 5.8f,
+                L3Cache = 36,
+                Tdp = 125,
+                HasIntegratedGraphics = true
+            };
+            await _cpuSpecRepository.InsertAsync(intelCpuSpec, autoSave: true);
+            var productCpu2 = new Product
+            {
+                CategoryId = cpus.Id,
+                CpuSpecificationId = intelCpuSpec.Id,
+                ProductName = "Intel Core i9-13900K",
+                Description = "Top-tier 24-core CPU",
+                Price = 13500000,
+                StockCount = 30
+            };
+            await _productRepository.InsertAsync(productCpu2, autoSave: true);
+
+            // 2. GPU: AMD Radeon RX 7900 XT
+            var amdGpuSpec = new GpuSpecification
+            {
+                Chipset = "Radeon RX 7900 XT",
+                MemorySize = 20,
+                MemoryType = "GDDR6",
+                BoostClock = 2600f,
+                Interface = "PCIe 4.0 x16",
+                RecommendedPsu = 750,
+                Length = 310f
+            };
+            await _gpuSpecRepository.InsertAsync(amdGpuSpec, autoSave: true);
+            var productGpu2 = new Product
+            {
+                CategoryId = gpus.Id,
+                GpuSpecificationId = amdGpuSpec.Id,
+                ProductName = "AMD Radeon RX 7900 XT",
+                Description = "High-end AMD graphics card",
+                Price = 28000000,
+                StockCount = 15
+            };
+            await _productRepository.InsertAsync(productGpu2, autoSave: true);
+            // 3. RAM: G.Skill Trident Z RGB 16GB (2×8)
+            var ramSpec2 = new RamSpecification
+            {
+                RamType = "DDR4",
+                Capacity = 16,
+                Speed = 3600,
+                ModuleCount = 2,
+                Timing = "18-22-22-42",
+                Voltage = 1.35f,
+                HasRGB = true
+            };
+            await _ramSpecRepository.InsertAsync(ramSpec2, autoSave: true);
+            var productRam2 = new Product
+            {
+                CategoryId = rams.Id,
+                RamSpecificationId = ramSpec2.Id,
+                ProductName = "G.Skill Trident Z RGB 16GB (2×8)",
+                Description = "DDR4 3600MHz kit with RGB",
+                Price = 1800000,
+                StockCount = 80
+            };
+            await _productRepository.InsertAsync(productRam2, autoSave: true);
+
+            // 4. Storage: WD Black SN770 1TB
+            var storageSpec2 = new StorageSpecification
+            {
+                StorageType = "NVMe SSD",
+                Interface = "PCIe 4.0 x4",
+                Capacity = 1000,
+                ReadSpeed = 5150,
+                WriteSpeed = 4900,
+                FormFactor = "M.2 2280"
+            };
+            await _storageSpecRepository.InsertAsync(storageSpec2, autoSave: true);
+            var productStorage2 = new Product
+            {
+                CategoryId = storage.Id,
+                StorageSpecificationId = storageSpec2.Id,
+                ProductName = "WD Black SN770 1TB",
+                Description = "High-performance PCIe 4.0 NVMe SSD",
+                Price = 2500000,
+                StockCount = 60
+            };
+            await _productRepository.InsertAsync(productStorage2, autoSave: true);
+            // 5. Keyboard: Razer Huntsman Elite
+            var keyboardSpec2 = new KeyboardSpecification
+            {
+                KeyboardType = "Mechanical",
+                SwitchType = "Opto-Mechanical",
+                Layout = "Full-size",
+                Connectivity = "Wired",
+                Backlight = "RGB"
+            };
+            await _keyboardSpecRepository.InsertAsync(keyboardSpec2, autoSave: true);
+            var keyboardProduct2 = new Product
+            {
+                CategoryId = keyboards.Id,
+                KeyboardSpecificationId = keyboardSpec2.Id,
+                ProductName = "Razer Huntsman Elite",
+                Description = "Opto-mechanical gaming keyboard",
+                Price = 4500000,
+                StockCount = 40
+            };
+            await _productRepository.InsertAsync(keyboardProduct2, autoSave: true);
+
+            // 6. Mouse: SteelSeries Rival 3
+            var mouseSpec2 = new MouseSpecification
+            {
+                Dpi = 8500,
+                PollingRate = 1000,
+                SensorType = "Optical",
+                Weight = 77,
+                Connectivity = "Wired",
+                ButtonCount = 6,
+                BacklightColor = "RGB",
+                Color = "White"
+            };
+            await _mouseSpecRepository.InsertAsync(mouseSpec2, autoSave: true);
+            var productMouse2 = new Product
+            {
+                CategoryId = mice.Id,
+                MouseSpecificationId = mouseSpec2.Id,
+                ProductName = "SteelSeries Rival 3",
+                Description = "Lightweight RGB gaming mouse",
+                Price = 800000,
+                StockCount = 120
+            };
+            await _productRepository.InsertAsync(productMouse2, autoSave: true);
+
+            // 7. Monitor: ASUS TUF Gaming VG27AQ
+            var monitorSpec2 = new MonitorSpecification
+            {
+                ScreenSize = 27,
+                Resolution = "2560x1440",
+                RefreshRate = 165,
+                PanelType = "IPS",
+                ResponseTime = 1,
+                ColorGamut = "sRGB 99%",
+                Brightness = 350,
+                VesaMount = true,
+                ResponseTimeMs = 1
+            };
+            await _monitorSpecRepository.InsertAsync(monitorSpec2, autoSave: true);
+            var productMonitor2 = new Product
+            {
+                CategoryId = monitors.Id,
+                MonitorSpecificationId = monitorSpec2.Id,
+                ProductName = "ASUS TUF Gaming VG27AQ",
+                Description = "27” QHD IPS 165Hz gaming monitor",
+                Price = 9000000,
+                StockCount = 25
+            };
+            await _productRepository.InsertAsync(productMonitor2, autoSave: true);
+
+            // 8. PSU: EVGA SuperNOVA 750 G5
+            var psuSpec2 = new PsuSpecification
+            {
+                Wattage = 750,
+                EfficiencyRating = "80 Plus Gold",
+                Modularity = "Fully Modular",
+                FormFactor = "ATX",
+            };
+            await _psuSpecRepository.InsertAsync(psuSpec2, autoSave: true);
+            var productPsu2 = new Product
+            {
+                CategoryId = psus.Id,
+                PsuSpecificationId = psuSpec2.Id,
+                ProductName = "EVGA SuperNOVA 750 G5",
+                Description = "750W gold-rated fully modular PSU",
+                Price = 2200000,
+                StockCount = 35
+            };
+            await _productRepository.InsertAsync(productPsu2, autoSave: true);
+            // 9. Case: Phanteks Eclipse P400A
+            var caseSpec2 = new CaseSpecification
+            {
+                SupportedMbFormFactor = "ATX Mid Tower",
+                CoolingSupport = "Up to 6 fans",
+                RadiatorSupport = "Up to 360mm",
+                DriveBays = "2 x 3.5\" + 2 x 2.5\"",
+                FrontPanelPorts = "USB 3.0, USB-C, Audio",
+                MaxGpuLength = 355,
+                MaxCpuCoolerHeight = 160,
+                MaxPsuLength = 220,
+                Material = "Steel, Tempered Glass",
+                Color = "White",
+                FanSupport = "Up to 6 x 120mm"
+            };
+            await _caseSpecRepository.InsertAsync(caseSpec2, autoSave: true);
+            var productCase2 = new Product
+            {
+                CategoryId = cases.Id,
+                CaseSpecificationId = caseSpec2.Id,
+                ProductName = "Phanteks Eclipse P400A",
+                Description = "High-airflow mid-tower ATX case",
+                Price = 1800000,
+                StockCount = 45
+            };
+            await _productRepository.InsertAsync(productCase2, autoSave: true);
+            // 10. CPU Cooler: Noctua NH-D15
+            var cpuCoolerSpec2 = new CpuCoolerSpecification
+            {
+                CoolerType = "Air",
+                FanSize = 140,
+                TdpSupport = 220,
+                NoiseLevel = 24,
+                Color = "Beige/Brown",
+                LedLighting = "None",
+                Height = 165,
+                RadiatorSize = null,
+                SupportedSockets = "AM4, LGA1700"
+            };
+            await _cpuCoolerSpecRepository.InsertAsync(cpuCoolerSpec2, autoSave: true);
+            var productCpuCooler2 = new Product
+            {
+                CategoryId = coolers.Id,
+                CpuCoolerSpecificationId = cpuCoolerSpec2.Id,
+                ProductName = "Noctua NH-D15",
+                Description = "Premium dual-tower air cooler",
+                Price = 1500000,
+                StockCount = 20
+            };
+            await _productRepository.InsertAsync(productCpuCooler2, autoSave: true);
+            // 11. Headset: HyperX Cloud II
+            var headsetSpec2 = new HeadsetSpecification
+            {
+                DriverSize = 53,
+                HasMicrophone = true,
+                IsNoiseCancelling = true,
+                IsSurroundSound = true,
+                Frequency = "15Hz - 25kHz",
+                Connectivity = "Wired",
+                MicrophoneType = "Detachable",
+                Impedance = 60,
+                Sensitivity = 98,
+                Color = "Black"
+            };
+            await _headsetSpecRepository.InsertAsync(headsetSpec2, autoSave: true);
+            var productHeadset2 = new Product
+            {
+                CategoryId = headsets.Id,
+                HeadsetSpecificationId = headsetSpec2.Id,
+                ProductName = "HyperX Cloud II",
+                Description = "Comfortable gaming headset with 7.1 surround",
+                Price = 1200000,
+                StockCount = 60
+            };
+            await _productRepository.InsertAsync(productHeadset2, autoSave: true);
+            // 12. Laptop: Dell XPS 13 9310
+            var laptopSpec2 = new LaptopSpecification
+            {
+                BatteryLife = "12 hours",
+                Weight = "1.2Kg",
+                Warranty = "1 year",
+                Storage = "PCIe SSD",
+                GraphicsCard = "Integrated Iris Xe",
+                CPU = "Intel Core i7-1185G7",
+                RAM = "16GB LPDDR4x",
+                OperatingSystem = "Windows 11 Pro",
+                Display= "60 Hz, Anti-glare, InfinityEdge display"
+            };
+            await _laptopSpecRepository.InsertAsync(laptopSpec2, autoSave: true);
+            var productLaptop2 = new Product
+            {
+                CategoryId = laptops.Id,
+                LaptopSpecificationId = laptopSpec2.Id,
+                ProductName = "Dell XPS 13 9310",
+                Description = "Ultra-portable 13” laptop",
+                Price = 31000000,
+                StockCount = 8
+            };
+
+            await _productRepository.InsertAsync(productLaptop2, autoSave: true);
+
             // --- Seed Products ---
             // Chỉ seed nếu chưa có Product nào trong DB
-            if (await _productRepository.GetCountAsync() <= 0)
+            if (await _productRepository.GetCountAsync() > 0)
             {
-                await _productRepository.InsertAsync(productCpu1);
-                await _productRepository.InsertAsync(productGpu1);
-                await _productRepository.InsertAsync(productRam1);
-                await _productRepository.InsertAsync(productStorage1);
-                await _productRepository.InsertAsync(productMouse1);
-                await _productRepository.InsertAsync(productMonitor1);
-                await _productRepository.InsertAsync(productPsu1);
-                await _productRepository.InsertAsync(productCase1);
-                await _productRepository.InsertAsync(productCpuCooler1);
-                await _productRepository.InsertAsync(productHeadset1);
-                await _productRepository.InsertAsync(productLaptop1);
-                await _productRepository.InsertAsync(keyboardProduct1);
-
+                return;
             }
+
+            await _productRepository.InsertAsync(productCpu2,autoSave:true);
+            await _productRepository.InsertAsync(productGpu2, autoSave: true);
+            await _productRepository.InsertAsync(productRam2, autoSave: true);
+            await _productRepository.InsertAsync(productStorage2, autoSave: true);
+            await _productRepository.InsertAsync(productMouse2, autoSave: true);
+            await _productRepository.InsertAsync(keyboardProduct2, autoSave: true);
+            await _productRepository.InsertAsync(productMonitor2, autoSave: true);
+            await _productRepository.InsertAsync(productPsu2, autoSave: true);
+            await _productRepository.InsertAsync(productCase2, autoSave: true);
+            await _productRepository.InsertAsync(productCpuCooler2, autoSave: true);
+            await _productRepository.InsertAsync(productHeadset2, autoSave: true);
+            await _productRepository.InsertAsync(productLaptop2, autoSave: true);
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿$(function () {
-    // Namespace có thể khác tùy theo tên dự án của bạn
+    //console.log("Available ABP objects:", abp);
     var productService = acme.productSelling.products.product; // Proxy client cho ProductAppService
     var l = abp.localization.getResource('ProductSelling');
 

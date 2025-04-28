@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -53,6 +53,10 @@ using Volo.Abp.Studio.Client.AspNetCore;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic.Bundling;
 
+using Volo.Abp.AspNetCore.Mvc.UI.Packages;
+using Volo.Abp.AspNetCore.Mvc.UI.Packages.Bootstrap;
+using Volo.Abp.AspNetCore.Mvc.UI.Packages.JQuery;
+using Volo.Abp.AspNetCore.Mvc.UI.Packages.DatatablesNet;
 namespace Acme.ProductSelling.Web;
 
 [DependsOn(
@@ -62,7 +66,7 @@ namespace Acme.ProductSelling.Web;
     typeof(AbpAutofacModule),
     typeof(AbpStudioClientAspNetCoreModule),
     typeof(AbpIdentityWebModule),
-    typeof(AbpAspNetCoreMvcUiBasicThemeModule),
+    typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
     typeof(AbpAccountWebOpenIddictModule),
     typeof(AbpTenantManagementWebModule),
     typeof(AbpFeatureManagementWebModule),
@@ -164,13 +168,26 @@ public class ProductSellingWebModule : AbpModule
         Configure<AbpBundlingOptions>(options =>
         {
             options.StyleBundles.Configure(
-                BasicThemeBundles.Styles.Global,
+                LeptonXLiteThemeBundles.Styles.Global,
                 bundle =>
                 {
-                    bundle.AddFiles("/global-scripts.js");
                     bundle.AddFiles("/global-styles.css");
+                    
                 }
             );
+            options.ScriptBundles.Configure(
+                 LeptonXLiteThemeBundles.Scripts.Global,
+                bundle =>
+                {
+                    bundle.AddContributors(typeof(JQueryScriptContributor)); // jQuery phải trước
+                    bundle.AddContributors(typeof(BootstrapScriptContributor)); // Bootstrap JS
+                                                                                // Thêm các contributor script khác của ABP nếu cần
+
+                    // Thêm contributor cho DataTables (Tên có thể khác)
+                    bundle.AddContributors(typeof(DatatablesNetScriptContributor));
+                    bundle.AddFiles("/global-scripts.js");
+                }
+                );
         });
     }
 

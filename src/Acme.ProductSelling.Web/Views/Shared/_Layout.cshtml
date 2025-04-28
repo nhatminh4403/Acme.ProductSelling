@@ -1,5 +1,7 @@
-﻿@using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic;
-@using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic.Bundling;
+﻿@using System.Globalization
+@using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
+@using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
+@using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,13 +11,18 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <abp-style-bundle name="@BasicThemeBundles.Styles.Global" />
+
+    <abp-style-bundle name="@LeptonXLiteThemeBundles.Styles.Global" />
     @await RenderSectionAsync("styles", required: false)
+
+    <style>
+
+    </style>
 </head>
 <body class="abp-application-layout">
     <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
         <div class="container">
-            <a class="navbar-brand" href="#" aria-label="Home"><i class="bi bi-house-door-fill fs-4"></i></a>
+            <a class="navbar-brand" href="/" aria-label="Home"><i class="bi bi-house-door-fill fs-4"></i></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                     aria-label="Toggle navigation">
@@ -89,7 +96,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <h6>Featured</h6><a href="#">
-                                                    <img src="https://via.placeholder.com/150x80?text=Sale+Now"
+                                                    <img src="~/images/getting-started/bg-01.png"
                                                          alt="Offer" class="img-fluid rounded">
                                                 </a>
                                             </div>
@@ -143,7 +150,7 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="/categories/all">All Categories</a></li>
+                            <li><a class="dropdown-item" href="/categories">All Categories</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -266,11 +273,12 @@
     </div>
 
 
-    <abp-script-bundle name="@BasicThemeBundles.Scripts.Global" />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
-            crossorigin="anonymous"></script>
+    <abp-script-bundle name="@LeptonXLiteThemeBundles.Scripts.Global" />
+    <script src="~/Abp/ServiceProxyScript" asp-append-version="true"></script>
+    @* <script src="~/Abp/ApplicationLocalizationScript?cultureName=@CultureInfo.CurrentUICulture.Name"></script> *@
+
     @await RenderSectionAsync("scripts", required: false)
+    <script src="~/Abp/ApplicationLocalizationScript?cultureName=@CultureInfo.CurrentUICulture.Name"></script>
 
 </body>
 </html>

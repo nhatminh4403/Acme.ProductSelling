@@ -10,11 +10,11 @@
 @inject IAuthorizationService AuthorizationService
 
 @{
-    ViewData["Title"] = L["Categories"];
-    Layout = "/Views/Shared/_Layout.cshtml"; // Đặt layout cho trang này
+    ViewData["Title"] = L["AllCategories"];
+    Layout = "/Views/Shared/_Layout.cshtml";
 }
 @section scripts {
-    <abp-script src="/Pages/Categories/Index.js" /> @* Link tới file JavaScript *@
+    <abp-script src="/Pages/Categories/Index.js" /> 
 }
 
 <abp-card>
@@ -29,7 +29,7 @@
                 @if (await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Categories.Create))
                 {
                     <abp-button id="NewCategoryButton"
-                                text="@L["CreateCategory"].Value" @* Thêm key "CreateCategory" *@
+                                text="@L["CreateCategory"].Value" 
                                 icon="plus"
                                 button-type="Primary" />
                 }
