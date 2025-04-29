@@ -87,7 +87,14 @@
             {
                 <div class="col">
                     <div class="card h-100">
-
+                        @if (!string.IsNullOrWhiteSpace(product.ImageUrl))
+                        {
+                            <img src="@product.ImageUrl" class="card-img-top p-3" alt="@product.ProductName" style="max-height: 200px; object-fit: contain;">
+                        }
+                        else
+                        {
+                            <div class="text-center p-5 bg-light"> <i class="fas fa-image fa-3x text-secondary"></i> </div> @* Ảnh placeholder *@
+                        }
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">
                                 @* Link đến trang chi tiết sản phẩm *@

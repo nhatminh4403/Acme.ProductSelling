@@ -14,7 +14,14 @@
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-6">
-
+                @if (!string.IsNullOrWhiteSpace(Model.Product.ImageUrl))
+                {
+                    <img src="@Model.Product.ImageUrl" class="img-fluid rounded border" alt="@Model.Product.ProductName">
+                }
+                else
+                {
+                    <div class="text-center p-5 border rounded bg-light"> <i class="fas fa-image fa-5x text-secondary"></i> </div>
+                }
             </div>
             <div class="col-md-6">
                 @* Thông tin chung *@

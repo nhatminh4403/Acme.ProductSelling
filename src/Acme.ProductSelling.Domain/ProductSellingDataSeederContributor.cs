@@ -129,7 +129,7 @@ namespace Acme.ProductSelling
                      Description = "Powerful 8-core CPU",
                      StockCount = 50,
                      CpuSpecificationId = cpuSpec1.Id,
-
+                     ImageUrl = "https://product.hstatic.net/200000722513/product/ryzen_7_-_1_00957bbe7b8542308c897a90d439b1fd_e1c9a16c537d47bb9768828dddb332d0_grande.jpg",
                  },
                  autoSave: true
              );
@@ -148,12 +148,14 @@ namespace Acme.ProductSelling
             var productGpu1 = new Product
             {
                 Price = 25000000,
-                ProductName = "NVIDIA GeForce RTX 4070 Ti",
+                ProductName = "ASUS ProArt GeForce RTX 4070 Ti SUPER 16GB GDDR6X OC Edition (PROART-RTX4070TIS-O16G)",
                 Description = "High-end graphics card",
                 StockCount = 20,
                 CategoryId = gpus.Id,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/fwebp__10__1d22cf39c094494bb772b5bb1c002172_grande.png",
                 // Gán FK cho spe
                 GpuSpecificationId = gpuSpec1.Id // Gán FK
+
             };
             await _productRepository.InsertAsync(productGpu1, autoSave: true);
             var ramSpec1 = new RamSpecification
@@ -174,6 +176,7 @@ namespace Acme.ProductSelling
                 Description = "High-performance RAM",
                 StockCount = 100,
                 CategoryId = rams.Id,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/gearvn-corsair-vengeance-rgb-ddr-5600-ddr5-5_6e319950a8e14231b28a416076c94951_grande.png",
                 // Gán FK cho spec
                 RamSpecificationId = ramSpec1.Id // Gán FK
             };
@@ -197,6 +200,7 @@ namespace Acme.ProductSelling
                 Description = "Fast NVMe SSD",
                 StockCount = 80,
                 CategoryId = storage.Id,
+                ImageUrl = "https://bizweb.dktcdn.net/thumb/grande/100/329/122/products/970-evo-plus-1tb-01-1689929004911.jpg?v=1695052940103",
                 // Gán FK cho spec
                 StorageSpecificationId = storageSpec1.Id // Gán FK
             };
@@ -215,6 +219,7 @@ namespace Acme.ProductSelling
             {
                 Price = 3000000,
                 ProductName = "Logitech G Pro TKL Keyboard",
+                ImageUrl = "https://product.hstatic.net/200000722513/product/1_5b2f7891bf434a7aab9f1abdba56c17e_grande.jpg",
                 Description = "Tenkeyless mechanical gaming keyboard",
                 StockCount = 80,
                 CategoryId = keyboards.Id,
@@ -244,7 +249,8 @@ namespace Acme.ProductSelling
                 StockCount = 150,
                 CategoryId = mice.Id,
                 // Gán FK cho spec
-                MouseSpecificationId = mouseSpec1.Id // Gán FK
+                MouseSpecificationId = mouseSpec1.Id,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/10001_01736316d2b443d0838e5a0741434420_grande.png"
             };
             await _productRepository.InsertAsync(productMouse1, autoSave: true);
 
@@ -269,7 +275,8 @@ namespace Acme.ProductSelling
                 StockCount = 30,
                 CategoryId = monitors.Id,
                 // Gán FK cho spec
-                MonitorSpecificationId = monitorSpec1.Id // Gán FK
+                MonitorSpecificationId = monitorSpec1.Id,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/lg_27gx790a-b_gearvn_18880ec6e5a944c2b29c76d85d44d243_medium.jpg"
             };
             var psuSpec1 = new PsuSpecification
             {
@@ -287,7 +294,9 @@ namespace Acme.ProductSelling
                 StockCount = 50,
                 CategoryId = psus.Id,
                 // Gán FK cho spec
-                PsuSpecificationId = psuSpec1.Id // Gán FK
+                PsuSpecificationId = psuSpec1.Id,
+                ImageUrl = "https://bizweb.dktcdn.net/thumb/grande/100/329/122/products/nguon-may-tinh-corsair-rm750x-shift-750w-80-plus-gold-cp-9020251-na-04-20838ea6-b253-460f-bb0c-ad9327565373.jpg?v=1743639588677"
+
             };
             await _productRepository.InsertAsync(productPsu1, autoSave: true);
 
@@ -315,7 +324,8 @@ namespace Acme.ProductSelling
                 StockCount = 40,
                 CategoryId = cases.Id,
                 // Gán FK cho spec
-                CaseSpecificationId = caseSpec1.Id // Gán FK
+                CaseSpecificationId = caseSpec1.Id,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/4108_be554d73268e3ca69f25d192629df397_b7fd1aebb5f74f50ae18c3b23efb8755_b6d80711bb304b568b03fdcf3e94c1ab_grande.jpg"
             };
             await _productRepository.InsertAsync(productCase1, autoSave: true);
             var cpuCoolerSpec1 = new CpuCoolerSpecification
@@ -339,7 +349,8 @@ namespace Acme.ProductSelling
                 StockCount = 60,
                 CategoryId = coolers.Id,
                 // Gán FK cho spec
-                CpuCoolerSpecificationId = cpuCoolerSpec1.Id // Gán FK
+                CpuCoolerSpecificationId = cpuCoolerSpec1.Id,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/hyper-212-argb-gallery-4-image_dc19349414e94e0e869c23e85c70cb49_d2713cd5bac947da94ee34d1456220fe_grande.png"
             };
 
             var headsetSpec1 = new HeadsetSpecification
@@ -364,7 +375,8 @@ namespace Acme.ProductSelling
                 StockCount = 70,
                 CategoryId = headsets.Id,
                 // Gán FK cho spec
-                HeadsetSpecificationId = headsetSpec1.Id // Gán FK
+                HeadsetSpecificationId = headsetSpec1.Id,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/gvn_logitech_prox_79c556630c454086baf1bee06c577ab7_3471d9d886fd4dbe8ab5ae6bed9f4d78_grande.png"
             };
             await _productRepository.InsertAsync(productHeadset1, autoSave: true);
 
@@ -378,21 +390,21 @@ namespace Acme.ProductSelling
                 //StorageCapacity = 512,
                 //GpuType = "Integrated",
                 BatteryLife = "3 hours 30 minutes",
-                Weight = "2.5Kg",
+                Weight = "1.95 Kg (4.30 lbs)",
                 //Color = "Black",
                 Warranty = "1 year",
                 Storage = "NVMe SSD",
                 /*                CoolingSystem = "Air",
                                 Ports = "USB-C, HDMI, Audio Jack",*/
-                GraphicsCard = "NVIDIA GeForce RTX 3060",
-                CPU = "Intel Core i7-12700H",
+                GraphicsCard = "Intel® Core™ Ultra 9",
+                CPU = "Intel® Core™ Ultra 9",
                 /*                ScreenType = "IPS",
                                 ScreenRefreshRate = 144,
                                 ScreenBrightness = 300,
                                 ScreenAspectRatio = "16:9",
                                 ScreenColorGamut = "sRGB 100%",
                                 ScreenResponseTime = 3,*/
-                Display = "Anti-glare",
+                Display = "16-inch 2.5K (2560 x 1600, WQXGA) 16:10 OLED, 240Hz, 0.2ms, 500 nits, 100% DCI-P3, Glossy display, G-Sync / Adaptive-Sync, ROG Nebula Display",
                 /*                ScreenContrastRatio = "1000:1",
                                 ScreenColorDepth = 8,
                                 ScreenViewingAngle = 178,
@@ -403,7 +415,7 @@ namespace Acme.ProductSelling
                                 ScreenTouch = false,
                                 ScreenAntiReflective = true,
                                 ScreenAntiGlare = true,*/
-                RAM = "DDR4",
+                RAM = "64GB LPDDR5X 7467 on board",
                 OperatingSystem = "Windows 11 Home",
 
             };
@@ -411,12 +423,13 @@ namespace Acme.ProductSelling
             var productLaptop1 = new Product
             {
                 Price = 25000000,
-                ProductName = "ASUS ROG Zephyrus G14",
+                ProductName = "ASUS ROG Zephyrus G16 GU605CX QR083W",
                 Description = "Powerful gaming laptop",
                 StockCount = 10,
                 CategoryId = laptops.Id,
                 // Gán FK cho spec
-                LaptopSpecificationId = laptopSpec1.Id // Gán FK
+                LaptopSpecificationId = laptopSpec1.Id,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/zephyrus_g16_gu605_grey_03_rgb_1_b58d513a9306445daf2980232fe2544b_grande.png"
             };
             await _productRepository.InsertAsync(productLaptop1, autoSave: true);
 
@@ -439,7 +452,9 @@ namespace Acme.ProductSelling
                 ProductName = "Intel Core i9-13900K",
                 Description = "Top-tier 24-core CPU",
                 Price = 13500000,
-                StockCount = 30
+                StockCount = 30,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/i9k-t2-special-box-07-1080x1080pixels_6c9ec1001cdf4e4998c13af4ac6c7581_114c47698e4a4984863c3b26e0619b65_grande.png"
+
             };
             await _productRepository.InsertAsync(productCpu2, autoSave: true);
 
@@ -459,10 +474,11 @@ namespace Acme.ProductSelling
             {
                 CategoryId = gpus.Id,
                 GpuSpecificationId = amdGpuSpec.Id,
-                ProductName = "AMD Radeon RX 7900 XT",
+                ProductName = "Asus Radeon RX 7900 XT TUF Gaming",
                 Description = "High-end AMD graphics card",
                 Price = 28000000,
-                StockCount = 15
+                StockCount = 15,
+                ImageUrl = " https://product.hstatic.net/200000722513/product/5681_ea11053c19e375dcaa8138b6f531262d_7d029f536978405393da9fb3c8f1e2fa_4d3cedb8fd4a485db1ece7519c1d41a8_grande.jpg"
             };
             await _productRepository.InsertAsync(productGpu2, autoSave: true);
             // 3. RAM: G.Skill Trident Z RGB 16GB (2×8)
@@ -484,7 +500,8 @@ namespace Acme.ProductSelling
                 ProductName = "G.Skill Trident Z RGB 16GB (2×8)",
                 Description = "DDR4 3600MHz kit with RGB",
                 Price = 1800000,
-                StockCount = 80
+                StockCount = 80,
+                ImageUrl = "https://anphat.com.vn/media/product/33685_153665426813.png"
             };
             await _productRepository.InsertAsync(productRam2, autoSave: true);
 
@@ -506,14 +523,15 @@ namespace Acme.ProductSelling
                 ProductName = "WD Black SN770 1TB",
                 Description = "High-performance PCIe 4.0 NVMe SSD",
                 Price = 2500000,
-                StockCount = 60
+                StockCount = 60,
+                ImageUrl = "https://bizweb.dktcdn.net/thumb/grande/100/329/122/products/ssd-wd-black-sn770-pcie-gen4-x4-nvme-m-2-500gb-wds500g3x0e-b058273a-af63-4053-ac31-83b41eb593a2.jpg?v=1655710957737"
             };
             await _productRepository.InsertAsync(productStorage2, autoSave: true);
             // 5. Keyboard: Razer Huntsman Elite
             var keyboardSpec2 = new KeyboardSpecification
             {
                 KeyboardType = "Mechanical",
-                SwitchType = "Opto-Mechanical",
+                SwitchType = " Linear Red Switch",
                 Layout = "Full-size",
                 Connectivity = "Wired",
                 Backlight = "RGB"
@@ -526,7 +544,8 @@ namespace Acme.ProductSelling
                 ProductName = "Razer Huntsman Elite",
                 Description = "Opto-mechanical gaming keyboard",
                 Price = 4500000,
-                StockCount = 40
+                StockCount = 40,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/r3m1_ac3aa0be001640e2873ff732d34617bc_2295901522e24ce399b8f5f07be51467_3ab2e4aca4434a9a84997283b79b5c3c_grande.png"
             };
             await _productRepository.InsertAsync(keyboardProduct2, autoSave: true);
 
@@ -550,7 +569,8 @@ namespace Acme.ProductSelling
                 ProductName = "SteelSeries Rival 3",
                 Description = "Lightweight RGB gaming mouse",
                 Price = 800000,
-                StockCount = 120
+                StockCount = 120,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/thumbchuot_e01eec6957cc40a88aba550b80cffed2_74ec8f2dec0447c382614fa201a4fa93_grande.png"
             };
             await _productRepository.InsertAsync(productMouse2, autoSave: true);
 
@@ -565,7 +585,7 @@ namespace Acme.ProductSelling
                 ColorGamut = "sRGB 99%",
                 Brightness = 350,
                 VesaMount = true,
-                ResponseTimeMs = 1
+                ResponseTimeMs = 1,
             };
             await _monitorSpecRepository.InsertAsync(monitorSpec2, autoSave: true);
             var productMonitor2 = new Product
@@ -575,7 +595,8 @@ namespace Acme.ProductSelling
                 ProductName = "ASUS TUF Gaming VG27AQ",
                 Description = "27” QHD IPS 165Hz gaming monitor",
                 Price = 9000000,
-                StockCount = 25
+                StockCount = 25,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/ips-2k-170hz-g-sync-hdr-chuyen-game-1_f9de14d5b20041b2b52b0cde6884a3d9_317538ed8cff45e6a25feb1cbb8650d0_grande.png"
             };
             await _productRepository.InsertAsync(productMonitor2, autoSave: true);
 
@@ -595,7 +616,8 @@ namespace Acme.ProductSelling
                 ProductName = "EVGA SuperNOVA 750 G5",
                 Description = "750W gold-rated fully modular PSU",
                 Price = 2200000,
-                StockCount = 35
+                StockCount = 35,
+                ImageUrl = "https://tandoanh.vn/wp-content/uploads/2021/10/EVGA-SuperNOVA-750-G1-%E2%80%93-80-GOLD-750W-%E2%80%93-Fully-Modular-h1.jpg"
             };
             await _productRepository.InsertAsync(productPsu2, autoSave: true);
             // 9. Case: Phanteks Eclipse P400A
@@ -621,7 +643,8 @@ namespace Acme.ProductSelling
                 ProductName = "Phanteks Eclipse P400A",
                 Description = "High-airflow mid-tower ATX case",
                 Price = 1800000,
-                StockCount = 45
+                StockCount = 45,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/k-_1_65d8edfddc2b4785af9a13f971fc258a_6043347819ed417bb6dd327b41b39b6e_60a930dd805e4bc891b6ea69e7c2d21a_grande.jpg"
             };
             await _productRepository.InsertAsync(productCase2, autoSave: true);
             // 10. CPU Cooler: Noctua NH-D15
@@ -645,7 +668,8 @@ namespace Acme.ProductSelling
                 ProductName = "Noctua NH-D15",
                 Description = "Premium dual-tower air cooler",
                 Price = 1500000,
-                StockCount = 20
+                StockCount = 20,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/noctua_nh-d15_2_75940b3d5fbb485190327d6b592429af_9ad735dcdbb94a71ba171d7d4ae0a326_grande.jpg"
             };
             await _productRepository.InsertAsync(productCpuCooler2, autoSave: true);
             // 11. Headset: HyperX Cloud II
@@ -667,10 +691,11 @@ namespace Acme.ProductSelling
             {
                 CategoryId = headsets.Id,
                 HeadsetSpecificationId = headsetSpec2.Id,
-                ProductName = "HyperX Cloud II",
+                ProductName = "HyperX Cloud Stinger Core II",
                 Description = "Comfortable gaming headset with 7.1 surround",
                 Price = 1200000,
-                StockCount = 60
+                StockCount = 60,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/thumbtainghe_499f42bf16fe47d28ab00bffb7bd5748_47730811ddaf40a0a969f4e4d49c7b27_grande.png"
             };
             await _productRepository.InsertAsync(productHeadset2, autoSave: true);
             // 12. Laptop: Dell XPS 13 9310
@@ -680,11 +705,11 @@ namespace Acme.ProductSelling
                 Weight = "1.2Kg",
                 Warranty = "1 year",
                 Storage = "PCIe SSD",
-                GraphicsCard = "Integrated Iris Xe",
-                CPU = "Intel Core i7-1185G7",
+                GraphicsCard = "Intel Arc Graphics",
+                CPU = "Intel® Core™ Ultra 5",
                 RAM = "16GB LPDDR4x",
                 OperatingSystem = "Windows 11 Pro",
-                Display= "60 Hz, Anti-glare, InfinityEdge display"
+                Display = "60 Hz, Anti-glare, InfinityEdge display"
             };
             await _laptopSpecRepository.InsertAsync(laptopSpec2, autoSave: true);
             var productLaptop2 = new Product
@@ -694,7 +719,8 @@ namespace Acme.ProductSelling
                 ProductName = "Dell XPS 13 9310",
                 Description = "Ultra-portable 13” laptop",
                 Price = 31000000,
-                StockCount = 8
+                StockCount = 8,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/51529_laptop_dell_xps_9350_xps93_1d46c518185a488a92c40932dd4d5cf6_grande.png"
             };
 
             await _productRepository.InsertAsync(productLaptop2, autoSave: true);
@@ -706,7 +732,7 @@ namespace Acme.ProductSelling
                 return;
             }
 
-            await _productRepository.InsertAsync(productCpu2,autoSave:true);
+            await _productRepository.InsertAsync(productCpu2, autoSave: true);
             await _productRepository.InsertAsync(productGpu2, autoSave: true);
             await _productRepository.InsertAsync(productRam2, autoSave: true);
             await _productRepository.InsertAsync(productStorage2, autoSave: true);
