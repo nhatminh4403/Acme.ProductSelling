@@ -2,6 +2,8 @@
 @using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 @using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
 @using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
+@using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Languages;
+
 
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
@@ -12,7 +14,7 @@
 @inject IAuthorizationService AuthorizationService
 @{
     var title = ViewData["Title"]?.ToString();
-    
+
 }
 
 
@@ -45,7 +47,7 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
-                @if (!title.ToLower().Contains("home") )
+                @if (!title.ToLower().Contains("home"))
                 {
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
                         <li class="nav-item dropdown category-dropdown-container me-2">
@@ -72,12 +74,41 @@
                     </a><a href="/cart" class="btn btn-outline-dark me-2 position-relative flex-shrink-0"
                            aria-label="Cart">
                         <i class="bi bi-cart3 fs-5"></i><span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
-                    </a><button type="button" class="btn btn-success d-flex align-items-center flex-shrink-0"
+                    </a><button type="button" class="btn btn-success d-flex align-items-center flex-shrink-0 me-2"
                                 data-bs-toggle="modal" data-bs-target="#loginModal">
                         <i class="bi bi-person-fill me-1"></i>
                         Login
                     </button>
+
+                    <div class="lpx-language-selection dropdown btn-language" data-lpx-language-selection="something">
+                        <div class="dropdown-toggle" role="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="lpx-icon bi bi-globe"></i>
+                            <span>EN</span>
+                        </div>
+                        <div class="dropdown-menu" aria-labelledby="languageDropdown">
+                            <a href="/Abp/Languages/Switch?culture=ar&amp;uiCulture=ar&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="AR">العربية / AR</a>
+                            <a href="/Abp/Languages/Switch?culture=cs&amp;uiCulture=cs&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="CS">Čeština / CS</a>
+                            <a href="/Abp/Languages/Switch?culture=en&amp;uiCulture=en&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="EN">English / EN</a>
+                            <a href="/Abp/Languages/Switch?culture=en-GB&amp;uiCulture=en-GB&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="EN">English (UK) / EN</a>
+                            <a href="/Abp/Languages/Switch?culture=hu&amp;uiCulture=hu&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="HU">Magyar / HU</a>
+                            <a href="/Abp/Languages/Switch?culture=fi&amp;uiCulture=fi&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="FI">Finnish / FI</a>
+                            <a href="/Abp/Languages/Switch?culture=fr&amp;uiCulture=fr&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="FR">Français / FR</a>
+                            <a href="/Abp/Languages/Switch?culture=hi&amp;uiCulture=hi&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="HI">Hindi / HI</a>
+                            <a href="/Abp/Languages/Switch?culture=it&amp;uiCulture=it&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="IT">Italiano / IT</a>
+                            <a href="/Abp/Languages/Switch?culture=pt-BR&amp;uiCulture=pt-BR&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="PT">Português / PT</a>
+                            <a href="/Abp/Languages/Switch?culture=ru&amp;uiCulture=ru&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="RU">Русский / RU</a>
+                            <a href="/Abp/Languages/Switch?culture=sk&amp;uiCulture=sk&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="SK">Slovak / SK</a>
+                            <a href="/Abp/Languages/Switch?culture=tr&amp;uiCulture=tr&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="TR">Türkçe / TR</a>
+                            <a href="/Abp/Languages/Switch?culture=zh-Hans&amp;uiCulture=zh-Hans&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="ZH">简体中文 / ZH</a>
+                            <a href="/Abp/Languages/Switch?culture=zh-Hant&amp;uiCulture=zh-Hant&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="ZH">繁體中文 / ZH</a>
+                            <a href="/Abp/Languages/Switch?culture=de-DE&amp;uiCulture=de-DE&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="DE">Deutsch / DE</a>
+                            <a href="/Abp/Languages/Switch?culture=es&amp;uiCulture=es&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="ES">Español / ES</a>
+                            <a href="/Abp/Languages/Switch?culture=sv&amp;uiCulture=sv&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="SV">Svenska / SV</a>
+                        </div>
+                    </div>
+
                 </div>
+
 
             </div>
         </div>
@@ -138,14 +169,6 @@
                 </div>
                 <!-- Cột 5: Vận chuyển -->
                 <div class="col-12 col-md-2 mb-4">
-                    @* <h6 class="fw-bold">ĐƠN VỊ VẬN CHUYỂN</h6>
-                    <div class="d-flex flex-wrap align-items-center gap-2">
-                        <img src="giao-hang-nhanh.png" alt="GHN" width="50">
-                        <img src="ems.png" alt="EMS" width="50">
-                        <img src="gvn.png" alt="GVN" width="50">
-                        <img src="viettel-post.png" alt="Viettel" width="50">
-                        <img src="vnpost.png" alt="VNPost" width="50">
-                    </div> *@
                     <h6 class="fw-bold">CÁCH THỨC THANH TOÁN</h6>
                     <div class="d-flex flex-wrap align-items-center gap-2">
                         <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_1.png?v=8602"
