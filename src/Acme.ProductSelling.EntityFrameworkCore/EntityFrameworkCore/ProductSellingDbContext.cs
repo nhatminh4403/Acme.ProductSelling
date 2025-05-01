@@ -17,6 +17,7 @@ using Volo.Abp.TenantManagement.EntityFrameworkCore;
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Specifications;
+using Acme.ProductSelling.Manufacturers;
 
 namespace Acme.ProductSelling.EntityFrameworkCore;
 
@@ -76,6 +77,7 @@ public class ProductSellingDbContext :
     public DbSet<CpuCoolerSpecification> CpuCoolerSpecifications { get; set; }
     public DbSet<KeyboardSpecification> KeyboardSpecifications { get; set; }
     public DbSet<HeadsetSpecification> HeadsetSpecifications { get; set; }
+    public DbSet<Manufacturer> Manufacturers { get; set; }
     #endregion
 
     public ProductSellingDbContext(DbContextOptions<ProductSellingDbContext> options)
@@ -114,12 +116,19 @@ public class ProductSellingDbContext :
             b.Property(c => c.Name).IsRequired().HasMaxLength(100);
             b.HasMany(c => c.Products).WithOne(p => p.Category).HasForeignKey(p => p.CategoryId);
         });
+        builder.Entity<Manufacturer>(b =>
+        {
+            b.ToTable("Manufacturers");
+            b.Property(c => c.Name).IsRequired().HasMaxLength(100);
+            b.HasMany(c => c.Products).WithOne(p => p.Manufacturer).HasForeignKey(p => p.ManufacturerId);
+        });
         builder.Entity<Product>(b =>
         {
             b.ToTable("Products");
             b.Property(p => p.ProductName).IsRequired().HasMaxLength(100);
             b.Property(p => p.Price).HasColumnType("decimal(18,2)");
             b.HasOne(p => p.Category).WithMany(c => c.Products).HasForeignKey(p => p.CategoryId);
+            b.HasOne(p => p.Manufacturer).WithMany(m => m.Products).HasForeignKey(p => p.ManufacturerId);
             b.HasOne(p => p.MonitorSpecification).WithOne().HasForeignKey<Product>(p => p.MonitorSpecificationId).IsRequired(false);
             b.HasOne(p => p.MouseSpecification).WithOne().HasForeignKey<Product>(p => p.MouseSpecificationId).IsRequired(false);
             b.HasOne(p => p.LaptopSpecification).WithOne().HasForeignKey<Product>(p => p.LaptopSpecificationId).IsRequired(false); // Giả sử có

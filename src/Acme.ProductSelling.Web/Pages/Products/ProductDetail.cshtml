@@ -26,6 +26,7 @@
             <div class="col-md-6">
                 @* Thông tin chung *@
                 <h2>@Model.Product.ProductName</h2>
+                <p class="text-muted">@L["Manufacturer"]: @Model.Product.ManufacturerName</p>
                 <p class="text-muted">@L["Category"]: @Model.Product.CategoryName</p>
                 <p>@Model.Product.Description</p>
                 <h3 class="text-danger my-3">@Model.Product.Price.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</h3>

@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Specifications;
 using AutoMapper;
@@ -9,10 +10,15 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
 {
     public ProductSellingApplicationAutoMapperProfile()
     {
+        CreateMap<Manufacturer, ManufacturerDto>();
+        CreateMap<CreateUpdateManufacturerDto, Manufacturer>();
+
         CreateMap<Product, ProductDto>()
                .ForMember(dest => dest.CategoryName,
                           opt => opt.MapFrom(src => src.Category.Name))
                .ForMember(dest => dest.CategorySpecificationType, opt => opt.MapFrom(src => src.Category.SpecificationType))
+                .ForMember(dest => dest.ManufacturerName,
+                              opt => opt.MapFrom(src => src.Manufacturer.Name))
                 // Map các spec con (AutoMapper sẽ tự map nếu tên và kiểu khớp)
                 .ForMember(dest => dest.MonitorSpecification, opt => opt.MapFrom(src => src.MonitorSpecification))
                 .ForMember(dest => dest.MouseSpecification, opt => opt.MapFrom(src => src.MouseSpecification))
@@ -96,5 +102,7 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
         CreateMap<MouseSpecification, MouseSpecificationDto>();
         CreateMap<CreateUpdateMouseSpecificationDto, MouseSpecification>();
 
+        CreateMap<LaptopSpecification, LaptopSpecificationDto>();
+        CreateMap<CreateUpdateLaptopSpecificationDto, LaptopSpecification>();
     }
 }

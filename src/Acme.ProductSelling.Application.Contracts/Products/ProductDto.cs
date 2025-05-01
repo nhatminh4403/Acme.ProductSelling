@@ -17,6 +17,9 @@ namespace Acme.ProductSelling.Products
         public Guid CategoryId { get; set; }
         public string CategoryName { get; set; }
 
+        public Guid ManufacturerId { get; set; }
+        public string ManufacturerName { get; set; }
+
         public SpecificationType CategorySpecificationType { get; set; }
         public MonitorSpecificationDto MonitorSpecification { get; set; }
         public MouseSpecificationDto MouseSpecification { get; set; }

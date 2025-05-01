@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Specifications;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,8 @@ namespace Acme.ProductSelling.Products
         public string ImageUrl { get; set; } 
         public Guid CategoryId { get; set; }
         public Category Category { get; set; }
-
+        public Guid ManufacturerId { get; set; }
+        public Manufacturer Manufacturer { get; set; }
 
         public Guid? MonitorSpecificationId { get; set; }
         public MonitorSpecification MonitorSpecification { get; set; }

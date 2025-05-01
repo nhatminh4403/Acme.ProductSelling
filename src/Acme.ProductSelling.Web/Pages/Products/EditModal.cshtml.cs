@@ -8,9 +8,13 @@ using System;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 using System.Linq;
 using System.Threading.Tasks;
+using Acme.ProductSelling.Permissions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Acme.ProductSelling.Web.Pages.Products
 {
+    [Authorize(ProductSellingPermissions.Products.Edit)]
+
     public class EditModalModel : AbpPageModel
     {
         [HiddenInput]

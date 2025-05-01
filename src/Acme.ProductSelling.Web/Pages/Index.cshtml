@@ -10,8 +10,15 @@
 
 @section styles {
     <abp-style src="/Pages/Index.css" />
+    <style>
+        .list-group-item-action:not(.active):hover {
+            background-color: #4CE1CA !important;
+        }
+    </style>
 }
-
+@section scripts {
+    <abp-script src="/Pages/Index.js" />
+}
 
 @{
     ViewData["Title"] = L["Menu:Home"]; // Hoặc L["Store"]
@@ -19,32 +26,146 @@
     Layout = "/Views/Shared/_Layout.cshtml"; /* Đặt layout cho trang này */
 }
 
-<div class="container mt-4">
+<div class="container mt-4 pb-4">
     <div class="row">
         <div class="col-lg-3 pe-lg-1 d-none d-lg-block">
-            <div class="list-group category-sidebar-menu border">
+            <ul class="list-group category-sidebar-menu border">
                 @if (Model.CategoryList != null)
                 {
                     foreach (var category in Model.CategoryList.Items)
                     {
 
-                        <div class="list-group-item list-group-item-action category-menu-item has-megamenu">
-                            <a asp-page="/Products/ProductsByCategory" asp-route-CategoryId="@category.Id" 
-                            class="d-flex justify-content-between align-items-center text-decoration-none text-dark">
-                                <span>@*<i class="bi bi-@GetCategoryIcon(category.Id) me-2"></i> *@ @category.Name</span>
+                        <li class="list-group-item list-group-item-action category-menu-item has-megamenu" style="padding:0">
+                            <a asp-page="/Products/ProductsByCategory" asp-route-CategoryId="@category.Id"
+                               class="d-flex justify-content-between align-items-center text-decoration-none text-dark">
+                                <span>@category.Name</span>
                                 <i class="bi bi-chevron-right small"></i>
                             </a>
-                        </div>
+                            <div class="megamenu-data-source d-none">
+                                <div class="megamenu-content-wrapper p-3 bg-white border rounded shadow-sm">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h4 class="megamenu-title">@L["Monitors"]</h4>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="subcategory">
+                                                        <h5 class="subcategory-title">@L["Brands"]</h5>
+
+                                                        <div class="subcategory-links">
+                                                            <a href="#">DJI</a>
+                                                            <a href="#">Autel</a>
+                                                            <a href="#">Flycam giá rẻ</a>
+                                                            <a href="#">Phụ kiện flycam</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="subcategory">
+                                                        <h5 class="subcategory-title">Camera hành động</h5>
+                                                        <div class="subcategory-links">
+                                                            <a href="#">GoPro</a>
+                                                            <a href="#">DJI Osmo</a>
+                                                            <a href="#">Insta360</a>
+                                                            <a href="#">Phụ kiện camera</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="subcategory">
+                                                        <h5 class="subcategory-title">@L["ByPrice"]</h5>
+
+                                                        <div class="subcategory-links">
+                                                            <a asp-page="/Products/ProductsByPrice"
+                                                               asp-route-CategoryId="@category.Id"
+                                                               asp-route-PriceRangeAlias="@L["PriceRangeAlias:Under1Million"].Value">
+                                                                @L["Under1Million"]
+                                                            </a>
+                                                            <a asp-page="/Products/ProductsByPrice"
+                                                               asp-route-CategoryId="@category.Id"
+                                                               asp-route-PriceRangeAlias="@L["PriceRangeAlias:From1MillionTo5Million"].Value">
+                                                                @L["From1MillionTo5Million"]
+                                                            </a>
+                                                            <a asp-page="/Products/ProductsByPrice"
+                                                               asp-route-CategoryId="@category.Id"
+                                                               asp-route-PriceRangeAlias="@L["PriceRangeAlias:From5MillionTo20Million"].Value">
+
+                                                                @L["From5MillionTo20Million"]
+                                                            </a>
+                                                            <a asp-page="/Products/ProductsByPrice"
+                                                               asp-route-CategoryId="@category.Id"
+                                                               asp-route-PriceRangeAlias="@L["PriceRangeAlias:Over20Million"].Value">
+
+                                                                @L["Over20Million"]
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="subcategory">
+                                                        <h5 class="subcategory-title">Camera hành động</h5>
+                                                        <div class="subcategory-links">
+                                                            <a href="#">GoPro</a>
+                                                            <a href="#">DJI Osmo</a>
+                                                            <a href="#">Insta360</a>
+                                                            <a href="#">Phụ kiện camera</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="subcategory">
+                                                        <h5 class="subcategory-title">Robot thông minh</h5>
+                                                        <div class="subcategory-links">
+                                                            <a href="#">Robot hút bụi</a>
+                                                            <a href="#">Robot lau nhà</a>
+                                                            <a href="#">Robot giáo dục</a>
+                                                            <a href="#">Robot thú cưng</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="subcategory">
+                                                        <h5 class="subcategory-title">Thiết bị thực tế ảo</h5>
+                                                        <div class="subcategory-links">
+                                                            <a href="#">Kính thực tế ảo</a>
+                                                            <a href="#">Phụ kiện VR</a>
+                                                            <a href="#">Tay cầm VR</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="subcategory">
+                                                        <h5 class="subcategory-title">Thiết bị thông minh</h5>
+                                                        <div class="subcategory-links">
+                                                            <a href="#">Khóa cửa thông minh</a>
+                                                            <a href="#">Đèn thông minh</a>
+                                                            <a href="#">Ổ cắm thông minh</a>
+                                                            <a href="#">Công tắc thông minh</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="subcategory">
+                                                        <h5 class="subcategory-title">Đồ chơi điện tử</h5>
+                                                        <div class="subcategory-links">
+                                                            <a href="#">Máy chơi game cầm tay</a>
+                                                            <a href="#">Máy game console</a>
+                                                            <a href="#">Phụ kiện gaming</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </li>
 
                     }
                 }
 
-            </div>
+            </ul>
         </div>
 
         <div class="col-lg-9 ps-lg-1">
-
-            <div id="mainBannerCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div id="megamenu-display-area" style="display: none;">
+                <!-- Nội dung megamenu sẽ được JS đưa vào đây -->
+            </div>
+            <div id="mainBannerCarousel" class="carousel slide z-0" data-bs-ride="carousel">
                 <div class="carousel-indicators">
                     <button type="button" data-bs-target="#mainBannerCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
                     <button type="button" data-bs-target="#mainBannerCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -53,7 +174,7 @@
                 <div class="carousel-inner">
                     <div class="carousel-item active">
                         <img src="https://file.hstatic.net/200000722513/file/thang_04_laptop_acer.png" class="d-block w-100" alt="Banner 1">
-                        
+
                     </div>
                     <div class="carousel-item">
                         <img src="https://file.hstatic.net/200000722513/file/thang_04_laptop_rtx_50series_800x400.jpg" class="d-block w-100" alt="Banner 2">

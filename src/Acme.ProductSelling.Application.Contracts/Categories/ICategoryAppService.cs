@@ -14,7 +14,7 @@ namespace Acme.ProductSelling.Categories
      PagedAndSortedResultRequestDto,
      CreateUpdateCategoryDto>
     {
-        Task<ListResultDto<CategoryDto>> GetAsync();
+        //Task<ListResultDto<CategoryDto>> GetAllAsync();
         Task<ListResultDto<CategoryLookupDto>> GetCategoryLookupAsync();
     }
 }

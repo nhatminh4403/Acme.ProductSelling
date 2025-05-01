@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Specifications;
 using System;
@@ -31,6 +32,7 @@ namespace Acme.ProductSelling
         private readonly IRepository<KeyboardSpecification, Guid> _keyboardSpecRepository;
         private readonly IRepository<HeadsetSpecification, Guid> _headsetSpecRepository;
         private readonly IGuidGenerator _guidGenerator;
+        private readonly IRepository<Manufacturer, Guid> _manufacturerRepository;
         public ProductSellingDataSeederContributor(
             IRepository<Product, Guid> productRepository,
             IRepository<Category, Guid> categoryRepository, CategoryManager categoryManager,
@@ -46,8 +48,9 @@ namespace Acme.ProductSelling
             IRepository<CpuCoolerSpecification, Guid> cpuCoolerSpecRepository,
             IRepository<KeyboardSpecification, Guid> keyboardSpecRepository,
             IRepository<HeadsetSpecification, Guid> headsetSpecRepository,
-                     IRepository<LaptopSpecification, Guid> laptopSpecRepository,
-             IGuidGenerator guidGenerator)
+            IRepository<LaptopSpecification, Guid> laptopSpecRepository,
+            IGuidGenerator guidGenerator,
+            IRepository<Manufacturer,Guid> manufacturerRepository)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
@@ -66,6 +69,7 @@ namespace Acme.ProductSelling
             _headsetSpecRepository = headsetSpecRepository;
             _laptopSpecRepository = laptopSpecRepository;
             _guidGenerator = guidGenerator;
+            _manufacturerRepository = manufacturerRepository;
         }
         public async Task SeedAsync(DataSeedContext context)
         {
@@ -106,6 +110,197 @@ namespace Acme.ProductSelling
                                                         await _categoryManager.CreateAsync("Headsets", "Audio Devices", SpecificationType.Headset));
 
 
+            List<Manufacturer> Manufacturers = new List<Manufacturer>();
+
+            var asus = new Manufacturer
+            {
+                ContactInfo = "https://www.asus.com/",
+                Name = "ASUS",
+                ManufacturerImage = "https://inkythuatso.com/uploads/thumbnails/800/2021/11/logo-asus-inkythuatso-2-01-26-09-21-11.jpg",
+                Description = "ASUS is a multinational computer hardware and electronics company headquartered in Taipei, Taiwan. It is known for its innovative products, including motherboards, graphics cards, laptops, desktops, and peripherals. ASUS is recognized for its commitment to quality and performance.",
+
+            };
+            Manufacturers.Add(asus);
+            var acer = new Manufacturer
+            {
+                ContactInfo = "https://www.acer.com/",
+                Name = "Acer",
+                Description = "Acer is a Taiwanese multinational hardware and electronics corporation specializing in advanced electronics technology. It is known for its laptops, desktops, monitors, and other computer peripherals. Acer focuses on providing innovative solutions for consumers and businesses.",
+                ManufacturerImage = "https://hoanghamobile.com/Uploads/2022/05/30/logo-acer-inkythuatso-2-01-27-15-50-00.jpg",
+            };
+            Manufacturers.Add(acer);
+            var amd = new Manufacturer
+            {
+                ContactInfo = "https://www.amd.com/",
+                Name = "AMD",
+                Description = "AMD (Advanced Micro Devices) is an American multinational semiconductor company that develops computer processors and related technologies. It is known for its Ryzen CPUs and Radeon GPUs, which compete with Intel and NVIDIA products. AMD focuses on high-performance computing and graphics solutions.",
+                ManufacturerImage = "https://www.amd.com/content/dam/code/images/header/amd-header-logo.svg"
+            };
+            Manufacturers.Add(amd);
+            var intel = new Manufacturer
+            {
+                ContactInfo = "https://www.intel.com/",
+                Name = "Intel",
+                Description = "Intel Corporation is an American multinational corporation and technology company headquartered in Santa Clara, California. It is known for its semiconductor products, including microprocessors, integrated circuits, and memory modules. Intel is a leader in computing innovation and technology.",
+                ManufacturerImage = "https://www.intel.com/content/dam/logos/intel-header-logo.svg"
+            };
+            Manufacturers.Add(intel);
+            var logitech = new Manufacturer
+            {
+                ContactInfo = "https://www.logitech.com/",
+                Name = "Logitech",
+                Description = "Logitech is a Swiss company that designs and manufactures computer peripherals and software. It is known for its mice, keyboards, webcams, and gaming accessories. Logitech focuses on creating innovative products that enhance the user experience.",
+                ManufacturerImage = "https://logos-world.net/wp-content/uploads/2020/11/Logitech-Symbol.png"
+            };
+            Manufacturers.Add(logitech);
+            var corsair = new Manufacturer
+            {
+                ContactInfo = "https://www.corsair.com/",
+                Name = "Corsair",
+                Description = "Corsair is an American computer peripherals and hardware company known for its high-performance gaming products, including memory modules, power supplies, cooling solutions, and gaming peripherals. Corsair focuses on delivering quality and performance to gamers and PC enthusiasts.",
+                ManufacturerImage = "https://gamebank.vn/kql/file/1908_new-corsair-logo-blog-image.png"
+            };
+            Manufacturers.Add(corsair);
+            var coolerMaster = new Manufacturer
+            {
+                ContactInfo = "https://www.coolermaster.com/",
+                Name = "Cooler Master",
+                Description = "Cooler Master is a Taiwanese computer hardware manufacturer known for its cooling solutions, power supplies, and computer cases. It focuses on providing innovative products for gamers and PC builders, including CPU coolers, cases, and peripherals.",
+                ManufacturerImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgxuDgNFwETbBYqgrfHipVKWsdklKC8DXE0A&s",
+            };
+            Manufacturers.Add(coolerMaster);
+            var msi = new Manufacturer
+            {
+                ContactInfo = "https://www.msi.com/",
+                Name = "MSI",
+                Description = "MSI (Micro-Star International) is a Taiwanese multinational information technology corporation known for its computer hardware products, including motherboards, graphics cards, laptops, and gaming peripherals. MSI focuses on high-performance gaming and computing solutions.",
+                ManufacturerImage = "https://1000logos.net/wp-content/uploads/2018/10/MSI-Logo.png"
+            };
+            Manufacturers.Add(msi);
+            var gigabyte = new Manufacturer
+            {
+                ContactInfo = "https://www.gigabyte.com/",
+                Name = "Gigabyte",
+                Description = "Gigabyte Technology is a Taiwanese manufacturer of computer hardware products, including motherboards, graphics cards, laptops, and gaming peripherals. It is known for its high-performance components and innovative technology solutions.",
+                ManufacturerImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8WUdoxygpBfsejP7-9SVKuvYv_2C31-T_9w&s"
+            };
+            Manufacturers.Add(gigabyte);
+            var razer = new Manufacturer
+            {
+                ContactInfo = "https://www.razer.com/",
+                Name = "Razer",
+                Description = "Razer Inc. is a global gaming hardware manufacturing company known for its high-performance gaming peripherals, laptops, and software. It focuses on creating innovative products for gamers, including mice, keyboards, headsets, and gaming laptops.",
+                ManufacturerImage = "https://logos-world.net/wp-content/uploads/2020/11/Razer-Symbol.jpg"
+            };
+            Manufacturers.Add(razer);
+            var samsung = new Manufacturer
+            {
+                ContactInfo = "https://www.samsung.com/",
+                Name = "Samsung",
+                Description = "Samsung Electronics is a South Korean multinational electronics company known for its consumer electronics, semiconductors, and telecommunications products. It is one of the largest manufacturers of smartphones, TVs, and memory chips in the world.",
+                ManufacturerImage = "https://1000logos.net/wp-content/uploads/2017/06/Font-Samsung-Logo.jpg"
+            };
+            Manufacturers.Add(samsung);
+            var nvidia = new Manufacturer
+            {
+                ContactInfo = "https://www.nvidia.com/",
+                Name = "NVIDIA",
+                Description = "NVIDIA Corporation is an American multinational technology company known for its graphics processing units (GPUs) and AI computing technology. It is a leader in the gaming, professional visualization, data center, and automotive markets.",
+                ManufacturerImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjPSt8IAZHIwQXUj8owif7VyiELZvOi0w1pA&s"
+            };
+            Manufacturers.Add(nvidia);
+            var lg = new Manufacturer
+            {
+                ContactInfo = "https://www.lg.com/",
+                Name = "LG",
+                Description = "LG Electronics is a South Korean multinational electronics company known for its consumer electronics, home appliances, and mobile communications. It is one of the largest manufacturers of TVs, refrigerators, and washing machines in the world.",
+                ManufacturerImage = "https://www.lg.com/content/dam/lge/common/logo/logo-lg-100-44.svg"
+            };
+            Manufacturers.Add(lg);
+            var nzxt = new Manufacturer
+            {
+                ContactInfo = "https://www.nzxt.com/",
+                Name = "NZXT",
+                Description = "NZXT is an American computer hardware company known for its PC cases, cooling solutions, and gaming peripherals. It focuses on providing innovative products for gamers and PC builders, including cases, power supplies, and cooling solutions.",
+                ManufacturerImage = "https://scontent.fsgn5-3.fna.fbcdn.net/v/t39.30808-1/357734767_742351191228829_4168876683057715556_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=104&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=uJiscYHQzqIQ7kNvwGZObEi&_nc_oc=AdlY_C0d8uJAp1ZwLsT2kEHRz2-tkF7aF6TQpTcfTuachJppQ4l1p1JMk2g6N4y0o-E&_nc_zt=24&_nc_ht=scontent.fsgn5-3.fna&_nc_gid=qLAResXVqOojqX9fVYrn5w&oh=00_AfFhE1XCW1wvV30ZLxx9AhDdWmogq8xD1ZFALmo1VNuYkw&oe=68192140"
+            };
+            Manufacturers.Add(nzxt);
+            var gskill = new Manufacturer
+            {
+                ContactInfo = "https://www.gskill.com/",
+                Name = "G.Skill",
+                Description = "G.Skill is a Taiwanese manufacturer of computer memory modules and storage solutions. It is known for its high-performance RAM and SSD products, catering to gamers and PC enthusiasts. G.Skill focuses on delivering quality and performance in its products.",
+                ManufacturerImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUiA8ArpBa9OvMcC-3HpeaoeM2U57pQ_ytyQ&s"
+            };
+            Manufacturers.Add(gskill);
+
+            var hyperx = new Manufacturer
+            {
+                ContactInfo = "https://www.hyperxgaming.com/",
+                Name = "HyperX",
+                Description = "HyperX is a gaming division of Kingston Technology Company, Inc. It is known for its high-performance gaming peripherals, memory modules, and storage solutions. HyperX focuses on delivering quality and performance for gamers and PC enthusiasts.",
+                ManufacturerImage = "https://brandlogos.net/wp-content/uploads/2022/08/hyperx-logo_brandlogos.net_w6acg.png"
+            };
+            Manufacturers.Add(hyperx);
+            var steelseries = new Manufacturer
+            {
+                ContactInfo = "https://steelseries.com/",
+                Name = "SteelSeries",
+                Description = "SteelSeries is a Danish manufacturer of gaming peripherals and accessories. It is known for its high-performance gaming mice, keyboards, headsets, and mousepads. SteelSeries focuses on creating innovative products for gamers.",
+                ManufacturerImage = "https://audio.vn/wp-content/uploads/2017/12/SteelSeries-logo.jpg"
+            };
+            Manufacturers.Add(steelseries);
+            var dell = new Manufacturer
+            {
+                ContactInfo = "https://www.dell.com/",
+                Name = "Dell",
+                Description = "Dell Technologies is an American multinational technology company known for its computer hardware, software, and services. It is one of the largest manufacturers of PCs, servers, and storage solutions in the world.",
+                ManufacturerImage = "https://1000logos.net/wp-content/uploads/2017/07/Dell-Logo.png"
+            };
+            Manufacturers.Add(dell);
+            var hp = new Manufacturer
+            {
+                ContactInfo = "https://www.hp.com/",
+                Name = "HP",
+                Description = "HP Inc. is an American multinational information technology company known for its printers, PCs, and related products. It is one of the largest manufacturers of printers and computers in the world.",
+                ManufacturerImage = "https://www.logo.wine/a/logo/HP_Inc./HP_Inc.-Logo.wine.svg"
+            };
+            Manufacturers.Add(hp);
+            var phanteks = new Manufacturer
+            {
+                ContactInfo = "https://www.phanteks.com/",
+                Name = "Phanteks",
+                Description = "Phanteks is a manufacturer of computer hardware products, including cases, cooling solutions, and power supplies. It focuses on providing innovative products for gamers and PC builders.",
+                ManufacturerImage = "https://seeklogo.com/images/P/phanteks-logo-51B95B5D26-seeklogo.com.png"
+            };
+            Manufacturers.Add(phanteks);
+            var evga = new Manufacturer
+            {
+                ContactInfo = "https://www.evga.com/",
+                Name = "EVGA",
+                Description = "EVGA Corporation is an American computer hardware company known for its graphics cards, motherboards, and power supplies. It focuses on providing high-performance products for gamers and PC enthusiasts.",
+                ManufacturerImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToVtUIKfXMaf4MeYXZXLZHVKDk9Nm4QMfvZA&s"
+            };
+            Manufacturers.Add(evga);
+            var wd = new Manufacturer
+            {
+                ContactInfo = "https://www.westerndigital.com/",
+                Name = "WD",
+                Description = "Western Digital Corporation is an American computer data storage company known for its hard drives and solid-state drives. It is one of the largest manufacturers of storage devices in the world.",
+                ManufacturerImage = "https://www.westerndigital.com/content/dam/store/en-us/assets/home-page/brand-logos/header-main-logo.svg"
+            };
+            Manufacturers.Add(wd);
+            var noctua = new Manufacturer
+            {
+                ContactInfo = "https://noctua.at/en/",
+                Name = "Noctua",
+                Description = "Noctua is an Austrian manufacturer of computer cooling solutions, including CPU coolers and fans. It is known for its high-performance and quiet cooling products.",
+                ManufacturerImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_4lSY7-yoIe1SVWV0Fpb6AfwjGeex8Egrkw&s"
+            };
+            Manufacturers.Add(noctua);
+            await _manufacturerRepository.InsertManyAsync(Manufacturers, autoSave: true);
+
+            #region products and specs
             var cpuSpec1 = new CpuSpecification
             {
                 Socket = "AM5",
@@ -125,10 +320,11 @@ namespace Acme.ProductSelling
                  {
                      CategoryId = cpus.Id,
                      Price = 8500000,
-                     ProductName = "AMD Ryzen 7 7700X",
+                     ProductName = "Ryzen 7 7700X",
                      Description = "Powerful 8-core CPU",
                      StockCount = 50,
                      CpuSpecificationId = cpuSpec1.Id,
+                     ManufacturerId = amd.Id,
                      ImageUrl = "https://product.hstatic.net/200000722513/product/ryzen_7_-_1_00957bbe7b8542308c897a90d439b1fd_e1c9a16c537d47bb9768828dddb332d0_grande.jpg",
                  },
                  autoSave: true
@@ -148,10 +344,11 @@ namespace Acme.ProductSelling
             var productGpu1 = new Product
             {
                 Price = 25000000,
-                ProductName = "ASUS ProArt GeForce RTX 4070 Ti SUPER 16GB GDDR6X OC Edition (PROART-RTX4070TIS-O16G)",
+                ProductName = "ProArt GeForce RTX 4070 Ti SUPER 16GB GDDR6X OC Edition (PROART-RTX4070TIS-O16G)",
                 Description = "High-end graphics card",
                 StockCount = 20,
                 CategoryId = gpus.Id,
+                ManufacturerId = asus.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/fwebp__10__1d22cf39c094494bb772b5bb1c002172_grande.png",
                 // Gán FK cho spe
                 GpuSpecificationId = gpuSpec1.Id // Gán FK
@@ -172,10 +369,11 @@ namespace Acme.ProductSelling
             var productRam1 = new Product
             {
                 Price = 2000000,
-                ProductName = "Corsair Vengeance LPX 16GB",
+                ProductName = "Vengeance LPX 16GB",
                 Description = "High-performance RAM",
                 StockCount = 100,
                 CategoryId = rams.Id,
+                ManufacturerId = corsair.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/gearvn-corsair-vengeance-rgb-ddr-5600-ddr5-5_6e319950a8e14231b28a416076c94951_grande.png",
                 // Gán FK cho spec
                 RamSpecificationId = ramSpec1.Id // Gán FK
@@ -196,9 +394,10 @@ namespace Acme.ProductSelling
             var productStorage1 = new Product
             {
                 Price = 3000000,
-                ProductName = "Samsung 970 EVO Plus 1TB",
+                ProductName = "970 EVO Plus 1TB",
                 Description = "Fast NVMe SSD",
                 StockCount = 80,
+                ManufacturerId = samsung.Id,
                 CategoryId = storage.Id,
                 ImageUrl = "https://bizweb.dktcdn.net/thumb/grande/100/329/122/products/970-evo-plus-1tb-01-1689929004911.jpg?v=1695052940103",
                 // Gán FK cho spec
@@ -222,6 +421,7 @@ namespace Acme.ProductSelling
                 ImageUrl = "https://product.hstatic.net/200000722513/product/1_5b2f7891bf434a7aab9f1abdba56c17e_grande.jpg",
                 Description = "Tenkeyless mechanical gaming keyboard",
                 StockCount = 80,
+                ManufacturerId = logitech.Id,
                 CategoryId = keyboards.Id,
                 // Gán FK cho spec
                 KeyboardSpecificationId = keyboardSpec1.Id // Gán FK
@@ -248,7 +448,7 @@ namespace Acme.ProductSelling
                 Description = "High-performance gaming mouse",
                 StockCount = 150,
                 CategoryId = mice.Id,
-                // Gán FK cho spec
+                ManufacturerId = logitech.Id,
                 MouseSpecificationId = mouseSpec1.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/10001_01736316d2b443d0838e5a0741434420_grande.png"
             };
@@ -270,10 +470,11 @@ namespace Acme.ProductSelling
             var productMonitor1 = new Product
             {
                 Price = 7000000,
-                ProductName = "LG UltraGear 27GL850",
+                ProductName = "UltraGear 27GL850",
                 Description = "27-inch QHD gaming monitor",
                 StockCount = 30,
                 CategoryId = monitors.Id,
+                ManufacturerId = lg.Id,
                 // Gán FK cho spec
                 MonitorSpecificationId = monitorSpec1.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/lg_27gx790a-b_gearvn_18880ec6e5a944c2b29c76d85d44d243_medium.jpg"
@@ -293,6 +494,7 @@ namespace Acme.ProductSelling
                 Description = "750W fully modular power supply",
                 StockCount = 50,
                 CategoryId = psus.Id,
+                ManufacturerId = corsair.Id,
                 // Gán FK cho spec
                 PsuSpecificationId = psuSpec1.Id,
                 ImageUrl = "https://bizweb.dktcdn.net/thumb/grande/100/329/122/products/nguon-may-tinh-corsair-rm750x-shift-750w-80-plus-gold-cp-9020251-na-04-20838ea6-b253-460f-bb0c-ad9327565373.jpg?v=1743639588677"
@@ -322,6 +524,7 @@ namespace Acme.ProductSelling
                 ProductName = "NZXT H510",
                 Description = "Mid-tower ATX case with tempered glass",
                 StockCount = 40,
+                ManufacturerId = nzxt.Id,
                 CategoryId = cases.Id,
                 // Gán FK cho spec
                 CaseSpecificationId = caseSpec1.Id,
@@ -349,6 +552,7 @@ namespace Acme.ProductSelling
                 StockCount = 60,
                 CategoryId = coolers.Id,
                 // Gán FK cho spec
+                ManufacturerId = coolerMaster.Id,
                 CpuCoolerSpecificationId = cpuCoolerSpec1.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/hyper-212-argb-gallery-4-image_dc19349414e94e0e869c23e85c70cb49_d2713cd5bac947da94ee34d1456220fe_grande.png"
             };
@@ -375,6 +579,7 @@ namespace Acme.ProductSelling
                 StockCount = 70,
                 CategoryId = headsets.Id,
                 // Gán FK cho spec
+                ManufacturerId = logitech.Id,
                 HeadsetSpecificationId = headsetSpec1.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/gvn_logitech_prox_79c556630c454086baf1bee06c577ab7_3471d9d886fd4dbe8ab5ae6bed9f4d78_grande.png"
             };
@@ -427,6 +632,7 @@ namespace Acme.ProductSelling
                 Description = "Powerful gaming laptop",
                 StockCount = 10,
                 CategoryId = laptops.Id,
+                ManufacturerId = asus.Id,
                 // Gán FK cho spec
                 LaptopSpecificationId = laptopSpec1.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/zephyrus_g16_gu605_grey_03_rgb_1_b58d513a9306445daf2980232fe2544b_grande.png"
@@ -453,6 +659,7 @@ namespace Acme.ProductSelling
                 Description = "Top-tier 24-core CPU",
                 Price = 13500000,
                 StockCount = 30,
+                ManufacturerId = intel.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/i9k-t2-special-box-07-1080x1080pixels_6c9ec1001cdf4e4998c13af4ac6c7581_114c47698e4a4984863c3b26e0619b65_grande.png"
 
             };
@@ -478,6 +685,7 @@ namespace Acme.ProductSelling
                 Description = "High-end AMD graphics card",
                 Price = 28000000,
                 StockCount = 15,
+                ManufacturerId = asus.Id,
                 ImageUrl = " https://product.hstatic.net/200000722513/product/5681_ea11053c19e375dcaa8138b6f531262d_7d029f536978405393da9fb3c8f1e2fa_4d3cedb8fd4a485db1ece7519c1d41a8_grande.jpg"
             };
             await _productRepository.InsertAsync(productGpu2, autoSave: true);
@@ -497,9 +705,10 @@ namespace Acme.ProductSelling
             {
                 CategoryId = rams.Id,
                 RamSpecificationId = ramSpec2.Id,
-                ProductName = "G.Skill Trident Z RGB 16GB (2×8)",
+                ProductName = "Trident Z RGB 16GB (2×8)",
                 Description = "DDR4 3600MHz kit with RGB",
                 Price = 1800000,
+                ManufacturerId = gskill.Id,
                 StockCount = 80,
                 ImageUrl = "https://anphat.com.vn/media/product/33685_153665426813.png"
             };
@@ -524,6 +733,7 @@ namespace Acme.ProductSelling
                 Description = "High-performance PCIe 4.0 NVMe SSD",
                 Price = 2500000,
                 StockCount = 60,
+                ManufacturerId = wd.Id,
                 ImageUrl = "https://bizweb.dktcdn.net/thumb/grande/100/329/122/products/ssd-wd-black-sn770-pcie-gen4-x4-nvme-m-2-500gb-wds500g3x0e-b058273a-af63-4053-ac31-83b41eb593a2.jpg?v=1655710957737"
             };
             await _productRepository.InsertAsync(productStorage2, autoSave: true);
@@ -545,6 +755,7 @@ namespace Acme.ProductSelling
                 Description = "Opto-mechanical gaming keyboard",
                 Price = 4500000,
                 StockCount = 40,
+                ManufacturerId = razer.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/r3m1_ac3aa0be001640e2873ff732d34617bc_2295901522e24ce399b8f5f07be51467_3ab2e4aca4434a9a84997283b79b5c3c_grande.png"
             };
             await _productRepository.InsertAsync(keyboardProduct2, autoSave: true);
@@ -570,6 +781,7 @@ namespace Acme.ProductSelling
                 Description = "Lightweight RGB gaming mouse",
                 Price = 800000,
                 StockCount = 120,
+                ManufacturerId = steelseries.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/thumbchuot_e01eec6957cc40a88aba550b80cffed2_74ec8f2dec0447c382614fa201a4fa93_grande.png"
             };
             await _productRepository.InsertAsync(productMouse2, autoSave: true);
@@ -596,6 +808,7 @@ namespace Acme.ProductSelling
                 Description = "27” QHD IPS 165Hz gaming monitor",
                 Price = 9000000,
                 StockCount = 25,
+                ManufacturerId = asus.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/ips-2k-170hz-g-sync-hdr-chuyen-game-1_f9de14d5b20041b2b52b0cde6884a3d9_317538ed8cff45e6a25feb1cbb8650d0_grande.png"
             };
             await _productRepository.InsertAsync(productMonitor2, autoSave: true);
@@ -616,6 +829,7 @@ namespace Acme.ProductSelling
                 ProductName = "EVGA SuperNOVA 750 G5",
                 Description = "750W gold-rated fully modular PSU",
                 Price = 2200000,
+                ManufacturerId = evga.Id,
                 StockCount = 35,
                 ImageUrl = "https://tandoanh.vn/wp-content/uploads/2021/10/EVGA-SuperNOVA-750-G1-%E2%80%93-80-GOLD-750W-%E2%80%93-Fully-Modular-h1.jpg"
             };
@@ -644,6 +858,7 @@ namespace Acme.ProductSelling
                 Description = "High-airflow mid-tower ATX case",
                 Price = 1800000,
                 StockCount = 45,
+                ManufacturerId = phanteks.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/k-_1_65d8edfddc2b4785af9a13f971fc258a_6043347819ed417bb6dd327b41b39b6e_60a930dd805e4bc891b6ea69e7c2d21a_grande.jpg"
             };
             await _productRepository.InsertAsync(productCase2, autoSave: true);
@@ -669,6 +884,7 @@ namespace Acme.ProductSelling
                 Description = "Premium dual-tower air cooler",
                 Price = 1500000,
                 StockCount = 20,
+                ManufacturerId = noctua.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/noctua_nh-d15_2_75940b3d5fbb485190327d6b592429af_9ad735dcdbb94a71ba171d7d4ae0a326_grande.jpg"
             };
             await _productRepository.InsertAsync(productCpuCooler2, autoSave: true);
@@ -695,6 +911,7 @@ namespace Acme.ProductSelling
                 Description = "Comfortable gaming headset with 7.1 surround",
                 Price = 1200000,
                 StockCount = 60,
+                ManufacturerId = hyperx.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/thumbtainghe_499f42bf16fe47d28ab00bffb7bd5748_47730811ddaf40a0a969f4e4d49c7b27_grande.png"
             };
             await _productRepository.InsertAsync(productHeadset2, autoSave: true);
@@ -720,6 +937,7 @@ namespace Acme.ProductSelling
                 Description = "Ultra-portable 13” laptop",
                 Price = 31000000,
                 StockCount = 8,
+                ManufacturerId = dell.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/51529_laptop_dell_xps_9350_xps93_1d46c518185a488a92c40932dd4d5cf6_grande.png"
             };
 
@@ -744,6 +962,8 @@ namespace Acme.ProductSelling
             await _productRepository.InsertAsync(productCpuCooler2, autoSave: true);
             await _productRepository.InsertAsync(productHeadset2, autoSave: true);
             await _productRepository.InsertAsync(productLaptop2, autoSave: true);
+
+            #endregion
         }
     }
 }

@@ -15,5 +15,6 @@ namespace Acme.ProductSelling.Products
                                                             CreateUpdateProductDto>
     {
         Task<PagedResultDto<ProductDto>> GetListByCategoryAsync(GetProductsByCategoryInput input);
+        Task<PagedResultDto<ProductDto>> GetListByProductPrice(GetProductsByPrice input);
     }
 }

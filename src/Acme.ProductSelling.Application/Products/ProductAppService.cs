@@ -55,7 +55,7 @@ namespace Acme.ProductSelling.Products
         {
             _categoryRepository = categoryRepository;
             GetPolicyName = null;
-            
+
             CreatePolicyName = ProductSellingPermissions.Products.Create;
             UpdatePolicyName = ProductSellingPermissions.Products.Edit;
             DeletePolicyName = ProductSellingPermissions.Products.Delete;
@@ -92,6 +92,7 @@ namespace Acme.ProductSelling.Products
                                   .Include(p => p.CpuCoolerSpecification)
                                   .Include(p => p.KeyboardSpecification)
                                   .Include(p => p.HeadsetSpecification)
+                                  .Include(p => p.Manufacturer)
                                   .FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
@@ -388,7 +389,7 @@ namespace Acme.ProductSelling.Products
         {
 
             var queryable = await Repository.GetQueryableAsync();
-            queryable = queryable.Include(p => p.Category); 
+            queryable = queryable.Include(p => p.Category);
 
             queryable = queryable.Where(p => p.CategoryId == input.CategoryId);
 
@@ -396,14 +397,35 @@ namespace Acme.ProductSelling.Products
             var totalCount = await AsyncExecuter.CountAsync(queryable);
 
             queryable = queryable
-                .OrderBy(input.Sorting ?? nameof(Product.ProductName)) 
-                .PageBy(input); 
+                .OrderBy(input.Sorting ?? nameof(Product.ProductName))
+                .PageBy(input);
 
 
             var products = await AsyncExecuter.ToListAsync(queryable);
 
             var productDtos = ObjectMapper.Map<List<Product>, List<ProductDto>>(products);
 
+            return new PagedResultDto<ProductDto>(
+                totalCount,
+                productDtos
+            );
+        }
+
+
+        public virtual async Task<PagedResultDto<ProductDto>> GetListByProductPrice(GetProductsByPrice input)
+        {
+            var queryable = await Repository.GetQueryableAsync();
+            queryable = queryable.Include(p => p.Category).Include(p => p.Manufacturer);
+            queryable = queryable.Where(p => p.CategoryId == input.CategoryId);
+            queryable = queryable.Where(p => p.Price <= input.MaxPrice && p.Price >= input.MinPrice);
+            var totalCount = await AsyncExecuter.CountAsync(queryable);
+
+            queryable = queryable
+                .OrderBy(input.Sorting ?? nameof(Product.ProductName))
+                .PageBy(input);
+
+            var products = await AsyncExecuter.ToListAsync(queryable);
+            var productDtos = ObjectMapper.Map<List<Product>, List<ProductDto>>(products);
             return new PagedResultDto<ProductDto>(
                 totalCount,
                 productDtos

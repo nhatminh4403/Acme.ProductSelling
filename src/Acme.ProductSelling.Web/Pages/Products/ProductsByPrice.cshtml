@@ -1,23 +1,25 @@
-﻿@page "/products/category/{CategoryId:Guid}"
-@model Acme.ProductSelling.Web.Pages.Products.ProductsByCategoryModel
+﻿@page "/products/category/{CategoryId:Guid}/price/{PriceRangeAlias}"
+@model Acme.ProductSelling.Web.Pages.Products.ProductByPriceModel
+
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
+@using Acme.ProductSelling.Categories
 @inject IStringLocalizer<ProductSellingResource> L
-
 @{
+    ViewData["Title"] = "Product By Price";
     Layout = "/Views/Shared/_Layout.cshtml"; // Đặt layout cho trang này
-    ViewData["Title"] = L["AllProductsByCategory"];
+    var title = L["MinPrice"] +" "+ Model.MinPrice + L["CategoryName"]+ " "+ Model.CategoryName + " " + L["MaxPrice"] + " " + Model.MaxPrice;
 }
 
 <div class="container mt-4">
     @* Hiển thị tên Category *@
-    <h1 class="mb-4">@L["ProductsInCategory"]: @Model.CategoryName</h1>
+    <h1 class="mb-4">@title</h1>
 
-    @if (Model.ProductList != null && Model.ProductList.Items.Any())
+    @if (Model.Products != null && Model.Products.Items.Any())
     {
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
             @* Ví dụ 4 cột *@
-            @foreach (var product in Model.ProductList.Items)
+            @foreach (var product in Model.Products.Items)
             {
                 <div class="col">
                     <div class="card h-100">
@@ -27,7 +29,8 @@
                         }
                         else
                         {
-                            <div class="text-center p-5 border rounded bg-light"> <i class="fas fa-image fa-5x text-secondary"></i> </div>
+                            <div class="text-center p-5 border rounded bg-light">
+                                <i class="fas fa-image fa-5x text-secondary"></i> </div>
                         }
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">
@@ -46,8 +49,8 @@
 
         @* Component phân trang *@
         <div class="mt-4">
-            <abp-pagination-controls total-count="@Model.ProductList.TotalCount"
-                                     page-size="@Model.PageSize" 
+            <abp-pagination-controls total-count="@Model.Products.TotalCount"
+                                     page-size="@Model.PageSize"
                                      current-page="@Model.CurrentPage"
                                      page-query-name="CurrentPage">
                 @* Tên query param cho số trang *@

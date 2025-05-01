@@ -25,10 +25,10 @@ namespace Acme.ProductSelling.Categories
         {
             _categoryRepository = categoryRepository;
             _productRepository = productRepository;
-            GetPolicyName = ProductSellingPermissions.Products.Default;
-            CreatePolicyName = ProductSellingPermissions.Products.Create;
-            UpdatePolicyName = ProductSellingPermissions.Products.Edit;
-            DeletePolicyName = ProductSellingPermissions.Products.Delete;
+            GetPolicyName = ProductSellingPermissions.Categories.Default;
+            CreatePolicyName = ProductSellingPermissions.Categories.Create;
+            UpdatePolicyName = ProductSellingPermissions.Categories.Edit;
+            DeletePolicyName = ProductSellingPermissions.Categories.Delete;
         }
 
 
@@ -40,13 +40,6 @@ namespace Acme.ProductSelling.Categories
                 ObjectMapper.Map<List<Category>, List<CategoryLookupDto>>(categories)
             );
         }
-        [AllowAnonymous]
-        public async Task<ListResultDto<CategoryDto>> GetAsync()
-        {
-            var categories = await Repository.GetListAsync();
-            return new ListResultDto<CategoryDto>(
-                ObjectMapper.Map<List<Category>, List<CategoryDto>>(categories)
-            );
-        }
+        
     }
 }

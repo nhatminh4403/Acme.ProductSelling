@@ -5,25 +5,24 @@
 namespace Acme.ProductSelling.Migrations
 {
     /// <inheritdoc />
-    public partial class addImageurl : Migration
+    public partial class updatemanufacturers : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "ImageUrl",
-                table: "Products",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "");
+            migrationBuilder.RenameColumn(
+                name: "Phone",
+                table: "Manufacturers",
+                newName: "Description");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "ImageUrl",
-                table: "Products");
+            migrationBuilder.RenameColumn(
+                name: "Description",
+                table: "Manufacturers",
+                newName: "Phone");
         }
     }
 }

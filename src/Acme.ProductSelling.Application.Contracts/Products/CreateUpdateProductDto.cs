@@ -25,7 +25,8 @@ namespace Acme.ProductSelling.Products
 
         [Required]
         public Guid CategoryId { get; set; }
-
+        [Required]
+        public Guid ManufacturerId { get; set; }
         public CreateUpdateMonitorSpecificationDto MonitorSpecification { get; set; }
         public CreateUpdateMouseSpecificationDto MouseSpecification { get; set; }
         public CreateUpdateLaptopSpecificationDto LaptopSpecification { get; set; } // Giả sử có

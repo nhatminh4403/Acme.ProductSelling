@@ -1,5 +1,7 @@
 ﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -10,6 +12,8 @@ using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Products
 {
+    [Authorize(ProductSellingPermissions.Products.Edit)]
+
     public class CreateModalModel : AbpPageModel
     {
         [BindProperty]

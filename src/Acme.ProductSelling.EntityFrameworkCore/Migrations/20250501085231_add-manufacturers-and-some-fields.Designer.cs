@@ -13,8 +13,8 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Acme.ProductSelling.Migrations
 {
     [DbContext(typeof(ProductSellingDbContext))]
-    [Migration("20250428185840_addImageurl")]
-    partial class addImageurl
+    [Migration("20250501085231_add-manufacturers-and-some-fields")]
+    partial class addmanufacturersandsomefields
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,6 +89,49 @@ namespace Acme.ProductSelling.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Manufacturers.Manufacturer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContactInfo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("LastModificationTime");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LastModifierId");
+
+                    b.Property<string>("ManufacturerImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Manufacturers", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Products.Product", b =>
@@ -170,6 +213,9 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("LastModifierId");
 
+                    b.Property<Guid>("ManufacturerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("MonitorSpecificationId")
                         .HasColumnType("uniqueidentifier");
 
@@ -230,6 +276,8 @@ namespace Acme.ProductSelling.Migrations
                     b.HasIndex("LaptopSpecificationId")
                         .IsUnique()
                         .HasFilter("[LaptopSpecificationId] IS NOT NULL");
+
+                    b.HasIndex("ManufacturerId");
 
                     b.HasIndex("MonitorSpecificationId")
                         .IsUnique()
@@ -2611,6 +2659,12 @@ namespace Acme.ProductSelling.Migrations
                         .WithOne()
                         .HasForeignKey("Acme.ProductSelling.Products.Product", "LaptopSpecificationId");
 
+                    b.HasOne("Acme.ProductSelling.Manufacturers.Manufacturer", "Manufacturer")
+                        .WithMany("Products")
+                        .HasForeignKey("ManufacturerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Acme.ProductSelling.Specifications.MonitorSpecification", "MonitorSpecification")
                         .WithOne()
                         .HasForeignKey("Acme.ProductSelling.Products.Product", "MonitorSpecificationId");
@@ -2650,6 +2704,8 @@ namespace Acme.ProductSelling.Migrations
                     b.Navigation("KeyboardSpecification");
 
                     b.Navigation("LaptopSpecification");
+
+                    b.Navigation("Manufacturer");
 
                     b.Navigation("MonitorSpecification");
 
@@ -2816,6 +2872,11 @@ namespace Acme.ProductSelling.Migrations
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Categories.Category", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Manufacturers.Manufacturer", b =>
                 {
                     b.Navigation("Products");
                 });

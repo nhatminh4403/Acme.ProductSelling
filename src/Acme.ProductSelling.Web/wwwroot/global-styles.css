@@ -64,6 +64,7 @@
 
 .has-submenu .submenu.mega-menu {
     display: none;
+    height:400px;
     position: absolute;
     top: 0;
     left: 100%;
