@@ -11,5 +11,6 @@ namespace Acme.ProductSelling.Products
             int maxResultCount,
             string sorting,
             string filter = null);
+        Task<Product> FindByIdAsync(Guid id);
     }
 }

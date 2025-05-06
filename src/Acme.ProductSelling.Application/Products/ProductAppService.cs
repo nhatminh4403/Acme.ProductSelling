@@ -11,7 +11,6 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
-
 namespace Acme.ProductSelling.Products
 {
     public class ProductAppService : CrudAppService<
@@ -55,11 +54,9 @@ namespace Acme.ProductSelling.Products
         {
             _categoryRepository = categoryRepository;
             GetPolicyName = null;
-
             CreatePolicyName = ProductSellingPermissions.Products.Create;
             UpdatePolicyName = ProductSellingPermissions.Products.Edit;
             DeletePolicyName = ProductSellingPermissions.Products.Delete;
-
             _monitorSpecRepository = monitorSpecRepository;
             _mouseSpecRepository = mouseSpecRepository;
             _laptopSpecRepository = laptopSpecRepository;
@@ -74,7 +71,6 @@ namespace Acme.ProductSelling.Products
             _keyboardSpecRepository = keyboardSpecRepository;
             _headsetSpecRepository = headsetSpecRepository;
         }
-
         public override async Task<ProductDto> GetAsync(Guid id)
         {
             var query = await Repository.GetQueryableAsync();
@@ -94,7 +90,6 @@ namespace Acme.ProductSelling.Products
                                   .Include(p => p.HeadsetSpecification)
                                   .Include(p => p.Manufacturer)
                                   .FirstOrDefaultAsync(p => p.Id == id);
-
             if (product == null)
             {
                 throw new Volo.Abp.Domain.Entities.EntityNotFoundException(typeof(Product), id);
@@ -106,7 +101,6 @@ namespace Acme.ProductSelling.Products
             await CheckCreatePolicyAsync();
             var category = await _categoryRepository.GetAsync(input.CategoryId);
             var product = ObjectMapper.Map<CreateUpdateProductDto, Product>(input);
-
             // With this updated line:
             typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(product, GuidGenerator.Create());
             // --- Switch statement dài hơn ---
@@ -232,11 +226,9 @@ namespace Acme.ProductSelling.Products
                 // ... Thêm các case khác ...
                 default: break;
             }
-
             await Repository.InsertAsync(product, autoSave: true);
             return await GetAsync(product.Id);
         }
-
         // Ghi đè UpdateAsync để xử lý cập nhật/xóa TẤT CẢ Specifications
         public override async Task<ProductDto> UpdateAsync(Guid id, CreateUpdateProductDto input)
         {
@@ -244,17 +236,14 @@ namespace Acme.ProductSelling.Products
             var product = await Repository.GetAsync(id); // Lấy product cũ
             var oldCategoryId = product.CategoryId;
             var newCategory = await _categoryRepository.GetAsync(input.CategoryId);
-
             // Xóa spec cũ NẾU category thay đổi VÀ loại spec khác nhau
             if (oldCategoryId != newCategory.Id)
             {
                 await DeleteOldSpecificationAsync(product, newCategory.SpecificationType);
             }
-
             // Map dữ liệu cơ bản
             ObjectMapper.Map(input, product);
             product.CategoryId = newCategory.Id; // Đảm bảo categoryId được cập nhật
-
             // Switch dựa trên loại Category MỚI để Tạo/Cập nhật spec
             switch (newCategory.SpecificationType)
             {
@@ -303,12 +292,9 @@ namespace Acme.ProductSelling.Products
                     await DeleteOldSpecificationAsync(product, SpecificationType.None);
                     break;
             }
-
-
             await Repository.UpdateAsync(product, autoSave: true);
             return await GetAsync(product.Id);
         }
-
         // Hàm helper chung cho việc Update/Create spec
         private async Task HandleSpecificationUpdateAsync<TSpecEntity, TSpecDto>(
             Guid? currentSpecId,
@@ -340,8 +326,6 @@ namespace Acme.ProductSelling.Products
                 setProductSpecIdAction(null); // Gỡ bỏ FK
             }
         }
-
-
         // Cập nhật DeleteOldSpecificationAsync để bao gồm TẤT CẢ các loại spec
         private async Task DeleteOldSpecificationAsync(Product product, SpecificationType? newSpecType)
         {
@@ -360,7 +344,6 @@ namespace Acme.ProductSelling.Products
             if (product.KeyboardSpecificationId.HasValue && newSpecType != SpecificationType.Keyboard) { await _keyboardSpecRepository.DeleteAsync(product.KeyboardSpecificationId.Value, autoSave: true); product.KeyboardSpecificationId = null; }
             if (product.HeadsetSpecificationId.HasValue && newSpecType != SpecificationType.Headset) { await _headsetSpecRepository.DeleteAsync(product.HeadsetSpecificationId.Value, autoSave: true); product.HeadsetSpecificationId = null; }
         }
-
         // Cập nhật DeleteAsync để gọi DeleteOldSpecificationAsync
         public override async Task DeleteAsync(Guid id)
         {
@@ -369,49 +352,33 @@ namespace Acme.ProductSelling.Products
             // nhưng cách đơn giản là lấy product cơ bản và gọi DeleteOld...
             var product = await Repository.FindAsync(id);
             if (product == null) return;
-
             // Xóa tất cả spec liên quan trước khi xóa product
             await DeleteOldSpecificationAsync(product, SpecificationType.None); // Truyền None để đảm bảo xóa hết
-
             await Repository.DeleteAsync(id, autoSave: true);
         }
         protected override async Task<ProductDto> MapToGetOutputDtoAsync(Product entity)
         {
             var dto = ObjectMapper.Map<Product, ProductDto>(entity);
-
             var category = await _categoryRepository.GetAsync(entity.CategoryId);
             dto.CategoryName = category.Name;
-
             return dto;
         }
-
         public virtual async Task<PagedResultDto<ProductDto>> GetListByCategoryAsync(GetProductsByCategoryInput input)
         {
-
             var queryable = await Repository.GetQueryableAsync();
             queryable = queryable.Include(p => p.Category);
-
             queryable = queryable.Where(p => p.CategoryId == input.CategoryId);
-
-
             var totalCount = await AsyncExecuter.CountAsync(queryable);
-
             queryable = queryable
                 .OrderBy(input.Sorting ?? nameof(Product.ProductName))
                 .PageBy(input);
-
-
             var products = await AsyncExecuter.ToListAsync(queryable);
-
             var productDtos = ObjectMapper.Map<List<Product>, List<ProductDto>>(products);
-
             return new PagedResultDto<ProductDto>(
                 totalCount,
                 productDtos
             );
         }
-
-
         public virtual async Task<PagedResultDto<ProductDto>> GetListByProductPrice(GetProductsByPrice input)
         {
             var queryable = await Repository.GetQueryableAsync();
@@ -419,11 +386,9 @@ namespace Acme.ProductSelling.Products
             queryable = queryable.Where(p => p.CategoryId == input.CategoryId);
             queryable = queryable.Where(p => p.Price <= input.MaxPrice && p.Price >= input.MinPrice);
             var totalCount = await AsyncExecuter.CountAsync(queryable);
-
             queryable = queryable
                 .OrderBy(input.Sorting ?? nameof(Product.ProductName))
                 .PageBy(input);
-
             var products = await AsyncExecuter.ToListAsync(queryable);
             var productDtos = ObjectMapper.Map<List<Product>, List<ProductDto>>(products);
             return new PagedResultDto<ProductDto>(

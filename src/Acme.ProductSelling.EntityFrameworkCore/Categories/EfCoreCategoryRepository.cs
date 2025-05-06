@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
-
 namespace Acme.ProductSelling.Categories
 {
     public class EfCoreCategoryRepository : EfCoreRepository<ProductSellingDbContext, Category, Guid>, ICategoryRepository
@@ -31,7 +30,5 @@ namespace Acme.ProductSelling.Categories
             var dbSet = await GetDbSetAsync();
             return await dbSet.FirstOrDefaultAsync(c => c.Id == id);
         }
-
     }
-   
 }

@@ -39,8 +39,13 @@
                     <p>@L["StockCount"]: Hết hàng</p>
                 }
 
-                @* (Optional) Nút thêm vào giỏ hàng *@
-                <button class="btn btn-primary btn-lg mt-3">@L["AddToCart"]</button>
+                <button class="btn btn-primary btn-lg add-to-cart-button" @* <<< Thêm class *@
+                        data-product-id="@Model.Product.Id" @* <<< Thêm data attribute chứa ID *@
+                @(Model.Product.StockCount <= 0 ? "disabled" : "")>
+                    @* Disable nút nếu hết hàng *@
+                    <i class="fas fa-cart-plus me-2"></i> @* Thêm icon nếu muốn *@
+                    @L[Model.Product.StockCount > 0 ? "AddToCart" : "OutOfStock"] @* Thay đổi text nếu hết hàng *@
+                </button>
             </div>
         </div>
 

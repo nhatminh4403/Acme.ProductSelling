@@ -18,7 +18,8 @@ using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Specifications;
 using Acme.ProductSelling.Manufacturers;
-
+using Acme.ProductSelling.Orders;
+using Acme.ProductSelling.Carts;
 namespace Acme.ProductSelling.EntityFrameworkCore;
 
 [ReplaceDbContext(typeof(IIdentityDbContext))]
@@ -78,6 +79,12 @@ public class ProductSellingDbContext :
     public DbSet<KeyboardSpecification> KeyboardSpecifications { get; set; }
     public DbSet<HeadsetSpecification> HeadsetSpecifications { get; set; }
     public DbSet<Manufacturer> Manufacturers { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
+
+
+    DbSet<Cart> Carts { get; set; }
+    DbSet<CartItem> CartItems { get; set; }
     #endregion
 
     public ProductSellingDbContext(DbContextOptions<ProductSellingDbContext> options)
@@ -161,5 +168,65 @@ public class ProductSellingDbContext :
         builder.Entity<CpuCoolerSpecification>(b => { b.ToTable("AppCpuCoolerSpecifications"); b.Property(s => s.Height).HasColumnType("decimal(18,2)"); });
         builder.Entity<KeyboardSpecification>(b => { b.ToTable("AppKeyboardSpecifications"); });
         builder.Entity<HeadsetSpecification>(b => { b.ToTable("AppHeadsetSpecifications"); });
+
+
+
+        builder.Entity<Order>(b =>
+        {
+            b.ToTable("AppOrders"); // Tên bảng
+            b.ConfigureFullAuditedAggregateRoot(); // Cấu hình các trường audit
+
+            b.Property(o => o.OrderNumber).IsRequired().HasMaxLength(OrderConsts.MaxOrderNumberLength);
+            b.HasIndex(o => o.OrderNumber).IsUnique();
+            b.Property(o => o.CustomerName).IsRequired().HasMaxLength(100);
+            b.Property(o => o.CustomerPhone).HasMaxLength(OrderConsts.MaxCustomerPhoneLentgth);
+            b.Property(o => o.ShippingAddress).IsRequired(); // Độ dài mặc định hoặc set MaxLength
+
+            b.Property(o => o.TotalAmount).HasColumnType("decimal(18,2)").IsRequired();
+
+            // Quan hệ 1-N với OrderItem
+            b.HasMany(o => o.OrderItems)
+             .WithOne() // Không cần navigation ngược lại từ OrderItem
+             .HasForeignKey(oi => oi.OrderId)
+             .IsRequired();
+        });
+
+        builder.Entity<OrderItem>(b =>
+        {
+            b.ToTable("AppOrderItems");
+            b.ConfigureByConvention(); // Cấu hình Id là key
+
+            b.Property(oi => oi.ProductName).IsRequired();
+            b.Property(oi => oi.Price).HasColumnType("decimal(18,2)").IsRequired();
+            b.Property(oi => oi.Quantity).IsRequired();
+
+            // Không cần cấu hình quan hệ với Product nếu không có navigation property
+
+            // Không cần cấu hình LineTotalAmount vì nó là computed property
+        });
+
+
+        builder.Entity<Cart>(b =>
+        {
+            b.ToTable("AppCarts");
+            b.ConfigureAuditedAggregateRoot(); // Cấu hình trường audit
+
+            // Tạo index duy nhất cho UserId để đảm bảo mỗi user chỉ có 1 giỏ hàng
+            b.HasIndex(c => c.UserId).IsUnique();
+
+            // Cấu hình quan hệ 1-N với CartItem
+            b.HasMany(c => c.Items)          // Cart có nhiều Items
+             .WithOne()                      // Mỗi CartItem thuộc về một Cart
+             .HasForeignKey(ci => ci.CartId) // Khóa ngoại trong CartItem là CartId
+             .IsRequired();                  // CartItem phải thuộc về Cart
+        });
+
+        builder.Entity<CartItem>(b =>
+        {
+            b.ToTable("AppCartItems");
+            b.ConfigureByConvention(); 
+
+            b.HasIndex(ci => ci.ProductId);
+        });
     }
 }

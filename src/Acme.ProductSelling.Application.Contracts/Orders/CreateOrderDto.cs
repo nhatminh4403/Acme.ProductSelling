@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace Acme.ProductSelling.Orders
+{
+    public class CreateOrderDto
+    {
+        [Required]
+        public string CustomerName { get; set; }
+        [Phone] // Giữ validation SĐT
+        public string CustomerPhone { get; set; }
+        [Required]
+        public string ShippingAddress { get; set; }
+        [Required]
+        [MinLength(1)] 
+        public List<CreateOrderItemDto> Items { get; set; } = new List<CreateOrderItemDto>();
+    }
+}

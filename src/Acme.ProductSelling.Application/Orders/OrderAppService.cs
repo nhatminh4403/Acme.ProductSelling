@@ -1,0 +1,150 @@
+﻿using Acme.ProductSelling.Carts;
+using Acme.ProductSelling.Products;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Threading.Tasks;
+using Volo.Abp;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.Application.Services;
+using Volo.Abp.Authorization;
+using Volo.Abp.Domain.Entities;
+using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Guids;
+using Volo.Abp.Users;
+namespace Acme.ProductSelling.Orders
+{
+    public class OrderAppService : ApplicationService, IOrderAppService
+    {
+        private readonly IRepository<Order, Guid> _orderRepository;
+        private readonly IRepository<Product, Guid> _productRepository;
+        private readonly IGuidGenerator _guidGenerator;
+        private readonly ICurrentUser _currentUser;
+        private readonly IRepository<Cart, Guid> _cartRepository; // *** INJECT CART REPO ***
+
+        public OrderAppService(
+           IRepository<Order, Guid> orderRepository,
+           IRepository<Product, Guid> productRepository,
+           IGuidGenerator guidGenerator,
+           ICurrentUser currentUser,
+                        IRepository<Cart, Guid> cartRepository // *** Thêm vào constructor ***
+
+           /*, ProductManager productManager */)
+        {
+            _orderRepository = orderRepository;
+            _productRepository = productRepository;
+            _guidGenerator = guidGenerator;
+            _currentUser = currentUser;
+            _cartRepository = cartRepository; // *** Gán repo vào biến ***
+            // _productManager = productManager;
+        }
+
+        public async Task<OrderDto> CreateAsync(CreateOrderDto input)
+        {
+            var orderNumber = $"DH-{DateTime.UtcNow:yyyyMMddHHmmss}-{_guidGenerator.Create().ToString("N").Substring(0, 6)}";
+
+            var customerId = _currentUser.Id;
+            var customerName = _currentUser.Name;
+            var cart = await (await _cartRepository.WithDetailsAsync(c => c.Items)) // Include Items
+                                  .FirstOrDefaultAsync(c => c.UserId == customerId);
+            if (cart == null || !cart.Items.Any())
+            {
+                throw new UserFriendlyException(L["ShoppingCartIsEmpty"]);
+            }
+            var order = new Order
+            {
+                OrderNumber = orderNumber,
+                CustomerId = customerId,
+                CustomerName = customerName,
+                CustomerPhone = input.CustomerPhone,
+                ShippingAddress = input.ShippingAddress,
+                OrderDate = DateTime.UtcNow,
+
+            };
+
+
+            var productIds = input.Items.Select(i => i.ProductId).Distinct().ToList();
+            var products = (await _productRepository.GetListAsync(p => productIds.Contains(p.Id)))
+                           .ToDictionary(p => p.Id);
+
+            foreach (var itemDto in input.Items)
+            {
+                if (!products.TryGetValue(itemDto.ProductId, out var product))
+                {
+                    throw new UserFriendlyException($"Product with ID {itemDto.ProductId} not found.");
+                    
+                }
+                if (product.StockCount < itemDto.Quantity)
+                {
+                    throw new UserFriendlyException($"Not enough stock for product '{product.ProductName}'." +
+                        $" Available: {product.StockCount}, Requested: {itemDto.Quantity}");
+                }
+
+                order.AddOrderItem(product.Id, product.ProductName, product.Price, itemDto.Quantity);
+
+                // Giảm tồn kho
+                product.StockCount -= itemDto.Quantity;
+                await _productRepository.UpdateAsync(product, autoSave: false); // Để UoW lưu
+            }
+            if (!order.OrderItems.Any())
+            {
+                throw new UserFriendlyException(L["NoValidItemsInCartToOrder"]);
+            }
+
+            order.CalculateTotals();
+
+            await _orderRepository.InsertAsync(order, autoSave: true);
+            return ObjectMapper.Map<Order, OrderDto>(order);
+        }
+        [AllowAnonymous]
+        public async Task<OrderDto> GetAsync(Guid id)
+        {
+            var order = await (await _orderRepository.WithDetailsAsync(o => o.OrderItems)) // Include Items
+                             .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (order == null)
+            {
+                throw new EntityNotFoundException(typeof(Order), id);
+            }
+
+           
+
+            return ObjectMapper.Map<Order, OrderDto>(order);
+        }
+
+        // [Authorize] // Bảo vệ nếu cần
+        public async Task<PagedResultDto<OrderDto>> GetListAsync(GetOrderListInput input)
+        {
+            var queryable = await _orderRepository.GetQueryableAsync();
+
+            if (input.CustomerId.HasValue) // Lọc theo KH nếu có ID
+            {
+                queryable = queryable.Where(o => o.CustomerId == input.CustomerId.Value);
+            }
+            // Bỏ lọc theo Status
+
+            if (!input.Filter.IsNullOrWhiteSpace())
+            {
+                queryable = queryable.Where(o => o.OrderNumber.Contains(input.Filter) ||
+                                                o.CustomerName.Contains(input.Filter));
+            }
+
+            var totalCount = await AsyncExecuter.CountAsync(queryable);
+
+            queryable = queryable
+                .OrderBy(input.Sorting ?? nameof(Order.OrderDate) + " DESC")
+                .PageBy(input);
+
+            var orders = await AsyncExecuter.ToListAsync(queryable);
+
+            return new PagedResultDto<OrderDto>(
+                totalCount,
+                ObjectMapper.Map<List<Order>, List<OrderDto>>(orders)
+            );
+        }
+
+    }
+}

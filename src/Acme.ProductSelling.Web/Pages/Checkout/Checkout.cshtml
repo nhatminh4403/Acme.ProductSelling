@@ -1,0 +1,66 @@
+﻿@page
+@model Acme.ProductSelling.Web.Pages.Checkout.CheckoutModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Acme.ProductSelling.Localization
+@inject IHtmlLocalizer<ProductSellingResource> L
+@{
+    ViewData["Title"] = L["Checkout"];
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+<h1>@L["Checkout"]</h1>
+<hr />
+@section scripts {
+    <abp-script src="/Pages/Carts/Index.js" /> @* Link JS *@
+
+}
+<form method="post">
+    <div class="row">
+        @* Cột Thông tin giao hàng *@
+        <div class="col-md-7">
+            <h4>@L["ShippingInformation"]</h4>
+            <abp-validation-summary /> @* Hiển thị lỗi chung *@
+            <abp-alert-list /> @* Hiển thị Alerts từ code-behind *@
+
+            <abp-input asp-for="OrderInput.CustomerName" />
+            <abp-input asp-for="OrderInput.CustomerPhone" />
+            <abp-input asp-for="OrderInput.ShippingAddress" type="textarea" rows="3" />
+
+        </div>
+
+        @* Cột Tóm tắt đơn hàng *@
+        <div class="col-md-5">
+            <h4>@L["OrderSummary"]</h4>
+            @if (Model.CurrentCart != null && Model.CurrentCart.CartItems.Any())
+            {
+                <ul class="list-group mb-3">
+                    @foreach (var item in Model.CurrentCart.CartItems)
+                    {
+                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                            <div>
+                                <h6 class="my-0">@item.ProductName</h6>
+                                <small class="text-muted">@L["Quantity"]: @item.Quantity</small>
+                            </div>
+                            <span class="text-muted">@item.LineTotal.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</span>
+                        </li>
+                    }
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>@L["Subtotal"]</span>
+                        <strong>@Model.CurrentCart.TotalPrice.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</strong>
+                    </li>
+                    @* Thêm phí ship, discount nếu có *@
+                    <li class="list-group-item d-flex justify-content-between fw-bold fs-5">
+                        <span>@L["Total"]</span>
+                        <strong>@Model.CurrentCart.TotalPrice.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</strong>
+                    </li>
+                </ul>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">@L["PlaceOrder"]</button>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning">@L["YourCartIsEmpty"]</div>
+            }
+        </div>
+    </div>
+</form>

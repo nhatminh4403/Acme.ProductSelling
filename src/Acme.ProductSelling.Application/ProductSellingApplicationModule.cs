@@ -6,9 +6,7 @@ using Volo.Abp.AutoMapper;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Modularity;
 using Volo.Abp.TenantManagement;
-
 namespace Acme.ProductSelling;
-
 [DependsOn(
     typeof(ProductSellingDomainModule),
     typeof(ProductSellingApplicationContractsModule),

@@ -1,18 +1,17 @@
-﻿using Acme.ProductSelling.Categories;
+﻿using Acme.ProductSelling.Carts;
+using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Manufacturers;
+using Acme.ProductSelling.Orders;
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Specifications;
 using AutoMapper;
-
 namespace Acme.ProductSelling;
-
 public class ProductSellingApplicationAutoMapperProfile : Profile
 {
     public ProductSellingApplicationAutoMapperProfile()
     {
         CreateMap<Manufacturer, ManufacturerDto>();
         CreateMap<CreateUpdateManufacturerDto, Manufacturer>();
-
         CreateMap<Product, ProductDto>()
                .ForMember(dest => dest.CategoryName,
                           opt => opt.MapFrom(src => src.Category.Name))
@@ -59,50 +58,42 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
                 .ForMember(dest => dest.KeyboardSpecification, opt => opt.Ignore())
                 .ForMember(dest => dest.HeadsetSpecificationId, opt => opt.Ignore())
                 .ForMember(dest => dest.HeadsetSpecification, opt => opt.Ignore());
-
         // --- Thêm mới Category Mappings ---
         CreateMap<Category, CategoryDto>();
         CreateMap<CreateUpdateCategoryDto, Category>();
         CreateMap<Category, CategoryLookupDto>();
-
         // --- Thêm mới Spec Mappings ---
         CreateMap<CpuSpecification, CpuSpecificationDto>();
         CreateMap<CreateUpdateCpuSpecificationDto, CpuSpecification>();
-
         CreateMap<GpuSpecification, GpuSpecificationDto>();
         CreateMap<CreateUpdateGpuSpecificationDto, GpuSpecification>();
-
         CreateMap<RamSpecification, RamSpecificationDto>();
         CreateMap<CreateUpdateRamSpecificationDto, RamSpecification>();
-
         CreateMap<MotherboardSpecification, MotherboardSpecificationDto>();
         CreateMap<CreateUpdateMotherboardSpecificationDto, MotherboardSpecification>();
-
         CreateMap<StorageSpecification, StorageSpecificationDto>();
         CreateMap<CreateUpdateStorageSpecificationDto, StorageSpecification>();
-
         CreateMap<PsuSpecification, PsuSpecificationDto>();
         CreateMap<CreateUpdatePsuSpecificationDto, PsuSpecification>();
-
         CreateMap<CaseSpecification, CaseSpecificationDto>();
         CreateMap<CreateUpdateCaseSpecificationDto, CaseSpecification>();
-
         CreateMap<CpuCoolerSpecification, CpuCoolerSpecificationDto>();
         CreateMap<CreateUpdateCpuCoolerSpecificationDto, CpuCoolerSpecification>();
-
         CreateMap<KeyboardSpecification, KeyboardSpecificationDto>();
         CreateMap<CreateUpdateKeyboardSpecificationDto, KeyboardSpecification>();
-
         CreateMap<HeadsetSpecification, HeadsetSpecificationDto>();
         CreateMap<CreateUpdateHeadsetSpecificationDto, HeadsetSpecification>();
-
         CreateMap<MonitorSpecification, MonitorSpecificationDto>();
         CreateMap<CreateUpdateMonitorSpecificationDto, MonitorSpecification>();
-
         CreateMap<MouseSpecification, MouseSpecificationDto>();
         CreateMap<CreateUpdateMouseSpecificationDto, MouseSpecification>();
-
         CreateMap<LaptopSpecification, LaptopSpecificationDto>();
         CreateMap<CreateUpdateLaptopSpecificationDto, LaptopSpecification>();
+        CreateMap<Order, OrderDto>();
+        CreateMap<OrderItem, OrderItemDto>();
+
+        CreateMap<Cart, CartDto>()
+            .ForMember(dest => dest.CartItems, opt => opt.MapFrom(src => src.Items)); // Map collection Items
+        CreateMap<CartItem, CartItemDto>();
     }
 }

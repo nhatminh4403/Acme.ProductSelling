@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using Volo.Abp.Domain.Entities.Auditing;
-
 namespace Acme.ProductSelling.Categories
 {
     public class Category : FullAuditedAggregateRoot<Guid>
@@ -14,7 +13,6 @@ namespace Acme.ProductSelling.Categories
         private Category()
         {
         }
-
         internal Category(Guid id, string name, string description, SpecificationType specType = SpecificationType.None) : base(id)
         {
             Name = name;

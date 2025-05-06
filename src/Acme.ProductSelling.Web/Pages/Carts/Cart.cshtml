@@ -1,0 +1,111 @@
+﻿@page
+@model Acme.ProductSelling.Web.Pages.Carts.CartModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Acme.ProductSelling.Localization
+@inject IHtmlLocalizer<ProductSellingResource> L
+
+
+@{
+    ViewData["Title"] = L["ShoppingCart"];
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+@section scripts {
+    <abp-script src="/Pages/Carts/Index.js" /> @* Link JS *@
+
+}
+<div class="container mt-4 mb-5">
+    <h1>@L["ShoppingCart"]</h1>
+
+    @* Hiển thị thông báo từ Alerts (nếu có sau khi Post) *@
+    <abp-alert-list />
+
+    @if (Model.Cart != null && Model.Cart.CartItems.Any())
+    {
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th scope="Column" style="width: 10%;">@L["Image"]</th>
+                        <th scope="Column" style="width: 35%;">@L["Product"]</th>
+                        <th scope="Column" style="width: 15%;" class="text-end">@L["Price"]</th>
+                        <th scope="Column" style="width: 15%;" class="text-center">@L["Quantity"]</th>
+                        <th scope="Column" style="width: 15%;" class="text-end">@L["Total"]</th>
+                        <th scope="Column" style="width: 10%;" class="text-center">@L["Actions"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Cart.CartItems)
+                    {
+                        <tr>
+                           
+                            <td>
+                                <a asp-page="/ProductDetail" asp-route-id="@item.ProductId" class="text-dark text-decoration-none fw-bold">
+                                    @item.ProductName
+                                </a>
+                                @* Có thể thêm các thông tin khác như thuộc tính sản phẩm nếu cần *@
+                            </td>
+                            <td class="text-end">@item.ProductPrice.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                            <td class="text-center">
+                                @* Form để cập nhật số lượng *@
+                                <form method="post" asp-page-handler="UpdateItem" class="d-inline-flex align-items-center justify-content-center">
+                                    @* Input ẩn chứa ID của CartItem *@
+                                    <input type="hidden" name="cartItemId" value="@item.Id" />
+                                    @* Ô nhập số lượng *@
+                                    <input type="number" name="quantity" class="form-control form-control-sm text-center me-2" value="@item.Quantity" min="1" max="100" style="width: 70px;" required />
+                                    @* Nút Update *@
+                                    <button type="submit" class="btn btn-sm btn-outline-primary" title="@L["UpdateQuantity"].Value">
+                                        <i class="fas fa-sync-alt"></i> @* Icon update *@
+                                    </button>
+                                </form>
+                            </td>
+                            <td class="text-end fw-bold">@item.LineTotal.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                            <td class="text-center">
+                                @* Form để xóa item *@
+                                <form method="post" asp-page-handler="RemoveItem" class="d-inline-block">
+                                    @* Input ẩn chứa ID của CartItem *@
+                                    <input type="hidden" name="cartItemId" value="@item.Id" />
+                                    @* Nút Remove *@
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="@L["RemoveItem"].Value">
+                                        <i class="fas fa-trash-alt"></i> @* Icon xóa *@
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6 offset-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@L["CartSummary"]</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                @L["Subtotal"]
+                                <span>@Model.Cart.TotalPrice.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</span>
+                            </li>
+                            @* Thêm các dòng khác nếu có phí ship, giảm giá *@
+                            <li class="list-group-item d-flex justify-content-between align-items-center fw-bold fs-5">
+                                @L["Total"]
+                                <span>@Model.Cart.TotalPrice.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</span> @* Tạm thời chỉ có Subtotal *@
+                            </li>
+                        </ul>
+                        <div class="d-grid gap-2 mt-3">
+                            <a asp-page="/Checkout" class="btn btn-primary btn-lg">@L["ProceedToCheckout"]</a>
+                            <a asp-page="/Index" class="btn btn-outline-secondary">@L["ContinueShopping"]</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            <p>@L["YourCartIsEmpty"]</p>
+            <a asp-page="/Index" class="btn btn-primary">@L["StartShopping"]</a>
+        </div>
+    }
+</div>

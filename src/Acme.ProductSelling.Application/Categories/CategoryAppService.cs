@@ -9,12 +9,10 @@ using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
-
 namespace Acme.ProductSelling.Categories
 {
     public class CategoryAppService : CrudAppService<Category, CategoryDto,
         Guid, PagedAndSortedResultRequestDto, CreateUpdateCategoryDto>, ICategoryAppService
-
     {
         private readonly IRepository<Product, Guid> _productRepository;
         private readonly ICategoryRepository _categoryRepository;
@@ -30,8 +28,6 @@ namespace Acme.ProductSelling.Categories
             UpdatePolicyName = ProductSellingPermissions.Categories.Edit;
             DeletePolicyName = ProductSellingPermissions.Categories.Delete;
         }
-
-
         [AllowAnonymous] 
         public async Task<ListResultDto<CategoryLookupDto>> GetCategoryLookupAsync()
         {
@@ -40,6 +36,5 @@ namespace Acme.ProductSelling.Categories
                 ObjectMapper.Map<List<Category>, List<CategoryLookupDto>>(categories)
             );
         }
-        
     }
 }
