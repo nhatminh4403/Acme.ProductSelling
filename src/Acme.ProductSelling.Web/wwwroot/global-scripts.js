@@ -1,4 +1,4 @@
-/* Your Global Scripts */
+﻿/* Your Global Scripts */
 
 document.addEventListener('DOMContentLoaded', function () {
     const menuContainer = document.querySelector('.category-dropdown-container');
@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const mainDropdownMenu = menuContainer.querySelector('.category-hover-menu');
 
     let mainHideTimeout;
-    const HIDE_DELAY = 200; // Milliseconds
+    const HIDE_DELAY = 500; // Milliseconds
 
     // --- Main Menu Logic ---
     const showMainMenu = () => {
@@ -29,9 +29,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         isHoveringSubmenu = true;
                     }
                 });
-                 // Also check if hovering the main menu itself
+                // Also check if hovering the main menu itself
                 if (mainDropdownMenu.matches(':hover')) {
-                     isHoveringSubmenu = true;
+                    isHoveringSubmenu = true;
                 }
 
                 if (!isHoveringSubmenu) { // Only hide if not hovering a related menu
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 clearTimeout(submenuHideTimeout);
 
                 // Hide other currently open sibling submenus
-                 mainDropdownMenu.querySelectorAll('.has-submenu .submenu.show').forEach(openSubmenu => {
+                mainDropdownMenu.querySelectorAll('.has-submenu .submenu.show').forEach(openSubmenu => {
                     if (openSubmenu !== submenu) {
                         openSubmenu.classList.remove('show');
                     }
@@ -72,18 +72,18 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Function to start hiding this submenu
-             const startHideSubmenu = () => {
-                 if (submenu) {
-                     submenuHideTimeout = setTimeout(() => {
+            const startHideSubmenu = () => {
+                if (submenu) {
+                    submenuHideTimeout = setTimeout(() => {
                         // Double check: Only hide if mouse isn't back over the trigger item or the submenu itself
                         if (!item.matches(':hover') && !submenu.matches(':hover')) {
                             submenu.classList.remove('show');
                         }
-                     }, HIDE_DELAY);
-                 }
-                  // Also trigger the main menu hide check in case mouse moved completely out
-                 startHideMainMenu();
-             }
+                    }, HIDE_DELAY);
+                }
+                // Also trigger the main menu hide check in case mouse moved completely out
+                startHideMainMenu();
+            }
 
             item.addEventListener('mouseenter', showSubmenu);
             item.addEventListener('mouseleave', startHideSubmenu);
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Click listener for main button (touch fallback)
-    mainToggleButton.addEventListener('click', function(event) {
+    mainToggleButton.addEventListener('click', function (event) {
         const isShown = mainDropdownMenu.classList.contains('show');
         if (isShown) {
             mainDropdownMenu.classList.remove('show');
@@ -113,12 +113,263 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Click outside to close main menu
-    document.addEventListener('click', function(event) {
+    document.addEventListener('click', function (event) {
         if (mainDropdownMenu && !menuContainer.contains(event.target) && mainDropdownMenu.classList.contains('show')) {
-             mainDropdownMenu.classList.remove('show');
-             mainToggleButton.setAttribute('aria-expanded', 'false');
-             mainDropdownMenu.querySelectorAll('.has-submenu .submenu.show').forEach(sm => sm.classList.remove('show'));
+            mainDropdownMenu.classList.remove('show');
+            mainToggleButton.setAttribute('aria-expanded', 'false');
+            mainDropdownMenu.querySelectorAll('.has-submenu .submenu.show').forEach(sm => sm.classList.remove('show'));
         }
+    });
+});
+$(function () {
+    abp.event.on('abp.setupComplete', function () {
+        
+        document.querySelectorAll('a[href^="/Account/Logout"]').forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                
+
+                let href = link.getAttribute('href');
+
+                if (href.indexOf('returnUrl') === -1) {
+                    href += (href.indexOf('?') === -1 ? '?' : '&') + 'returnUrl=/';
+                }
+
+                setTimeout(function () {
+
+                    abp.ajax({
+                        url: href,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function () {
+                            abp.notify.success(
+                                'You are being logged out. Redirecting to home page...',
+                                'Logging Out'
+                            );
+                            window.location.href = '/';
+                        },
+                        error: function () {
+                            window.location.href = '/';
+                        }
+                    });
+                }, 1000);
+            });
+        });
+    });
+});
+$(function () {
+    var loginModalElement = document.getElementById('loginModal');
+    var loginModal = bootstrap.Modal.getOrCreateInstance(loginModalElement);
+    var loginForm = $('#loginForm');
+
+    // Check if ABP and its objects are available first
+    loginForm.on('submit', function (e) {
+        e.preventDefault();
+
+        // Validate form if jQuery validate is available
+        if ($.validator && !loginForm.valid()) {
+            return;
+        }
+
+        var loginButton = $(this).find('button[type="submit"]');
+        var originalButtonText = loginButton.html();
+        loginButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Logging in...');
+
+        var loginData = {
+            userNameOrEmailAddress: $('#loginEmail').val(),
+            password: $('#loginPassword').val(),
+            rememberMe: $('#rememberMeCheck').is(':checked')
+        };
+
+        // Check if abp proxy is available and fallback otherwise
+        if (typeof abp !== 'undefined' && abp.auth && abp.auth.login) {
+            // Use direct ABP API if available
+            abp.auth.login(loginData)
+                .then(handleLoginSuccess)
+                .catch(handleLoginError);
+        }
+        else if (typeof abp !== 'undefined' && abp.ajax) {
+            // Use ABP AJAX if available
+            setTimeout(function () {
+                abp.ajax({
+                    url: '/api/account/login',
+                    type: 'POST',
+                    data: JSON.stringify(loginData),
+                    contentType: 'application/json'
+                })
+                    .then(handleLoginSuccess)
+                    .catch(handleLoginError);
+            }, 2000);
+            
+        }
+        else {
+            // Fallback to standard AJAX
+            $.ajax({
+                url: '/api/account/login',
+                type: 'POST',
+                data: JSON.stringify(loginData),
+                contentType: 'application/json',
+                success: handleLoginSuccess,
+                error: function (xhr) {
+                    handleLoginError(xhr.responseJSON || { error: { message: 'Login failed' } });
+                }
+            });
+        }
+    });
+
+    // Handle successful login
+    function handleLoginSuccess(result) {
+        loginModal.hide();
+        if (typeof abp !== 'undefined' && abp.notify) {
+            abp.notify.success('Login successful!');
+        } else {
+            alert('Login successful!');
+        }
+
+        var returnUrl = new URLSearchParams(window.location.search).get('ReturnUrl');
+        if (returnUrl) {
+            window.location.href = decodeURIComponent(returnUrl);
+        } else {
+            window.location.reload();
+        }
+    }
+
+    // Handle login errors
+    function handleLoginError(error) {
+        var errorMessage = error?.error?.message || error?.message || 'Login failed. Please check your credentials.';
+
+        if (typeof abp !== 'undefined' && abp.notify) {
+            abp.notify.error(errorMessage);
+        } else {
+            alert('Error: ' + errorMessage);
+        }
+
+        console.error("Login error:", error);
+        loginButton.prop('disabled', false).html(originalButtonText || 'Login');
+    }
+
+    // Optional: Reset form when modal is closed
+    loginModalElement.addEventListener('hidden.bs.modal', function (event) {
+        loginForm.find('.text-danger').remove();
+        loginForm[0].reset();
+        var loginButton = loginForm.find('button[type="submit"]');
+        loginButton.prop('disabled', false).html('Login');
+    });
+});
+
+
+$(function () {
+    var registerModalElement = document.getElementById('registerModal');
+    var registerModal = bootstrap.Modal.getOrCreateInstance(registerModalElement);
+    var registerForm = $('#registerForm');
+    var loginModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('loginModal')); // Cần để mở lại login modal
+
+
+
+    registerForm.on('submit', function (e) {
+        e.preventDefault();
+
+        if (!registerForm.valid()) { // jQuery Validate
+            return;
+        }
+
+        // Kiểm tra mật khẩu khớp nhau
+        var password = $('#registerPassword').val();
+        var confirmPassword = $('#registerConfirmPassword').val();
+        if (password !== confirmPassword) {
+            abp.notify.error('Passwords do not match.');
+            // Hiển thị lỗi validation cụ thể hơn nếu muốn
+            return;
+        }
+
+        var registerButton = $(this).find('button[type="submit"]');
+        var originalButtonText = registerButton.html();
+        registerButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Registering...');
+
+
+        var registerData = {
+            appName: 'ProductSelling', // Thay bằng tên ứng dụng của bạn (quan trọng)
+            emailAddress: $('#registerEmail').val(),
+            userName: $('#registerName').val(), // ABP thường dùng email làm username, nhưng cần kiểm tra lại DTO
+            password: password,
+           
+            extraProperties: { // Nếu cần gửi thêm thông tin như Tên đầy đủ
+                
+            }
+        };
+        // Check if abp proxy is available and fallback otherwise
+        if (typeof abp !== 'undefined' && abp.auth && abp.auth.login) {
+            // Use direct ABP API if available
+            abp.auth.register(registerData)
+                .then(handleRegisterSuccess)
+                .catch(handleRegisterError);
+        }
+        else if (typeof abp !== 'undefined' && abp.ajax) {
+            // Use ABP AJAX if available
+            setTimeout(function () {
+                abp.ajax({
+                    url: '/api/account/register',
+                    type: 'POST',
+                    data: JSON.stringify(registerData),
+                    contentType: 'application/json'
+                })
+                    .then(handleRegisterSuccess)
+                    .catch(handleRegisterError);
+            }, 2000);
+
+        }
+        else {
+            // Fallback to standard AJAX
+            $.ajax({
+                url: '/api/account/register',
+                type: 'POST',
+                data: JSON.stringify(registerData),
+                contentType: 'application/json',
+                success: handleRegisterSuccess,
+                error: function (xhr) {
+                    handleLoginError(xhr.responseJSON || { error: { message: 'register failed' } });
+                }
+            });
+        }
+        function handleRegisterSuccess(result) {
+            loginModal.hide();
+            if (typeof abp !== 'undefined' && abp.notify) {
+                abp.notify.success('Login successful!');
+            } else {
+                alert('Login successful!');
+            }
+
+            var returnUrl = new URLSearchParams(window.location.search).get('ReturnUrl');
+            if (returnUrl) {
+                window.location.href = decodeURIComponent(returnUrl);
+            } else {
+                window.location.reload();
+            }
+        }
+
+        // Handle login errors
+        function handleRegisterError(error) {
+            var errorMessage = error?.error?.message || error?.message || 'Login failed. Please check your credentials.';
+
+            if (typeof abp !== 'undefined' && abp.notify) {
+                abp.notify.error(errorMessage);
+            } else {
+                alert('Error: ' + errorMessage);
+            }
+
+            console.error("Login error:", error);
+            loginButton.prop('disabled', false).html(originalButtonText || 'Login');
+        }
+
+    });
+
+    // (Optional) Xử lý khi modal bị đóng
+    registerModalElement.addEventListener('hidden.bs.modal', function (event) {
+        registerForm.find('.text-danger').remove();
+        registerForm[0].reset();
+        var registerButton = registerForm.find('button[type="submit"]');
+        registerButton.prop('disabled', false).html('Register');
     });
 });
 

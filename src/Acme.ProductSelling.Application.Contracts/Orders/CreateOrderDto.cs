@@ -14,8 +14,6 @@ namespace Acme.ProductSelling.Orders
         public string CustomerPhone { get; set; }
         [Required]
         public string ShippingAddress { get; set; }
-        [Required]
-        [MinLength(1)] 
         public List<CreateOrderItemDto> Items { get; set; } = new List<CreateOrderItemDto>();
     }
 }

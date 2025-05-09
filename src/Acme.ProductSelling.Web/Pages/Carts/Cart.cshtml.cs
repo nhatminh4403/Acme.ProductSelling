@@ -32,6 +32,7 @@ namespace Acme.ProductSelling.Web.Pages.Carts
             var cart = await _cartAppService.GetAsync();
             CartItems = cart.CartItems.ToList();
             TotalPrice = cart.TotalPrice;
+            Cart = cart;
             return Page();
         }
         public async Task<IActionResult> OnPostUpdateItemAsync(Guid cartItemId, int quantity)

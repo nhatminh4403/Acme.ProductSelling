@@ -52,11 +52,12 @@ using Volo.Abp.SettingManagement.Web;
 using Volo.Abp.Studio.Client.AspNetCore;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic.Bundling;
-
 using Volo.Abp.AspNetCore.Mvc.UI.Packages;
 using Volo.Abp.AspNetCore.Mvc.UI.Packages.Bootstrap;
 using Volo.Abp.AspNetCore.Mvc.UI.Packages.JQuery;
 using Volo.Abp.AspNetCore.Mvc.UI.Packages.DatatablesNet;
+using Acme.ProductSelling.Web.Filters;
+using Microsoft.AspNetCore.Mvc;
 namespace Acme.ProductSelling.Web;
 
 [DependsOn(
@@ -121,7 +122,7 @@ public class ProductSellingWebModule : AbpModule
     {
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
-
+        var service = context.Services;
         if (!configuration.GetValue<bool>("App:DisablePII"))
         {
             Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
@@ -140,7 +141,7 @@ public class ProductSellingWebModule : AbpModule
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;
             });
         }
-
+        
         ConfigureBundles();
         ConfigureUrls(configuration);
         ConfigureHealthChecks(context);
@@ -154,6 +155,10 @@ public class ProductSellingWebModule : AbpModule
         Configure<PermissionManagementOptions>(options =>
         {
             options.IsDynamicPermissionStoreEnabled = true;
+        });
+        Configure<MvcOptions>(options =>
+        {
+            options.Filters.AddService<AuthenticatedRedirectFilter>();
         });
     }
 
@@ -181,7 +186,7 @@ public class ProductSellingWebModule : AbpModule
                 {
                     bundle.AddContributors(typeof(JQueryScriptContributor)); // jQuery phải trước
                     bundle.AddContributors(typeof(BootstrapScriptContributor)); // Bootstrap JS
-                                                                                // Thêm các contributor script khác của ABP nếu cần
+                                                                         // Thêm các contributor script khác của ABP nếu cần
 
                     // Thêm contributor cho DataTables (Tên có thể khác)
                     bundle.AddContributors(typeof(DatatablesNetScriptContributor));

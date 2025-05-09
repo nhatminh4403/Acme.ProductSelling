@@ -11,14 +11,8 @@ namespace Acme.ProductSelling.Carts
     {
         [Required]
         public Guid ProductId { get; set; }
-
-        /// <summary>
-        /// Số lượng sản phẩm muốn thêm. Mặc định là 1.
-        /// </summary>
-        [Range(1, 100)] // Ví dụ: giới hạn số lượng thêm mỗi lần
-        public int Quantity { get; set; } = 1;
-
-        public string ProductName { get; set; }
-        public decimal ProductPrice { get; set; }
+        [Required]
+        [Range(1, int.MaxValue)]
+        public int Quantity { get; set; }
     }
 }

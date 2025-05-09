@@ -6,9 +6,11 @@
 @inject IStringLocalizer<ProductSellingResource> L
 @{
     ViewData["Title"] = Model.Product?.ProductName ?? L["ProductDetail"];
-    Layout = "/Views/Shared/_Layout.cshtml"; // Đặt layout cho trang này
+     Layout = "/Views/Shared/_Layout.cshtml"; 
 }
-
+@section scripts {
+    @* <abp-script src="/Pages/Carts/Index.js" /> *@
+}
 @if (Model.Product != null)
 {
     <div class="container mt-4">
@@ -24,7 +26,6 @@
                 }
             </div>
             <div class="col-md-6">
-                @* Thông tin chung *@
                 <h2>@Model.Product.ProductName</h2>
                 <p class="text-muted">@L["Manufacturer"]: @Model.Product.ManufacturerName</p>
                 <p class="text-muted">@L["Category"]: @Model.Product.CategoryName</p>
@@ -39,12 +40,11 @@
                     <p>@L["StockCount"]: Hết hàng</p>
                 }
 
-                <button class="btn btn-primary btn-lg add-to-cart-button" @* <<< Thêm class *@
-                        data-product-id="@Model.Product.Id" @* <<< Thêm data attribute chứa ID *@
+                <button class="btn btn-primary btn-lg add-to-cart-button" 
+                        data-product-id="@Model.Product.Id" data-product-name="@Model.Product.ProductName" data-product-price="@Model.Product.Price"
                 @(Model.Product.StockCount <= 0 ? "disabled" : "")>
-                    @* Disable nút nếu hết hàng *@
-                    <i class="fas fa-cart-plus me-2"></i> @* Thêm icon nếu muốn *@
-                    @L[Model.Product.StockCount > 0 ? "AddToCart" : "OutOfStock"] @* Thay đổi text nếu hết hàng *@
+                    <i class="fas fa-cart-plus me-2"></i> 
+                    @L[Model.Product.StockCount > 0 ? "AddToCart" : "OutOfStock"] 
                 </button>
             </div>
         </div>
@@ -135,7 +135,12 @@
                             <partial name="/Pages/Shared/ProductSpecs/_HeadsetSpecsPartial.cshtml" model="Model.Product.HeadsetSpecification" />
                         }
                         break;
-                    // Thêm các case khác nếu có (Laptop,...)
+                    case SpecificationType.Laptop:
+                        @if (Model.Product.LaptopSpecification != null)
+                        {
+                            <partial name="/Pages/Shared/ProductSpecs/_LaptopSpecsPartial.cshtml" model="Model.Product.LaptopSpecification" />
+                        }
+                        break;
                     default:
                         <p>@L["NoSpecificSpecifications"]</p>
 
@@ -144,7 +149,6 @@
                 }
             </div>
         </div>
-        @* --- Kết thúc Phần Specifications --- *@
 
     </div>
 }
@@ -152,3 +156,4 @@ else
 {
     <div class="alert alert-warning">@L["ProductNotFound"]</div>
 }
+

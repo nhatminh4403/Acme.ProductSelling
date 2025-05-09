@@ -1,0 +1,72 @@
+﻿@page "/OrderHistory"
+@model Acme.ProductSelling.Web.Pages.Orders.OrderHistoryModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Acme.ProductSelling.Localization
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<ProductSellingResource> L
+@inject Volo.Abp.Users.ICurrentUser CurrentUser
+@{
+    ViewData["Title"] = L["MyOrderHistory"];
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <h2>@L["MyOrderHistory"]</h2>
+            </abp-column>
+            <abp-column size-md="_6" class="text-end">
+                @* Optional: Add any actions like "Refresh" or "Filter" later *@
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        @if (Model.Orders != null && Model.Orders.Items.Any())
+        {
+            <abp-table striped-rows="true" id="OrderHistoryTable">
+                <thead>
+                    <tr>
+                        <th>@L["OrderNumber"]</th>
+                        <th>@L["OrderDate"]</th>
+                        <th>@L["CustomerName"]</th> <!-- Or remove if it's always the current user -->
+                        <th>@L["TotalAmount"]</th>
+                        <th>@L["Actions"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model.Orders.Items)
+                    {
+                        <tr>
+                            <td>@order.OrderNumber</td>
+                            <td>@order.OrderDate.ToShortDateString() @order.OrderDate.ToShortTimeString()</td>
+                            <td>@order.CustomerName</td>
+                            <td>@order.TotalAmount.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                            <td>
+                                <a class="btn btn-sm btn-info" href="@Url.Page("/Orders/OrderDetail", new { id = order.Id })">
+                                    @L["ViewDetails"]
+                                </a>
+                                @* Or link to your existing order confirmation/detail page if it can take an orderId/orderNumber *@
+                                @* Example: <a class="btn btn-sm btn-info" href="@Url.Page("/Checkout/OrderConfirmation", new { orderId = order.Id, orderNumber = order.OrderNumber })">@L["ViewDetails"]</a> *@
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </abp-table>
+
+            <abp-pagination-controls total-count="Model.Orders.TotalCount"
+                                     page-size="Model.PageSize"
+                                     current-page="Model.CurrentPage"
+                                     page-name="/my-orders"
+                                     sort-param-name="Sorting"
+                                     current-sort="Model.Sorting">
+            </abp-pagination-controls>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                @L["NoOrdersFound"]
+            </div>
+        }
+    </abp-card-body>
+</abp-card>

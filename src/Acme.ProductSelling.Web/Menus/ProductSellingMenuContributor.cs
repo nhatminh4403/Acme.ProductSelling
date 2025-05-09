@@ -46,7 +46,12 @@ public class ProductSellingMenuContributor : IMenuContributor
         icon: "fa-solid fa-list",
         url: "/Products"
         ));
-
+        context.Menu.AddItem(new ApplicationMenuItem(
+        "Cart",
+        l["Products"],
+        icon: "fa-solid fa-list",
+        url: "/cart"
+        ));
         var administration = context.Menu.GetAdministration();
         administration.Order = 6;
 

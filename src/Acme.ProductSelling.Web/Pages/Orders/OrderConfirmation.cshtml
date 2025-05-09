@@ -1,0 +1,90 @@
+﻿@page "{orderId:guid?}/{orderNumber?}"
+@model Acme.ProductSelling.Web.Pages.Checkout.OrderConfirmationModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Acme.ProductSelling.Localization
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<ProductSellingResource> L
+@{
+    ViewData["Title"] = L["OrderConfirmation"];
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h1 class="h3 mb-0">@L["OrderConfirmation"]</h1>
+        </div>
+        <div class="card-body">
+            <div class="text-center mb-4">
+                <i class="fa fa-check-circle fa-4x text-success mb-3"></i>
+                <h2>@L["ThankYouForYourOrder"]</h2>
+                <p class="lead">@L["YourOrderHasBeenPlaced"]</p>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5 class="mb-0">@L["OrderDetails"]</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>@L["OrderNumber"]:</strong> @Model.Order.OrderNumber</p>
+                            <p><strong>@L["OrderDate"]:</strong> @Model.Order.CreationTime.ToString("dd/MM/yyyy HH:mm")</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5 class="mb-0">@L["ShippingInformation"]</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>@L["Name"]:</strong> @Model.Order.CustomerName</p>
+                            <p><strong>@L["Phone"]:</strong> @Model.Order.CustomerPhone</p>
+                            <p><strong>@L["Address"]:</strong> @Model.Order.ShippingAddress</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0">@L["OrderItems"]</h5>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>@L["Product"]</th>
+                                <th class="text-end">@L["UnitPrice"]</th>
+                                <th class="text-center">@L["Quantity"]</th>
+                                <th class="text-end">@L["Total"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Order.OrderItems)
+                            {
+                                <tr>
+                                    <td>@item.ProductName</td>
+                                    <td class="text-end">@item.Price.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                                    <td class="text-center">@item.Quantity</td>
+                                    <td class="text-end">@item.LineTotalAmount.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <th colspan="3" class="text-end">@L["Total"]:</th>
+                                <th class="text-end">@Model.Order.TotalAmount.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a asp-page="/Index" class="btn btn-primary">@L["ContinueShopping"]</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -19,7 +19,6 @@ namespace Acme.ProductSelling.Orders
         public string CustomerPhone { get; set; }
         public string ShippingAddress { get; set; }
         public decimal TotalAmount { get; set; }
-        public string Notes { get; set; }
         public List<OrderItemDto> OrderItems { get; set; } = new List<OrderItemDto>();
     }
 }

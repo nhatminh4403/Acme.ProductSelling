@@ -1,8 +1,8 @@
 ﻿@page
 @model Acme.ProductSelling.Web.Pages.Checkout.CheckoutModel
-@using Microsoft.AspNetCore.Mvc.Localization
 @using Acme.ProductSelling.Localization
-@inject IHtmlLocalizer<ProductSellingResource> L
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<ProductSellingResource> L
 @{
     ViewData["Title"] = L["Checkout"];
     Layout = "/Views/Shared/_Layout.cshtml";
@@ -10,21 +10,19 @@
 <h1>@L["Checkout"]</h1>
 <hr />
 @section scripts {
-    <abp-script src="/Pages/Carts/Index.js" /> @* Link JS *@
-
 }
 <form method="post">
     <div class="row">
         @* Cột Thông tin giao hàng *@
         <div class="col-md-7">
             <h4>@L["ShippingInformation"]</h4>
-            <abp-validation-summary /> @* Hiển thị lỗi chung *@
-            <abp-alert-list /> @* Hiển thị Alerts từ code-behind *@
+            <abp-validation-summary />
+            <abp-alert-list />
 
             <abp-input asp-for="OrderInput.CustomerName" />
             <abp-input asp-for="OrderInput.CustomerPhone" />
             <abp-input asp-for="OrderInput.ShippingAddress" type="textarea" rows="3" />
-
+            
         </div>
 
         @* Cột Tóm tắt đơn hàng *@

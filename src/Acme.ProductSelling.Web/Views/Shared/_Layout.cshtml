@@ -9,7 +9,8 @@
 @using Microsoft.Extensions.Localization
 @using Microsoft.AspNetCore.Authorization
 @using Acme.ProductSelling.Permissions
-
+@using Volo.Abp.Users
+@inject ICurrentUser CurrentUser
 @inject IStringLocalizer<ProductSellingResource> L
 @inject IAuthorizationService AuthorizationService
 @{
@@ -35,7 +36,7 @@
 
     </style>
 </head>
-<body class="abp-application-layout bg-light">
+<body class="abp-application-layout bg-light d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
         <div class="container">
             <a class="navbar-brand" href="/" aria-label="Home"><i class="bi bi-house-door-fill fs-4"></i></a>
@@ -61,53 +62,63 @@
                     </ul>
                 }
 
-                <form class="d-flex my-2 my-lg-0 flex-grow-1 mx-lg-3" role="search">
+                <form class="d-flex my-2 my-lg-0 flex-grow-1 mx-lg-2" role="search">
                     <input class="form-control me-2 border-1 border-black"
                            type="search" placeholder="Search..." aria-label="Search"><button class="btn btn-outline-success" type="submit">
                         Search
                     </button>
                 </form>
-                <div class="d-flex align-items-center ms-lg-auto">
-                    <a href="/track"
-                       class="btn btn-outline-primary me-2 d-flex align-items-center flex-shrink-0">
-                        <i class="bi bi-truck me-1"></i><span class="d-none d-lg-inline">Track</span>
-                    </a><a href="/cart" class="btn btn-outline-dark me-2 position-relative flex-shrink-0"
+                @if (CurrentUser.IsAuthenticated)
+                {
+
+                    <div class="d-flex align-items-center ms-lg-auto">
+
+                        <div class="dropdown me-2">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle me-1"></i>
+                                @CurrentUser.UserName
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" asp-page="/Account/Manage/Index">@L["ManageYourProfile"]</a></li>
+                                <li><a class="dropdown-item" asp-page="/Orders/OrderHistory">@L["MyOrders"]</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+
+
+                                    <a class="dropdown-item" href="/Account/Logout?returnUrl=/" id="logoutButton">
+                                        <i class="bi bi-box-arrow-right me-2"></i>@L["Logout"]
+                                    </a>
+
+
+
+                                </li>
+                            </ul>
+                        </div>
+                        <a href="/cart" id="shopping-cart-widget" class="btn btn-outline-dark me-2 position-relative flex-shrink-0"
                            aria-label="Cart">
-                        <i class="bi bi-cart3 fs-5"></i><span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
-                    </a><button type="button" class="btn btn-success d-flex align-items-center flex-shrink-0 me-2"
-                                data-bs-toggle="modal" data-bs-target="#loginModal">
-                        <i class="bi bi-person-fill me-1"></i>
-                        Login
-                    </button>
-
-                    <div class="lpx-language-selection dropdown btn-language" data-lpx-language-selection="something">
-                        <div class="dropdown-toggle" role="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="lpx-icon bi bi-globe"></i>
-                            <span>EN</span>
-                        </div>
-                        <div class="dropdown-menu" aria-labelledby="languageDropdown">
-                            <a href="/Abp/Languages/Switch?culture=ar&amp;uiCulture=ar&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="AR">العربية / AR</a>
-                            <a href="/Abp/Languages/Switch?culture=cs&amp;uiCulture=cs&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="CS">Čeština / CS</a>
-                            <a href="/Abp/Languages/Switch?culture=en&amp;uiCulture=en&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="EN">English / EN</a>
-                            <a href="/Abp/Languages/Switch?culture=en-GB&amp;uiCulture=en-GB&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="EN">English (UK) / EN</a>
-                            <a href="/Abp/Languages/Switch?culture=hu&amp;uiCulture=hu&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="HU">Magyar / HU</a>
-                            <a href="/Abp/Languages/Switch?culture=fi&amp;uiCulture=fi&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="FI">Finnish / FI</a>
-                            <a href="/Abp/Languages/Switch?culture=fr&amp;uiCulture=fr&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="FR">Français / FR</a>
-                            <a href="/Abp/Languages/Switch?culture=hi&amp;uiCulture=hi&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="HI">Hindi / HI</a>
-                            <a href="/Abp/Languages/Switch?culture=it&amp;uiCulture=it&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="IT">Italiano / IT</a>
-                            <a href="/Abp/Languages/Switch?culture=pt-BR&amp;uiCulture=pt-BR&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="PT">Português / PT</a>
-                            <a href="/Abp/Languages/Switch?culture=ru&amp;uiCulture=ru&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="RU">Русский / RU</a>
-                            <a href="/Abp/Languages/Switch?culture=sk&amp;uiCulture=sk&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="SK">Slovak / SK</a>
-                            <a href="/Abp/Languages/Switch?culture=tr&amp;uiCulture=tr&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="TR">Türkçe / TR</a>
-                            <a href="/Abp/Languages/Switch?culture=zh-Hans&amp;uiCulture=zh-Hans&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="ZH">简体中文 / ZH</a>
-                            <a href="/Abp/Languages/Switch?culture=zh-Hant&amp;uiCulture=zh-Hant&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="ZH">繁體中文 / ZH</a>
-                            <a href="/Abp/Languages/Switch?culture=de-DE&amp;uiCulture=de-DE&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="DE">Deutsch / DE</a>
-                            <a href="/Abp/Languages/Switch?culture=es&amp;uiCulture=es&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="ES">Español / ES</a>
-                            <a href="/Abp/Languages/Switch?culture=sv&amp;uiCulture=sv&amp;returnUrl=%2F" class="dropdown-item" data-lpx-language-option="SV">Svenska / SV</a>
-                        </div>
+                            <i class="bi bi-cart3 fs-5"></i>
+                            <span class="cart-item-count position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">0</span>
+                        </a>
+                        @{
+                            await Html.RenderPartialAsync("_LanguageDropdownPartial");
+                        }
                     </div>
+                }
+                else
+                {
+                    <div class="d-flex align-items-center ms-lg-auto">
+                        <button type="button" class="btn btn-success d-flex align-items-center flex-shrink-0 me-2"
+                                data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i class="bi bi-person-fill me-1"></i>
+                            Login
+                        </button>
 
-                </div>
+                        @{
+                            await Html.RenderPartialAsync("_LanguageDropdownPartial");
+                        }
+                    </div>
+                }
+
 
 
             </div>
@@ -123,7 +134,7 @@
     </div>
 
 
-    <footer class="bg-white text-dark">
+    <footer class="bg-white text-dark mt-auto">
         <div class="container" style="padding-top:10px">
             <!-- Upper section -->
             <div class="row justify-content-center" style="margin-top:10px">
@@ -197,11 +208,11 @@
             <div class="row align-items-center">
                 <div class="col-md-6 mb-3 mb-md-0 text-decoration-none">
                     <span class="fw-bold me-3">KẾT NỐI VỚI CHÚNG TÔI</span>
-                    <a href="#" class="me-2 ">
+                    <a href="#" class="me-2 text-decoration-none">
                         <img src="https://file.hstatic.net/200000636033/file/facebook_1_0e31d70174824ea184c759534430deec.png"
                              alt="FB" width="30">
                     </a>
-                    <a href="#" class="me-2">
+                    <a href="#" class="me-2 text-decoration-none">
                         <img src="https://file.hstatic.net/200000722513/file/tiktok-logo_fe1e020f470a4d679064cec31bc676e4.png"
                              alt="TikTok" width="30">
                     </a>
@@ -211,7 +222,7 @@
                     </a>
 
                 </div>
-                <div class="col-md-6 text-md-end">
+                <div class="col-md-6 text-md-end text-decoration-none">
                     <img src="https://theme.hstatic.net/200000722513/1001090675/14/logo-bct.png?v=8602"
                          alt="Đã thông báo Bộ Công Thương" width="150">
                 </div>
@@ -228,7 +239,7 @@
                 <div class="modal-body">
                     <form id="loginForm">
                         <div class="mb-3">
-                            <label for="loginEmail" class="form-label">Email</label><input type="email"
+                            <label for="loginEmail" class="form-label">Email</label><input type="text"
                                                                                            class="form-control" id="loginEmail" required>
                         </div>
                         <div class="mb-3">
@@ -240,8 +251,9 @@
                                                                for="rememberMeCheck">Remember</label>
                         </div>
                         <p class="text-center small">
-                            <a href="#">Forgot password?</a> | <a data-bs-toggle="modal"
-                                                                  data-bs-target="#registerModal" data-bs-dismiss="modal">Create Account</a>
+                            <a href="#">Forgot password?</a> |
+                            <a data-bs-toggle="modal"
+                               data-bs-target="#registerModal" data-bs-dismiss="modal">Create Account</a>
                         </p>
                     </form>
                 </div>
@@ -261,27 +273,31 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="registerModalLabel">Register</h5><button type="button" class="btn-close"
-                                                                                         data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="registerModalLabel">Register</h5>
+                    <button type="button" class="btn-close"
+                            data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="registerForm">
                         <div class="mb-3">
-                            <label for="registerName" class="form-label">Full Name</label><input type="text" class="form-control" id="registerName" required>
+                            <label for="registerName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="registerName" required>
                         </div>
                         <div class="mb-3">
-                            <label for="registerEmail" class="form-label">Email</label><input type="email"
-                                                                                              class="form-control" id="registerEmail" required>
+                            <label for="registerEmail" class="form-label">Email</label>
+                            <input type="email"
+                                   class="form-control" id="registerEmail" required>
                         </div>
                         <div class="mb-3">
-                            <label for="registerPassword" class="form-label">Password</label><input type="password" class="form-control" id="registerPassword" required>
+                            <label for="registerPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="registerPassword" required>
                         </div>
                         <div class="mb-3">
                             <label for="registerConfirmPassword" class="form-label">
                                 Confirm
                                 Password
-                            </label><input type="password" class="form-control" id="registerConfirmPassword"
-                                           required>
+                            </label>
+                            <input type="password" class="form-control" id="registerConfirmPassword" required>
                         </div>
                         <p class="text-center small">
                             Already have an account? <a data-bs-toggle="modal"
@@ -302,13 +318,13 @@
         </div>
     </div>
 
-
     <abp-script-bundle name="@LeptonXLiteThemeBundles.Scripts.Global" />
+
     <script src="~/Abp/ServiceProxyScript" asp-append-version="true"></script>
-    @* <script src="~/Abp/ApplicationLocalizationScript?cultureName=@CultureInfo.CurrentUICulture.Name"></script> *@
+    <script src="~/Abp/ApplicationLocalizationScript?cultureName=@CultureInfo.CurrentUICulture.Name"></script>
 
     @await RenderSectionAsync("scripts", required: false)
-    <script src="~/Abp/ApplicationLocalizationScript?cultureName=@CultureInfo.CurrentUICulture.Name"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
 
 </body>
 </html>

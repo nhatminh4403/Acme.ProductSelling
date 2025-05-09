@@ -1,8 +1,9 @@
-﻿@page
+﻿@page "/cart"
 @model Acme.ProductSelling.Web.Pages.Carts.CartModel
-@using Microsoft.AspNetCore.Mvc.Localization
 @using Acme.ProductSelling.Localization
-@inject IHtmlLocalizer<ProductSellingResource> L
+@using Microsoft.Extensions.Localization
+@using Acme.ProductSelling.Categories
+@inject IStringLocalizer<ProductSellingResource> L
 
 
 @{
@@ -10,7 +11,6 @@
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 @section scripts {
-    <abp-script src="/Pages/Carts/Index.js" /> @* Link JS *@
 
 }
 <div class="container mt-4 mb-5">
@@ -25,7 +25,6 @@
             <table class="table align-middle">
                 <thead>
                     <tr>
-                        <th scope="Column" style="width: 10%;">@L["Image"]</th>
                         <th scope="Column" style="width: 35%;">@L["Product"]</th>
                         <th scope="Column" style="width: 15%;" class="text-end">@L["Price"]</th>
                         <th scope="Column" style="width: 15%;" class="text-center">@L["Quantity"]</th>
@@ -93,7 +92,7 @@
                             </li>
                         </ul>
                         <div class="d-grid gap-2 mt-3">
-                            <a asp-page="/Checkout" class="btn btn-primary btn-lg">@L["ProceedToCheckout"]</a>
+                            <a asp-page="/Orders/Checkout" class="btn btn-primary btn-lg">@L["ProceedToCheckout"]</a>
                             <a asp-page="/Index" class="btn btn-outline-secondary">@L["ContinueShopping"]</a>
                         </div>
                     </div>

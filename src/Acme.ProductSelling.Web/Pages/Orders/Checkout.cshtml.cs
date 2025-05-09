@@ -17,7 +17,7 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
     {
         [BindProperty]
         public CreateOrderDto OrderInput { get; set; } // DTO đơn giản
-
+        [BindProperty]
         public CartDto CurrentCart { get; set; }
         private readonly ICartAppService _cartAppService;
 
@@ -35,16 +35,13 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
             CurrentCart = await _cartAppService.GetAsync(); // Lấy giỏ hàng hiện tại
             if (!CurrentCart.CartItems.Any())
             {
-                // Không có gì để checkout, quay về trang giỏ hàng hoặc trang chủ
-                return RedirectToPage("/Cart");
+                return RedirectToPage("/" + "Cart".ToLower());
             }
 
-            // Điền sẵn thông tin nếu có thể
             if (CurrentUser.IsAuthenticated)
             {
                 OrderInput.CustomerName = CurrentUser.Name ?? CurrentUser.UserName;
                 OrderInput.CustomerPhone = CurrentUser.PhoneNumber;
-                // Lấy địa chỉ mặc định nếu có...
             }
             return Page();
         }
@@ -54,36 +51,50 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
             CurrentCart = await _cartAppService.GetAsync();
             if (!CurrentCart.CartItems.Any())
             {
-                // Ai đó đã xóa giỏ hàng trong lúc người dùng ở trang checkout?
                 Alerts.Warning(L["ShoppingCartIsEmptyCannotPlaceOrder"]);
                 return RedirectToPage("/Cart");
             }
+            OrderInput.Items = CurrentCart.CartItems.Select(
+                                cartItem => new CreateOrderItemDto
+                                {
+                                    ProductId = cartItem.ProductId,
+                                    Quantity = cartItem.Quantity
+                                })
+                                .ToList();
             if (!ModelState.IsValid)
             {
-                // CurrentCart = await _cartService.GetAsync(); // Lấy lại giỏ hàng để hiển thị lại form
-                return Page(); // Hiển thị lại form với lỗi validation
+                foreach (var modelStateKey in ModelState.Keys)
+                {
+                    var modelStateVal = ModelState[modelStateKey];
+                    foreach (var error in modelStateVal.Errors)
+                    {
+                        Console.WriteLine($"Key: {modelStateKey}, Error: {error.ErrorMessage}");
+                    }
+                }
+                CurrentCart = await _cartAppService.GetAsync();
+                return Page();
             }
-
             try
             {
+
                 var createdOrder = await _orderAppService.CreateAsync(OrderInput);
 
-                // *** XÓA GIỎ HÀNG SAU KHI ĐẶT HÀNG THÀNH CÔNG ***
                 await _cartAppService.ClearAsync();
 
                 // Chuyển hướng đến trang xác nhận
-                return RedirectToPage("/OrderConfirmation",
+                return RedirectToPage("/Orders/OrderConfirmation",
                     new { orderId = createdOrder.Id, orderNumber = createdOrder.OrderNumber });
             }
             catch (UserFriendlyException ex)
             {
-                Alerts.Warning(ex.Message); // Hiển thị lỗi (vd: hết hàng)
-                return Page(); // Hiển thị lại form checkout
+                Alerts.Warning(ex.Message); 
+                return Page(); 
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Error creating order.");
                 Alerts.Danger("An error occurred while placing your order.");
+                Console.WriteLine("Error", ex.Message);
                 return Page();
             }
         }

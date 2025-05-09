@@ -89,9 +89,17 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
         CreateMap<CreateUpdateMouseSpecificationDto, MouseSpecification>();
         CreateMap<LaptopSpecification, LaptopSpecificationDto>();
         CreateMap<CreateUpdateLaptopSpecificationDto, LaptopSpecification>();
-        CreateMap<Order, OrderDto>();
-        CreateMap<OrderItem, OrderItemDto>();
 
+        CreateMap<Order, OrderDto>();
+        CreateMap<CreateOrderDto, Order>()
+            .ForMember(dest => dest.OrderItems, opt => opt.Ignore()) 
+            .ForMember(dest => dest.TotalAmount, opt => opt.Ignore()); 
+        CreateMap<CreateOrderItemDto, OrderItem>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.OrderId, opt => opt.Ignore())
+            .ForMember(dest => dest.LineTotalAmount, opt => opt.Ignore());
+        CreateMap<OrderItem, OrderItemDto>()
+               .ForMember(dest => dest.LineTotalAmount, opt => opt.MapFrom(src => src.LineTotalAmount));
         CreateMap<Cart, CartDto>()
             .ForMember(dest => dest.CartItems, opt => opt.MapFrom(src => src.Items)); // Map collection Items
         CreateMap<CartItem, CartItemDto>();

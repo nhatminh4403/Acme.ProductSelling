@@ -1,95 +1,134 @@
-﻿// Đặt trong $(function () { ... }); để đảm bảo DOM sẵn sàng
+﻿$(function () {
+    var cartService = acme.productSelling.carts.cart;
+    var localizationResource = abp.localization.getResource('ProductSelling');
 
-// Khai báo service proxy (thay bằng đường dẫn đúng của bạn)
-// Kiểm tra trong Console (F12) của trình duyệt nếu không chắc
-var cartService = acme.productSelling.carts.cart; // Ví dụ
-var localizationResource = abp.localization.getResource('ProductSelling'); // Tên resource của bạn
+    $('body').on('click', '.add-to-cart-button', function (e) {
+        e.preventDefault();
+        var $button = $(this); // Lưu trữ đối tượng jQuery của nút
+        console.log("abp.currentUser.isAuthenticated: " + abp.currentUser.isAuthenticated)
+        if (!abp.currentUser.isAuthenticated) {
+            var returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+            window.location.href = abp.appPath + 'Account/Login?ReturnUrl=' + returnUrl;
+            return;
 
-// --- Xử lý nút Add To Cart ---
-// Sử dụng event delegation cho các nút có thể được thêm động
-$('body').on('click', '.add-to-cart-button', function (e) {
-    e.preventDefault();
-    var $button = $(this); // Lưu trữ đối tượng jQuery của nút
+        }
 
-    // 1. KIỂM TRA ĐĂNG NHẬP
-    if (!abp.currentUser.isAuthenticated) {
-        // Lấy URL hiện tại để quay lại sau khi đăng nhập
-        var returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
-        // Thay '/Account/Login' bằng URL trang đăng nhập thực tế của bạn
-        window.location.href = abp.appPath + 'Account/Login?ReturnUrl=' + returnUrl;
-        return; // Dừng thực thi nếu chưa đăng nhập
-    }
+        var productId = $button.data('product-id');
 
-    // 2. Lấy thông tin sản phẩm
-    var productId = $button.data('product-id');
-    // Ví dụ lấy số lượng từ input có id="quantity-for-PRODUCT_ID"
-    var quantityInputId = '#quantity-for-' + productId;
-    var quantity = parseInt($(quantityInputId).val() || '1'); // Mặc định là 1
+        var quantityInputId = '#quantity-for-' + productId;
+        var $quantityInput = $(quantityInputId);
 
-    if (!productId || quantity <= 0) {
-        abp.notify.warn(localizationResource('InvalidProductOrQuantity'));
-        return;
-    }
+        if ($quantityInput.length === 0) {
+            $quantityInput = $button.closest('.product-item, .product-detail').find('input[type="number"]');
+        }
 
-    // 3. Xử lý trạng thái nút (Loading)
-    $button.prop('disabled', true).addClass('disabled');
-    var originalButtonHtml = $button.html(); // Lưu lại nội dung gốc của nút
-    $button.html('<i class="fas fa-spinner fa-spin me-1"></i>' + localizationResource('AddingToCart')); // Hiển thị loading
+        var quantity = 1;
+        if ($quantityInput.length > 0) {
+            quantity = parseInt($quantityInput.val() || '1');
+        }
 
-    // 4. Gọi API Service
-    cartService.addItem({ // Tạo đối tượng AddToCartInput
-        productId: productId,
-        quantity: quantity
-    })
-        .then(function () {
-            abp.notify.success(localizationResource('ItemAddedToCart'));
-            // 5. Cập nhật số lượng trên widget giỏ hàng
-            updateCartWidgetCount(); // Gọi hàm cập nhật widget
-        })
-        .catch(function (error) {
-            // Hiển thị lỗi trả về từ server hoặc lỗi chung
-            abp.notify.error(error.message || localizationResource('CouldNotAddItemToCart'));
-            console.error("Add to cart error:", error); // Ghi log lỗi chi tiết
-        })
-        .finally(function () {
-            // 6. Khôi phục trạng thái nút
-            $button.prop('disabled', false).removeClass('disabled').html(originalButtonHtml);
-        });
-});
+        if (!productId || quantity <= 0) {
+            abp.notify.warn(localizationResource('InvalidProductOrQuantity') || 'Invalid product or quantity');
+            return;
+        }
 
-// --- Hàm cập nhật số lượng trên Widget giỏ hàng ---
-function updateCartWidgetCount() {
-    var $widget = $('#shopping-cart-widget'); // ID của widget trong Layout
-    var $countElement = $widget.find('.cart-item-count'); // Selector của phần tử hiển thị số lượng
+        $button.prop('disabled', true).addClass('disabled');
+        var originalButtonHtml = $button.html();
+        $button.html('<i class="fas fa-spinner fa-spin me-1"></i>' + (localizationResource('AddingToCart') || 'Adding...'));
 
-    if ($widget.length === 0 || $countElement.length === 0) {
-        return; // Không tìm thấy widget hoặc phần tử đếm
-    }
+        // Log để debug
 
-    // Chỉ gọi API nếu đã đăng nhập
-    if (abp.currentUser.isAuthenticated) {
-        cartService.getItemCount()
-            .then(function (count) {
-                $countElement.text(count); // Cập nhật số
-                // Hiển thị/ẩn badge dựa trên số lượng
-                if (count > 0) {
-                    $countElement.removeClass('d-none'); // Hoặc logic tương tự để hiển thị badge
-                } else {
-                    $countElement.addClass('d-none'); // Ẩn badge nếu không có item
+
+        try {
+            if (typeof cartService.addItem !== 'function') {
+                console.error("cartService.addItem is not a function", cartService);
+                abp.notify.error("Cart service not available");
+                $button.prop('disabled', false).removeClass('disabled');
+                $button.html(originalButtonHtml);
+                return;
+            }
+
+            cartService.addItem({
+                productId: productId,
+                quantity: quantity
+            }, {
+                success: function () {
+                    abp.notify.success(localizationResource('ItemAddedToCart') || 'Item added to cart');
+                    updateCartWidgetCount();
+                },
+                error: function (error) {
+                    abp.notify.error(error.message || localizationResource('CouldNotAddItemToCart') || 'Could not add item to cart');
+                    console.error("Add to cart error:", error);
+                },
+                complete: function () {
+                    $button.prop('disabled', false).removeClass('disabled');
+                    $button.html(originalButtonHtml);
                 }
-            })
-            .catch(function (error) {
-                console.error("Error updating cart widget count:", error);
-                // Có thể ẩn badge nếu lỗi
-                $countElement.addClass('d-none');
             });
-    } else {
-        // Nếu chưa đăng nhập, hiển thị 0 và ẩn badge
-        $countElement.text('0').addClass('d-none');
+        } catch (error) {
+            console.error("Exception in add to cart:", error);
+            abp.notify.error("Error adding item to cart");
+            $button.prop('disabled', false).removeClass('disabled');
+            $button.html(originalButtonHtml);
+        }
+    });
+
+
+    function updateCartWidgetCount() {
+        var $cartButton = $('a[href="/cart"]');
+        var $countElement = $cartButton.find('.badge');
+
+        if ($cartButton.length === 0) {
+            console.warn("Cart button element not found");
+            return;
+        }
+        if ($countElement.length === 0) {
+            console.warn("Cart count badge element not found");
+            // Create a badge element if it doesn't exist
+            $countElement = $('<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>');
+            $cartButton.append($countElement);
+        }
+
+
+        // Chỉ gọi API nếu đã đăng nhập
+        if (abp.currentUser.isAuthenticated) {
+            try {
+                // Kiểm tra xem có phương thức getItemCount không
+                if (typeof cartService.getItemCount !== 'function') {
+                    console.error("cartService.getItemCount is not a function", cartService);
+                    return;
+                }
+
+                cartService.getItemCount({
+                    success: function (count) {
+                        console.log("Cart count updated:", count);
+                        $countElement.text(count);
+                        if (count > 0) {
+                            $countElement.removeClass('d-none');
+                        } else {
+                            $countElement.addClass('d-none');
+                        }
+                    },
+                    error: function (error) {
+                        console.error("Error updating cart widget count:", error);
+                        $countElement.addClass('d-none');
+                    }
+                });
+            } catch (error) {
+                console.error("Exception in update cart count:", error);
+            }
+        } else {
+            $countElement.text('0').addClass('d-none');
+        }
     }
-}
 
-// Gọi hàm cập nhật widget lần đầu khi trang tải
-updateCartWidgetCount();
-
-}); // Kết thúc $(function () { ... });
+    // Gọi hàm cập nhật widget lần đầu khi trang tải
+    try {
+        if (abp.currentUser.isAuthenticated) {
+            console.log("Initializing cart widget...");
+            updateCartWidgetCount();
+        }
+    } catch (error) {
+        console.error("Error initializing cart widget:", error);
+    }
+});

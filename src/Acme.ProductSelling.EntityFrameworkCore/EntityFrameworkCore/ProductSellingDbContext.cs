@@ -82,9 +82,8 @@ public class ProductSellingDbContext :
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
 
-
-    DbSet<Cart> Carts { get; set; }
-    DbSet<CartItem> CartItems { get; set; }
+    public DbSet<Cart> Carts { get; set; }
+    public DbSet<CartItem> CartItems { get; set; }
     #endregion
 
     public ProductSellingDbContext(DbContextOptions<ProductSellingDbContext> options)
