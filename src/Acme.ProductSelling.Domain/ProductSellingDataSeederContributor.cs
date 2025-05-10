@@ -50,7 +50,7 @@ namespace Acme.ProductSelling
             IRepository<HeadsetSpecification, Guid> headsetSpecRepository,
             IRepository<LaptopSpecification, Guid> laptopSpecRepository,
             IGuidGenerator guidGenerator,
-            IRepository<Manufacturer,Guid> manufacturerRepository)
+            IRepository<Manufacturer, Guid> manufacturerRepository)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
@@ -109,7 +109,7 @@ namespace Acme.ProductSelling
             var headsets = await _categoryRepository.InsertAsync(
                                                         await _categoryManager.CreateAsync("Headsets", "Audio Devices", SpecificationType.Headset));
 
-
+            #region Manufacturers
             List<Manufacturer> Manufacturers = new List<Manufacturer>();
 
             var asus = new Manufacturer
@@ -298,8 +298,16 @@ namespace Acme.ProductSelling
                 ManufacturerImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_4lSY7-yoIe1SVWV0Fpb6AfwjGeex8Egrkw&s"
             };
             Manufacturers.Add(noctua);
+            var asrock = new Manufacturer
+            {
+                ContactInfo = "https://www.asrock.com/",
+                Name = "ASRock",
+                Description = "ASRock Inc. is a Taiwanese manufacturer of motherboards, graphics cards, and other computer hardware. It is known for its innovative products and focuses on providing quality and performance.",
+                ManufacturerImage = "https://1000logos.net/wp-content/uploads/2021/05/ASRock-logo.png"
+            };
+            Manufacturers.Add(asrock);
             await _manufacturerRepository.InsertManyAsync(Manufacturers, autoSave: true);
-
+            #endregion
             #region products and specs
             var cpuSpec1 = new CpuSpecification
             {
@@ -943,8 +951,108 @@ namespace Acme.ProductSelling
 
             await _productRepository.InsertAsync(productLaptop2, autoSave: true);
 
-            // --- Seed Products ---
-            // Chỉ seed nếu chưa có Product nào trong DB
+            var motherboardSpec1 = new MotherboardSpecification
+            {
+                Socket = "LGA1700",
+                Chipset = "Intel® Z790 Express",
+                FormFactor = "E-ATX",
+                RamSlots = 4,
+                MaxRam = 192, // hỗ trợ RAM DDR5 tối đa 192GB (với 48GB x 4 DIMM)
+                SupportedRamType = "DDR5",
+                M2Slots = 5, // 1 x PCIe 5.0 + 4 x PCIe 4.0
+                SataPorts = 6,
+                HasWifi = true
+            };
+            await _motherboardSpecRepository.InsertAsync(motherboardSpec1, autoSave: true);
+            var motherboardProduct1 = new Product
+            {
+                CategoryId = motherboards.Id,
+                MotherboardSpecificationId = motherboardSpec1.Id,
+                ProductName = "GIGABYTE Z790 AORUS XTREME X ICE",
+                Description = "GIGABYTE Z790 AORUS XTREME X ICE is a premium E-ATX motherboard designed for Intel 12th/13th/14th Gen processors, featuring LGA1700 socket, DDR5 memory support, advanced thermal design, Wi-Fi 6E, and multiple M.2 slots — perfect for high-performance and overclocking builds.",
+                Price = 8000000,
+                StockCount = 20,
+                ManufacturerId = gigabyte.Id,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/z790_aorus_xtreme_x_ice-01_5a397436688c4f2e9dc0e358ebf25927_grande.png"
+            };
+            await _productRepository.InsertAsync(motherboardProduct1, autoSave: true);
+
+            var msiMegZ890 = new MotherboardSpecification
+            {
+                Socket = "LGA1851", // giả định cho thế hệ CPU mới hơn
+                Chipset = "Intel Z890",
+                FormFactor = "E-ATX",
+                RamSlots = 4,
+                MaxRam = 192, // nếu dùng DDR5 48GB x 4
+                SupportedRamType = "DDR5",
+                M2Slots = 6, // thường dòng GODLIKE hỗ trợ nhiều khe M.2
+                SataPorts = 6,
+                HasWifi = true // dòng GODLIKE luôn có Wi-Fi cao cấp, giả định là Wi-Fi 7
+            };
+            await _motherboardSpecRepository.InsertAsync(msiMegZ890, autoSave: true);
+            var motherboardProduct2 = new Product
+            {
+                CategoryId = motherboards.Id,
+                MotherboardSpecificationId = msiMegZ890.Id,
+                ProductName = "MSI MEG Z890 GODLIKE",
+                Description = "MSI MEG Z890 GODLIKE is a high-end E-ATX motherboard designed for Intel 12th/13th/14th Gen processors, featuring LGA1851 socket, DDR5 memory support, advanced thermal design, Wi-Fi 7, and multiple M.2 slots — perfect for extreme performance and overclocking builds.",
+                Price = 12000000,
+                StockCount = 15,
+                ManufacturerId = msi.Id,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/msi-meg_z890_godlike_3d2_rgb_b691f05efbcf45e58c54ab731ea28136_grande.png"
+
+            };
+            await _productRepository.InsertAsync(motherboardProduct2, autoSave: true);
+            var asusX670EHero = new MotherboardSpecification
+            {
+                Socket = "AM5",
+                Chipset = "AMD X670E",
+                FormFactor = "ATX",
+                RamSlots = 4,
+                MaxRam = 192, // hỗ trợ DDR5 tối đa 192GB (48GB x4)
+                SupportedRamType = "DDR5",
+                M2Slots = 5, // 1 x PCIe 5.0 + 4 x PCIe 4.0
+                SataPorts = 6,
+                HasWifi = true // Wi-Fi 6E tích hợp
+            };
+            await _motherboardSpecRepository.InsertAsync(asusX670EHero, autoSave: true);
+            var motherboardProduct3 = new Product
+            {
+                CategoryId = motherboards.Id,
+                MotherboardSpecificationId = asusX670EHero.Id,
+                ProductName = "ASUS ROG Crosshair X670E Hero",
+                Description = "ASUS ROG Crosshair X670E Hero is a high-end ATX motherboard designed for AMD Ryzen 7000 series processors, featuring AM5 socket, DDR5 memory support, advanced thermal design, Wi-Fi 6E, and multiple M.2 slots — perfect for high-performance and overclocking builds.",
+                Price = 8000000,
+                StockCount = 20,
+                ManufacturerId = asus.Id,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/rog-crosshair-x870e-hero-01_5ab538b8eb38470a83ff1a122393bd26_grande.jpg"
+            };
+            await _productRepository.InsertAsync(motherboardProduct3, autoSave: true);
+            var asrockX670ETaichi = new MotherboardSpecification
+            {
+                Socket = "AM5",
+                Chipset = "AMD X670E",
+                FormFactor = "ATX",
+                RamSlots = 4,
+                MaxRam = 192, // hỗ trợ DDR5
+                SupportedRamType = "DDR5",
+                M2Slots = 5, // trong đó có hỗ trợ PCIe 5.0
+                SataPorts = 8,
+                HasWifi = true // Wi-Fi 6E tích hợp
+            };
+            await _motherboardSpecRepository.InsertAsync(asrockX670ETaichi, autoSave: true);
+            var motherboardProduct4 = new Product
+            {
+                CategoryId = motherboards.Id,
+                MotherboardSpecificationId = asrockX670ETaichi.Id,
+                ProductName = "ASRock X670E Taichi",
+                Description = "ASRock X670E Taichi is a high-end ATX motherboard designed for AMD Ryzen 7000 series processors, featuring AM5 socket, DDR5 memory support, advanced thermal design, Wi-Fi 6E, and multiple M.2 slots — perfect for high-performance and overclocking builds.",
+                Price = 9000000,
+                StockCount = 15,
+                ManufacturerId = asrock.Id,
+                ImageUrl = "https://www.asrock.com/mb/photo/X670E%20Taichi(M1).png"
+            };
+            await _productRepository.InsertAsync(motherboardProduct4, autoSave: true);
             if (await _productRepository.GetCountAsync() > 0)
             {
                 return;

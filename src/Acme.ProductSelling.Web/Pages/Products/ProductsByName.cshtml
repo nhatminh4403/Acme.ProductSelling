@@ -1,18 +1,16 @@
-﻿@page "/products/category/{CategoryId:Guid}"
-@model Acme.ProductSelling.Web.Pages.Products.ProductsByCategoryModel
+﻿@page "/products/search/{Name?}"
+@model Acme.ProductSelling.Web.Pages.Products.ProductsByNameModel
+
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
 @inject IStringLocalizer<ProductSellingResource> L
-
 @{
-    Layout = "/Views/Shared/_Layout.cshtml"; // Đặt layout cho trang này
-    ViewData["Title"] = L["AllProductsByCategory"];
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = L["AllProductsByName"];
 }
 
 <div class="container mt-4">
-    @* Hiển thị tên Category *@
-    <h1 class="mb-4">@L["ProductsInCategory"]: @Model.CategoryName</h1>
-
+    <h1 class="mb-4">@L["ProductsByName"]: @Model.Name</h1>
     @if (Model.ProductList != null && Model.ProductList.Items.Any())
     {
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
@@ -29,7 +27,9 @@
                         }
                         else
                         {
-                            <div class="text-center p-5 border rounded bg-light"> <i class="fas fa-image fa-5x text-secondary"></i> </div>
+                            <div class="text-center p-5 border rounded bg-light">
+                                <i class="fas fa-image fa-5x text-secondary"></i>
+                            </div>
                         }
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">
@@ -49,7 +49,7 @@
         @* Component phân trang *@
         <div class="mt-4">
             <abp-pagination-controls total-count="@Model.ProductList.TotalCount"
-                                     page-size="@Model.PageSize" 
+                                     page-size="@Model.PageSize"
                                      current-page="@Model.CurrentPage"
                                      page-query-name="CurrentPage">
                 @* Tên query param cho số trang *@
@@ -58,6 +58,6 @@
     }
     else
     {
-        <div class="alert alert-info">@L["NoProductsFoundInCategory"]</div> @* Key localization mới *@
+        <div class="alert alert-info">@L["NoProductsFoundWithKeyword"] @Model.Name</div> 
     }
 </div>

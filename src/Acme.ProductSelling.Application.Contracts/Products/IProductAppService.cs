@@ -16,5 +16,7 @@ namespace Acme.ProductSelling.Products
     {
         Task<PagedResultDto<ProductDto>> GetListByCategoryAsync(GetProductsByCategoryInput input);
         Task<PagedResultDto<ProductDto>> GetListByProductPrice(GetProductsByPrice input);
+        Task<PagedResultDto<ProductDto>> GetProductByName(GetProductByName input);
+        Task<PagedResultDto<ProductDto>> GetProductByManufacturer(GetProductsByManufacturer input);
     }
 }

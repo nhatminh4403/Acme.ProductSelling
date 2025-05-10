@@ -32,13 +32,13 @@
             <ul class="list-group category-sidebar-menu border">
                 @if (Model.CategoryList != null)
                 {
-                    foreach (var category in Model.CategoryList.Items)
+                    foreach (var category in Model.BrandsWithAssociatedCategory.Items)
                     {
 
                         <li class="list-group-item list-group-item-action category-menu-item has-megamenu" style="padding:0">
                             <a asp-page="/Products/ProductsByCategory" asp-route-CategoryId="@category.Id"
                                class="d-flex justify-content-between align-items-center text-decoration-none text-dark">
-                                <span>@category.Name</span>
+                                <span>@category.CategoryName</span>
                                 <i class="bi bi-chevron-right small"></i>
                             </a>
                             <div class="megamenu-data-source d-none">
@@ -48,23 +48,69 @@
                                             <h4 class="megamenu-title">@L["Monitors"]</h4>
                                             <div class="row">
                                                 <div class="col-md-3">
+                                                    @if (Model.ManufacturerList != null)
+                                                    {
+                                                        <div class="subcategory">
+                                                            <h5 class="subcategory-title">@L["Brands"]</h5>
+                                                            <div class="subcategory-links">
+                                                                @foreach (var manufacturer in category.Manufacturers.Take(4))
+                                                                {
+
+
+                                                                    <a asp-page="/Products/ProductsByManufacturer"
+                                                                       asp-route-CategoryId="@category.Id"
+                                                                       asp-route-ManufacturerId="@manufacturer.Id">
+                                                                        @manufacturer.Name
+                                                                    </a>
+
+                                                                }
+                                                                <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
+                                                                    <span>@L["SeeAll"]</span>
+                                                                </a>
+                                                            </div>
+
+                                                        </div>
+
+                                                    }
+                                                </div>
+
+                                                <div class="col-md-3">
                                                     <div class="subcategory">
                                                         <h5 class="subcategory-title">@L["Brands"]</h5>
+                                                        @foreach (var manufacturer in category.Manufacturers.Skip(4).Take(4))
+                                                        {
 
+                                                            <div class="subcategory-links">
+                                                                <a asp-page="/Products/ProductsByManufacturer"
+                                                                   asp-route-CategoryId="@category.Id"
+                                                                   asp-route-ManufacturerId="@manufacturer.Id">
+                                                                    @manufacturer.Name
+                                                                </a>
+                                                                <a asp-page="/Products/ProductsByCategory" asp-route-CategoryId="@category.Id">
+                                                                    <span>@L["SeeAll"]</span>
+                                                                </a>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                    @*  *@
+
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="subcategory">
+                                                        <h5 class="subcategory-title">@L["Brands"]</h5>
                                                         <div class="subcategory-links">
-                                                            <a href="#">DJI</a>
-                                                            <a href="#">Autel</a>
-                                                            <a href="#">Flycam giá rẻ</a>
-                                                            <a href="#">Phụ kiện flycam</a>
+                                                            <a href="#">Robot hút bụi</a>
+                                                            <a href="#">Robot lau nhà</a>
+                                                            <a href="#">Robot giáo dục</a>
+                                                            <a href="#">Robot thú cưng</a>
                                                         </div>
                                                     </div>
                                                     <div class="subcategory">
-                                                        <h5 class="subcategory-title">Camera hành động</h5>
+                                                        <h5 class="subcategory-title">@L["Brands"]</h5>
                                                         <div class="subcategory-links">
-                                                            <a href="#">GoPro</a>
-                                                            <a href="#">DJI Osmo</a>
-                                                            <a href="#">Insta360</a>
-                                                            <a href="#">Phụ kiện camera</a>
+                                                            <a href="#">Kính thực tế ảo</a>
+                                                            <a href="#">Phụ kiện VR</a>
+                                                            <a href="#">Tay cầm VR</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -97,70 +143,25 @@
                                                             </a>
                                                         </div>
                                                     </div>
-                                                    <div class="subcategory">
-                                                        <h5 class="subcategory-title">Camera hành động</h5>
-                                                        <div class="subcategory-links">
-                                                            <a href="#">GoPro</a>
-                                                            <a href="#">DJI Osmo</a>
-                                                            <a href="#">Insta360</a>
-                                                            <a href="#">Phụ kiện camera</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="subcategory">
-                                                        <h5 class="subcategory-title">Robot thông minh</h5>
-                                                        <div class="subcategory-links">
-                                                            <a href="#">Robot hút bụi</a>
-                                                            <a href="#">Robot lau nhà</a>
-                                                            <a href="#">Robot giáo dục</a>
-                                                            <a href="#">Robot thú cưng</a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="subcategory">
-                                                        <h5 class="subcategory-title">Thiết bị thực tế ảo</h5>
-                                                        <div class="subcategory-links">
-                                                            <a href="#">Kính thực tế ảo</a>
-                                                            <a href="#">Phụ kiện VR</a>
-                                                            <a href="#">Tay cầm VR</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="subcategory">
-                                                        <h5 class="subcategory-title">Thiết bị thông minh</h5>
-                                                        <div class="subcategory-links">
-                                                            <a href="#">Khóa cửa thông minh</a>
-                                                            <a href="#">Đèn thông minh</a>
-                                                            <a href="#">Ổ cắm thông minh</a>
-                                                            <a href="#">Công tắc thông minh</a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="subcategory">
-                                                        <h5 class="subcategory-title">Đồ chơi điện tử</h5>
+                                                    @* <div class="subcategory">
+                                                        <h5 class="subcategory-title">@L["Brands"]</h5>
                                                         <div class="subcategory-links">
                                                             <a href="#">Máy chơi game cầm tay</a>
                                                             <a href="#">Máy game console</a>
                                                             <a href="#">Phụ kiện gaming</a>
                                                         </div>
-                                                    </div>
+                                                    </div> *@
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
-
                                 </div>
-
                             </div>
                         </li>
-
                     }
                 }
-
             </ul>
         </div>
-
         <div class="col-lg-9 ps-lg-1">
             <div id="megamenu-display-area" style="display: none;">
                 <!-- Nội dung megamenu sẽ được JS đưa vào đây -->

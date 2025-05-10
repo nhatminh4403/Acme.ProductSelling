@@ -1,18 +1,18 @@
-﻿@using System.Globalization
-@using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
-@using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
-@using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
-@using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Languages;
+﻿    @using System.Globalization
+    @using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
+    @using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
+    @using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
+    @using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Languages;
 
 
-@using Acme.ProductSelling.Localization
-@using Microsoft.Extensions.Localization
-@using Microsoft.AspNetCore.Authorization
-@using Acme.ProductSelling.Permissions
-@using Volo.Abp.Users
-@inject ICurrentUser CurrentUser
-@inject IStringLocalizer<ProductSellingResource> L
-@inject IAuthorizationService AuthorizationService
+    @using Acme.ProductSelling.Localization
+    @using Microsoft.Extensions.Localization
+    @using Microsoft.AspNetCore.Authorization
+    @using Acme.ProductSelling.Permissions
+    @using Volo.Abp.Users
+    @inject ICurrentUser CurrentUser
+    @inject IStringLocalizer<ProductSellingResource> L
+    @inject IAuthorizationService AuthorizationService
 @{
     var title = ViewData["Title"]?.ToString();
 
@@ -37,7 +37,7 @@
     </style>
 </head>
 <body class="abp-application-layout bg-light d-flex flex-column min-vh-100">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
         <div class="container">
             <a class="navbar-brand" href="/" aria-label="Home"><i class="bi bi-house-door-fill fs-4"></i></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -62,10 +62,12 @@
                     </ul>
                 }
 
-                <form class="d-flex my-2 my-lg-0 flex-grow-1 mx-lg-2" role="search">
-                    <input class="form-control me-2 border-1 border-black"
-                           type="search" placeholder="Search..." aria-label="Search"><button class="btn btn-outline-success" type="submit">
-                        Search
+                <form class="d-flex my-2 my-lg-0 flex-grow-1 mx-lg-2"
+                      asp-page="/Products/ProductsByName" method="get">
+                    <input class="form-control me-2 border-1 border-black" name="name" type="search" placeholder="@L["Search..."]"
+                           aria-label="@L["Search..."]">
+                    <button class="btn btn-outline-success" type="submit">
+                        @L["Search"]
                     </button>
                 </form>
                 @if (CurrentUser.IsAuthenticated)

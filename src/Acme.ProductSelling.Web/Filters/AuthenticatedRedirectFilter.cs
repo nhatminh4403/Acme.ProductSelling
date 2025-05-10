@@ -19,21 +19,28 @@ namespace Acme.ProductSelling.Web.Filters
         }
         public async Task OnPageHandlerExecutionAsync(PageHandlerExecutingContext context, PageHandlerExecutionDelegate next)
         {
-            if (!_currentUser.IsAuthenticated)
-            {
-                context.Result = new RedirectToPageResult("/Account/Login");
-            }
             var path = context.HttpContext.Request.Path.Value?.ToLower();
-            if (path != null && (
-                               path.Contains("/account/login") ||
-                               path.Contains("/account/register") ||
-                               path.Contains("/identity/account/login") ||
-                               path.Contains("/identity/account/register")))
+
+            if (_currentUser.IsAuthenticated)
             {
-                context.Result = new RedirectResult("/");
-                return;
+
+                // List of paths to redirect (login and register)
+                if (path != null &&IsAuthPage(path))
+                {
+                    context.Result = new RedirectResult("/");
+                    return;
+                }
             }
+
             await next.Invoke();
+        }
+        private bool IsAuthPage(string? path)
+        {
+            if (path == null) return false;
+            return path.Contains("/account/login")
+                || path.Contains("/account/register")
+                || path.Contains("/identity/account/login")
+                || path.Contains("/identity/account/register");
         }
     }
 }

@@ -229,29 +229,26 @@ namespace Acme.ProductSelling.Products
             await Repository.InsertAsync(product, autoSave: true);
             return await GetAsync(product.Id);
         }
-        // Ghi đè UpdateAsync để xử lý cập nhật/xóa TẤT CẢ Specifications
         public override async Task<ProductDto> UpdateAsync(Guid id, CreateUpdateProductDto input)
         {
             await CheckUpdatePolicyAsync();
-            var product = await Repository.GetAsync(id); // Lấy product cũ
+            var product = await Repository.GetAsync(id);
             var oldCategoryId = product.CategoryId;
             var newCategory = await _categoryRepository.GetAsync(input.CategoryId);
-            // Xóa spec cũ NẾU category thay đổi VÀ loại spec khác nhau
             if (oldCategoryId != newCategory.Id)
             {
                 await DeleteOldSpecificationAsync(product, newCategory.SpecificationType);
             }
             // Map dữ liệu cơ bản
             ObjectMapper.Map(input, product);
-            product.CategoryId = newCategory.Id; // Đảm bảo categoryId được cập nhật
-            // Switch dựa trên loại Category MỚI để Tạo/Cập nhật spec
+            product.CategoryId = newCategory.Id;
             switch (newCategory.SpecificationType)
             {
                 case SpecificationType.Monitor:
-                    // (Giữ nguyên logic cũ cho Monitor)
+                    await HandleSpecificationUpdateAsync(product.MonitorSpecificationId, input.MonitorSpecification, _monitorSpecRepository, (specId) => product.MonitorSpecificationId = specId);
                     break;
                 case SpecificationType.Mouse:
-                    // (Giữ nguyên logic cũ cho Mouse)
+                    await HandleSpecificationUpdateAsync(product.MouseSpecificationId, input.MouseSpecification, _mouseSpecRepository, (specId) => product.MouseSpecificationId = specId);
                     break;
                 case SpecificationType.Laptop: // Giả sử có
                     await HandleSpecificationUpdateAsync(product.LaptopSpecificationId, input.LaptopSpecification, _laptopSpecRepository, (specId) => product.LaptopSpecificationId = specId);
@@ -288,7 +285,6 @@ namespace Acme.ProductSelling.Products
                     break;
                 // ... Thêm các case khác ...
                 default:
-                    // Đảm bảo tất cả các FK spec đều là null nếu loại category là None
                     await DeleteOldSpecificationAsync(product, SpecificationType.None);
                     break;
             }
@@ -330,29 +326,78 @@ namespace Acme.ProductSelling.Products
         private async Task DeleteOldSpecificationAsync(Product product, SpecificationType? newSpecType)
         {
             // Check và xóa từng loại spec nếu nó tồn tại và không khớp với loại mới
-            if (product.MonitorSpecificationId.HasValue && newSpecType != SpecificationType.Monitor) { await _monitorSpecRepository.DeleteAsync(product.MonitorSpecificationId.Value, autoSave: true); product.MonitorSpecificationId = null; }
-            if (product.MouseSpecificationId.HasValue && newSpecType != SpecificationType.Mouse) { await _mouseSpecRepository.DeleteAsync(product.MouseSpecificationId.Value, autoSave: true); product.MouseSpecificationId = null; }
-            if (product.LaptopSpecificationId.HasValue && newSpecType != SpecificationType.Laptop) { await _laptopSpecRepository.DeleteAsync(product.LaptopSpecificationId.Value, autoSave: true); product.LaptopSpecificationId = null; } // Giả sử có
-            if (product.CpuSpecificationId.HasValue && newSpecType != SpecificationType.CPU) { await _cpuSpecRepository.DeleteAsync(product.CpuSpecificationId.Value, autoSave: true); product.CpuSpecificationId = null; }
-            if (product.GpuSpecificationId.HasValue && newSpecType != SpecificationType.GPU) { await _gpuSpecRepository.DeleteAsync(product.GpuSpecificationId.Value, autoSave: true); product.GpuSpecificationId = null; }
-            if (product.RamSpecificationId.HasValue && newSpecType != SpecificationType.RAM) { await _ramSpecRepository.DeleteAsync(product.RamSpecificationId.Value, autoSave: true); product.RamSpecificationId = null; }
-            if (product.MotherboardSpecificationId.HasValue && newSpecType != SpecificationType.Motherboard) { await _motherboardSpecRepository.DeleteAsync(product.MotherboardSpecificationId.Value, autoSave: true); product.MotherboardSpecificationId = null; }
-            if (product.StorageSpecificationId.HasValue && newSpecType != SpecificationType.Storage) { await _storageSpecRepository.DeleteAsync(product.StorageSpecificationId.Value, autoSave: true); product.StorageSpecificationId = null; }
-            if (product.PsuSpecificationId.HasValue && newSpecType != SpecificationType.PSU) { await _psuSpecRepository.DeleteAsync(product.PsuSpecificationId.Value, autoSave: true); product.PsuSpecificationId = null; }
-            if (product.CaseSpecificationId.HasValue && newSpecType != SpecificationType.Case) { await _caseSpecRepository.DeleteAsync(product.CaseSpecificationId.Value, autoSave: true); product.CaseSpecificationId = null; }
-            if (product.CpuCoolerSpecificationId.HasValue && newSpecType != SpecificationType.CPUCooler) { await _cpuCoolerSpecRepository.DeleteAsync(product.CpuCoolerSpecificationId.Value, autoSave: true); product.CpuCoolerSpecificationId = null; }
-            if (product.KeyboardSpecificationId.HasValue && newSpecType != SpecificationType.Keyboard) { await _keyboardSpecRepository.DeleteAsync(product.KeyboardSpecificationId.Value, autoSave: true); product.KeyboardSpecificationId = null; }
-            if (product.HeadsetSpecificationId.HasValue && newSpecType != SpecificationType.Headset) { await _headsetSpecRepository.DeleteAsync(product.HeadsetSpecificationId.Value, autoSave: true); product.HeadsetSpecificationId = null; }
+            if (product.MonitorSpecificationId.HasValue && newSpecType != SpecificationType.Monitor)
+            {
+                await _monitorSpecRepository.DeleteAsync(product.MonitorSpecificationId.Value, autoSave: true);
+                product.MonitorSpecificationId = null;
+            }
+            if (product.MouseSpecificationId.HasValue && newSpecType != SpecificationType.Mouse)
+            {
+                await _mouseSpecRepository.DeleteAsync(product.MouseSpecificationId.Value, autoSave: true);
+                product.MouseSpecificationId = null;
+            }
+            if (product.LaptopSpecificationId.HasValue && newSpecType != SpecificationType.Laptop)
+            {
+                await _laptopSpecRepository.DeleteAsync(product.LaptopSpecificationId.Value, autoSave: true);
+                product.LaptopSpecificationId = null;
+            }
+            if (product.CpuSpecificationId.HasValue && newSpecType != SpecificationType.CPU)
+            {
+                await _cpuSpecRepository.DeleteAsync(product.CpuSpecificationId.Value, autoSave: true);
+                product.CpuSpecificationId = null;
+            }
+            if (product.GpuSpecificationId.HasValue && newSpecType != SpecificationType.GPU)
+            {
+                await _gpuSpecRepository.DeleteAsync(product.GpuSpecificationId.Value, autoSave: true);
+                product.GpuSpecificationId = null;
+            }
+            if (product.RamSpecificationId.HasValue && newSpecType != SpecificationType.RAM)
+            {
+                await _ramSpecRepository.DeleteAsync(product.RamSpecificationId.Value, autoSave: true);
+                product.RamSpecificationId = null;
+            }
+            if (product.MotherboardSpecificationId.HasValue && newSpecType != SpecificationType.Motherboard)
+            {
+                await _motherboardSpecRepository.DeleteAsync(product.MotherboardSpecificationId.Value, autoSave: true);
+                product.MotherboardSpecificationId = null;
+            }
+            if (product.StorageSpecificationId.HasValue && newSpecType != SpecificationType.Storage)
+            {
+                await _storageSpecRepository.DeleteAsync(product.StorageSpecificationId.Value, autoSave: true);
+                product.StorageSpecificationId = null;
+            }
+            if (product.PsuSpecificationId.HasValue && newSpecType != SpecificationType.PSU)
+            {
+                await _psuSpecRepository.DeleteAsync(product.PsuSpecificationId.Value, autoSave: true);
+                product.PsuSpecificationId = null;
+            }
+            if (product.CaseSpecificationId.HasValue && newSpecType != SpecificationType.Case)
+            {
+                await _caseSpecRepository.DeleteAsync(product.CaseSpecificationId.Value, autoSave: true);
+                product.CaseSpecificationId = null;
+            }
+            if (product.CpuCoolerSpecificationId.HasValue && newSpecType != SpecificationType.CPUCooler)
+            {
+                await _cpuCoolerSpecRepository.DeleteAsync(product.CpuCoolerSpecificationId.Value, autoSave: true);
+                product.CpuCoolerSpecificationId = null;
+            }
+            if (product.KeyboardSpecificationId.HasValue && newSpecType != SpecificationType.Keyboard)
+            {
+                await _keyboardSpecRepository.DeleteAsync(product.KeyboardSpecificationId.Value, autoSave: true);
+                product.KeyboardSpecificationId = null;
+            }
+            if (product.HeadsetSpecificationId.HasValue && newSpecType != SpecificationType.Headset)
+            {
+                await _headsetSpecRepository.DeleteAsync(product.HeadsetSpecificationId.Value, autoSave: true);
+                product.HeadsetSpecificationId = null;
+            }
         }
-        // Cập nhật DeleteAsync để gọi DeleteOldSpecificationAsync
         public override async Task DeleteAsync(Guid id)
         {
             await CheckDeletePolicyAsync();
-            // Lấy thông tin product bao gồm các ID spec nếu cần include để xóa,
-            // nhưng cách đơn giản là lấy product cơ bản và gọi DeleteOld...
+
             var product = await Repository.FindAsync(id);
             if (product == null) return;
-            // Xóa tất cả spec liên quan trước khi xóa product
             await DeleteOldSpecificationAsync(product, SpecificationType.None); // Truyền None để đảm bảo xóa hết
             await Repository.DeleteAsync(id, autoSave: true);
         }
@@ -391,6 +436,39 @@ namespace Acme.ProductSelling.Products
                 .PageBy(input);
             var products = await AsyncExecuter.ToListAsync(queryable);
             var productDtos = ObjectMapper.Map<List<Product>, List<ProductDto>>(products);
+            return new PagedResultDto<ProductDto>(
+                totalCount,
+                productDtos
+            );
+        }
+        public virtual async Task<PagedResultDto<ProductDto>> GetProductByName(GetProductByName input)
+        {
+            var queryable = await Repository.GetQueryableAsync();
+            queryable = queryable.Include(p => p.Category).Include(p => p.Manufacturer);
+            queryable = queryable.Where(p => p.ProductName.Contains(input.Filter));
+
+            queryable = queryable
+                .OrderBy(input.Sorting ?? nameof(Product.ProductName))
+                .PageBy(input);
+            var totalCount = await AsyncExecuter.CountAsync(queryable);
+
+            var products = await AsyncExecuter.ToListAsync(queryable);
+            var productDtos = ObjectMapper.Map<List<Product>, List<ProductDto>>(products);
+            return new PagedResultDto<ProductDto>(
+                totalCount,
+                productDtos
+            );
+        }
+
+        public virtual async Task<PagedResultDto<ProductDto>> GetProductByManufacturer(GetProductsByManufacturer input)
+        {
+            var queryable = await Repository.GetQueryableAsync();
+            queryable = queryable.Include(p => p.Category).Include(p => p.Manufacturer);
+            queryable = queryable.Where(p => p.CategoryId == input.CategoryId);
+            queryable = queryable.Where(p => p.ManufacturerId == input.ManufacturerId);
+            var products = await AsyncExecuter.ToListAsync(queryable);
+            var productDtos = ObjectMapper.Map<List<Product>, List<ProductDto>>(products);
+            var totalCount = await AsyncExecuter.CountAsync(queryable);
             return new PagedResultDto<ProductDto>(
                 totalCount,
                 productDtos
