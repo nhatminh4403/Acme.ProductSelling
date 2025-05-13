@@ -1,4 +1,5 @@
-﻿using Acme.ProductSelling.EntityFrameworkCore;
+﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -25,9 +26,25 @@ namespace Acme.ProductSelling.Products
             }
             return product;
         }
-        public Task<List<Product>> GetListAsync(int skipCount, int maxResultCount, string sorting, string filter = null)
+        public async Task<List<Product>> GetListAsync(int skipCount, 
+            int maxResultCount, string sorting, string filter = null)
         {
-            throw new NotImplementedException();
+            var dbSet = await GetDbSetAsync();
+            var query = dbSet.AsQueryable();
+            if (!filter.IsNullOrWhiteSpace())
+            {
+                query = query.Where(c => c.ProductName.Contains(filter));
+            }
+
+            return await query.OrderBy(c => EF.Property<object>(c, sorting))
+                              .Skip(skipCount)
+                              .Take(maxResultCount)
+                              .ToListAsync();
+        }
+        public async Task<List<Product>> GetListAsync()
+        {
+            var dbSet = await GetDbSetAsync();
+            return await dbSet.ToListAsync();
         }
         public async Task<Product> FindByIdAsync(Guid id)
         {

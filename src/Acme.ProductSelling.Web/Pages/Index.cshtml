@@ -4,6 +4,7 @@
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
 @using Volo.Abp.Users
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Pagination
 @inject IStringLocalizer<ProductSellingResource> L
 @inject ICurrentUser CurrentUser
 @model Acme.ProductSelling.Web.Pages.IndexModel
@@ -200,9 +201,7 @@
 </div>
 
 <div class="container mt-4">
-
-
-    @if (Model.ProductList != null && Model.ProductList.Items.Any())
+    @if (Model.ProductList != null && Model.ProductList.Items != null && Model.ProductList.Items.Any())
     {
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             @foreach (var product in Model.ProductList.Items)
@@ -211,7 +210,9 @@
                     <div class="card h-100">
                         @if (!string.IsNullOrWhiteSpace(product.ImageUrl))
                         {
-                            <img src="@product.ImageUrl" class="card-img-top p-3" alt="@product.ProductName" style="max-height: 200px; object-fit: contain;">
+                            <a asp-page="/Products/ProductDetail" asp-route-id="@product.Id">
+                                <img src="@product.ImageUrl" class="card-img-top p-3" alt="@product.ProductName" style="max-height: 200px; object-fit: contain;">
+                            </a>
                         }
                         else
                         {
@@ -236,15 +237,10 @@
                 </div>
             }
         </div>
+        <abp-paginator asp-page="/" show-info="true" model="Model.PagerModel" class="mb-4">
+        </abp-paginator>
 
-        @* Component phân trang của ABP *@
-        <div class="mt-4">
-            <abp-pagination-controls total-count="@Model.ProductList.TotalCount"
-                                     page-size="@Model.PageSize"
-                                     current-page="@Model.CurrentPage"
-                                     page-query-name="CurrentPage">
-            </abp-pagination-controls>
-        </div>
+
     }
     else
     {

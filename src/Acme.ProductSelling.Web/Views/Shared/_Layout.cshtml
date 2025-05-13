@@ -324,7 +324,8 @@
 
     <script src="~/Abp/ServiceProxyScript" asp-append-version="true"></script>
     <script src="~/Abp/ApplicationLocalizationScript?cultureName=@CultureInfo.CurrentUICulture.Name"></script>
-
+    @* <script src="~/libs/abp/core/"></script> *@
+    <script src="~/libs/abp/core/abp.js"></script>
     @await RenderSectionAsync("scripts", required: false)
     <script src="~/js/site.js" asp-append-version="true"></script>
 
