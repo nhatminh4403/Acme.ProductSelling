@@ -67,7 +67,7 @@ namespace Acme.ProductSelling.Web;
     typeof(AbpAutofacModule),
     typeof(AbpStudioClientAspNetCoreModule),
     typeof(AbpIdentityWebModule),
-    typeof(AbpAspNetCoreMvcUiBasicThemeModule),
+    typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
     typeof(AbpAccountWebOpenIddictModule),
     typeof(AbpTenantManagementWebModule),
     typeof(AbpFeatureManagementWebModule),
@@ -174,22 +174,19 @@ namespace Acme.ProductSelling.Web;
         Configure<AbpBundlingOptions>(options =>
         {
             options.StyleBundles.Configure(
-                BasicThemeBundles.Styles.Global,
+                LeptonXLiteThemeBundles.Styles.Global,
                 bundle =>
                 {
                     bundle.AddFiles("/global-styles.css");
-                    
+                    bundle.AddContributors(typeof(BootstrapStyleContributor));
                 }
             );
             options.ScriptBundles.Configure(
-                 BasicThemeBundles.Scripts.Global,
+                 LeptonXLiteThemeBundles.Scripts.Global,
                 bundle =>
                 {
-                    bundle.AddContributors(typeof(JQueryScriptContributor)); // jQuery phải trước
-                    bundle.AddContributors(typeof(BootstrapScriptContributor)); // Bootstrap JS
-                                                                         // Thêm các contributor script khác của ABP nếu cần
-
-                    // Thêm contributor cho DataTables (Tên có thể khác)
+                    bundle.AddContributors(typeof(JQueryScriptContributor)); 
+                    bundle.AddContributors(typeof(BootstrapScriptContributor)); 
                     bundle.AddContributors(typeof(DatatablesNetScriptContributor));
                     bundle.AddFiles("/global-scripts.js");
                 }

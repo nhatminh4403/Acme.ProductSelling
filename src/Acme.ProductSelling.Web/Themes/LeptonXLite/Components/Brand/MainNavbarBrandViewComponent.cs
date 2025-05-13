@@ -8,7 +8,7 @@ namespace Acme.ProductSelling.Web.Theme.LeptonXLite.Components.Brand
     {
         public virtual IViewComponentResult Invoke()
         {
-            return View("~/Themes/Basic/Components/Brand/Default.cshtml");
+            return View("~/Themes/LeptonXLite/Components/Brand/Default.cshtml");
         }
     }
 

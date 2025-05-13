@@ -18,33 +18,33 @@
                 {
                     title: l('Actions'),
                     visible: abp.auth.isGranted('ProductSelling.Orders.Edit')
-                        || abp.auth.isGranted('ProductSelling.Orders.Delete'), 
-                        items: [
-                            {
-                                text: l('Edit'),
-                                visible: abp.auth.isGranted('ProductSelling.Orders.Edit'),
-                                action: function (data) {
-                                    editModal.open({ id: data.record.id });
-                                }
-                            },
-                            {
-                                text: l('Delete'),
-                                visible: abp.auth.isGranted('ProductSelling.Orders.Delete'),
-                                confirmMessage: function (data) {
-                                    return l('OrderDeletionConfirmationMessage', data.record.name);
-                                },
-                                action: function (data) {
-                                    // Gọi API xóa
-                                    orderService.delete(data.record.id)
-                                        .then(function () {
-                                            abp.notify.info(l('SuccessfullyDeleted'));
-                                            dataTable.ajax.reload();
-                                        });
-                                }
+                        || abp.auth.isGranted('ProductSelling.Orders.Delete'),
+                    items: [
+                        {
+                            text: l('Edit'),
+                            visible: abp.auth.isGranted('ProductSelling.Orders.Edit'),
+                            action: function (data) {
+                                editModal.open({ id: data.record.id });
                             }
-                        ]
-                    }
-                },
+                        },
+                        {
+                            text: l('Delete'),
+                            visible: abp.auth.isGranted('ProductSelling.Orders.Delete'),
+                            confirmMessage: function (data) {
+                                return l('OrderDeletionConfirmationMessage', data.record.name);
+                            },
+                            action: function (data) {
+                                // Gọi API xóa
+                                orderService.delete(data.record.id)
+                                    .then(function () {
+                                        abp.notify.info(l('SuccessfullyDeleted'));
+                                        dataTable.ajax.reload();
+                                    });
+                            }
+                        }
+                    ]
+                }
+                ,
                 {
                     title: l('Name'),
                     data: "name"

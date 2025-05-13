@@ -12,7 +12,7 @@ namespace Acme.ProductSelling.Orders
     { // Không cần kế thừa ICrudAppService nữa
         Task<OrderDto> CreateAsync(CreateOrderDto input);
         Task<OrderDto> GetAsync(Guid id);
-        Task<PagedResultDto<OrderDto>> GetListAsync(GetOrderListInput input);
+        //Task<PagedResultDto<OrderDto>> GetListAsync(GetOrderListInput input);
         Task<OrderDto> GetByOrderNumberAsync(string orderNumber);
         Task<PagedResultDto<OrderDto>> GetListForCurrentUserAsync(PagedAndSortedResultRequestDto input);
 

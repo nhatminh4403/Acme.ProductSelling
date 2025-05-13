@@ -1,4 +1,4 @@
-﻿@page "{id:Guid}"
+﻿@page
 @model Acme.ProductSelling.Web.Pages.Categories.EditModalModel
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
@@ -9,31 +9,17 @@
 }
 
 
-@* Sử dụng abp-dynamic-form hoặc form thủ công tương tự CreateModal *@
-<abp-dynamic-form abp-model="Category" asp-page="/Categories/EditModal">
-     @* Thêm input ẩn chứa Id *@
-    <input type="hidden" asp-for="Id" /> @* Rất quan trọng để gửi Id khi Post *@
-    <abp-modal>
-        <abp-modal-header title="@L["EditCategory"].Value"></abp-modal-header> @* Thêm key "EditCategory" *@
-        <abp-modal-body>
-             @* <abp-form-content /> *@
-             @* Hoặc định nghĩa input thủ công *@
-             <abp-input asp-for="Category.Name" label="@L["Name"].Value" />
-        </abp-modal-body>
-        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
-    </abp-modal>
-</abp-dynamic-form>
 
-@* Hoặc không dùng abp-dynamic-form: *@
-@*
-<form method="post" asp-page="/Categories/EditModal" asp-route-id="@Model.Id"> 
-    <input type="hidden" asp-for="Id" /> 
+
+<form method="post" asp-page="/Categories/EditModal" asp-route-id="@Model.Id">
+    <input type="hidden" asp-for="Id" />
     <abp-modal>
-    <abp-modal-header title="@L["EditCategory"].Value"></abp-modal-header>
+        <abp-modal-header title="@L["EditCategory"].Value"></abp-modal-header>
         <abp-modal-body>
-             <abp-input asp-for="Category.Name" label="@L["Name"].Value" />
+            <abp-input asp-for="Category.Name" label="@L["Name"].Value" />
+            <abp-input asp-for="Category.Description" label="@L["Description"]" type="textarea" />
+
         </abp-modal-body>
         <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
     </abp-modal>
 </form>
-*@

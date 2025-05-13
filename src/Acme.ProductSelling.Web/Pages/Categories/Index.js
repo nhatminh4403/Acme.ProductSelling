@@ -5,7 +5,6 @@
     var createModal = new abp.ModalManager(abp.appPath + 'Categories/CreateModal'); 
     var editModal = new abp.ModalManager(abp.appPath + 'Categories/EditModal');  
 
-    // Cấu hình DataTables
     var dataTable = $('#CategoriesTable').DataTable(
         abp.libs.datatables.normalizeConfiguration({ 
             serverSide: true, 
@@ -34,7 +33,6 @@
                                     return l('CategoryDeletionConfirmationMessage', data.record.name); 
                                 },
                                 action: function (data) {
-                                    // Gọi API xóa
                                     categoryService.delete(data.record.id)
                                         .then(function () {
                                             abp.notify.info(l('SuccessfullyDeleted')); 

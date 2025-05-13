@@ -1,6 +1,5 @@
 ﻿$(function () {
-    //console.log("Available ABP objects:", abp);
-    var productService = acme.productSelling.products.product; // Proxy client cho ProductAppService
+    var productService = acme.productSelling.products.product; 
     var l = abp.localization.getResource('ProductSelling');
 
     var createModal = new abp.ModalManager(abp.appPath + 'Products/CreateModal');
@@ -13,11 +12,12 @@
             order: [[1, "asc"]], // Sắp xếp theo tên sản phẩm
             searching: false,
             scrollX: true,
-            ajax: abp.libs.datatables.createAjax(productService.getList), // Gọi API GetList
+            ajax: abp.libs.datatables.createAjax(productService.getList), 
             columnDefs: [
                 {
                     title: l('Actions'),
-                    visible: abp.auth.isGranted('ProductSelling.Products.Edit') || abp.auth.isGranted('ProductSelling.Products.Delete'), // Hiện cột này nếu có quyền Edit hoặc Delete
+                    visible: abp.auth.isGranted('ProductSelling.Products.Edit') ||
+                        abp.auth.isGranted('ProductSelling.Products.Delete'), 
                     rowAction: {
                         items: [
                             {
@@ -31,7 +31,7 @@
                                 text: l('Delete'),
                                 visible: abp.auth.isGranted('ProductSelling.Products.Delete'),
                                 confirmMessage: function (data) {
-                                    return l('ProductDeletionConfirmationMessage', data.record.name); // Key: "Are you sure..."
+                                    return l('ProductDeletionConfirmationMessage', data.record.name); 
                                 },
                                 action: function (data) {
                                     productService.delete(data.record.id)

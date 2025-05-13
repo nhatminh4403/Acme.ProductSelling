@@ -1,5 +1,23 @@
 ﻿/* Your Global Scripts */
+function safeInitModal(modalElementId) {
+    const modalElement = document.getElementById(modalElementId);
+    if (!modalElement) return null;
 
+    let modalInstance = null;
+
+    // Try Bootstrap 5 approach
+    if (typeof bootstrap !== 'undefined') {
+        try {
+            modalInstance = new bootstrap.Modal(modalElement);
+            return modalInstance;
+        } catch (e) {
+            console.log(`Could not initialize ${modalElementId} with Bootstrap 5:`, e);
+        }
+    }
+
+    console.error(`Failed to initialize modal ${modalElementId}`);
+    return null;
+}
 document.addEventListener('DOMContentLoaded', function () {
     const menuContainer = document.querySelector('.category-dropdown-container');
     if (!menuContainer) return;
@@ -160,10 +178,8 @@ $(function () {
 });
 $(function () {
     var loginModalElement = document.getElementById('loginModal');
-    var loginModal = bootstrap.Modal.getOrCreateInstance(loginModalElement);
     var loginForm = $('#loginForm');
-
-    // Check if ABP and its objects are available first
+    safeInitModal(loginModalElement);
     loginForm.on('submit', function (e) {
         e.preventDefault();
 
@@ -182,46 +198,59 @@ $(function () {
             rememberMe: $('#rememberMeCheck').is(':checked')
         };
 
-        // Check if abp proxy is available and fallback otherwise
-        if (typeof abp !== 'undefined' && abp.auth && abp.auth.login) {
-            // Use direct ABP API if available
-            abp.auth.login(loginData)
-                .then(handleLoginSuccess)
-                .catch(handleLoginError);
+        // Implement custom error handling
+        if (typeof abp === 'undefined') {
+            // Define abp if it doesn't exist
+            window.abp = {};
         }
-        else if (typeof abp !== 'undefined' && abp.ajax) {
-            // Use ABP AJAX if available
-            setTimeout(function () {
-                abp.ajax({
-                    url: '/api/account/login',
-                    type: 'POST',
-                    data: JSON.stringify(loginData),
-                    contentType: 'application/json'
-                })
-                    .then(handleLoginSuccess)
-                    .catch(handleLoginError);
-            }, 2000);
-            
+
+        // Ensure error handlers are properly defined
+        if (!abp.message) {
+            abp.message = {};
         }
-        else {
-            // Fallback to standard AJAX
-            $.ajax({
-                url: '/api/account/login',
-                type: 'POST',
-                data: JSON.stringify(loginData),
-                contentType: 'application/json',
-                success: handleLoginSuccess,
-                error: function (xhr) {
-                    handleLoginError(xhr.responseJSON || { error: { message: 'Login failed' } });
-                }
-            });
+
+        if (!abp.message.error) {
+            abp.message.error = function (message) {
+                console.error("Error:", message);
+                alert("Error: " + message);
+            };
         }
+
+        if (!abp.notify) {
+            abp.notify = {};
+        }
+
+        if (!abp.notify.error) {
+            abp.notify.error = function (message) {
+                console.error("Notification error:", message);
+                alert("Error: " + message);
+            };
+        }
+
+        // Use standard AJAX for consistent behavior
+        $.ajax({
+            url: '/api/account/login',
+            type: 'POST',
+            data: JSON.stringify(loginData),
+            contentType: 'application/json',
+            success: handleLoginSuccess,
+            error: function (xhr) {
+                console.log("Login error response:", xhr);
+                var errorObj = xhr.responseJSON || { error: { message: 'Login failed' } };
+                handleLoginError(errorObj);
+            }
+        });
     });
 
     // Handle successful login
     function handleLoginSuccess(result) {
-        loginModal.hide();
-        if (typeof abp !== 'undefined' && abp.notify) {
+        console.log("Login successful:", result);
+
+        if (loginModal) {
+            loginModal.hide();
+        }
+
+        if (typeof abp !== 'undefined' && abp.notify && abp.notify.success) {
             abp.notify.success('Login successful!');
         } else {
             alert('Login successful!');
@@ -237,36 +266,42 @@ $(function () {
 
     // Handle login errors
     function handleLoginError(error) {
-        var errorMessage = error?.error?.message || error?.message || 'Login failed. Please check your credentials.';
+        console.error("Processing login error:", error);
 
-        if (typeof abp !== 'undefined' && abp.notify) {
+        var errorMessage;
+        if (error && error.error && error.error.message) {
+            errorMessage = error.error.message;
+        } else if (error && error.message) {
+            errorMessage = error.message;
+        } else {
+            errorMessage = 'Login failed. Please check your credentials.';
+        }
+
+        if (typeof abp !== 'undefined' && abp.notify && abp.notify.error) {
             abp.notify.error(errorMessage);
         } else {
             alert('Error: ' + errorMessage);
         }
 
-        console.error("Login error:", error);
-        loginButton.prop('disabled', false).html(originalButtonText || 'Login');
+        // Reset button state
+        var loginButton = loginForm.find('button[type="submit"]');
+        loginButton.prop('disabled', false).html('Login');
     }
 
     // Optional: Reset form when modal is closed
-    loginModalElement.addEventListener('hidden.bs.modal', function (event) {
-        loginForm.find('.text-danger').remove();
-        loginForm[0].reset();
-        var loginButton = loginForm.find('button[type="submit"]');
-        loginButton.prop('disabled', false).html('Login');
-    });
+    if (loginModalElement) {
+        loginModalElement.addEventListener('hidden.bs.modal', function (event) {
+            loginForm.find('.text-danger').remove();
+            loginForm[0].reset();
+            var loginButton = loginForm.find('button[type="submit"]');
+            loginButton.prop('disabled', false).html('Login');
+        });
+    }
 });
-
 
 $(function () {
     var registerModalElement = document.getElementById('registerModal');
-    var registerModal = bootstrap.Modal.getOrCreateInstance(registerModalElement);
     var registerForm = $('#registerForm');
-    var loginModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('loginModal')); // Cần để mở lại login modal
-
-
-
     registerForm.on('submit', function (e) {
         e.preventDefault();
 
@@ -363,13 +398,15 @@ $(function () {
         }
 
     });
+    if (registerModalElement) {
+       
+        registerModalElement.addEventListener('hidden.bs.modal', function (event) {
+            registerForm.find('.text-danger').remove();
+            registerForm[0].reset();
+            var registerButton = registerForm.find('button[type="submit"]');
+            registerButton.prop('disabled', false).html('Register');
+        });
+    }
 
-    // (Optional) Xử lý khi modal bị đóng
-    registerModalElement.addEventListener('hidden.bs.modal', function (event) {
-        registerForm.find('.text-danger').remove();
-        registerForm[0].reset();
-        var registerButton = registerForm.find('button[type="submit"]');
-        registerButton.prop('disabled', false).html('Register');
-    });
 });
 

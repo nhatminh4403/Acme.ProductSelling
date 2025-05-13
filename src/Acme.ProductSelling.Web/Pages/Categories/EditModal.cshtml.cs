@@ -33,8 +33,6 @@ namespace Acme.ProductSelling.Web.Pages.Categories
         // Hàm này được gọi khi submit form (POST request)
         public async Task<IActionResult> OnPostAsync()
         {
-            
-
             await _categoryAppService.UpdateAsync(Id, Category);
             return NoContent(); 
         }

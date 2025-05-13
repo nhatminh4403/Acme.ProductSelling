@@ -46,7 +46,7 @@ namespace Acme.ProductSelling.Orders
             DeletePolicyName = ProductSellingPermissions.Orders.Delete;
         }
 
-        public async Task<OrderDto> CreateAsync(CreateOrderDto input)
+        public override async Task<OrderDto> CreateAsync(CreateOrderDto input)
         {
             var orderNumber = $"DH-{DateTime.UtcNow:yyyyMMddHHmmss}-{_guidGenerator.Create().ToString("N").Substring(0, 6)}";
 
@@ -104,8 +104,8 @@ namespace Acme.ProductSelling.Orders
             await _orderRepository.InsertAsync(order, autoSave: true);
             return ObjectMapper.Map<Order, OrderDto>(order);
         }
-        [AllowAnonymous]
-        public async Task<OrderDto> GetAsync(Guid id)
+        [Authorize]
+        public override async Task<OrderDto> GetAsync(Guid id)
         {
             var order = await (await 
                             _orderRepository.WithDetailsAsync(o => o.OrderItems)) // Include Items
@@ -121,7 +121,7 @@ namespace Acme.ProductSelling.Orders
             return ObjectMapper.Map<Order, OrderDto>(order);
         }
 
-        [Authorize] // Bảo vệ nếu cần
+/*        [Authorize] // Bảo vệ nếu cần
         public async Task<PagedResultDto<OrderDto>> GetListAsync(GetOrderListInput input)
         {
             var queryable = await _orderRepository.GetQueryableAsync();
@@ -150,7 +150,7 @@ namespace Acme.ProductSelling.Orders
                 totalCount,
                 ObjectMapper.Map<List<Order>, List<OrderDto>>(orders)
             );
-        }
+        }*/
         public async Task<OrderDto> GetByOrderNumberAsync(string orderNumber)
         {
             var order = await _orderRepository.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
