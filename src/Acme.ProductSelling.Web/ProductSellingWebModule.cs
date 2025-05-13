@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -67,14 +67,15 @@ namespace Acme.ProductSelling.Web;
     typeof(AbpAutofacModule),
     typeof(AbpStudioClientAspNetCoreModule),
     typeof(AbpIdentityWebModule),
-    typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
+    typeof(AbpAspNetCoreMvcUiBasicThemeModule),
     typeof(AbpAccountWebOpenIddictModule),
     typeof(AbpTenantManagementWebModule),
     typeof(AbpFeatureManagementWebModule),
     typeof(AbpSwashbuckleModule),
     typeof(AbpAspNetCoreSerilogModule)
 )]
-public class ProductSellingWebModule : AbpModule
+[DependsOn(typeof(AbpAspNetCoreMvcUiThemeSharedModule))]
+    public class ProductSellingWebModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)
     {
@@ -173,7 +174,7 @@ public class ProductSellingWebModule : AbpModule
         Configure<AbpBundlingOptions>(options =>
         {
             options.StyleBundles.Configure(
-                LeptonXLiteThemeBundles.Styles.Global,
+                BasicThemeBundles.Styles.Global,
                 bundle =>
                 {
                     bundle.AddFiles("/global-styles.css");
@@ -181,7 +182,7 @@ public class ProductSellingWebModule : AbpModule
                 }
             );
             options.ScriptBundles.Configure(
-                 LeptonXLiteThemeBundles.Scripts.Global,
+                 BasicThemeBundles.Scripts.Global,
                 bundle =>
                 {
                     bundle.AddContributors(typeof(JQueryScriptContributor)); // jQuery phải trước

@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
-namespace Acme.ProductSelling.Web.Pages.Categories
+namespace Acme.ProductSelling.Web.Admin.Pages
 {
-    [Authorize(ProductSellingPermissions.Categories.Default)]
+    [Authorize(ProductSellingPermissions.Products.Default)]
     public class IndexModel : AbpPageModel
     {
         public void OnGet()

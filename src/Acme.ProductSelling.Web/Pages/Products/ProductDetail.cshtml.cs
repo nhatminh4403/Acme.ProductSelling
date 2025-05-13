@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Products;
+using Acme.ProductSelling.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
@@ -10,10 +11,12 @@ namespace Acme.ProductSelling.Web.Pages.Products
 {
     public class ProductDetailModel : AbpPageModel
     {
-        [BindProperty(SupportsGet = true)]
-        public Guid Id { get; set; }
+        //[BindProperty(SupportsGet = true)]
+        //public Guid Id { get; set; }
 
-        // Thuộc tính này đã chứa đủ thông tin, bao gồm cả các spec con và CategorySpecificationType
+        [BindProperty(SupportsGet = true)]
+        public string Slug { get; set; }
+
         public ProductDto Product { get; private set; }
 
         private readonly IProductAppService _productAppService;
@@ -27,7 +30,12 @@ namespace Acme.ProductSelling.Web.Pages.Products
         {
             try
             {
-                Product = await _productAppService.GetAsync(Id);
+                if (string.IsNullOrWhiteSpace(this.Slug))
+                {
+                    return NotFound();
+                }
+                //Product = await _productAppService.GetAsync(Id);
+                Product = await _productAppService.GetProductBySlug(Slug);
                 return Page();
             }
             catch (EntityNotFoundException)

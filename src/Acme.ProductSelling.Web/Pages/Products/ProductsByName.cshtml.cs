@@ -35,7 +35,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
                 SkipCount = (CurrentPage - 1) * PageSize,
                 Sorting = "ProductName",
             };
-            ProductList = await _productAppService.GetProductByName(input);
+            ProductList = await _productAppService.GetProductsByName(input);
 
             return Page();
         }

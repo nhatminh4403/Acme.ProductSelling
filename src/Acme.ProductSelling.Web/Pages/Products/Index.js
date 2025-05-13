@@ -51,15 +51,18 @@
 
                         var detailUrl = abp.appPath + 'products/' + row.id; 
                         return '<a href="' + detailUrl + '">' + data + '</a>'; 
-                    }
+                    },
+                    width: "20%", // Đặt chiều rộng cột
                 },
                 {
                     title: l('Description'), // Key localization "Name"
-                    data: "description"
+                    data: "description",
+                    width: "35%", 
                 },
                 {
                     title: l('Category'), // Key localization "Category" (đã thêm ở bước trước)
-                    data: "categoryName" // Lấy từ ProductDto
+                    data: "categoryName" ,// Lấy từ ProductDto
+                    // Đặt chiều rộng cột
                 },
                 {
                     title: l('Price'), // Key localization "Price"
@@ -72,7 +75,8 @@
                 },
                 {
                     title: l('Stock'), // Key localization "Name"
-                    data: "stockCount"
+                    data: "stockCount",
+                    width: "5%", // Đặt chiều rộng cột
                 },
             ]
         })

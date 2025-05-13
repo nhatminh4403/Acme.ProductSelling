@@ -1,12 +1,15 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Specifications;
+using Acme.ProductSelling.Utils;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Volo.Abp;
 using Volo.Abp.Domain.Entities.Auditing;
 namespace Acme.ProductSelling.Products
 {
@@ -16,6 +19,10 @@ namespace Acme.ProductSelling.Products
         public string Description { get; set; }
         public decimal Price { get; set; }
         public int StockCount { get; set; }
+
+        [MaxLength(ProductConsts.MaxUrlSlugLength)]
+        public string UrlSlug { get;  set; }
+
         public string ImageUrl { get; set; } 
         public Guid CategoryId { get; set; }
         public Category Category { get; set; }
@@ -48,5 +55,16 @@ namespace Acme.ProductSelling.Products
         public KeyboardSpecification KeyboardSpecification { get; set; }
         public Guid? HeadsetSpecificationId { get; set; }
         public HeadsetSpecification HeadsetSpecification { get; set; }
+        public virtual void SetProductNameAndSlug(string productName)
+        {
+            ProductName = Check.NotNullOrWhiteSpace(productName, nameof(productName), maxLength: ProductConsts.MaxProductNameLength);
+            UrlSlug = UrlHelper.RemoveDiacritics(productName);
+        }
+
+        internal virtual void SetSlug(string slug)
+        {
+            UrlSlug = Check.NotNullOrWhiteSpace(slug, nameof(slug), maxLength: ProductConsts.MaxUrlSlugLength);
+        }
+
     }
 }

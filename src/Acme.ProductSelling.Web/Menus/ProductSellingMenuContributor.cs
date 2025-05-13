@@ -29,7 +29,7 @@ public class ProductSellingMenuContributor : IMenuContributor
             new ApplicationMenuItem(
                 ProductSellingMenus.Home,
                 l["Menu:Home"],
-                "~/",
+                "/admin",
                 icon: "fa fa-home",
                 order: 1
             )
@@ -38,24 +38,24 @@ public class ProductSellingMenuContributor : IMenuContributor
         "Categories",
         l["Categories"],
         icon: "fa-solid fa-list",
-        url: "/Categories"
+        url: "/admin/Categories"
         ));
         context.Menu.AddItem(new ApplicationMenuItem(
         "Products",
         l["Products"],
         icon: "fa-solid fa-list",
-        url: "/Products"
+        url: "/admin/Products"
         ));
         context.Menu.AddItem(new ApplicationMenuItem(
-        "Cart",
-        l["Products"],
+        "Orders",
+        l["Orders"],
         icon: "fa-solid fa-list",
-        url: "/cart"
+        url: "/admin/Orders"
         ));
         var administration = context.Menu.GetAdministration();
         administration.Order = 6;
 
-        //Administration->Identity
+        
         administration.SetSubItemOrder(IdentityMenuNames.GroupName, 1);
 
         if (MultiTenancyConsts.IsEnabled)

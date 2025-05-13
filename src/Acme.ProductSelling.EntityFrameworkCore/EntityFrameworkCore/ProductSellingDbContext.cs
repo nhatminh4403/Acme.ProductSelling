@@ -121,12 +121,14 @@ public class ProductSellingDbContext :
             b.ToTable("Categories");
             b.Property(c => c.Name).IsRequired().HasMaxLength(100);
             b.HasMany(c => c.Products).WithOne(p => p.Category).HasForeignKey(p => p.CategoryId);
+            //b.HasIndex(p => p.UrlSlug);
         });
         builder.Entity<Manufacturer>(b =>
         {
             b.ToTable("Manufacturers");
             b.Property(c => c.Name).IsRequired().HasMaxLength(100);
             b.HasMany(c => c.Products).WithOne(p => p.Manufacturer).HasForeignKey(p => p.ManufacturerId);
+            //b.HasIndex(p => p.UrlSlug);
         });
         builder.Entity<Product>(b =>
         {
@@ -148,6 +150,7 @@ public class ProductSellingDbContext :
             b.HasOne(p => p.CpuCoolerSpecification).WithOne().HasForeignKey<Product>(p => p.CpuCoolerSpecificationId).IsRequired(false);
             b.HasOne(p => p.KeyboardSpecification).WithOne().HasForeignKey<Product>(p => p.KeyboardSpecificationId).IsRequired(false);
             b.HasOne(p => p.HeadsetSpecification).WithOne().HasForeignKey<Product>(p => p.HeadsetSpecificationId).IsRequired(false);
+            b.HasIndex(p => p.UrlSlug);
         });
 
 

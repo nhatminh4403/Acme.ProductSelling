@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
+@using Acme.ProductSelling.Utils;
 @using Volo.Abp.Users
 @using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Pagination
 @inject IStringLocalizer<ProductSellingResource> L
@@ -221,7 +222,7 @@
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">
                                 @* Link đến trang chi tiết sản phẩm *@
-                                <a asp-page="/Products/ProductDetail" asp-route-id="@product.Id">@product.ProductName</a>
+                                <a asp-page="/Products/ProductDetail" asp-route-slug="@product.UrlSlug">@product.ProductName</a>
                             </h5>
                             <p class="card-text text-muted small">@L["Category"]: @product.CategoryName</p>
                             <p class="card-text mt-auto">

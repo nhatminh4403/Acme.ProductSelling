@@ -1,4 +1,4 @@
-﻿@page "/products"
+﻿@page "/admin/products"
 @model Acme.ProductSelling.Web.Pages.Products.IndexModel
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
@@ -14,7 +14,7 @@
 
 }
 
-<abp-card>
+<abp-card class="px-3">
     <abp-card-header>
         <abp-row>
             <abp-column size-md="_6">
@@ -32,6 +32,6 @@
         </abp-row>
     </abp-card-header>
     <abp-card-body>
-        <abp-table striped-rows="true" id="ProductsTable"></abp-table> @* Bảng DataTables *@
+        <abp-table striped-rows="true" hoverable-rows="true" id="ProductsTable"></abp-table> 
     </abp-card-body>
 </abp-card>

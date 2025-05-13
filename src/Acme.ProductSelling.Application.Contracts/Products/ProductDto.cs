@@ -13,6 +13,7 @@ namespace Acme.ProductSelling.Products
 
         public decimal Price { get; set; }
         public int StockCount { get; set; }
+        public string UrlSlug { get; set; } // Đường dẫn URL thân thiện
         public string ImageUrl { get; set; }
         public Guid CategoryId { get; set; }
         public string CategoryName { get; set; }

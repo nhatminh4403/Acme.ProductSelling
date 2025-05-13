@@ -21,6 +21,12 @@ public class ProductSellingPermissionDefinitionProvider : PermissionDefinitionPr
         categoriesPermission.AddChild(ProductSellingPermissions.Categories.Create, L("Permission:Categories.Create"));
         categoriesPermission.AddChild(ProductSellingPermissions.Categories.Edit, L("Permission:Categories.Edit"));
         categoriesPermission.AddChild(ProductSellingPermissions.Categories.Delete, L("Permission:Categories.Delete"));
+
+        var orderPermission = myGroup.AddPermission(ProductSellingPermissions.Orders.Default, L("Permission:Orders"));
+        orderPermission.AddChild(ProductSellingPermissions.Orders.Create, L("Permission:Orders.Create"));
+        orderPermission.AddChild(ProductSellingPermissions.Orders.Edit, L("Permission:Orders.Edit"));
+        orderPermission.AddChild(ProductSellingPermissions.Orders.Delete, L("Permission:Orders.Delete"));
+
     }
 
     private static LocalizableString L(string name)

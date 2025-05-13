@@ -1,4 +1,6 @@
 ﻿using Acme.ProductSelling.Carts;
+using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +19,8 @@ using Volo.Abp.Guids;
 using Volo.Abp.Users;
 namespace Acme.ProductSelling.Orders
 {
-    public class OrderAppService : ApplicationService, IOrderAppService
+    public class OrderAppService : CrudAppService<Order, OrderDto,
+        Guid, PagedAndSortedResultRequestDto, CreateOrderDto>, IOrderAppService
     {
         private readonly IRepository<Order, Guid> _orderRepository;
         private readonly IRepository<Product, Guid> _productRepository;
@@ -30,13 +33,17 @@ namespace Acme.ProductSelling.Orders
            IRepository<Product, Guid> productRepository,
            IGuidGenerator guidGenerator,
            ICurrentUser currentUser,
-                        IRepository<Cart, Guid> cartRepository )
+                        IRepository<Cart, Guid> cartRepository ) : base(orderRepository)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
             _guidGenerator = guidGenerator;
             _currentUser = currentUser;
             _cartRepository = cartRepository;
+            GetPolicyName = ProductSellingPermissions.Orders.Default;
+            CreatePolicyName = ProductSellingPermissions.Orders.Create;
+            UpdatePolicyName = ProductSellingPermissions.Orders.Edit;
+            DeletePolicyName = ProductSellingPermissions.Orders.Delete;
         }
 
         public async Task<OrderDto> CreateAsync(CreateOrderDto input)
@@ -76,7 +83,8 @@ namespace Acme.ProductSelling.Orders
                 }
                 if (product.StockCount < itemDto.Quantity)
                 {
-                    throw new UserFriendlyException($"Not enough stock for product '{product.ProductName}'." +
+                    throw new UserFriendlyException
+                        ($"Not enough stock for product '{product.ProductName}'." +
                         $" Available: {product.StockCount}, Requested: {itemDto.Quantity}");
                 }
 
@@ -99,7 +107,8 @@ namespace Acme.ProductSelling.Orders
         [AllowAnonymous]
         public async Task<OrderDto> GetAsync(Guid id)
         {
-            var order = await (await _orderRepository.WithDetailsAsync(o => o.OrderItems)) // Include Items
+            var order = await (await 
+                            _orderRepository.WithDetailsAsync(o => o.OrderItems)) // Include Items
                              .FirstOrDefaultAsync(o => o.Id == id);
 
             if (order == null)
@@ -112,7 +121,7 @@ namespace Acme.ProductSelling.Orders
             return ObjectMapper.Map<Order, OrderDto>(order);
         }
 
-        // [Authorize] // Bảo vệ nếu cần
+        [Authorize] // Bảo vệ nếu cần
         public async Task<PagedResultDto<OrderDto>> GetListAsync(GetOrderListInput input)
         {
             var queryable = await _orderRepository.GetQueryableAsync();

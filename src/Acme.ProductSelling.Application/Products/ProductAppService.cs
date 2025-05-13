@@ -1,6 +1,7 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Specifications;
+using Acme.ProductSelling.Utils;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace Acme.ProductSelling.Products
         private readonly IRepository<Category, Guid> _categoryRepository;
         private readonly IRepository<MonitorSpecification, Guid> _monitorSpecRepository;
         private readonly IRepository<MouseSpecification, Guid> _mouseSpecRepository;
-        private readonly IRepository<LaptopSpecification, Guid> _laptopSpecRepository; // Giả sử có
+        private readonly IRepository<LaptopSpecification, Guid> _laptopSpecRepository;
         private readonly IRepository<CpuSpecification, Guid> _cpuSpecRepository;
         private readonly IRepository<GpuSpecification, Guid> _gpuSpecRepository;
         private readonly IRepository<RamSpecification, Guid> _ramSpecRepository;
@@ -77,7 +78,7 @@ namespace Acme.ProductSelling.Products
             var product = await query.Include(p => p.Category)
                                   .Include(p => p.MonitorSpecification)
                                   .Include(p => p.MouseSpecification)
-                                  .Include(p => p.LaptopSpecification) // Giả sử có
+                                  .Include(p => p.LaptopSpecification)
                                   .Include(p => p.CpuSpecification)
                                   .Include(p => p.GpuSpecification)
                                   .Include(p => p.RamSpecification)
@@ -96,14 +97,38 @@ namespace Acme.ProductSelling.Products
             }
             return ObjectMapper.Map<Product, ProductDto>(product);
         }
+
+        public virtual async Task<ProductDto> GetProductBySlug(string slug)
+        {
+            var query = await Repository.GetQueryableAsync();
+            var product = await query.Include(p => p.Category)
+                                  .Include(p => p.MonitorSpecification)
+                                  .Include(p => p.MouseSpecification)
+                                  .Include(p => p.LaptopSpecification)
+                                  .Include(p => p.CpuSpecification)
+                                  .Include(p => p.GpuSpecification)
+                                  .Include(p => p.RamSpecification)
+                                  .Include(p => p.MotherboardSpecification)
+                                  .Include(p => p.StorageSpecification)
+                                  .Include(p => p.PsuSpecification)
+                                  .Include(p => p.CaseSpecification)
+                                  .Include(p => p.CpuCoolerSpecification)
+                                  .Include(p => p.KeyboardSpecification)
+                                  .Include(p => p.HeadsetSpecification)
+                                  .Include(p => p.Manufacturer)
+                                  .FirstOrDefaultAsync(p => p.UrlSlug.ToLower() == slug.ToLower());
+            if (product == null)
+            {
+                throw new Volo.Abp.Domain.Entities.EntityNotFoundException(typeof(Product), slug);
+            }
+            return ObjectMapper.Map<Product, ProductDto>(product);
+        }
         public override async Task<ProductDto> CreateAsync(CreateUpdateProductDto input)
         {
             await CheckCreatePolicyAsync();
             var category = await _categoryRepository.GetAsync(input.CategoryId);
             var product = ObjectMapper.Map<CreateUpdateProductDto, Product>(input);
-            // With this updated line:
             typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(product, GuidGenerator.Create());
-            // --- Switch statement dài hơn ---
             switch (category.SpecificationType)
             {
                 case SpecificationType.Monitor:
@@ -124,7 +149,7 @@ namespace Acme.ProductSelling.Products
                         product.MouseSpecificationId = spec.Id;
                     }
                     break;
-                case SpecificationType.Laptop: // Giả sử có
+                case SpecificationType.Laptop:
                     if (input.LaptopSpecification != null)
                     {
                         var spec = ObjectMapper.Map<CreateUpdateLaptopSpecificationDto, LaptopSpecification>(input.LaptopSpecification);
@@ -223,7 +248,6 @@ namespace Acme.ProductSelling.Products
                         product.HeadsetSpecificationId = spec.Id;
                     }
                     break;
-                // ... Thêm các case khác ...
                 default: break;
             }
             await Repository.InsertAsync(product, autoSave: true);
@@ -239,7 +263,6 @@ namespace Acme.ProductSelling.Products
             {
                 await DeleteOldSpecificationAsync(product, newCategory.SpecificationType);
             }
-            // Map dữ liệu cơ bản
             ObjectMapper.Map(input, product);
             product.CategoryId = newCategory.Id;
             switch (newCategory.SpecificationType)
@@ -250,7 +273,7 @@ namespace Acme.ProductSelling.Products
                 case SpecificationType.Mouse:
                     await HandleSpecificationUpdateAsync(product.MouseSpecificationId, input.MouseSpecification, _mouseSpecRepository, (specId) => product.MouseSpecificationId = specId);
                     break;
-                case SpecificationType.Laptop: // Giả sử có
+                case SpecificationType.Laptop:
                     await HandleSpecificationUpdateAsync(product.LaptopSpecificationId, input.LaptopSpecification, _laptopSpecRepository, (specId) => product.LaptopSpecificationId = specId);
                     break;
                 case SpecificationType.CPU:
@@ -283,7 +306,6 @@ namespace Acme.ProductSelling.Products
                 case SpecificationType.Headset:
                     await HandleSpecificationUpdateAsync(product.HeadsetSpecificationId, input.HeadsetSpecification, _headsetSpecRepository, (specId) => product.HeadsetSpecificationId = specId);
                     break;
-                // ... Thêm các case khác ...
                 default:
                     await DeleteOldSpecificationAsync(product, SpecificationType.None);
                     break;
@@ -291,41 +313,38 @@ namespace Acme.ProductSelling.Products
             await Repository.UpdateAsync(product, autoSave: true);
             return await GetAsync(product.Id);
         }
-        // Hàm helper chung cho việc Update/Create spec
         private async Task HandleSpecificationUpdateAsync<TSpecEntity, TSpecDto>(
             Guid? currentSpecId,
             TSpecDto inputDto,
             IRepository<TSpecEntity, Guid> specRepository,
             Action<Guid?> setProductSpecIdAction)
-            where TSpecEntity : class, Volo.Abp.Domain.Entities.IEntity<Guid> // Ràng buộc kiểu
+            where TSpecEntity : class, Volo.Abp.Domain.Entities.IEntity<Guid>
             where TSpecDto : class
         {
             if (inputDto != null)
             {
-                if (currentSpecId.HasValue) // Cập nhật spec hiện có
+                if (currentSpecId.HasValue)
                 {
                     var existingSpec = await specRepository.GetAsync(currentSpecId.Value);
                     ObjectMapper.Map(inputDto, existingSpec);
                     await specRepository.UpdateAsync(existingSpec, autoSave: true);
                 }
-                else // Tạo spec mới
+                else
                 {
                     var newSpec = ObjectMapper.Map<TSpecDto, TSpecEntity>(inputDto);
                     typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(newSpec, GuidGenerator.Create());
                     await specRepository.InsertAsync(newSpec, autoSave: true);
-                    setProductSpecIdAction(newSpec.Id); // Gán FK mới cho Product thông qua Action<>
+                    setProductSpecIdAction(newSpec.Id);
                 }
             }
-            else if (currentSpecId.HasValue) // Xóa spec nếu input DTO là null nhưng FK đang có giá trị
+            else if (currentSpecId.HasValue)
             {
                 await specRepository.DeleteAsync(currentSpecId.Value, autoSave: true);
-                setProductSpecIdAction(null); // Gỡ bỏ FK
+                setProductSpecIdAction(null);
             }
         }
-        // Cập nhật DeleteOldSpecificationAsync để bao gồm TẤT CẢ các loại spec
         private async Task DeleteOldSpecificationAsync(Product product, SpecificationType? newSpecType)
         {
-            // Check và xóa từng loại spec nếu nó tồn tại và không khớp với loại mới
             if (product.MonitorSpecificationId.HasValue && newSpecType != SpecificationType.Monitor)
             {
                 await _monitorSpecRepository.DeleteAsync(product.MonitorSpecificationId.Value, autoSave: true);
@@ -398,7 +417,7 @@ namespace Acme.ProductSelling.Products
 
             var product = await Repository.FindAsync(id);
             if (product == null) return;
-            await DeleteOldSpecificationAsync(product, SpecificationType.None); // Truyền None để đảm bảo xóa hết
+            await DeleteOldSpecificationAsync(product, SpecificationType.None);
             await Repository.DeleteAsync(id, autoSave: true);
         }
         protected override async Task<ProductDto> MapToGetOutputDtoAsync(Product entity)
@@ -441,7 +460,7 @@ namespace Acme.ProductSelling.Products
                 productDtos
             );
         }
-        public virtual async Task<PagedResultDto<ProductDto>> GetProductByName(GetProductByName input)
+        public virtual async Task<PagedResultDto<ProductDto>> GetProductsByName(GetProductByName input)
         {
             var queryable = await Repository.GetQueryableAsync();
             queryable = queryable.Include(p => p.Category).Include(p => p.Manufacturer);

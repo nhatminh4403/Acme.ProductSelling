@@ -2,12 +2,11 @@
 @model Acme.ProductSelling.Web.Pages.Categories.CreateModalModel
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
-@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal; @* Cần thiết cho abp-modal *@
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal; 
 @inject IStringLocalizer<ProductSellingResource> L
 @{
     Layout = null; @* Không sử dụng layout cho modal *@
 }
-@* Sử dụng form động của ABP hoặc định nghĩa input thủ công *@
 
 <form method="post" asp-page="/Categories/CreateModal">
     <abp-modal>

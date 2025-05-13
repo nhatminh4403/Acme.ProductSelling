@@ -2,6 +2,7 @@
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products;
+using Acme.ProductSelling.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
@@ -69,7 +70,7 @@ public class IndexModel : ProductSellingPageModel
             Items = productList.Items,
             TotalCount = productList.TotalCount
         };
-        
+
         var categoryLookup = await _categoryRepository.GetListAsync();
 
         CategoryList = new PagedResultDto<CategoryDto>

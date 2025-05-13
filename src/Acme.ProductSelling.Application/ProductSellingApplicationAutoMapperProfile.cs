@@ -13,6 +13,7 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
         CreateMap<Manufacturer, ManufacturerDto>();
         CreateMap<CreateUpdateManufacturerDto, Manufacturer>();
         CreateMap<Product, ProductDto>()
+             .ForMember(dest => dest.UrlSlug, opt => opt.MapFrom(src => src.UrlSlug))
                .ForMember(dest => dest.CategoryName,
                           opt => opt.MapFrom(src => src.Category.Name))
                .ForMember(dest => dest.CategorySpecificationType, opt => opt.MapFrom(src => src.Category.SpecificationType))
@@ -92,8 +93,8 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
 
         CreateMap<Order, OrderDto>();
         CreateMap<CreateOrderDto, Order>()
-            .ForMember(dest => dest.OrderItems, opt => opt.Ignore()) 
-            .ForMember(dest => dest.TotalAmount, opt => opt.Ignore()); 
+            .ForMember(dest => dest.OrderItems, opt => opt.Ignore())
+            .ForMember(dest => dest.TotalAmount, opt => opt.Ignore());
         CreateMap<CreateOrderItemDto, OrderItem>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.OrderId, opt => opt.Ignore())

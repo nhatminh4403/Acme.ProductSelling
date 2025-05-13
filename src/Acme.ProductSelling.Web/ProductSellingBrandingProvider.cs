@@ -16,4 +16,6 @@ public class ProductSellingBrandingProvider : DefaultBrandingProvider
     }
 
     public override string AppName => _localizer["AppName"];
+    public override string LogoUrl => "/images/monitor.png";
+    public override string LogoReverseUrl => "/admin";
 }

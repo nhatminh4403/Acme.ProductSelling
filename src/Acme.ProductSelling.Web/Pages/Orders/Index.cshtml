@@ -1,5 +1,5 @@
-﻿@page "/admin/Categories"
-@model IndexModel
+﻿@page "/admin/orders"
+@model Acme.ProductSelling.Web.Pages.Orders.IndexModel
 @using Acme.ProductSelling.Localization
 @using Acme.ProductSelling.Web.Pages.Categories
 @using Microsoft.Extensions.Localization
@@ -8,27 +8,24 @@
 
 @inject IStringLocalizer<ProductSellingResource> L
 @inject IAuthorizationService AuthorizationService
-
 @{
-    ViewData["Title"] = L["AllCategories"];
 }
 @section scripts {
-    <abp-script src="/Pages/Categories/Index.js" /> 
+    <abp-script src="/Pages/Orders/Index.js" />
 }
-
 <abp-card>
     <abp-card-header>
         <abp-row>
             <abp-column size-md="_6">
                 @* Tiêu đề Card *@
-                <abp-card-title>@L["Categories"]</abp-card-title>
+                <abp-card-title>@L["Orders"]</abp-card-title>
             </abp-column>
             <abp-column size-md="_6" class="text-end">
                 @* Nút tạo mới - Chỉ hiển thị nếu user có quyền Create *@
                 @if (await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Categories.Create))
                 {
                     <abp-button id="NewCategoryButton"
-                                text="@L["CreateCategory"].Value" 
+                                text="@L["CreateOrder"].Value"
                                 icon="plus"
                                 button-type="Primary" />
                 }
@@ -37,6 +34,6 @@
     </abp-card-header>
     <abp-card-body>
         @* Tag Helper tạo bảng, DataTables sẽ gắn vào id này *@
-        <abp-table striped-rows="true" id="CategoriesTable"></abp-table>
+        <abp-table striped-rows="true" id="OrdersTable"></abp-table>
     </abp-card-body>
 </abp-card>
