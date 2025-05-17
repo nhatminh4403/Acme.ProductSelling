@@ -1,6 +1,8 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Specifications;
+using JetBrains.Annotations;
 using System;
+using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Products
@@ -11,7 +13,10 @@ namespace Acme.ProductSelling.Products
 
         public string Description { get; set; }
 
-        public decimal Price { get; set; }
+        public decimal OriginalPrice { get; set; }
+        public decimal? DiscountedPrice { get; set; }
+        [Range(0, 100)]
+        public double DiscountPercent { get; set; }
         public int StockCount { get; set; }
         public string UrlSlug { get; set; } // Đường dẫn URL thân thiện
         public string ImageUrl { get; set; }

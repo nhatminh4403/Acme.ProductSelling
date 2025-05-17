@@ -6,14 +6,37 @@
 @inject IStringLocalizer<ProductSellingResource> L
 @{
     ViewData["Title"] = Model.Product?.ProductName ?? L["ProductDetail"];
-     Layout = "/Views/Shared/_Layout.cshtml"; 
+    Layout = "/Views/Shared/_Layout.cshtml";
 }
 @section scripts {
-    @* <abp-script src="/Pages/Carts/Index.js" /> *@
+    <script>
+        function toggleContent(id, button) {
+            const container = document.getElementById(id);
+            container.classList.toggle('expanded');
+            button.classList.toggle('rotated');
+
+            const showMoreText = button.querySelector('.show-more-text');
+            const showLessText = button.querySelector('.show-less-text');
+
+            if (showMoreText && showLessText) {
+              showMoreText.classList.toggle('d-none');
+              showLessText.classList.toggle('d-none');
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const leftCard = document.getElementById('leftCard');
+            const rightSidebar = document.getElementById('rightSidebar');
+
+            if (leftCard && rightSidebar) {
+                const height = leftCard.offsetHeight;
+                rightSidebar.style.height = height + 'px';
+            }
+        });
+    </script>
 }
 @if (Model.Product != null)
 {
-    <div class="container mt-4">
+    <div class="container mt-4 mb-4">
         <div class="row">
             <div class="col-md-6">
                 @if (!string.IsNullOrWhiteSpace(Model.Product.ImageUrl))
@@ -28,24 +51,35 @@
             <div class="col-md-6">
                 <h2>@Model.Product.ProductName</h2>
                 <p class="text-muted">@L["Manufacturer"]: @Model.Product.ManufacturerName</p>
-                <p class="text-muted">@L["Category"]: @Model.Product.CategoryName</p>
                 <p>@Model.Product.Description</p>
-                <h3 class="text-danger my-3">@Model.Product.Price.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</h3>
-                @if( Model.Product.StockCount > 0)
+                <h3 class="text-danger my-3">
+                    @Model.Product.OriginalPrice.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))
+                </h3>
+                @if (Model.Product.StockCount > 0)
                 {
                     <p>@L["StockCount"]: @Model.Product.StockCount</p>
+                    <button class="btn btn-primary btn-lg add-to-cart-button"
+                            data-product-id="@Model.Product.Id"
+                            data-product-name="@Model.Product.ProductName"
+                            data-product-price="@Model.Product.OriginalPrice"
+                    @(Model.Product.StockCount <= 0 ? "disabled" : "")>
+                        <i class="fas fa-cart-plus me-2"></i>
+                        @L[Model.Product.StockCount > 0 ? "AddToCart" : "OutOfStock"]
+                    </button>
                 }
                 else
                 {
-                    <p>@L["StockCount"]: Hết hàng</p>
+                    <button class="btn btn-primary btn-lg add-to-cart-button"
+                            data-product-id="@Model.Product.Id"
+                            data-product-name="@Model.Product.ProductName"
+                            data-product-price="@Model.Product.OriginalPrice"
+                    @(Model.Product.StockCount <= 0 ? "disabled" : "")>
+                        <i class="fas fa-cart-plus me-2"></i>
+                        @L[Model.Product.StockCount > 0 ? "AddToCart" : "OutOfStock"]
+                    </button>
                 }
 
-                <button class="btn btn-primary btn-lg add-to-cart-button" 
-                        data-product-id="@Model.Product.Id" data-product-name="@Model.Product.ProductName" data-product-price="@Model.Product.Price"
-                @(Model.Product.StockCount <= 0 ? "disabled" : "")>
-                    <i class="fas fa-cart-plus me-2"></i> 
-                    @L[Model.Product.StockCount > 0 ? "AddToCart" : "OutOfStock"] 
-                </button>
+
             </div>
         </div>
 
@@ -149,7 +183,44 @@
                 }
             </div>
         </div>
+        <div class="row">
+            <!-- Main content -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm" id="leftCard">
+                    <div class="card-header bg-light">Example 2: With Border and Shadow</div>
+                    <div class="card-body">
+                        <div class="content-container" id="content2">
+                            <h5>What are collapsible containers?</h5>
+                            <p>Collapsible containers are UI elements that allow you to show a preview of content while giving users the option to expand and see more.</p>
+                            <ul>
+                                <li>Long articles or blog posts</li>
+                                <li>Product descriptions</li>
+                                <li>FAQ sections</li>
+                                <li>Comment sections</li>
+                            </ul>
+                            <h5>How do they work?</h5>
+                            <p>They use CSS transitions to smoothly animate the expansion and collapse of the content.</p>
+                            <h5>Benefits</h5>
+                            <p>These containers help manage vertical space on your page and improve load performance.</p>
+                        </div>
+                        <hr />
+                        <button class="btn btn-sm btn-outline-primary toggle-button d-block mx-auto" onclick="toggleContent('content2', this)">
+                            <span class="show-more-text">Expand</span>
+                            <span class="show-less-text d-none">Collapse</span>
+                            <i class="bi bi-chevron-down ms-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <div class="sticky-sidebar" id="rightSidebar">
+                    <h5>Sticky Sidebar</h5>
+                    <p>This sidebar stays visible while scrolling the expanded content on the left.</p>
+                </div>
+            </div>
+        </div>
     </div>
 }
 else

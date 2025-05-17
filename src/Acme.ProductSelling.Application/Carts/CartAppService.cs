@@ -90,8 +90,16 @@ namespace Acme.ProductSelling.Carts
                     {
                         if (products.TryGetValue(itemDto.ProductId, out var product))
                         {
-                            itemDto.ProductName = product.ProductName;
-                            itemDto.ProductPrice = product.Price;
+                            if (product.DiscountedPrice == null)
+                            {
+                                itemDto.ProductName = product.ProductName;
+                                itemDto.ProductPrice = product.DiscountedPrice.Value;
+                            }
+                            else
+                            {
+                                itemDto.ProductName = product.ProductName;
+                                itemDto.ProductPrice = product.OriginalPrice;
+                            }
                         }
                     }
                     // Xóa item khỏi DTO nếu SP không tìm thấy
@@ -140,17 +148,30 @@ namespace Acme.ProductSelling.Carts
                     throw new UserFriendlyException($"Not enough stock for '{product.ProductName}'." +
                         $" Available: {product.StockCount}, Requested total: {requestedQuantity}");
                 }
+                if (product.DiscountedPrice == null)
+                {
+                    cart.AddOrUpdateItem(
+                        input.ProductId,
+                        input.Quantity,
+                        _guidGenerator,
+                        product.ProductName,
+                        product.OriginalPrice
+                    );
+                }
+                else
+                {
+                    cart.AddOrUpdateItem(
+                        input.ProductId,
+                        input.Quantity,
+                        _guidGenerator,
+                        product.ProductName,
+                        product.DiscountedPrice.Value
+                    );
+                }
+                    // Thêm hoặc cập nhật item trong giỏ hàng
 
-                // Thêm hoặc cập nhật item trong giỏ hàng
-                cart.AddOrUpdateItem(
-                    input.ProductId,
-                    input.Quantity,
-                    _guidGenerator,
-                    product.ProductName,
-                    product.Price
-                );
 
-                await _cartRepository.UpdateAsync(cart, autoSave: true);
+                    await _cartRepository.UpdateAsync(cart, autoSave: true);
             }
             catch (EntityNotFoundException)
             {

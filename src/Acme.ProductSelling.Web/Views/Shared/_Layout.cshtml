@@ -17,7 +17,7 @@
 @{
     var title = ViewData["Title"]?.ToString();
     var hasAdminPermission = await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Products.Default);
-
+    var titleAppName = L["Menu:AppName"].ToString();
 }
 
 
@@ -39,7 +39,7 @@
     </style>
 </head>
 <body class="abp-application-layout bg-light d-flex flex-column min-vh-100">
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom position-sticky">
         <div class="container">
             <a class="navbar-brand" href="/" aria-label="Home">
                 <img src="~/images/monitor.png" alt="Home" style="width: 75px;aspect-ratio: 16 / 9;" />
@@ -52,14 +52,15 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
-                @if (!title.ToLower().Contains("home"))
+                @if (!title.ToLower().Contains(titleAppName.ToLower()))
                 {
+                    
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
                         <li class="nav-item dropdown category-dropdown-container me-2">
                             <button class="btn btn-danger dropdown-toggle d-flex align-items-center" type="button"
                                     id="navbarDropdownCategories" aria-expanded="false">
                                 <i class="bi bi-list me-2"></i>
-                                Categories
+                                Categories 
                             </button>
                             @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Components.CategoriesMenu.CategoriesMenuViewComponent))
                         </li>

@@ -1,8 +1,9 @@
 {
   "Culture": "en",
   "Texts": {
-    "AppName": "ProductSelling",
+    "AppName": "XComputer",
     "Menu:Home": "Home",
+    "Menu:AppName": "XComputer",
     "LongWelcomeMessage": "Welcome to the application. This is a startup project based on the ABP framework. For more information visit",
     "Welcome": "Welcome",
     "CategoryDeletionConfirmationMessage": "Are you sure you want to delete this category?",

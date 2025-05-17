@@ -5,7 +5,7 @@ using Volo.Abp.Domain.Entities.Auditing;
 
 namespace Acme.ProductSelling.Manufacturers
 {
-    public class Manufacturer : AuditedEntity<Guid>
+    public class Manufacturer : FullAuditedEntity<Guid>
     {
         public string Name { get; set; }
         public string Description { get; set; }

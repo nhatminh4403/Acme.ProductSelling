@@ -12,11 +12,15 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
     {
         CreateMap<Manufacturer, ManufacturerDto>();
         CreateMap<CreateUpdateManufacturerDto, Manufacturer>();
+        CreateMap<Manufacturer, ManufacturerLookupDto>();
         CreateMap<Product, ProductDto>()
-             .ForMember(dest => dest.UrlSlug, opt => opt.MapFrom(src => src.UrlSlug))
-               .ForMember(dest => dest.CategoryName,
+                .ForMember(dest => dest.UrlSlug, opt => opt.MapFrom(src => src.UrlSlug))
+                .ForMember(dest => dest.CategoryName,
                           opt => opt.MapFrom(src => src.Category.Name))
-               .ForMember(dest => dest.CategorySpecificationType, opt => opt.MapFrom(src => src.Category.SpecificationType))
+                .ForMember(dest => dest.OriginalPrice, opt => opt.MapFrom(src => src.OriginalPrice))
+                .ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(src => src.DiscountedPrice))
+                .ForMember(dest => dest.DiscountPercent, opt => opt.MapFrom(src => src.DiscountPercent))
+                .ForMember(dest => dest.CategorySpecificationType, opt => opt.MapFrom(src => src.Category.SpecificationType))
                 .ForMember(dest => dest.ManufacturerName,
                               opt => opt.MapFrom(src => src.Manufacturer.Name))
                 // Map các spec con (AutoMapper sẽ tự map nếu tên và kiểu khớp)
@@ -104,5 +108,7 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
         CreateMap<Cart, CartDto>()
             .ForMember(dest => dest.CartItems, opt => opt.MapFrom(src => src.Items)); // Map collection Items
         CreateMap<CartItem, CartItemDto>();
+
+
     }
 }

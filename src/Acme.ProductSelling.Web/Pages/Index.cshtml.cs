@@ -62,7 +62,7 @@ public class IndexModel : ProductSellingPageModel
             
         };
         ViewData["Title"] = _localizer["Menu:Home"];
-
+        
         var productList = await _productAppService.GetListAsync(input);
 
         ProductList = new PagedResultDto<ProductDto>

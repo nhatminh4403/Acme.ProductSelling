@@ -1,0 +1,32 @@
+﻿@model Acme.ProductSelling.Specifications.MotherboardSpecificationDto
+@using Microsoft.Extensions.Localization
+@using Acme.ProductSelling.Localization
+@inject IStringLocalizer<ProductSellingResource> L
+
+<h5>@L["MotherboardDetail"]</h5>
+<dl class="row mt-3">
+    <dt class="col-sm-4">@L["Socket"]</dt>
+    <dd class="col-sm-8">@Model.Socket </dd>
+    <dt class="col-sm-4">@L["Chipset"]</dt>
+    <dd class="col-sm-8">@Model.Chipset</dd>
+    <dt class="col-sm-4">@L["RAMSlots"]</dt>
+    <dd class="col-sm-8">@Model.RamSlots</dd>
+    <dt class="col-sm-4">@L["MaxRam"]</dt>
+    <dd class="col-sm-8">@Model.MaxRam GB</dd>
+    <dt class="col-sm-4">@L["FormFactor"]</dt>
+    <dd class="col-sm-8">@Model.FormFactor</dd>
+    <dt class="col-sm-4">@L["StorageSlots"]</dt>
+    <dd class="col-sm-8">@Model.RamSlots</dd>
+    <dt class="col-sm-4">@L["SupportedRamType"]</dt>
+    <dd class="col-sm-8">@Model.SupportedRamType</dd>
+
+    <dt class="col-sm-4">@L["HasWifi"]</dt>
+    <dd class="col-sm-8">@(Model.HasWifi ? L["Yes"] : L["No"])</dd>
+
+    <dt class="col-sm-4">@L["SataPorts"]</dt>
+    <dd class="col-sm-8">@Model.SataPorts</dd>
+
+    <dt class="col-sm-4">@L["M2Slots"]</dt>
+    <dd class="col-sm-8">@Model.M2Slots</dd>
+
+</dl>

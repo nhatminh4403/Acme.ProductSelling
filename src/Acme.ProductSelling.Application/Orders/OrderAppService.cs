@@ -45,6 +45,24 @@ namespace Acme.ProductSelling.Orders
             UpdatePolicyName = ProductSellingPermissions.Orders.Edit;
             DeletePolicyName = ProductSellingPermissions.Orders.Delete;
         }
+        public override async Task<PagedResultDto<OrderDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+        {
+            var queryable = await Repository.GetQueryableAsync();   
+            
+            var query = queryable.Include(o => o.OrderItems)
+                .Include(o => o.OrderItems);
+            var queryResult = await AsyncExecuter.ToListAsync(query);
+
+            var orderDtos = ObjectMapper.Map<List<Order>, List<OrderDto>>(queryResult);
+
+            var totalCount = await Repository.GetCountAsync();
+
+            return new PagedResultDto<OrderDto>(
+                totalCount,
+                orderDtos
+            );
+        }
+
 
         public override async Task<OrderDto> CreateAsync(CreateOrderDto input)
         {
@@ -88,7 +106,7 @@ namespace Acme.ProductSelling.Orders
                         $" Available: {product.StockCount}, Requested: {itemDto.Quantity}");
                 }
 
-                order.AddOrderItem(product.Id, product.ProductName, product.Price, itemDto.Quantity);
+                order.AddOrderItem(product.Id, product.ProductName, product.OriginalPrice, itemDto.Quantity);
 
                 // Giảm tồn kho
                 product.StockCount -= itemDto.Quantity;

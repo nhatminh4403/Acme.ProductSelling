@@ -9,7 +9,7 @@
         abp.libs.datatables.normalizeConfiguration({
             serverSide: true,
             paging: true,
-            order: [[1, "asc"]], // Sắp xếp theo tên sản phẩm
+            order: [[1, "asc"]], 
             searching: false,
             scrollX: true,
             ajax: abp.libs.datatables.createAjax(productService.getList), 
@@ -52,31 +52,29 @@
                         var detailUrl = abp.appPath + 'products/' + row.id; 
                         return '<a href="' + detailUrl + '">' + data + '</a>'; 
                     },
-                    width: "20%", // Đặt chiều rộng cột
+                    width: "5%",
                 },
                 {
-                    title: l('Description'), // Key localization "Name"
+                    title: l('Description'), 
                     data: "description",
-                    width: "35%", 
+                     
                 },
                 {
-                    title: l('Category'), // Key localization "Category" (đã thêm ở bước trước)
-                    data: "categoryName" ,// Lấy từ ProductDto
-                    // Đặt chiều rộng cột
+                    title: l('Category'), 
+                    data: "categoryName" ,
                 },
                 {
-                    title: l('Price'), // Key localization "Price"
+                    title: l('Price'), 
                     data: "price",
-                    render: function (data) { // Định dạng giá tiền (ví dụ)
+                    render: function (data) { 
                         return data.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-                        // Hoặc định dạng đơn giản hơn nếu cần
-                        // return data;
+
                     }
                 },
                 {
-                    title: l('Stock'), // Key localization "Name"
+                    title: l('Stock'), 
                     data: "stockCount",
-                    width: "5%", // Đặt chiều rộng cột
+                    width: "5%", 
                 },
             ]
         })

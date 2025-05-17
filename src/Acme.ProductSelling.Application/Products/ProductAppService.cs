@@ -126,132 +126,70 @@ namespace Acme.ProductSelling.Products
         public override async Task<ProductDto> CreateAsync(CreateUpdateProductDto input)
         {
             await CheckCreatePolicyAsync();
+
             var category = await _categoryRepository.GetAsync(input.CategoryId);
-            var product = ObjectMapper.Map<CreateUpdateProductDto, Product>(input);
-            typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(product, GuidGenerator.Create());
+            var productEntity = ObjectMapper.Map<CreateUpdateProductDto, Product>(input);
+            typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(productEntity.Id, GuidGenerator.Create());
+            async Task<Guid?> CreateSpecificationAsync<TSpecDto, TSpecEntity>(
+                TSpecDto specDto,
+                IRepository<TSpecEntity, Guid> specRepository)
+                where TSpecEntity : class, Volo.Abp.Domain.Entities.IEntity<Guid>, new()
+                where TSpecDto : class
+            {
+                if (specDto == null) return null;
+
+                var specEntity = ObjectMapper.Map<TSpecDto, TSpecEntity>(specDto);
+                typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(specEntity.Id, GuidGenerator.Create()); 
+                await specRepository.InsertAsync(specEntity, autoSave: false);
+                return specEntity.Id;
+            }
+
             switch (category.SpecificationType)
             {
                 case SpecificationType.Monitor:
-                    if (input.MonitorSpecification != null)
-                    {
-                        var spec = ObjectMapper.Map<CreateUpdateMonitorSpecificationDto, MonitorSpecification>(input.MonitorSpecification);
-                        typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(spec, GuidGenerator.Create());
-                        await _monitorSpecRepository.InsertAsync(spec, autoSave: true);
-                        product.MonitorSpecificationId = spec.Id;
-                    }
+                    productEntity.MonitorSpecificationId = await CreateSpecificationAsync(input.MonitorSpecification, _monitorSpecRepository);
                     break;
                 case SpecificationType.Mouse:
-                    if (input.MouseSpecification != null)
-                    {
-                        var spec = ObjectMapper.Map<CreateUpdateMouseSpecificationDto, MouseSpecification>(input.MouseSpecification);
-                        typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(spec, GuidGenerator.Create());
-                        await _mouseSpecRepository.InsertAsync(spec, autoSave: true);
-                        product.MouseSpecificationId = spec.Id;
-                    }
+                    productEntity.MouseSpecificationId = await CreateSpecificationAsync(input.MouseSpecification, _mouseSpecRepository);
                     break;
                 case SpecificationType.Laptop:
-                    if (input.LaptopSpecification != null)
-                    {
-                        var spec = ObjectMapper.Map<CreateUpdateLaptopSpecificationDto, LaptopSpecification>(input.LaptopSpecification);
-                        typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(spec, GuidGenerator.Create());
-                        await _laptopSpecRepository.InsertAsync(spec, autoSave: true);
-                        product.LaptopSpecificationId = spec.Id;
-                    }
+                    productEntity.LaptopSpecificationId = await CreateSpecificationAsync(input.LaptopSpecification, _laptopSpecRepository);
                     break;
                 case SpecificationType.CPU:
-                    if (input.CpuSpecification != null)
-                    {
-                        var spec = ObjectMapper.Map<CreateUpdateCpuSpecificationDto, CpuSpecification>(input.CpuSpecification);
-                        typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(spec, GuidGenerator.Create());
-                        await _cpuSpecRepository.InsertAsync(spec, autoSave: true);
-                        product.CpuSpecificationId = spec.Id;
-                    }
+                    productEntity.CpuSpecificationId = await CreateSpecificationAsync(input.CpuSpecification, _cpuSpecRepository);
                     break;
                 case SpecificationType.GPU:
-                    if (input.GpuSpecification != null)
-                    {
-                        var spec = ObjectMapper.Map<CreateUpdateGpuSpecificationDto, GpuSpecification>(input.GpuSpecification);
-                        typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(spec, GuidGenerator.Create());
-                        await _gpuSpecRepository.InsertAsync(spec, autoSave: true);
-                        product.GpuSpecificationId = spec.Id;
-                    }
+                    productEntity.GpuSpecificationId = await CreateSpecificationAsync(input.GpuSpecification, _gpuSpecRepository);
                     break;
                 case SpecificationType.RAM:
-                    if (input.RamSpecification != null)
-                    {
-                        var spec = ObjectMapper.Map<CreateUpdateRamSpecificationDto, RamSpecification>(input.RamSpecification);
-                        typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(spec, GuidGenerator.Create());
-                        await _ramSpecRepository.InsertAsync(spec, autoSave: true);
-                        product.RamSpecificationId = spec.Id;
-                    }
+                    productEntity.RamSpecificationId = await CreateSpecificationAsync(input.RamSpecification, _ramSpecRepository);
                     break;
                 case SpecificationType.Motherboard:
-                    if (input.MotherboardSpecification != null)
-                    {
-                        var spec = ObjectMapper.Map<CreateUpdateMotherboardSpecificationDto, MotherboardSpecification>(input.MotherboardSpecification);
-                        typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(spec, GuidGenerator.Create());
-                        await _motherboardSpecRepository.InsertAsync(spec, autoSave: true);
-                        product.MotherboardSpecificationId = spec.Id;
-                    }
+                    productEntity.MotherboardSpecificationId = await CreateSpecificationAsync(input.MotherboardSpecification, _motherboardSpecRepository);
                     break;
                 case SpecificationType.Storage:
-                    if (input.StorageSpecification != null)
-                    {
-                        var spec = ObjectMapper.Map<CreateUpdateStorageSpecificationDto, StorageSpecification>(input.StorageSpecification);
-                        typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(spec, GuidGenerator.Create());
-                        await _storageSpecRepository.InsertAsync(spec, autoSave: true);
-                        product.StorageSpecificationId = spec.Id;
-                    }
+                    productEntity.StorageSpecificationId = await CreateSpecificationAsync(input.StorageSpecification, _storageSpecRepository);
                     break;
                 case SpecificationType.PSU:
-                    if (input.PsuSpecification != null)
-                    {
-                        var spec = ObjectMapper.Map<CreateUpdatePsuSpecificationDto, PsuSpecification>(input.PsuSpecification);
-                        typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(spec, GuidGenerator.Create());
-                        await _psuSpecRepository.InsertAsync(spec, autoSave: true);
-                        product.PsuSpecificationId = spec.Id;
-                    }
+                    productEntity.PsuSpecificationId = await CreateSpecificationAsync(input.PsuSpecification, _psuSpecRepository);
                     break;
                 case SpecificationType.Case:
-                    if (input.CaseSpecification != null)
-                    {
-                        var spec = ObjectMapper.Map<CreateUpdateCaseSpecificationDto, CaseSpecification>(input.CaseSpecification);
-                        typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(spec, GuidGenerator.Create());
-                        await _caseSpecRepository.InsertAsync(spec, autoSave: true);
-                        product.CaseSpecificationId = spec.Id;
-                    }
+                    productEntity.CaseSpecificationId = await CreateSpecificationAsync(input.CaseSpecification, _caseSpecRepository);
                     break;
                 case SpecificationType.CPUCooler:
-                    if (input.CpuCoolerSpecification != null)
-                    {
-                        var spec = ObjectMapper.Map<CreateUpdateCpuCoolerSpecificationDto, CpuCoolerSpecification>(input.CpuCoolerSpecification);
-                        typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(spec, GuidGenerator.Create());
-                        await _cpuCoolerSpecRepository.InsertAsync(spec, autoSave: true);
-                        product.CpuCoolerSpecificationId = spec.Id;
-                    }
+                    productEntity.CpuCoolerSpecificationId = await CreateSpecificationAsync(input.CpuCoolerSpecification, _cpuCoolerSpecRepository);
                     break;
                 case SpecificationType.Keyboard:
-                    if (input.KeyboardSpecification != null)
-                    {
-                        var spec = ObjectMapper.Map<CreateUpdateKeyboardSpecificationDto, KeyboardSpecification>(input.KeyboardSpecification);
-                        typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(spec, GuidGenerator.Create());
-                        await _keyboardSpecRepository.InsertAsync(spec, autoSave: true);
-                        product.KeyboardSpecificationId = spec.Id;
-                    }
+                    productEntity.KeyboardSpecificationId = await CreateSpecificationAsync(input.KeyboardSpecification, _keyboardSpecRepository);
                     break;
                 case SpecificationType.Headset:
-                    if (input.HeadsetSpecification != null)
-                    {
-                        var spec = ObjectMapper.Map<CreateUpdateHeadsetSpecificationDto, HeadsetSpecification>(input.HeadsetSpecification);
-                        typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(spec, GuidGenerator.Create());
-                        await _headsetSpecRepository.InsertAsync(spec, autoSave: true);
-                        product.HeadsetSpecificationId = spec.Id;
-                    }
+                    productEntity.HeadsetSpecificationId = await CreateSpecificationAsync(input.HeadsetSpecification, _headsetSpecRepository);
                     break;
                 default: break;
             }
-            await Repository.InsertAsync(product, autoSave: true);
-            return await GetAsync(product.Id);
+            await Repository.InsertAsync(productEntity, autoSave: true);
+            return await GetAsync(productEntity.Id);
+            
         }
         public override async Task<ProductDto> UpdateAsync(Guid id, CreateUpdateProductDto input)
         {
@@ -316,7 +254,7 @@ namespace Acme.ProductSelling.Products
         private async Task HandleSpecificationUpdateAsync<TSpecEntity, TSpecDto>(
             Guid? currentSpecId,
             TSpecDto inputDto,
-            IRepository<TSpecEntity, Guid> specRepository,
+            IRepository<TSpecEntity, Guid> specRepository,  
             Action<Guid?> setProductSpecIdAction)
             where TSpecEntity : class, Volo.Abp.Domain.Entities.IEntity<Guid>
             where TSpecDto : class
@@ -448,7 +386,10 @@ namespace Acme.ProductSelling.Products
             var queryable = await Repository.GetQueryableAsync();
             queryable = queryable.Include(p => p.Category).Include(p => p.Manufacturer);
             queryable = queryable.Where(p => p.CategoryId == input.CategoryId);
-            queryable = queryable.Where(p => p.Price <= input.MaxPrice && p.Price >= input.MinPrice);
+            queryable = queryable.Where(p =>
+                    (p.DiscountedPrice ?? p.OriginalPrice) >= input.MinPrice &&
+                    (p.DiscountedPrice ?? p.OriginalPrice) <= input.MaxPrice
+                );
             var totalCount = await AsyncExecuter.CountAsync(queryable);
             queryable = queryable
                 .OrderBy(input.Sorting ?? nameof(Product.ProductName))

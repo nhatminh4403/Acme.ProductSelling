@@ -327,7 +327,9 @@ namespace Acme.ProductSelling
             var product1 = new Product
             {
                 CategoryId = cpus.Id,
-                Price = 8500000,
+                OriginalPrice = 8500000,
+                DiscountPercent = 10,
+                 
                 ProductName = "Ryzen 7 7700X",
                 Description = "Powerful 8-core CPU",
 
@@ -357,7 +359,8 @@ namespace Acme.ProductSelling
             await _gpuSpecRepository.InsertAsync(gpuSpec1, autoSave: true); // Lưu spec trước
             var productGpu1 = new Product
             {
-                Price = 25000000,
+                OriginalPrice = 25000000,
+                DiscountPercent = 5,
                 ProductName = "ProArt GeForce RTX 4070 Ti SUPER 16GB GDDR6X OC Edition (PROART-RTX4070TIS-O16G)",
                 Description = "High-end graphics card",
                 StockCount = 20,
@@ -384,7 +387,8 @@ namespace Acme.ProductSelling
             await _ramSpecRepository.InsertAsync(ramSpec1, autoSave: true); // Lưu spec trước
             var productRam1 = new Product
             {
-                Price = 2000000,
+                OriginalPrice = 2000000,
+                DiscountPercent = 0,
                 ProductName = "Vengeance LPX 16GB",
                 Description = "High-performance RAM",
                 StockCount = 100,
@@ -411,7 +415,8 @@ namespace Acme.ProductSelling
             await _storageSpecRepository.InsertAsync(storageSpec1, autoSave: true); // Lưu spec trước
             var productStorage1 = new Product
             {
-                Price = 3000000,
+                OriginalPrice = 3000000,
+                DiscountPercent = 8,
                 ProductName = "970 EVO Plus 1TB",
                 Description = "Fast NVMe SSD",
                 StockCount = 80,
@@ -434,7 +439,8 @@ namespace Acme.ProductSelling
             await _keyboardSpecRepository.InsertAsync(keyboardSpec1, autoSave: true); // Lưu spec trước
             var keyboardProduct1 = new Product
             {
-                Price = 3000000,
+                OriginalPrice = 3000000,
+                DiscountPercent = 7,
                 ProductName = "Logitech G Pro TKL Keyboard",
                 ImageUrl = "https://product.hstatic.net/200000722513/product/1_5b2f7891bf434a7aab9f1abdba56c17e_grande.jpg",
                 Description = "Tenkeyless mechanical gaming keyboard",
@@ -462,7 +468,8 @@ namespace Acme.ProductSelling
             await _mouseSpecRepository.InsertAsync(mouseSpec1, autoSave: true);
             var productMouse1 = new Product
             {
-                Price = 1000000,
+                OriginalPrice = 1000000,
+                DiscountPercent = 5,
                 ProductName = "Logitech G502 HERO",
                 Description = "High-performance gaming mouse",
                 StockCount = 150,
@@ -489,7 +496,8 @@ namespace Acme.ProductSelling
             await _monitorSpecRepository.InsertAsync(monitorSpec1, autoSave: true); // Lưu spec trước
             var productMonitor1 = new Product
             {
-                Price = 7000000,
+                OriginalPrice = 7000000,
+                DiscountPercent = 6,
                 ProductName = "UltraGear 27GL850",
                 Description = "27-inch QHD gaming monitor",
                 StockCount = 30,
@@ -510,7 +518,8 @@ namespace Acme.ProductSelling
             await _psuSpecRepository.InsertAsync(psuSpec1, autoSave: true); // Lưu spec trước
             var productPsu1 = new Product
             {
-                Price = 2000000,
+                OriginalPrice = 2000000,
+                DiscountPercent = 5,
                 ProductName = "Corsair RM750x",
                 Description = "750W fully modular power supply",
                 StockCount = 50,
@@ -543,7 +552,8 @@ namespace Acme.ProductSelling
             await _caseSpecRepository.InsertAsync(caseSpec1, autoSave: true); // Lưu spec trước
             var productCase1 = new Product
             {
-                Price = 1500000,
+                OriginalPrice = 1500000,
+                DiscountPercent = 5,
                 ProductName = "NZXT H510",
                 Description = "Mid-tower ATX case with tempered glass",
                 StockCount = 40,
@@ -570,7 +580,8 @@ namespace Acme.ProductSelling
             await _cpuCoolerSpecRepository.InsertAsync(cpuCoolerSpec1, autoSave: true); // Lưu spec trước
             var productCpuCooler1 = new Product
             {
-                Price = 1200000,
+                OriginalPrice = 1200000,
+                DiscountPercent = 5,
                 ProductName = "Cooler Master Hyper 212",
                 Description = "Air cooler with RGB lighting",
                 StockCount = 60,
@@ -600,7 +611,8 @@ namespace Acme.ProductSelling
             await _headsetSpecRepository.InsertAsync(headsetSpec1, autoSave: true); // Lưu spec trước
             var productHeadset1 = new Product
             {
-                Price = 1500000,
+                OriginalPrice = 1500000,
+                DiscountPercent = 5,
                 ProductName = "Logitech G Pro X",
                 Description = "High-quality gaming headset",
                 StockCount = 70,
@@ -655,7 +667,8 @@ namespace Acme.ProductSelling
             await _laptopSpecRepository.InsertAsync(laptopSpec1, autoSave: true); // Lưu spec trước
             var productLaptop1 = new Product
             {
-                Price = 25000000,
+                OriginalPrice = 25000000,
+                DiscountPercent = 12,
                 ProductName = "ASUS ROG Zephyrus G16 GU605CX QR083W",
                 Description = "Powerful gaming laptop",
                 StockCount = 10,
@@ -687,7 +700,8 @@ namespace Acme.ProductSelling
                 CpuSpecificationId = intelCpuSpec.Id,
                 ProductName = "Intel Core i9-13900K",
                 Description = "Top-tier 24-core CPU",
-                Price = 13500000,
+                OriginalPrice = 13500000,
+                DiscountPercent = 7,
                 StockCount = 30,
                 ManufacturerId = intel.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/i9k-t2-special-box-07-1080x1080pixels_6c9ec1001cdf4e4998c13af4ac6c7581_114c47698e4a4984863c3b26e0619b65_grande.png"
@@ -714,7 +728,8 @@ namespace Acme.ProductSelling
                 GpuSpecificationId = amdGpuSpec.Id,
                 ProductName = "Asus Radeon RX 7900 XT TUF Gaming",
                 Description = "High-end AMD graphics card",
-                Price = 28000000,
+                OriginalPrice = 28000000,
+                DiscountPercent = 10,
                 StockCount = 15,
                 ManufacturerId = asus.Id,
                 ImageUrl = " https://product.hstatic.net/200000722513/product/5681_ea11053c19e375dcaa8138b6f531262d_7d029f536978405393da9fb3c8f1e2fa_4d3cedb8fd4a485db1ece7519c1d41a8_grande.jpg"
@@ -739,7 +754,8 @@ namespace Acme.ProductSelling
                 RamSpecificationId = ramSpec2.Id,
                 ProductName = "Trident Z RGB 16GB (2×8)",
                 Description = "DDR4 3600MHz kit with RGB",
-                Price = 1800000,
+                OriginalPrice = 1800000,
+                DiscountPercent = 5,
                 ManufacturerId = gskill.Id,
                 StockCount = 80,
                 ImageUrl = "https://anphat.com.vn/media/product/33685_153665426813.png"
@@ -764,7 +780,8 @@ namespace Acme.ProductSelling
                 StorageSpecificationId = storageSpec2.Id,
                 ProductName = "WD Black SN770 1TB",
                 Description = "High-performance PCIe 4.0 NVMe SSD",
-                Price = 2500000,
+                OriginalPrice = 2500000,
+                DiscountPercent = 5,
                 StockCount = 60,
                 ManufacturerId = wd.Id,
                 ImageUrl = "https://bizweb.dktcdn.net/thumb/grande/100/329/122/products/ssd-wd-black-sn770-pcie-gen4-x4-nvme-m-2-500gb-wds500g3x0e-b058273a-af63-4053-ac31-83b41eb593a2.jpg?v=1655710957737"
@@ -787,7 +804,8 @@ namespace Acme.ProductSelling
                 KeyboardSpecificationId = keyboardSpec2.Id,
                 ProductName = "Razer Huntsman Elite",
                 Description = "Opto-mechanical gaming keyboard",
-                Price = 4500000,
+                OriginalPrice = 4500000,
+                DiscountPercent = 5,
                 StockCount = 40,
                 ManufacturerId = razer.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/r3m1_ac3aa0be001640e2873ff732d34617bc_2295901522e24ce399b8f5f07be51467_3ab2e4aca4434a9a84997283b79b5c3c_grande.png"
@@ -814,7 +832,8 @@ namespace Acme.ProductSelling
                 MouseSpecificationId = mouseSpec2.Id,
                 ProductName = "SteelSeries Rival 3",
                 Description = "Lightweight RGB gaming mouse",
-                Price = 800000,
+                OriginalPrice = 800000,
+                DiscountPercent = 20,
                 StockCount = 120,
                 ManufacturerId = steelseries.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/thumbchuot_e01eec6957cc40a88aba550b80cffed2_74ec8f2dec0447c382614fa201a4fa93_grande.png"
@@ -842,7 +861,8 @@ namespace Acme.ProductSelling
                 MonitorSpecificationId = monitorSpec2.Id,
                 ProductName = "ASUS TUF Gaming VG27AQ",
                 Description = "27” QHD IPS 165Hz gaming monitor",
-                Price = 9000000,
+                OriginalPrice = 9000000,
+                DiscountPercent = 12,
                 StockCount = 25,
                 ManufacturerId = asus.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/ips-2k-170hz-g-sync-hdr-chuyen-game-1_f9de14d5b20041b2b52b0cde6884a3d9_317538ed8cff45e6a25feb1cbb8650d0_grande.png"
@@ -865,7 +885,8 @@ namespace Acme.ProductSelling
                 PsuSpecificationId = psuSpec2.Id,
                 ProductName = "EVGA SuperNOVA 750 G5",
                 Description = "750W gold-rated fully modular PSU",
-                Price = 2200000,
+                OriginalPrice = 2200000,
+                DiscountPercent = 20,
                 ManufacturerId = evga.Id,
                 StockCount = 35,
                 ImageUrl = "https://tandoanh.vn/wp-content/uploads/2021/10/EVGA-SuperNOVA-750-G1-%E2%80%93-80-GOLD-750W-%E2%80%93-Fully-Modular-h1.jpg"
@@ -894,7 +915,8 @@ namespace Acme.ProductSelling
                 CaseSpecificationId = caseSpec2.Id,
                 ProductName = "Phanteks Eclipse P400A",
                 Description = "High-airflow mid-tower ATX case",
-                Price = 1800000,
+                OriginalPrice = 1800000,
+                DiscountPercent = 10,
                 StockCount = 45,
                 ManufacturerId = phanteks.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/k-_1_65d8edfddc2b4785af9a13f971fc258a_6043347819ed417bb6dd327b41b39b6e_60a930dd805e4bc891b6ea69e7c2d21a_grande.jpg"
@@ -921,7 +943,8 @@ namespace Acme.ProductSelling
                 CpuCoolerSpecificationId = cpuCoolerSpec2.Id,
                 ProductName = "Noctua NH-D15",
                 Description = "Premium dual-tower air cooler",
-                Price = 1500000,
+                OriginalPrice = 4000000,
+                DiscountPercent = 25,
                 StockCount = 20,
                 ManufacturerId = noctua.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/noctua_nh-d15_2_75940b3d5fbb485190327d6b592429af_9ad735dcdbb94a71ba171d7d4ae0a326_grande.jpg"
@@ -949,7 +972,8 @@ namespace Acme.ProductSelling
                 HeadsetSpecificationId = headsetSpec2.Id,
                 ProductName = "HyperX Cloud Stinger Core II",
                 Description = "Comfortable gaming headset with 7.1 surround",
-                Price = 1200000,
+                OriginalPrice = 1200000,
+                DiscountPercent = 5,
                 StockCount = 60,
                 ManufacturerId = hyperx.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/thumbtainghe_499f42bf16fe47d28ab00bffb7bd5748_47730811ddaf40a0a969f4e4d49c7b27_grande.png"
@@ -976,7 +1000,8 @@ namespace Acme.ProductSelling
                 LaptopSpecificationId = laptopSpec2.Id,
                 ProductName = "Dell XPS 13 9310",
                 Description = "Ultra-portable 13” laptop",
-                Price = 31000000,
+                OriginalPrice = 60000000,
+                DiscountPercent = 10,
                 StockCount = 8,
                 ManufacturerId = dell.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/51529_laptop_dell_xps_9350_xps93_1d46c518185a488a92c40932dd4d5cf6_grande.png"
@@ -1004,7 +1029,8 @@ namespace Acme.ProductSelling
                 MotherboardSpecificationId = motherboardSpec1.Id,
                 ProductName = "GIGABYTE Z790 AORUS XTREME X ICE",
                 Description = "GIGABYTE Z790 AORUS XTREME X ICE is a premium E-ATX motherboard designed for Intel 12th/13th/14th Gen processors, featuring LGA1700 socket, DDR5 memory support, advanced thermal design, Wi-Fi 6E, and multiple M.2 slots — perfect for high-performance and overclocking builds.",
-                Price = 8000000,
+                OriginalPrice = 8000000,
+                DiscountPercent = 11,
                 StockCount = 20,
                 ManufacturerId = gigabyte.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/z790_aorus_xtreme_x_ice-01_5a397436688c4f2e9dc0e358ebf25927_grande.png"
@@ -1031,7 +1057,8 @@ namespace Acme.ProductSelling
                 MotherboardSpecificationId = msiMegZ890.Id,
                 ProductName = "MSI MEG Z890 GODLIKE",
                 Description = "MSI MEG Z890 GODLIKE is a high-end E-ATX motherboard designed for Intel 12th/13th/14th Gen processors, featuring LGA1851 socket, DDR5 memory support, advanced thermal design, Wi-Fi 7, and multiple M.2 slots — perfect for extreme performance and overclocking builds.",
-                Price = 12000000,
+                OriginalPrice = 44000000,
+                DiscountPercent = 15,
                 StockCount = 15,
                 ManufacturerId = msi.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/msi-meg_z890_godlike_3d2_rgb_b691f05efbcf45e58c54ab731ea28136_grande.png"
@@ -1058,8 +1085,8 @@ namespace Acme.ProductSelling
                 MotherboardSpecificationId = asusX670EHero.Id,
                 ProductName = "ASUS ROG Crosshair X670E Hero",
                 Description = "ASUS ROG Crosshair X670E Hero is a high-end ATX motherboard designed for AMD Ryzen 7000 series processors, featuring AM5 socket, DDR5 memory support, advanced thermal design, Wi-Fi 6E, and multiple M.2 slots — perfect for high-performance and overclocking builds.",
-                Price = 8000000,
-                StockCount = 20,
+                OriginalPrice = 2100000,
+                StockCount = 12,
                 ManufacturerId = asus.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/rog-crosshair-x870e-hero-01_5ab538b8eb38470a83ff1a122393bd26_grande.jpg"
             };
@@ -1082,10 +1109,11 @@ namespace Acme.ProductSelling
             {
                 CategoryId = motherboards.Id,
                 MotherboardSpecificationId = asrockX670ETaichi.Id,
-                ProductName = "ASRock X670E Taichi",
+                ProductName = "ASRock X670E Taichi AQUA",
                 Description = "ASRock X670E Taichi is a high-end ATX motherboard designed for AMD Ryzen 7000 series processors, featuring AM5 socket, DDR5 memory support, advanced thermal design, Wi-Fi 6E, and multiple M.2 slots — perfect for high-performance and overclocking builds.",
-                Price = 9000000,
-                StockCount = 15,
+                OriginalPrice = 28000000,
+                DiscountPercent = 0,
+                StockCount = 0,
                 ManufacturerId = asrock.Id,
                 ImageUrl = "https://www.asrock.com/mb/photo/X670E%20Taichi(M1).png"
             };
