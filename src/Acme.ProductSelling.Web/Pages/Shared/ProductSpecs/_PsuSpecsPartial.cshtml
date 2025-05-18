@@ -5,14 +5,23 @@
 
 <h5>@L["PSU Details"]</h5>
 
-<dl class="row mt-3">
-    <dt class="col-sm-4">@L["Wattage"]</dt>
-    <dd class="col-sm-8">@Model.Wattage W</dd>
-    <dt class="col-sm-4">@L["EfficiencyRating"]</dt>
-    <dd class="col-sm-8">@Model.EfficiencyRating</dd>
-    <dt class="col-sm-4">@L["Modularity"]</dt>
-    <dd class="col-sm-8">@Model.Modularity</dd>
-    <dt class="col-sm-4">@L["FormFactor"]</dt>
-    <dd class="col-sm-8">@Model.FormFactor</dd>
-    </dl>
-
+<table class="table table-bordered mb-0">
+    <tbody>
+        <tr>
+            <th>@L["Wattage"]</th>
+            <td>@Model.Wattage W</td>
+        </tr>
+        <tr>
+            <th>@L["EfficiencyRating"]</th>
+            <td>@Model.EfficiencyRating</td>
+        </tr>
+        <tr>
+            <th>@L["Modularity"]</th>
+            <td>@Model.Modularity</td>
+        </tr>
+        <tr>
+            <th>@L["FormFactor"]</th>
+            <td>@Model.FormFactor</td>
+        </tr>
+    </tbody>
+</table>

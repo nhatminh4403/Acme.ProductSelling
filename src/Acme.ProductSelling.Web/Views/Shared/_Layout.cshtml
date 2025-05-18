@@ -39,7 +39,7 @@
     </style>
 </head>
 <body class="abp-application-layout bg-light d-flex flex-column min-vh-100">
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom position-sticky">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
         <div class="container">
             <a class="navbar-brand" href="/" aria-label="Home">
                 <img src="~/images/monitor.png" alt="Home" style="width: 75px;aspect-ratio: 16 / 9;" />
@@ -132,16 +132,12 @@
         </div>
     </nav>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                @RenderBody()
-            </div>
-        </div>
+    <div class="container" style="background: #CCC">
+        @RenderBody()
     </div>
 
 
-    <footer class="bg-white text-dark mt-auto">
+    <footer class="bg-white text-dark mt-auto border-top ">
         <div class="container" style="padding-top:10px">
             <!-- Upper section -->
             <div class="row justify-content-center" style="margin-top:10px">

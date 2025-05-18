@@ -4,17 +4,31 @@
 @inject IStringLocalizer<ProductSellingResource> L
 
 <h5>@L["CPU Details"]</h5>
-<dl class="row mt-3">
-    <dt class="col-sm-4">@L["Socket"]</dt>
-    <dd class="col-sm-8">@Model.Socket</dd>
-    <dt class="col-sm-4">@L["CoresThreads"]</dt>
-    <dd class="col-sm-8">@Model.CoreCount / @Model.ThreadCount</dd>
-    <dt class="col-sm-4">@L["BaseBoostClock"]</dt>
-    <dd class="col-sm-8">@Model.BaseClock GHz / @Model.BoostClock GHz</dd>
-    <dt class="col-sm-4">@L["L3Cache"]</dt>
-    <dd class="col-sm-8">@Model.L3Cache MB</dd>
-    <dt class="col-sm-4">@L["TDP"]</dt>
-    <dd class="col-sm-8">@Model.Tdp W</dd>
-    <dt class="col-sm-4">@L["IntegratedGraphics"]</dt>
-    <dd class="col-sm-8">@L[Model.HasIntegratedGraphics ? "Yes" : "No"]</dd>
-</dl>
+<table class="table table-bordered mb-0">
+    <tbody>
+        <tr>
+            <th>@L["Socket"]</th>
+            <td>@Model.Socket</td>
+        </tr>
+        <tr>
+            <th>@L["CoresThreads"]</th>
+            <td>@Model.CoreCount / @Model.ThreadCount</td>
+        </tr>
+        <tr>
+            <th>@L["BaseBoostClock"]</th>
+            <td>@Model.BaseClock GHz / @Model.BoostClock GHz</td>
+        </tr>
+        <tr>
+            <th>@L["L3Cache"]</th>
+            <td>@Model.L3Cache MB</td>
+        </tr>
+        <tr>
+            <th>@L["TDP"]</th>
+            <td>@Model.Tdp W</td>
+        </tr>
+        <tr>
+            <th>@L["IntegratedGraphics"]</th>
+            <td>@L[Model.HasIntegratedGraphics ? "Yes" : "No"]</td>
+        </tr>
+    </tbody>
+</table>

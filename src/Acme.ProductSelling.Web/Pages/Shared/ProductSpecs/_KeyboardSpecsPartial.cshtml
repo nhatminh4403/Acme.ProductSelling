@@ -5,15 +5,27 @@
 @model Acme.ProductSelling.Specifications.KeyboardSpecificationDto
 
 <h5>@L["Keyboard Details"]</h5>
-<dl class="row mt-3">
-    <dt class="col-sm-4">@L["Connectivity"]</dt>
-    <dd class="col-sm-8">@Model.Connectivity</dd>
-    <dt class="col-sm-4">@L["SwitchType"]</dt>
-    <dd class="col-sm-8">@Model.SwitchType</dd>
-    <dt class="col-sm-4">@L["KeyboardType"]</dt>
-    <dd class="col-sm-8">@Model.KeyboardType</dd>
-    <dt class="col-sm-4">@L["Layout"]</dt>
-    <dd class="col-sm-8">@Model.Layout</dd>
-    <dt class="col-sm-4">@L["Backlight"]</dt>
-    <dd class="col-sm-8">@Model.Backlight</dd>
-</dl>
+<table class="table table-bordered mb-0">
+    <tbody>
+        <tr>
+            <th>@L["Connectivity"]</th>
+            <td>@Model.Connectivity</td>
+        </tr>
+        <tr>
+            <th>@L["SwitchType"]</th>
+            <td>@Model.SwitchType</td>
+        </tr>
+        <tr>
+            <th>@L["KeyboardType"]</th>
+            <td>@Model.KeyboardType</td>
+        </tr>
+        <tr>
+            <th>@L["Layout"]</th>
+            <td>@Model.Layout</td>
+        </tr>
+        <tr>
+            <th>@L["Backlight"]</th>
+            <td>@Model.Backlight</td>
+        </tr>
+    </tbody>
+</table>

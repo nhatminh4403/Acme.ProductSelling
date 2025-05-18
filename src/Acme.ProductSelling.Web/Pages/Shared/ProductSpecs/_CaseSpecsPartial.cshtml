@@ -3,8 +3,8 @@
 @using Acme.ProductSelling.Localization
 @inject IStringLocalizer<ProductSellingResource> L
 
-<h5>@L["Case Details"]</h5>
-<dl class="row mt-3">
+@* <h5>@L["Case Details"]</h5> *@
+@* <dl class="row mt-3">
     <dt class="col-sm-4">@L["SupportedMbFormFactor"]</dt>
     <dd class="col-sm-8">@Model.SupportedMbFormFactor</dd>
     <dt class="col-sm-4">@L["Color"]</dt>
@@ -14,4 +14,32 @@
     <dt class="col-sm-4">@L["MaxGpuLength"]</dt>
     <dd class="col-sm-8">@Model.MaxGpuLength</dd>
 
-</dl>
+</dl> *@
+<table class="table table-bordered mb-0">
+    <tbody>
+        <tr>
+            <th>@L["SupportedMbFormFactor"]</th>
+            <td>
+                @Model.SupportedMbFormFactor
+            </td>
+        </tr>
+        <tr>
+            <th>@L["Color"]</th>
+            <td>
+                @Model.Color
+            </td>
+        </tr>
+        <tr>
+            <th>@L["MaxCpuCoolerHeight"]</th>
+            <td>
+                @Model.MaxCpuCoolerHeight
+            </td>
+        </tr>
+        <tr>
+            <th>@L["MaxGpuLength"]</th>
+            <td>
+                @Model.MaxGpuLength
+            </td>
+        </tr>
+    </tbody>
+</table>

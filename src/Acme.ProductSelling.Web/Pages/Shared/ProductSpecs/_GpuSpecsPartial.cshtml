@@ -4,17 +4,31 @@
 @inject IStringLocalizer<ProductSellingResource> L
 
 <h5>@L["GPU Details"]</h5>
-<dl class="row mt-3">
-    <dt class="col-sm-4">@L["Chipset"]</dt>
-    <dd class="col-sm-8">@Model.Chipset</dd>
-    <dt class="col-sm-4">@L["Memory"]</dt>
-    <dd class="col-sm-8">@Model.MemorySize GB @Model.MemoryType</dd>
-    <dt class="col-sm-4">@L["BoostClock"]</dt>
-    <dd class="col-sm-8">@Model.BoostClock MHz</dd> @* Hoặc đơn vị khác *@
-    <dt class="col-sm-4">@L["Interface"]</dt>
-    <dd class="col-sm-8">@Model.Interface</dd>
-    <dt class="col-sm-4">@L["RecommendedPSU"]</dt>
-    <dd class="col-sm-8">@Model.RecommendedPsu W</dd>
-    <dt class="col-sm-4">@L["Length"]</dt>
-    <dd class="col-sm-8">@Model.Length mm</dd>
-</dl>
+<table class="table table-bordered mb-0">
+    <tbody>
+        <tr>
+            <th>@L["Chipset"]</th>
+            <td>@Model.Chipset</td>
+        </tr>
+        <tr>
+            <th>@L["Memory"]</th>
+            <td>@Model.MemorySize GB @Model.MemoryType</td>
+        </tr>
+        <tr>
+            <th>@L["BoostClock"]</th>
+            <td>@Model.BoostClock MHz</td>
+        </tr>
+        <tr>
+            <th>@L["Interface"]</th>
+            <td>@Model.Interface</td>
+        </tr>
+        <tr>
+            <th>@L["RecommendedPSU"]</th>
+            <td>@Model.RecommendedPsu W</td>
+        </tr>
+        <tr>
+            <th>@L["Length"]</th>
+            <td>@Model.Length mm</td>
+        </tr>
+    </tbody>
+</table>

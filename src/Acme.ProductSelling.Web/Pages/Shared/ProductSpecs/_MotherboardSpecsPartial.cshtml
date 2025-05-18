@@ -4,29 +4,47 @@
 @inject IStringLocalizer<ProductSellingResource> L
 
 <h5>@L["MotherboardDetail"]</h5>
-<dl class="row mt-3">
-    <dt class="col-sm-4">@L["Socket"]</dt>
-    <dd class="col-sm-8">@Model.Socket </dd>
-    <dt class="col-sm-4">@L["Chipset"]</dt>
-    <dd class="col-sm-8">@Model.Chipset</dd>
-    <dt class="col-sm-4">@L["RAMSlots"]</dt>
-    <dd class="col-sm-8">@Model.RamSlots</dd>
-    <dt class="col-sm-4">@L["MaxRam"]</dt>
-    <dd class="col-sm-8">@Model.MaxRam GB</dd>
-    <dt class="col-sm-4">@L["FormFactor"]</dt>
-    <dd class="col-sm-8">@Model.FormFactor</dd>
-    <dt class="col-sm-4">@L["StorageSlots"]</dt>
-    <dd class="col-sm-8">@Model.RamSlots</dd>
-    <dt class="col-sm-4">@L["SupportedRamType"]</dt>
-    <dd class="col-sm-8">@Model.SupportedRamType</dd>
-
-    <dt class="col-sm-4">@L["HasWifi"]</dt>
-    <dd class="col-sm-8">@(Model.HasWifi ? L["Yes"] : L["No"])</dd>
-
-    <dt class="col-sm-4">@L["SataPorts"]</dt>
-    <dd class="col-sm-8">@Model.SataPorts</dd>
-
-    <dt class="col-sm-4">@L["M2Slots"]</dt>
-    <dd class="col-sm-8">@Model.M2Slots</dd>
-
-</dl>
+<table class="table table-bordered mb-0">
+    <tbody>
+        <tr>
+            <th>@L["Socket"]</th>
+            <td>@Model.Socket</td>
+        </tr>
+        <tr>
+            <th>@L["Chipset"]</th>
+            <td>@Model.Chipset</td>
+        </tr>
+        <tr>
+            <th>@L["RAMSlots"]</th>
+            <td>@Model.RamSlots</td>
+        </tr>
+        <tr>
+            <th>@L["MaxRam"]</th>
+            <td>@Model.MaxRam GB</td>
+        </tr>
+        <tr>
+            <th>@L["FormFactor"]</th>
+            <td>@Model.FormFactor</td>
+        </tr>
+@*         <tr>
+            <th>@L["StorageSlots"]</th>
+            <td>@Model.Stor</td>
+        </tr> *@
+        <tr>
+            <th>@L["SupportedRamType"]</th>
+            <td>@Model.SupportedRamType</td>
+        </tr>
+        <tr>
+            <th>@L["HasWifi"]</th>
+            <td>@(Model.HasWifi ? L["Yes"] : L["No"])</td>
+        </tr>
+        <tr>
+            <th>@L["SataPorts"]</th>
+            <td>@Model.SataPorts</td>
+        </tr>
+        <tr>
+            <th>@L["M2Slots"]</th>
+            <td>@Model.M2Slots</td>
+        </tr>
+    </tbody>
+</table>

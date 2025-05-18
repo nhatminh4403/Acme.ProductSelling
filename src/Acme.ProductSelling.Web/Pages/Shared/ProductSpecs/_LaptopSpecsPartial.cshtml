@@ -4,25 +4,43 @@
 @inject IStringLocalizer<ProductSellingResource> L
 
 <h5>@L["Laptop Details"]</h5>
-<dl class="row mt-3">
-    <dt class="col-sm-4">@L["RAM"]</dt>
-    <dd class="col-sm-8">@Model.RAM</dd>
-    <dt class="col-sm-4">@L["CPU"]</dt>
-    <dd class="col-sm-8">@Model.CPU</dd>
-    <dt class="col-sm-4">@L["Display"]</dt>
-    <dd class="col-sm-8">@Model.Display</dd>
-    <dt class="col-sm-4">@L["BatteryLife"]</dt>
-    <dd class="col-sm-8">@Model.BatteryLife</dd>
-    <dt class="col-sm-4">@L["Weight"]</dt>
-    <dd class="col-sm-8">@Model.Weight</dd>
-
-    <dt class="col-sm-4">@L["GraphicsCard"]</dt>
-    <dd class="col-sm-8">@Model.GraphicsCard</dd>
-    <dt class="col-sm-4">@L["Warranty"]</dt>
-    <dd class="col-sm-8">@Model.Warranty</dd>
-    <dt class="col-sm-4">@L["Storage"]</dt>
-    <dd class="col-sm-8">@Model.Storage</dd>
-    <dt class="col-sm-4">@L["OperatingSystem"]</dt>
-    <dd class="col-sm-8">@Model.OperatingSystem</dd>
-
-</dl>
+<table class="table table-bordered mb-0">
+    <tbody>
+        <tr>
+            <th>@L["RAM"]</th>
+            <td>@Model.RAM</td>
+        </tr>
+        <tr>
+            <th>@L["CPU"]</th>
+            <td>@Model.CPU</td>
+        </tr>
+        <tr>
+            <th>@L["Display"]</th>
+            <td>@Model.Display</td>
+        </tr>
+        <tr>
+            <th>@L["BatteryLife"]</th>
+            <td>@Model.BatteryLife</td>
+        </tr>
+        <tr>
+            <th>@L["Weight"]</th>
+            <td>@Model.Weight</td>
+        </tr>
+        <tr>
+            <th>@L["GraphicsCard"]</th>
+            <td>@Model.GraphicsCard</td>
+        </tr>
+        <tr>
+            <th>@L["Warranty"]</th>
+            <td>@Model.Warranty</td>
+        </tr>
+        <tr>
+            <th>@L["Storage"]</th>
+            <td>@Model.Storage</td>
+        </tr>
+        <tr>
+            <th>@L["OperatingSystem"]</th>
+            <td>@Model.OperatingSystem</td>
+        </tr>
+    </tbody>
+</table>

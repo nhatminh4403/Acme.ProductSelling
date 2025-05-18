@@ -3,20 +3,44 @@
 @using Acme.ProductSelling.Localization
 @inject IStringLocalizer<ProductSellingResource> L
 
-<h5>@L["Details"]</h5>
-<dl class="row mt-3">
-    <dt class="col-sm-4">@L["CoolerType"]</dt>
-    <dd class="col-sm-8">@Model.CoolerType</dd>
-    <dt class="col-sm-4">@L["Color"]</dt>
-    <dd class="col-sm-8">@Model.Color</dd>
-    <dt class="col-sm-4">@L["FanSize"]</dt>
-    <dd class="col-sm-8">@Model.FanSize</dd>
-    <dt class="col-sm-4">@L["MaxGpuLength"]</dt>
-    <dd class="col-sm-8">@Model.NoiseLevel</dd>
-    <dd class="col-sm-8">@L["RadiatorSize"] </dd>
-    <dd class="col-sm-8">@Model.RadiatorSize</dd>
-    <dt class="col-sm-4">@L["NoiseLevel"]</dt>
-    <dd class="col-sm-8">@Model.NoiseLevel</dd>
-    <dt class="col-sm-4">@L["LedLighting"]</dt>
-    <dd class="col-sm-8">@Model.LedLighting</dd>
-</dl>
+<table class="table table-bordered mb-0">
+    <tbody>
+        <tr>
+            <th>@L["CoolerType"]</th>
+            <td>@Model.CoolerType</td>
+        </tr>
+        <tr>
+            <th>@L["Color"]</th>
+            <td>@Model.Color</td>
+        </tr>
+        <tr>
+            <th>@L["FanSize"]</th>
+            <td>@Model.FanSize</td>
+        </tr>
+        <tr>
+            <th>@L["Height"]</th>
+            <td>@Model.Height</td>
+        </tr>
+        <tr>
+            <th>@L["TdpSupport"]</th>
+            <td>@Model.TdpSupport</td>
+        </tr>
+        <tr>
+            <th>@L["SupportedSockets"]</th>
+            <td>@Model.SupportedSockets</td>
+        </tr>
+        <tr>
+            <th>@L["RadiatorSize"]</th>
+            <td>@Model.RadiatorSize</td>
+        </tr>
+        <tr>
+            <th>@L["NoiseLevel"]</th>
+            <td>@Model.NoiseLevel</td>
+        </tr>
+        <tr>
+            <th>@L["LedLighting"]</th>
+            <td>@Model.LedLighting</td>
+        </tr>
+
+    </tbody>
+</table>
