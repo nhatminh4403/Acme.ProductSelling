@@ -10,109 +10,7 @@
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 @section styles {
-    <style>
-        /* Styles for recently viewed products */
-        .recently-viewed-section {
-            margin-top: 30px;
-            background-color: #f8f9fa;
-            padding: 20px 0;
-            border-radius: 8px;
-        }
-
-        .recently-viewed-title {
-            margin-bottom: 20px;
-            padding-left: 15px;
-            font-weight: 600;
-            color: #333;
-            position: relative;
-        }
-
-            .recently-viewed-title:before {
-                content: '';
-                position: absolute;
-                left: 0;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 4px;
-                height: 20px;
-                background-color: #007bff;
-            }
-
-        .viewed-product-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-            background-color: white;
-            height: 100%;
-            transition: transform 0.2s;
-        }
-
-            .viewed-product-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            }
-
-        .viewed-product-img {
-            height: 150px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
-        }
-
-            .viewed-product-img img {
-                max-height: 130px;
-                max-width: 100%;
-                object-fit: contain;
-            }
-
-        .viewed-product-info {
-            padding: 10px 15px;
-        }
-
-        .viewed-product-title {
-            font-size: 14px;
-            height: 40px;
-            overflow: hidden;
-            margin-bottom: 8px;
-            color: #333;
-        }
-
-        .viewed-product-price {
-            font-weight: bold;
-            color: #dc3545;
-        }
-
-        .viewed-product-original-price {
-            text-decoration: line-through;
-            color: #6c757d;
-            font-size: 13px;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .viewed-product-discount {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: #dc3545;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .carousel-control-prev, .carousel-control-next {
-            width: 40px;
-            height: 40px;
-            background-color: rgba(0,0,0,0.2);
-            border-radius: 50%;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-    </style>
+    <link href="~/css/product-detail.css" rel="stylesheet" />
 }
 @section scripts {
     <script>
@@ -211,9 +109,7 @@
 }
 @if (Model.Product != null)
 {
-    <!-- Wrap everything in a single container -->
     <div class="container mt-4 mb-4">
-        <!-- Image and Basic Info -->
         <div class="bg-white p-4 rounded">
             <div class="row">
                 <div class="col-md-7 text-center">
@@ -270,12 +166,12 @@
                 <div class="separator-custom rounded"></div>
             </div>
         </div>
-        <!--Specs-->
+   
 
         <div class="row">
             <!-- Main content -->
             <div class="col-lg-8">
-                <div class="card shadow-sm h-100" id="leftCard">
+                <div class="card h-100" id="leftCard">
                     <div class="card-header bg-light"><h2>@L["Specification"]</h2></div>
                     <div class="card-body">
                         <div class="content-container" id="content2">
@@ -386,7 +282,7 @@
 
             <!-- Sidebar -->
             <div class="col-lg-4">
-                <div class="sticky-sidebar" id="rightSidebar">
+                <div class="sticky-sidebar shadow" id="rightSidebar">
                     <h5>Sticky Sidebar</h5>
                     <p>This sidebar stays visible while scrolling the expanded content on the left.</p>
                 </div>
@@ -394,7 +290,7 @@
         </div>
 
         <!-- Recently Viewed Products -->
-        <div class="recently-viewed-section mt-4">
+        <div class="recently-viewed-section  mt-4">
             <div class="container">
                 <h4 class="recently-viewed-title">@L["RecentlyViewedProducts"]</h4>
                 <div class="row" id="recentProductsRow">
