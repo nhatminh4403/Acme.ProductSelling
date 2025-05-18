@@ -1,0 +1,37 @@
+﻿@page "/admin/products"
+@model Acme.ProductSelling.Web.Pages.Products.IndexModel
+@using Acme.ProductSelling.Localization
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Authorization
+@using Acme.ProductSelling.Permissions
+@inject IStringLocalizer<ProductSellingResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = L["AllProducts"]; // Key localization "Products"
+}
+@section scripts {
+    <abp-script src="/Pages/Products/Index.js" /> @* Link JS *@
+
+}
+
+<abp-card class="px-3">
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <abp-card-title>@L["Products"]</abp-card-title>
+            </abp-column>
+            <abp-column size-md="_6" class="text-end">
+                @if (await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Products.Create))
+                {@* Key localization "CreateProduct" *@
+                    <abp-button id="NewProductButton"
+                                text="@L["CreateProduct"].Value" 
+                                icon="plus"
+                                button-type="Primary" />
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" hoverable-rows="true" id="ProductsTable"></abp-table> 
+    </abp-card-body>
+</abp-card>

@@ -1,0 +1,26 @@
+﻿@page
+@model Acme.ProductSelling.Web.Pages.Products.EditModalModel
+@using Acme.ProductSelling.Localization
+@using Microsoft.Extensions.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal;
+@inject IStringLocalizer<ProductSellingResource> L; 
+@{
+    Layout = null;
+}
+
+<form method="post" asp-page="/Products/EditModal" asp-route-id="@Model.Id">
+    @* Post về đúng Id *@
+    <input type="hidden" asp-for="Id" /> @* Đừng quên input ẩn chứa Id *@
+    <abp-modal>
+        <abp-modal-header title="@L["EditProduct"].Value"></abp-modal-header> @* Key "EditProduct" *@
+        <abp-modal-body>
+            <abp-select asp-for="Product.CategoryId" asp-items="Model.Categories" label="@L["Category"]" />
+            <abp-input asp-for="Product.ProductName" label="@L["Name"]" />
+            <abp-input asp-for="Product.Description" label="@L["Description"]" type="textarea" />
+            <abp-input asp-for="Product.OriginalPrice" label="@L["Price"]" type="number" />
+            <abp-input asp-for="Product.DiscountPercent" label="@L["Price"]" type="number" />
+
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+    </abp-modal>
+</form>
