@@ -7,7 +7,8 @@
 .card-bg-image {
     pointer-events: none;
     position: absolute;
-    width: 630px;
+    width: 100%;
+    max-width: 630px;
     height: auto;
     bottom: 0;
     right: 0;
@@ -199,7 +200,10 @@
         display: block !important; 
     }
 }
-
+.col-md-2-4 {
+    width: calc(20% - 30px);
+    padding: 0 15px;
+}
 
 /* --- CSS cho Khu vực hiển thị Megamenu MỚI --- */
 #megamenu-display-area {
