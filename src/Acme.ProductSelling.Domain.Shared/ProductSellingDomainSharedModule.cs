@@ -48,7 +48,10 @@ public class ProductSellingDomainSharedModule : AbpModule
                 .Add<ProductSellingResource>("en")
                 .AddBaseTypes(typeof(AbpValidationResource))
                 .AddVirtualJson("/Localization/ProductSelling");
-
+            /*options.Resources
+                .Add<ProductSellingResource>("vi")
+                .AddBaseTypes(typeof(AbpValidationResource))
+                .AddVirtualJson("/Localization/ProductSelling");*/
             options.DefaultResourceType = typeof(ProductSellingResource);
         });
 

@@ -15,57 +15,7 @@
 @section styles {
     <abp-style src="/Pages/Index.css" />
     <style>
-        .list-group-item-action:not(.active):hover {
-            background-color: #4CE1CA !important;
-        }
-
-        .carousel-item img {
-            object-fit: cover;
-        }
-
-        .section-spacing {
-            margin-top: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .row.align-items-stretch {
-            min-height: 400px;
-        }
-
-        .col-md-2-4 {
-            width: 20%;
-            padding-right: 15px;
-            padding-left: 15px;
-        }
-
-        /* Ensure subcategory styling is consistent */
-        .subcategory {
-            margin-bottom: 1.5rem;
-        }
-
-        .subcategory-title {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-
-        .subcategory-links {
-            display: flex;
-            flex-direction: column;
-        }
-
-            .subcategory-links a {
-                color: #666;
-                text-decoration: none;
-                margin-bottom: 0.25rem;
-                font-size: 0.9rem;
-                transition: color 0.2s;
-            }
-
-                .subcategory-links a:hover {
-                    color: #007bff;
-                }
+        
     </style>
 }
 @section scripts {
@@ -77,228 +27,231 @@
 
     Layout = "/Views/Shared/_Layout.cshtml";
 }
-<div class="row">
-    <div class="col-md-12 d-flex flex-column gap-1 ">
-        <section class="container mt-2">
-            <div class="row d-flex align-items-stretch pt-2 h-100">
-                <div class="col-lg-3 p-0 d-block bg-light rounded h-100">
-                    <ul class="list-group category-sidebar-menu border">
-                        @if (Model.CategoryList != null)
-                        {
-                            foreach (var category in Model.BrandsWithAssociatedCategory.Items)
+
+<div class="container p-0">
+    <div class="row">
+        <div class="col-md-12 d-flex flex-column gap-1 ">
+            <section class="container mt-2">
+                <div class="row d-flex align-items-stretch pt-2 h-100">
+                    <div class="col-lg-3 p-0 d-block bg-light rounded h-100">
+                        <ul class="list-group category-sidebar-menu border">
+                            @if (Model.CategoryList != null)
                             {
-                                <li class="list-group-item list-group-item-action category-menu-item has-megamenu" style="padding:0">
-                                    <a asp-page="/Products/ProductsByCategory" asp-route-CategoryId="@category.Id"
-                                       class="d-flex justify-content-between align-items-center text-decoration-none text-dark">
-                                        <span>@category.CategoryName</span>
-                                        <i class="bi bi-chevron-right small"></i>
-                                    </a>
-                                    <div class="megamenu-data-source d-none">
-                                        <div class="megamenu-content-wrapper p-3 bg-white border rounded shadow-sm">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <!-- First Row: 5 columns -->
-                                                    <div class="row mb-3">
-                                                        <!-- Column 1 -->
-                                                        <div class="col-md-2-4">
-                                                            <div class="subcategory">
-                                                                <h5 class="subcategory-title">@L["Brands"]</h5>
-                                                                <div class="subcategory-links">
-                                                                    @foreach (var manufacturer in category.Manufacturers.Take(4))
-                                                                    {
-                                                                        <a asp-page="/Products/ProductsByManufacturer"
-                                                                           asp-route-CategoryId="@category.Id"
-                                                                           asp-route-ManufacturerId="@manufacturer.Id">
-                                                                            @manufacturer.Name
+                                foreach (var category in Model.BrandsWithAssociatedCategory.Items)
+                                {
+                                    <li class="list-group-item list-group-item-action category-menu-item has-megamenu" style="padding:0">
+                                        <a asp-page="/Products/ProductsByCategory" asp-route-CategoryId="@category.Id"
+                                           class="d-flex justify-content-between align-items-center text-decoration-none text-dark">
+                                            <span>@category.CategoryName</span>
+                                            <i class="bi bi-chevron-right small"></i>
+                                        </a>
+                                        <div class="megamenu-data-source d-none">
+                                            <div class="megamenu-content-wrapper p-3 bg-white border rounded shadow-sm">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <!-- First Row: 5 columns -->
+                                                        <div class="row mb-3">
+                                                            <!-- Column 1 -->
+                                                            <div class="col-md-2-4">
+                                                                <div class="subcategory">
+                                                                    <h5 class="subcategory-title">@L["Brands"]</h5>
+                                                                    <div class="subcategory-links">
+                                                                        @foreach (var manufacturer in category.Manufacturers.Take(4))
+                                                                        {
+                                                                            <a asp-page="/Products/ProductsByManufacturer"
+                                                                               asp-route-CategoryId="@category.Id"
+                                                                               asp-route-ManufacturerId="@manufacturer.Id">
+                                                                                @manufacturer.Name
+                                                                            </a>
+                                                                        }
+                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
+                                                                            <span>@L["SeeAll"]</span>
                                                                         </a>
-                                                                    }
-                                                                    <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
-                                                                        <span>@L["SeeAll"]</span>
-                                                                    </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Column 2 -->
+                                                            <div class="col-md-2-4">
+                                                                <div class="subcategory">
+                                                                    <h5 class="subcategory-title">CATEGORY_TITLE_2</h5>
+                                                                    <div class="subcategory-links">
+                                                                        <a href="#">SUBCATEGORY_ITEM_2_1</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_2_2</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_2_3</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_2_4</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_2_4</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_2_4</a>
+
+                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
+                                                                            <span>@L["SeeAll"]</span>
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Column 3 -->
+                                                            <div class="col-md-2-4">
+                                                                <div class="subcategory">
+                                                                    <h5 class="subcategory-title">CATEGORY_TITLE_3</h5>
+                                                                    <div class="subcategory-links">
+                                                                        <a href="#">SUBCATEGORY_ITEM_3_1</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_3_2</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_3_3</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_3_4</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_2_4</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_2_4</a>
+
+                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
+                                                                            <span>@L["SeeAll"]</span>
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Column 4 -->
+                                                            <div class="col-md-2-4">
+                                                                <div class="subcategory">
+                                                                    <h5 class="subcategory-title">CATEGORY_TITLE_4</h5>
+                                                                    <div class="subcategory-links">
+                                                                        <a href="#">SUBCATEGORY_ITEM_4_1</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_4_2</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_4_3</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_4_4</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_2_4</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_2_4</a>
+
+                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
+                                                                            <span>@L["SeeAll"]</span>
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Column 5 -->
+                                                            <div class="col-md-2-4">
+                                                                <div class="subcategory">
+                                                                    <h5 class="subcategory-title">CATEGORY_TITLE_5</h5>
+                                                                    <div class="subcategory-links">
+                                                                        <a href="#">SUBCATEGORY_ITEM_5_1</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_5_2</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_5_3</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_5_4</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_2_4</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_2_4</a>
+
+                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
+                                                                            <span>@L["SeeAll"]</span>
+                                                                        </a>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
 
-                                                        <!-- Column 2 -->
-                                                        <div class="col-md-2-4">
-                                                            <div class="subcategory">
-                                                                <h5 class="subcategory-title">CATEGORY_TITLE_2</h5>
-                                                                <div class="subcategory-links">
-                                                                    <a href="#">SUBCATEGORY_ITEM_2_1</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_2_2</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_2_3</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_2_4</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_2_4</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_2_4</a>
+                                                        <!-- Second Row: 5 columns -->
+                                                        <div class="row">
+                                                            <!-- Column 1 -->
+                                                            <div class="col-md-2-4">
+                                                                <div class="subcategory">
+                                                                    <h5 class="subcategory-title">CATEGORY_TITLE_6</h5>
+                                                                    <div class="subcategory-links">
+                                                                        <a href="#">SUBCATEGORY_ITEM_6_1</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_6_2</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_6_3</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_6_4</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_2_4</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_2_4</a>
 
-                                                                    <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
-                                                                        <span>@L["SeeAll"]</span>
-                                                                    </a>
+                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
+                                                                            <span>@L["SeeAll"]</span>
+                                                                        </a>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
 
-                                                        <!-- Column 3 -->
-                                                        <div class="col-md-2-4">
-                                                            <div class="subcategory">
-                                                                <h5 class="subcategory-title">CATEGORY_TITLE_3</h5>
-                                                                <div class="subcategory-links">
-                                                                    <a href="#">SUBCATEGORY_ITEM_3_1</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_3_2</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_3_3</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_3_4</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_2_4</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_2_4</a>
+                                                            <!-- Column 2 -->
+                                                            <div class="col-md-2-4">
+                                                                <div class="subcategory">
+                                                                    <h5 class="subcategory-title">CATEGORY_TITLE_7</h5>
+                                                                    <div class="subcategory-links">
+                                                                        <a href="#">SUBCATEGORY_ITEM_7_1</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_7_2</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_7_3</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_7_4</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_2_4</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_2_4</a>
 
-                                                                    <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
-                                                                        <span>@L["SeeAll"]</span>
-                                                                    </a>
+                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
+                                                                            <span>@L["SeeAll"]</span>
+                                                                        </a>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
 
-                                                        <!-- Column 4 -->
-                                                        <div class="col-md-2-4">
-                                                            <div class="subcategory">
-                                                                <h5 class="subcategory-title">CATEGORY_TITLE_4</h5>
-                                                                <div class="subcategory-links">
-                                                                    <a href="#">SUBCATEGORY_ITEM_4_1</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_4_2</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_4_3</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_4_4</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_2_4</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_2_4</a>
+                                                            <!-- Column 3 -->
+                                                            <div class="col-md-2-4">
+                                                                <div class="subcategory">
+                                                                    <h5 class="subcategory-title">CATEGORY_TITLE_8</h5>
+                                                                    <div class="subcategory-links">
+                                                                        <a href="#">SUBCATEGORY_ITEM_8_1</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_8_2</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_8_3</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_8_4</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_2_4</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_2_4</a>
 
-                                                                    <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
-                                                                        <span>@L["SeeAll"]</span>
-                                                                    </a>
+                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
+                                                                            <span>@L["SeeAll"]</span>
+                                                                        </a>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
 
-                                                        <!-- Column 5 -->
-                                                        <div class="col-md-2-4">
-                                                            <div class="subcategory">
-                                                                <h5 class="subcategory-title">CATEGORY_TITLE_5</h5>
-                                                                <div class="subcategory-links">
-                                                                    <a href="#">SUBCATEGORY_ITEM_5_1</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_5_2</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_5_3</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_5_4</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_2_4</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_2_4</a>
+                                                            <!-- Column 4 -->
+                                                            <div class="col-md-2-4">
+                                                                <div class="subcategory">
+                                                                    <h5 class="subcategory-title">CATEGORY_TITLE_9</h5>
+                                                                    <div class="subcategory-links">
+                                                                        <a href="#">SUBCATEGORY_ITEM_9_1</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_9_2</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_9_3</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_9_4</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_2_4</a>
+                                                                        <a href="#">SUBCATEGORY_ITEM_2_4</a>
 
-                                                                    <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
-                                                                        <span>@L["SeeAll"]</span>
-                                                                    </a>
+                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
+                                                                            <span>@L["SeeAll"]</span>
+                                                                        </a>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    </div>
 
-                                                    <!-- Second Row: 5 columns -->
-                                                    <div class="row">
-                                                        <!-- Column 1 -->
-                                                        <div class="col-md-2-4">
-                                                            <div class="subcategory">
-                                                                <h5 class="subcategory-title">CATEGORY_TITLE_6</h5>
-                                                                <div class="subcategory-links">
-                                                                    <a href="#">SUBCATEGORY_ITEM_6_1</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_6_2</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_6_3</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_6_4</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_2_4</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_2_4</a>
-
-                                                                    <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
-                                                                        <span>@L["SeeAll"]</span>
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <!-- Column 2 -->
-                                                        <div class="col-md-2-4">
-                                                            <div class="subcategory">
-                                                                <h5 class="subcategory-title">CATEGORY_TITLE_7</h5>
-                                                                <div class="subcategory-links">
-                                                                    <a href="#">SUBCATEGORY_ITEM_7_1</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_7_2</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_7_3</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_7_4</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_2_4</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_2_4</a>
-
-                                                                    <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
-                                                                        <span>@L["SeeAll"]</span>
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <!-- Column 3 -->
-                                                        <div class="col-md-2-4">
-                                                            <div class="subcategory">
-                                                                <h5 class="subcategory-title">CATEGORY_TITLE_8</h5>
-                                                                <div class="subcategory-links">
-                                                                    <a href="#">SUBCATEGORY_ITEM_8_1</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_8_2</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_8_3</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_8_4</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_2_4</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_2_4</a>
-
-                                                                    <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
-                                                                        <span>@L["SeeAll"]</span>
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <!-- Column 4 -->
-                                                        <div class="col-md-2-4">
-                                                            <div class="subcategory">
-                                                                <h5 class="subcategory-title">CATEGORY_TITLE_9</h5>
-                                                                <div class="subcategory-links">
-                                                                    <a href="#">SUBCATEGORY_ITEM_9_1</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_9_2</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_9_3</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_9_4</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_2_4</a>
-                                                                    <a href="#">SUBCATEGORY_ITEM_2_4</a>
-
-                                                                    <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
-                                                                        <span>@L["SeeAll"]</span>
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <!-- Column 5 - Price Ranges -->
-                                                        <div class="col-md-2-4">
-                                                            <div class="subcategory">
-                                                                <h5 class="subcategory-title">@L["ByPrice"]</h5>
-                                                                <div class="subcategory-links">
-                                                                    <a asp-page="/Products/ProductsByPrice"
-                                                                       asp-route-CategoryId="@category.Id"
-                                                                       asp-route-PriceRangeAlias="@L["PriceRangeAlias:Under1Million"].Value">
-                                                                        @L["Under1Million"]
-                                                                    </a>
-                                                                    <a asp-page="/Products/ProductsByPrice"
-                                                                       asp-route-CategoryId="@category.Id"
-                                                                       asp-route-PriceRangeAlias="@L["PriceRangeAlias:From1MillionTo5Million"].Value">
-                                                                        @L["From1MillionTo5Million"]
-                                                                    </a>
-                                                                    <a asp-page="/Products/ProductsByPrice"
-                                                                       asp-route-CategoryId="@category.Id"
-                                                                       asp-route-PriceRangeAlias="@L["PriceRangeAlias:From5MillionTo20Million"].Value">
-                                                                        @L["From5MillionTo20Million"]
-                                                                    </a>
-                                                                    <a asp-page="/Products/ProductsByPrice"
-                                                                       asp-route-CategoryId="@category.Id"
-                                                                       asp-route-PriceRangeAlias="@L["PriceRangeAlias:Over20Million"].Value">
-                                                                        @L["Over20Million"]
-                                                                    </a>
+                                                            <!-- Column 5 - Price Ranges -->
+                                                            <div class="col-md-2-4">
+                                                                <div class="subcategory">
+                                                                    <h5 class="subcategory-title">@L["ByPrice"]</h5>
+                                                                    <div class="subcategory-links">
+                                                                        <a asp-page="/Products/ProductsByPrice"
+                                                                           asp-route-CategoryId="@category.Id"
+                                                                           asp-route-PriceRangeAlias="@L["PriceRangeAlias:Under1Million"].Value">
+                                                                            @L["Under1Million"]
+                                                                        </a>
+                                                                        <a asp-page="/Products/ProductsByPrice"
+                                                                           asp-route-CategoryId="@category.Id"
+                                                                           asp-route-PriceRangeAlias="@L["PriceRangeAlias:From1MillionTo5Million"].Value">
+                                                                            @L["From1MillionTo5Million"]
+                                                                        </a>
+                                                                        <a asp-page="/Products/ProductsByPrice"
+                                                                           asp-route-CategoryId="@category.Id"
+                                                                           asp-route-PriceRangeAlias="@L["PriceRangeAlias:From5MillionTo20Million"].Value">
+                                                                            @L["From5MillionTo20Million"]
+                                                                        </a>
+                                                                        <a asp-page="/Products/ProductsByPrice"
+                                                                           asp-route-CategoryId="@category.Id"
+                                                                           asp-route-PriceRangeAlias="@L["PriceRangeAlias:Over20Million"].Value">
+                                                                            @L["Over20Million"]
+                                                                        </a>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -306,107 +259,135 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </li>
+                                    </li>
+                                }
                             }
-                        }
-                    </ul>
-                </div>
+                        </ul>
+                    </div>
 
-                <!-- Banner Carousel -->
-                <div class="col-lg-9 ps-lg-1 d-flex flex-column h-100">
-                    <div id="megamenu-display-area" style="display: none;"></div>
-                    <div id="mainBannerCarousel" class="carousel slide z-0 mt-0 pt-0 h-100" data-bs-ride="carousel">
-                        <div class="carousel-indicators">
-                            <button type="button" data-bs-target="#mainBannerCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                            <button type="button" data-bs-target="#mainBannerCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                            <button type="button" data-bs-target="#mainBannerCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                    <!-- Banner Carousel -->
+                    <div class="col-lg-9 ps-lg-1 d-flex flex-column h-100">
+                        <div id="megamenu-display-area" style="display: none;"></div>
+                        <div id="mainBannerCarousel" class="carousel slide z-0 mt-0 pt-0 h-100" data-bs-ride="carousel">
+                            <div class="carousel-indicators">
+                                <button type="button" data-bs-target="#mainBannerCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                                <button type="button" data-bs-target="#mainBannerCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                                <button type="button" data-bs-target="#mainBannerCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                            </div>
+                            <div class="carousel-inner h-100">
+                                <div class="carousel-item active h-100">
+                                    <img src="https://file.hstatic.net/200000722513/file/thang_04_laptop_acer.png" class="d-block h-100 w-100" style="object-fit: cover;" alt="Banner 1">
+                                </div>
+                                <div class="carousel-item h-100">
+                                    <img src="https://file.hstatic.net/200000722513/file/thang_04_laptop_rtx_50series_800x400.jpg" class="d-block h-100 w-100" style="object-fit: cover; " alt="Banner 2">
+                                </div>
+                                <div class="carousel-item h-100">
+                                    <img src="https://file.hstatic.net/200000722513/file/gearvn-festival-505-slider.jpg" class="d-block h-100 w-100" style="object-fit: cover; " alt="Banner 3">
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#mainBannerCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#mainBannerCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
                         </div>
-                        <div class="carousel-inner h-100">
-                            <div class="carousel-item active h-100">
-                                <img src="https://file.hstatic.net/200000722513/file/thang_04_laptop_acer.png" class="d-block h-100 w-100" style="object-fit: cover;" alt="Banner 1">
-                            </div>
-                            <div class="carousel-item h-100">
-                                <img src="https://file.hstatic.net/200000722513/file/thang_04_laptop_rtx_50series_800x400.jpg" class="d-block h-100 w-100" style="object-fit: cover; " alt="Banner 2">
-                            </div>
-                            <div class="carousel-item h-100">
-                                <img src="https://file.hstatic.net/200000722513/file/gearvn-festival-505-slider.jpg" class="d-block h-100 w-100" style="object-fit: cover; " alt="Banner 3">
-                            </div>
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#mainBannerCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#mainBannerCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <section class="container my-2 bg-light rounded">
-            @if (Model.ProductList != null && Model.ProductList.Items != null && Model.ProductList.Items.Any())
-            {
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 px-1 py-3">
-                    @foreach (var product in Model.ProductList.Items)
-                    {
-                        <div class="col">
-                            <div class="card h-100">
-                                @if (!string.IsNullOrWhiteSpace(product.ImageUrl))
-                                {
-                                    <a asp-page="/Products/ProductDetail" asp-route-slug="@product.UrlSlug">
-                                        <img src="@product.ImageUrl" class="card-img-top p-3"
-                                             alt="@product.ProductName" style="max-height: 200px; object-fit: contain;">
-                                    </a>
-                                }
-                                else
-                                {
-                                    <div class="text-center p-5 bg-light"> <i class="fas fa-image fa-3x text-secondary"></i> </div>
-                                }
-                                <div class="card-body d-flex flex-column">
-                                    <div class="product-header mb-2">
-                                        <h6 class="card-title mb-1">
-                                            <a asp-page="/Products/ProductDetail" class="text-decoration-none"
-                                               asp-route-slug="@product.UrlSlug">@product.ProductName</a>
-                                        </h6>
-                                        <p class="card-text text-muted small mb-0">@L["Category"]: @product.CategoryName</p>
-                                    </div>
-                                    @if (product.DiscountPercent > 0)
+            <section class="container my-2 bg-light rounded">
+                @if (Model.ProductList != null && Model.ProductList.Items != null && Model.ProductList.Items.Any())
+                {
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 px-1 py-3">
+                        @foreach (var product in Model.ProductList.Items)
+                        {
+                            <div class="col">
+                                <div class="card h-100">
+                                    @if (!string.IsNullOrWhiteSpace(product.ImageUrl))
                                     {
-                                        <div class="card-text mt-auto">
-                                            <div class="text-muted text-decoration-line-through fs-6 mb-1">
-                                                @product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
-                                            </div>
-                                            <div class="d-flex align-items-center gap-2">
-                                                <span class="fw-bold fs-5 text-danger">
-                                                    @product.DiscountedPrice.Value.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
-                                                </span>
-                                                <span class="badge bg-danger">@product.DiscountPercent% OFF</span>
-                                            </div>
-                                        </div>
+                                        <a asp-page="/Products/ProductDetail" asp-route-slug="@product.UrlSlug">
+                                            <img src="@product.ImageUrl" class="card-img-top p-3"
+                                                 alt="@product.ProductName" style="max-height: 200px; object-fit: contain;">
+                                        </a>
                                     }
                                     else
                                     {
-                                        <div class="mt-auto fw-bold fs-6">
-                                            @product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
-                                        </div>
+                                        <div class="text-center p-5 bg-light"> <i class="fas fa-image fa-3x text-secondary"></i> </div>
                                     }
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="product-header mb-2">
+                                            <h6 class="card-title mb-1">
+                                                <a asp-page="/Products/ProductDetail" class="text-decoration-none"
+                                                   asp-route-slug="@product.UrlSlug">@product.ProductName</a>
+                                            </h6>
+                                            <p class="card-text text-muted small mb-0">@L["Category"]: @product.CategoryName</p>
+                                        </div>
+                                        @if (product.DiscountPercent > 0)
+                                        {
+                                            <div class="card-text mt-auto">
+                                                <div class="text-muted text-decoration-line-through fs-6 mb-1">
+                                                    @product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
+                                                </div>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <span class="fw-bold fs-5 text-danger">
+                                                        @product.DiscountedPrice.Value.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
+                                                    </span>
+                                                    <span class="badge bg-danger">-@product.DiscountPercent%</span>
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="mt-auto fw-bold text-danger fs-5">
+                                                @product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
                             </div>
+                        }
+                    </div>
+                    <abp-paginator asp-page="/" show-info="true" model="Model.PagerModel" class="mb-4">
+                    </abp-paginator>
+                }
+                else
+                {
+                    <div class="alert alert-info">@L["NoProductsFound"]</div> @* Key "NoProductsFound" *@
+                }
+
+            </section>
+
+            <section class="container bg-light my-3 rounded py-3">
+                <h2 class="border-bottom pb-2 mb-3 ps-2">@L["CategoryList"]</h2>
+                <div class="row g-2 px-2">
+                    @if (Model.CategoryList != null && Model.CategoryList.Items.Any())
+                    {
+                        foreach (var category in Model.CategoryList.Items)
+                        {
+                            <div class="col-category">
+                                <a asp-page="/Products/ProductsByCategory" asp-route-CategoryId="@category.Id" class="text-decoration-none category-link">
+                                    <div class="category-item-wrapper">
+                                        <img src="https://placehold.co/80x80" alt="@category.Name" class="img-fluid category-img mb-2">
+
+                                        <div class="category-name text-dark">@category.Name</div>
+                                    </div>
+                                </a>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="col-12">
+                            <div class="alert alert-info">@L["NoCategoriesFound"]</div>
                         </div>
                     }
                 </div>
-                <abp-paginator asp-page="/" show-info="true" model="Model.PagerModel" class="mb-4">
-                </abp-paginator>
-            }
-            else
-            {
-                <div class="alert alert-info">@L["NoProductsFound"]</div> @* Key "NoProductsFound" *@
-            }
+            </section>
+        </div>
 
-        </section>
     </div>
-
 </div>
+

@@ -19,6 +19,21 @@
     "PriceRangeAlias:Under1Million": "under-1million",
     "PriceRangeAlias:From1MillionTo5Million": "from-1million-to-5million",
     "PriceRangeAlias:From5MillionTo20Million": "from-5million-to-20million",
-    "PriceRangeAlias:Over20Million": "over-20million"
+    "PriceRangeAlias:Over20Million": "over-20million",
+
+    "Login:Processing": "Your login request is being processed. Please wait...",
+    "Login:Initiated": "Login Initiated",
+    "Login:Success": "Login successful!",
+    "Login:ErrorDefault": "Login failed. Please check your credentials.",
+    "Login:ButtonDefault": "Login",
+    "Register:Processing": "Your registration request is being processed. Please wait...",
+    "Register:Initiated": "Registration Initiated",
+    "Register:PasswordsDoNotMatch": "Passwords do not match.",
+    "Register:SuccessAndLoggingIn": "Registration successful! Attempting to log you in...",
+    "Register:ErrorDefault": "Registration failed. Please check your input.",
+    "Register:ButtonDefault": "Register",
+    "AutoLogin:ErrorDefault": "Auto-login failed. Please log in manually.",
+    "AutoLogin:WarnTitle": "Registration Succeeded, Auto-Login Failed",
+    "Button:Processing": "<i class=\"fas fa-spinner fa-spin me-1\"></i> Processing..."
   }
 }

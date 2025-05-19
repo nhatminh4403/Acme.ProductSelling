@@ -8,11 +8,15 @@
     Layout = "/Views/Shared/_Layout.cshtml"; 
     ViewData["Title"] = L["AllProductsByCategory"];
 }
-
 <div class="container mt-4">
-    @* Hiển thị tên Category *@
-    <h1 class="mb-4">@L["ProductsInCategory"]: @Model.CategoryName</h1>
-
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+        <ol class="breadcrumb border-0">
+            <li class="breadcrumb-item"><a href="/">@L["Menu:Home"]</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@L[Model.CategoryName]</li>
+        </ol>
+    </nav>
+</div>
+<div class="container my-4 pb-1 bg-light rounded">
     @if (Model.ProductList != null && Model.ProductList.Items.Any())
     {
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
@@ -49,12 +53,8 @@
 
         @* Component phân trang *@
         <div class="mt-4">
-            <abp-pagination-controls total-count="@Model.ProductList.TotalCount"
-                                     page-size="@Model.PageSize" 
-                                     current-page="@Model.CurrentPage"
-                                     page-query-name="CurrentPage">
-                @* Tên query param cho số trang *@
-            </abp-pagination-controls>
+            <abp-paginator asp-page="/" show-info="true" model="Model.PagerModel" class="mb-4">
+            </abp-paginator>
         </div>
     }
     else

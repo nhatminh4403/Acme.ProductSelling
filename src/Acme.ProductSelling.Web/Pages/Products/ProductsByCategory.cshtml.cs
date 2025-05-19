@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
+using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Pagination;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Products
@@ -27,11 +28,13 @@ namespace Acme.ProductSelling.Web.Pages.Products
 
         // Giữ kết quả sản phẩm
         public PagedResultDto<ProductDto> ProductList { get; set; }
-
+        public PagerModel PagerModel { get; set; }
+        
         // (Optional) Giữ tên Category để hiển thị
         public string CategoryName { get; set; }
         public int PageSize = 12;
-        public ProductsByCategoryModel(IProductAppService productAppService, ICategoryAppService categoryAppService, ICategoryRepository categoryRepository)
+        public ProductsByCategoryModel(IProductAppService productAppService,
+            ICategoryAppService categoryAppService, ICategoryRepository categoryRepository)
         {
             _productAppService = productAppService;
             _categoryAppService = categoryAppService;
@@ -63,7 +66,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
 
             // Gọi service để lấy danh sách sản phẩm theo category
             ProductList = await _productAppService.GetListByCategoryAsync(input);
-
+            PagerModel = new PagerModel(ProductList.TotalCount, 3, CurrentPage, PageSize, "/");
             return Page();
         }
     }

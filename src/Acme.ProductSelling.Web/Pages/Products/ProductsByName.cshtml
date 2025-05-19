@@ -9,8 +9,8 @@
     ViewData["Title"] = L["AllProductsByName"];
 }
 
-<div class="container mt-4">
-    <h1 class="mb-4">@L["ProductsByName"]: @Model.Name</h1>
+<div class="container my-4 pb-1 bg-light rounded">
+    <h1 class="mb-4 text-center">@L["ProductsByName"]: @Model.Name</h1>
     @if (Model.ProductList != null && Model.ProductList.Items.Any())
     {
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
@@ -46,12 +46,8 @@
 
         @* Component phân trang *@
         <div class="mt-4">
-            <abp-pagination-controls total-count="@Model.ProductList.TotalCount"
-                                     page-size="@Model.PageSize"
-                                     current-page="@Model.CurrentPage"
-                                     page-query-name="CurrentPage">
-                @* Tên query param cho số trang *@
-            </abp-pagination-controls>
+            <abp-paginator asp-page="/" show-info="true" model="Model.PagerModel" class="mb-4">
+            </abp-paginator>
         </div>
     }
     else

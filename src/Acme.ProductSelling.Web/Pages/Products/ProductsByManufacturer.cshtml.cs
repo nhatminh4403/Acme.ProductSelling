@@ -1,9 +1,11 @@
+using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Products;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
+using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Pagination;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Products
@@ -11,6 +13,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
     public class ProductsByManufacturerModel : AbpPageModel
     {
         private readonly IProductAppService _productAppService;
+        private readonly ICategoryRepository _categoryRepository;
         public PagedResultDto<ProductDto> Products { get; set; }
 
         public string Filter { get; set; }
@@ -23,9 +26,12 @@ namespace Acme.ProductSelling.Web.Pages.Products
         [BindProperty(SupportsGet = true)]
         public Guid CategoryId { get; set; }
         public string CategoryName { get; set; }
-        public ProductsByManufacturerModel(IProductAppService productAppService)
+        public PagerModel PagerModel { get; set; }
+        //
+        public ProductsByManufacturerModel(IProductAppService productAppService,ICategoryRepository categoryRepository)
         {
             _productAppService = productAppService;
+            _categoryRepository = categoryRepository;
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -44,8 +50,12 @@ namespace Acme.ProductSelling.Web.Pages.Products
                     SkipCount = (CurrentPage - 1) * 6
                 });
                 Products = result;
+                var category = await _categoryRepository.GetAsync(CategoryId);
+                CategoryName = category.Name;
+                ManufacturerName = result.Items[0].ManufacturerName;
+                PagerModel = new PagerModel(Products.TotalCount, 3, CurrentPage, PageSize, "/");
                 return Page();
-
+                
             }
             catch (Exception ex)
             {

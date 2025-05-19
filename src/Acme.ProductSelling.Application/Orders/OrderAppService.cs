@@ -108,9 +108,8 @@ namespace Acme.ProductSelling.Orders
 
                 order.AddOrderItem(product.Id, product.ProductName, product.OriginalPrice, itemDto.Quantity);
 
-                // Giảm tồn kho
                 product.StockCount -= itemDto.Quantity;
-                await _productRepository.UpdateAsync(product, autoSave: false); // Để UoW lưu
+                await _productRepository.UpdateAsync(product, autoSave: false); 
             }
             if (!order.OrderItems.Any())
             {
@@ -126,7 +125,7 @@ namespace Acme.ProductSelling.Orders
         public override async Task<OrderDto> GetAsync(Guid id)
         {
             var order = await (await 
-                            _orderRepository.WithDetailsAsync(o => o.OrderItems)) // Include Items
+                            _orderRepository.WithDetailsAsync(o => o.OrderItems)) 
                              .FirstOrDefaultAsync(o => o.Id == id);
 
             if (order == null)

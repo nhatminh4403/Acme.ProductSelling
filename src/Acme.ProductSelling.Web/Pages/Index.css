@@ -7,7 +7,8 @@
 .card-bg-image {
     pointer-events: none;
     position: absolute;
-    width: 630px;
+    width: 100%;
+    max-width: 630px;
     height: auto;
     bottom: 0;
     right: 0;
@@ -52,10 +53,8 @@
 
 
 .category-sidebar-menu .list-group-item.category-menu-item:hover {
-    background-color: #4CE1CA; /* Màu xanh nhạt hơn hoặc màu bạn muốn */
-    /* Optional: Thêm border trái để nhấn mạnh */
-    /* border-left: 3px solid #0d6efd; */
-    /* padding-left: calc(1rem - 3px); /* Điều chỉnh padding nếu thêm border */
+    background-color: #4CE1CA; 
+
 }
     .category-sidebar-menu .list-group-item.category-menu-item:hover > a.category-main-link,
     .category-sidebar-menu .list-group-item.category-menu-item:hover > a.category-main-link span,
@@ -79,6 +78,14 @@
     width: 5%;
     height: 100%;
     z-index: 1;
+}
+.section-spacing {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.row.align-items-stretch {
+    min-height: 400px;
 }
 .list-group-item.category-menu-item {
     padding-top: 0.47rem;
@@ -199,7 +206,10 @@
         display: block !important; 
     }
 }
-
+.col-md-2-4 {
+    width: calc(20% - 30px);
+    padding: 0 15px;
+}
 
 /* --- CSS cho Khu vực hiển thị Megamenu MỚI --- */
 #megamenu-display-area {
@@ -215,4 +225,93 @@
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     height: 100%;
     overflow-y: auto;
+}
+.col-category {
+    width: 10%; /* 10 cột trên mỗi hàng */
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-bottom: 15px;
+}
+
+.category-item-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s ease;
+    padding: 5px;
+}
+
+    .category-item-wrapper:hover {
+        transform: translateY(-5px);
+    }
+
+.category-img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    margin-bottom: 8px;
+}
+
+.category-name {
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.category-link:hover .category-name {
+    color: #0d6efd !important;
+}
+
+/* Responsive cho các màn hình khác nhau */
+@media (max-width: 1199px) {
+    .col-category {
+        width: 12.5%; /* 8 cột trên màn hình laptop */
+    }
+}
+
+@media (max-width: 991px) {
+    .col-category {
+        width: 16.66%; /* 6 cột trên màn hình tablet */
+    }
+
+    .category-img {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 767px) {
+    .col-category {
+        width: 20%; /* 5 cột trên màn hình nhỏ */
+    }
+
+    .category-img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .category-name {
+        font-size: 12px;
+    }
+}
+@media (max-width: 575px) {
+    .col-category {
+        width: 25%; /* 4 cột trên màn hình điện thoại */
+    }
+
+    .category-img {
+        width: 45px;
+        height: 45px;
+    }
+
+    .category-name {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 400px) {
+    .col-category {
+        width: 33.33%; /* 3 cột trên màn hình điện thoại nhỏ */
+    }
 }

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Themes.LeptonXLite.Components.Brand;
-namespace Acme.ProductSelling.Web.Theme.LeptonXLite.Components.Brand
+namespace Acme.ProductSelling.Web.Themes.LeptonXLite.Components.Brand
 {
     public class MainNavbarBrandViewComponent : AbpViewComponent
     {

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
+using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Pagination;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Products
@@ -19,6 +20,8 @@ namespace Acme.ProductSelling.Web.Pages.Products
         public PagedResultDto<ProductDto> ProductList { get; set; }
         public int PageSize = 12;
         private readonly IProductAppService _productAppService;
+        public PagerModel PagerModel { get; set; }
+        //PagerModel = new PagerModel(ProductList.TotalCount, 3, CurrentPage, PageSize, "/");
         public ProductsByNameModel(IProductAppService productAppService)
         {
             _productAppService = productAppService;
@@ -36,6 +39,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
                 Sorting = "ProductName",
             };
             ProductList = await _productAppService.GetProductsByName(input);
+            PagerModel = new PagerModel(ProductList.TotalCount, 3, CurrentPage, PageSize, "/");
 
             return Page();
         }

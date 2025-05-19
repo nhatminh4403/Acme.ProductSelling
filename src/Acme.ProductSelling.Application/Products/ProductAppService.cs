@@ -426,6 +426,9 @@ namespace Acme.ProductSelling.Products
             queryable = queryable.Include(p => p.Category).Include(p => p.Manufacturer);
             queryable = queryable.Where(p => p.CategoryId == input.CategoryId);
             queryable = queryable.Where(p => p.ManufacturerId == input.ManufacturerId);
+            queryable = queryable
+                .OrderBy(input.Sorting ?? nameof(Product.ProductName))
+                .PageBy(input);
             var products = await AsyncExecuter.ToListAsync(queryable);
             var productDtos = ObjectMapper.Map<List<Product>, List<ProductDto>>(products);
             var totalCount = await AsyncExecuter.CountAsync(queryable);

@@ -63,6 +63,7 @@ public class ProductSellingDomainModule : AbpModule
             options.Languages.Add(new LanguageInfo("de-DE", "de-DE", "Deutsch"));
             options.Languages.Add(new LanguageInfo("es", "es", "Español"));
             options.Languages.Add(new LanguageInfo("sv", "sv", "Svenska"));
+            options.Languages.Add(new LanguageInfo("vi", "vi", "Tiếng Việt"));
         });
 
 

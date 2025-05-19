@@ -1,0 +1,20 @@
+{
+  "Culture": "vi",
+  "Texts": {
+    "Login:Processing": "Yêu cầu đăng nhập của bạn đang được xử lý. Vui lòng đợi...",
+    "Login:Initiated": "Đang Đăng Nhập",
+    "Login:Success": "Đăng nhập thành công!",
+    "Login:ErrorDefault": "Đăng nhập thất bại. Vui lòng kiểm tra thông tin đăng nhập.",
+    "Login:ButtonDefault": "Đăng Nhập",
+    "Register:Processing": "Yêu cầu đăng ký của bạn đang được xử lý. Vui lòng đợi...",
+    "Register:Initiated": "Đang Đăng Ký",
+    "Register:PasswordsDoNotMatch": "Mật khẩu không khớp.",
+    "Register:SuccessAndLoggingIn": "Đăng ký thành công! Đang cố gắng đăng nhập cho bạn...",
+    "Register:ErrorDefault": "Đăng ký thất bại. Vui lòng kiểm tra thông tin.",
+    "Register:ButtonDefault": "Đăng Ký",
+    "AutoLogin:ErrorDefault": "Tự động đăng nhập thất bại. Vui lòng đăng nhập thủ công.",
+    "AutoLogin:WarnTitle": "Đăng Ký Thành Công, Tự Động Đăng Nhập Thất Bại",
+    "Button:Processing": "<i class=\"fas fa-spinner fa-spin me-1\"></i> Đang xử lý..."
+    // ...
+  }
+}
