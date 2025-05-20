@@ -33,7 +33,7 @@ namespace Acme.ProductSelling.Products
             var query = dbSet.AsQueryable();
             if (!filter.IsNullOrWhiteSpace())
             {
-                query = query.Where(c => c.ProductName.Contains(filter));
+                query = query.Where(c => c.CategoryId.ToString() == filter);
             }
 
             return await query.OrderBy(c => EF.Property<object>(c, sorting))
@@ -41,6 +41,7 @@ namespace Acme.ProductSelling.Products
                               .Take(maxResultCount)
                               .ToListAsync();
         }
+        
         public async Task<List<Product>> GetListAsync()
         {
             var dbSet = await GetDbSetAsync();

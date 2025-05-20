@@ -30,15 +30,15 @@ public class IndexModel : ProductSellingPageModel
     private readonly ICategoryRepository _categoryRepository;
     private readonly IManufacturerAppService _manufacturerAppService;
     private readonly IManufacturerRepository _manufacturerRepository;
-    public PagedResultDto<ProductDto> ProductList { get; set; } 
-    
+    public PagedResultDto<ProductDto> ProductList { get; set; }
+
     public PagedResultDto<CategoryDto> CategoryList { get; set; }
     public PagedResultDto<ManufacturerDto> ManufacturerList { get; set; }
     public ListResultDto<CategoryWithManufacturersDto> BrandsWithAssociatedCategory { get; set; }
 
     public PagerModel PagerModel { get; set; }
 
-
+    public List<FeaturedCategoryProductsDto> FeaturedProductCarousels { get; set; }
     public IndexModel(IProductAppService productAppService, ICategoryAppService categoryAppService,
         IStringLocalizer<ProductSellingResource> localizer, ICategoryRepository categoryRepository,
         IManufacturerAppService manufacturerAppService, IManufacturerRepository manufacturerRepository, IProductRepository productRepository)
@@ -59,10 +59,10 @@ public class IndexModel : ProductSellingPageModel
             MaxResultCount = PageSize,
             SkipCount = (CurrentPage - 1) * PageSize,
             Sorting = "ProductName",
-            
+
         };
         ViewData["Title"] = _localizer["Menu:Home"];
-        
+
         var productList = await _productAppService.GetListAsync(input);
 
         ProductList = new PagedResultDto<ProductDto>
@@ -92,6 +92,48 @@ public class IndexModel : ProductSellingPageModel
             Items = brandsWithAssociatedCategory.Items
         };
 
-        PagerModel = new PagerModel(ProductList.TotalCount,3, CurrentPage, PageSize, "/");
+        FeaturedProductCarousels = new List<FeaturedCategoryProductsDto>();
+        int numberOfFeaturedCategories = 4; // Display carousels for 4 categories
+        int productsPerCarousel = 8;
+        var categoriesToFeature = CategoryList.Items.Take(numberOfFeaturedCategories).ToList();
+
+
+        foreach (var category in categoriesToFeature)
+        {
+            long totalProductsInCategory = await _productRepository.GetCountAsync();
+            totalProductsInCategory = await _productRepository.GetListAsync(p => p.CategoryId == category.Id).ContinueWith(t => t.Result.Count);
+            int skipCountForNewest = (int)Math.Max(0, totalProductsInCategory - productsPerCarousel);
+
+            List<Product> productsFromRepo = await _productRepository.GetListAsync(
+                skipCount: skipCountForNewest,
+                maxResultCount: productsPerCarousel,
+                sorting: "CreationTime", 
+                filter: category.Id.ToString() 
+            );
+
+            List<Product> correctlySortedProducts = productsFromRepo.OrderByDescending(p => p.CreationTime).ToList();
+
+            if (correctlySortedProducts.Any())
+            {
+                FeaturedProductCarousels.Add(new FeaturedCategoryProductsDto
+                {
+                    Category = category,
+                    Products = ObjectMapper.Map<List<Product>, List<ProductDto>>(correctlySortedProducts)
+                });
+            }
+        }
+        
+        PagerModel = new PagerModel(ProductList.TotalCount, 3, CurrentPage, PageSize, "/");
+    }
+
+    public class FeaturedCategoryProductsDto
+    {
+        public CategoryDto Category { get; set; }
+        public List<ProductDto> Products { get; set; }
+
+        public FeaturedCategoryProductsDto()
+        {
+            Products = new List<ProductDto>();
+        }
     }
 }

@@ -7,7 +7,6 @@
 @using Microsoft.Extensions.Localization
 @using Acme.ProductSelling.Utils;
 @using Volo.Abp.Users
-@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Pagination
 @inject IStringLocalizer<ProductSellingResource> L
 @inject ICurrentUser CurrentUser
 @model Acme.ProductSelling.Web.Pages.IndexModel
@@ -15,19 +14,42 @@
 @section styles {
     <abp-style src="/Pages/Index.css" />
     <style>
-        
+        .product-carousel .carousel-item .row {
+            margin-left: -0.5rem; 
+            margin-right: -0.5rem;
+        }
+
+        .product-carousel .carousel-item .col-carousel {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+
+        .product-carousel .card {
+            margin-bottom: 0; 
+        }
+
+        .carousel-control-prev, .carousel-control-next {
+            width: 5%; /* Smaller control buttons */
+        }
+
+        .carousel-control-prev-icon, .carousel-control-next-icon {
+            background-color: rgba(0,0,0,0.3); 
+            border-radius: 0.25rem;
+            padding: 0.5rem;
+        }
     </style>
 }
 @section scripts {
     <abp-script src="/Pages/Index.js" />
 }
-
+                                  
 @{
     ViewData["Title"] = L["Menu:AppName"];
-
     Layout = "/Views/Shared/_Layout.cshtml";
+    int productsPerSlide = 4; // Define how many products per carousel slide
 }
 
+                           
 <div class="container p-0">
     <div class="row">
         <div class="col-md-12 d-flex flex-column gap-1 ">
@@ -35,7 +57,7 @@
                 <div class="row d-flex align-items-stretch pt-2 h-100">
                     <div class="col-lg-3 p-0 d-block bg-light rounded h-100">
                         <ul class="list-group category-sidebar-menu border">
-                            @if (Model.CategoryList != null)
+                            @if (Model.BrandsWithAssociatedCategory != null && Model.BrandsWithAssociatedCategory.Items.Any())
                             {
                                 foreach (var category in Model.BrandsWithAssociatedCategory.Items)
                                 {
@@ -50,7 +72,7 @@
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         <!-- First Row: 5 columns -->
-                                                        <div class="row mb-3">
+                                                        <div class="row mb-3 justify-content-around">
                                                             <!-- Column 1 -->
                                                             <div class="col-md-2-4">
                                                                 <div class="subcategory">
@@ -149,7 +171,7 @@
                                                         </div>
 
                                                         <!-- Second Row: 5 columns -->
-                                                        <div class="row">
+                                                        <div class="row pt-3 justify-content-around">
                                                             <!-- Column 1 -->
                                                             <div class="col-md-2-4">
                                                                 <div class="subcategory">
@@ -256,6 +278,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -298,67 +321,107 @@
                 </div>
             </section>
 
-            <section class="container my-2 bg-light rounded">
-                @if (Model.ProductList != null && Model.ProductList.Items != null && Model.ProductList.Items.Any())
+            <!-- START: Product Carousels by Category -->
+            @if (Model.FeaturedProductCarousels != null && Model.FeaturedProductCarousels.Any())
+            {
+                foreach (var featuredCategory in Model.FeaturedProductCarousels)
                 {
-                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 px-1 py-3">
-                        @foreach (var product in Model.ProductList.Items)
-                        {
-                            <div class="col">
-                                <div class="card h-100">
-                                    @if (!string.IsNullOrWhiteSpace(product.ImageUrl))
-                                    {
-                                        <a asp-page="/Products/ProductDetail" asp-route-slug="@product.UrlSlug">
-                                            <img src="@product.ImageUrl" class="card-img-top p-3"
-                                                 alt="@product.ProductName" style="max-height: 200px; object-fit: contain;">
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <div class="text-center p-5 bg-light"> <i class="fas fa-image fa-3x text-secondary"></i> </div>
-                                    }
-                                    <div class="card-body d-flex flex-column">
-                                        <div class="product-header mb-2">
-                                            <h6 class="card-title mb-1">
-                                                <a asp-page="/Products/ProductDetail" class="text-decoration-none"
-                                                   asp-route-slug="@product.UrlSlug">@product.ProductName</a>
-                                            </h6>
-                                            <p class="card-text text-muted small mb-0">@L["Category"]: @product.CategoryName</p>
-                                        </div>
-                                        @if (product.DiscountPercent > 0)
-                                        {
-                                            <div class="card-text mt-auto">
-                                                <div class="text-muted text-decoration-line-through fs-6 mb-1">
-                                                    @product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
-                                                </div>
-                                                <div class="d-flex align-items-center gap-2">
-                                                    <span class="fw-bold fs-5 text-danger">
-                                                        @product.DiscountedPrice.Value.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
-                                                    </span>
-                                                    <span class="badge bg-danger">-@product.DiscountPercent%</span>
-                                                </div>
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <div class="mt-auto fw-bold text-danger fs-5">
-                                                @product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                    <abp-paginator asp-page="/" show-info="true" model="Model.PagerModel" class="mb-4">
-                    </abp-paginator>
-                }
-                else
-                {
-                    <div class="alert alert-info">@L["NoProductsFound"]</div> @* Key "NoProductsFound" *@
-                }
+                    if (featuredCategory.Products == null || !featuredCategory.Products.Any())
+                    {
+                        continue; // Skip if no products for this category
+                    }
+                    var carouselId = $"categoryCarousel_{featuredCategory.Category.Id.ToString().Replace("-", "")}";
+                    <section class="container my-3 bg-light rounded py-3 product-carousel">
+                        <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3 ps-2">
+                            <h2 class="m-0">@L["ProductsFromCategory"] @featuredCategory.Category.Name</h2>
+                            <a asp-page="/Products/ProductsByCategory" asp-route-CategoryId="@featuredCategory.Category.Id" class="btn btn-sm btn-outline-primary">@L["SeeAll"] <i class="bi bi-arrow-right-short"></i></a>
+                        </div>
 
-            </section>
+                        <div id="@carouselId" class="carousel slide" data-bs-ride="false">
+                            @* Changed to data-bs-ride="false" to prevent auto-sliding initially *@
+                            <div class="carousel-inner">
+                                @for (int i = 0; i < featuredCategory.Products.Count; i += productsPerSlide)
+                                {
+                                    var slideProducts = featuredCategory.Products.Skip(i).Take(productsPerSlide).ToList();
+                                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-@productsPerSlide g-3 px-1">
+                                            @foreach (var product in slideProducts)
+                                            {
+                                                <div class="col col-carousel">
+                                                    <div class="card h-100 shadow-sm">
+                                                        @if (!string.IsNullOrWhiteSpace(product.ImageUrl))
+                                                        {
+                                                            <a asp-page="/Products/ProductDetail" asp-route-slug="@product.UrlSlug">
+                                                                <img src="@product.ImageUrl" class="card-img-top p-3"
+                                                                     alt="@product.ProductName" style="max-height: 180px; object-fit: contain;">
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="text-center p-5 bg-light"> <i class="fas fa-image fa-3x text-secondary"></i> </div>
+                                                        }
+                                                        <div class="card-body d-flex flex-column">
+                                                            <div class="product-header mb-2">
+                                                                <h6 class="card-title mb-1 fs-6" style="min-height: 40px;">
+                                                                    <a asp-page="/Products/ProductDetail" class="text-decoration-none"
+                                                                       asp-route-slug="@product.UrlSlug" title="@product.ProductName">
+                                                                        @(product.ProductName.Length > 50 ? product.ProductName.Substring(0, 47) + "..." : product.ProductName)
+                                                                    </a>
+                                                                </h6>
+                                                            </div>
+                                                            @if (product.DiscountPercent > 0)
+                                                            {
+                                                                <div class="card-text mt-auto">
+                                                                    <div class="text-muted text-decoration-line-through small mb-0">
+                                                                        @product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center gap-2">
+                                                                        <span class="fw-bold fs-6 text-danger">
+                                                                            @product.DiscountedPrice.Value.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
+                                                                        </span>
+                                                                        <span class="badge bg-danger small">-@product.DiscountPercent%</span>
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="mt-auto fw-bold text-danger fs-6">
+                                                                    @product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                        <div class="card-footer bg-transparent border-0 text-center pb-2">
+                                                            <a asp-page="/Products/ProductDetail" asp-route-slug="@product.UrlSlug" class="btn btn-sm btn-primary">@L["ViewDetails"]</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            @if (featuredCategory.Products.Count > productsPerSlide) // Only show controls if there's more than one slide
+                            {
+                                <button class="carousel-control-prev" type="button" data-bs-target="#@carouselId" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">@L["Previous"]</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#@carouselId" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">@L["Next"]</span>
+                                </button>
+                            }
+                        </div>
+                    </section>
+                }
+            }
+            else
+            {
+                <section class="container my-2 bg-light rounded py-3">
+                    <div class="alert alert-info">@L["NoFeaturedProductsFound"]</div> @* New localization key *@
+                </section>
+            }
+
 
             <section class="container bg-light my-3 rounded py-3">
                 <h2 class="border-bottom pb-2 mb-3 ps-2">@L["CategoryList"]</h2>
@@ -370,9 +433,11 @@
                             <div class="col-category">
                                 <a asp-page="/Products/ProductsByCategory" asp-route-CategoryId="@category.Id" class="text-decoration-none category-link">
                                     <div class="category-item-wrapper">
-                                        <img src="https://placehold.co/80x80" alt="@category.Name" class="img-fluid category-img mb-2">
+                                        <img src="https://placehold.co/80x80?text= + category.Name.Substring(0,1) : category.ImageUrl)"
+                                             alt="@category.Name" class="img-fluid category-img mb-2"
+                                             style="width: 80px; height: 80px; object-fit: cover;"> @* Added style for consistent image size *@
 
-                                        <div class="category-name text-dark">@category.Name</div>
+                                        <div class="category-name text-dark text-center">@category.Name</div> @* Added text-center *@
                                     </div>
                                 </a>
                             </div>
@@ -387,7 +452,5 @@
                 </div>
             </section>
         </div>
-
     </div>
 </div>
-

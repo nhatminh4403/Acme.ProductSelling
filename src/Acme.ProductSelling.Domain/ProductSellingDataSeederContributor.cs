@@ -356,7 +356,7 @@ namespace Acme.ProductSelling
                 RecommendedPsu = 700,
                 Length = 310f
             };
-            await _gpuSpecRepository.InsertAsync(gpuSpec1, autoSave: true); // Lưu spec trước
+            await _gpuSpecRepository.InsertAsync(gpuSpec1, autoSave: true); 
             var productGpu1 = new Product
             {
                 OriginalPrice = 25000000,
@@ -454,32 +454,6 @@ namespace Acme.ProductSelling
             await _productRepository.InsertAsync(keyboardProduct1, autoSave: true);
 
 
-            var mouseSpec1 = new MouseSpecification
-            {
-                Dpi = 16000,
-                PollingRate = 1000,
-                SensorType = "Optical",
-                Weight = 80,
-                Connectivity = "Wired",
-                ButtonCount = 6,
-                BacklightColor = "RGB",
-                Color = "Black"
-            };
-            await _mouseSpecRepository.InsertAsync(mouseSpec1, autoSave: true);
-            var productMouse1 = new Product
-            {
-                OriginalPrice = 1000000,
-                DiscountPercent = 5,
-                ProductName = "Logitech G502 HERO",
-                Description = "High-performance gaming mouse",
-                StockCount = 150,
-                CategoryId = mice.Id,
-                ManufacturerId = logitech.Id,
-                MouseSpecificationId = mouseSpec1.Id,
-                ImageUrl = "https://product.hstatic.net/200000722513/product/10001_01736316d2b443d0838e5a0741434420_grande.png"
-            };
-            productMouse1.UrlSlug = UrlHelper.RemoveDiacritics(productMouse1.ProductName);
-            await _productRepository.InsertAsync(productMouse1, autoSave: true);
 
             var monitorSpec1 = new MonitorSpecification
             {
@@ -595,91 +569,6 @@ namespace Acme.ProductSelling
             await _productRepository.InsertAsync(productCpuCooler1, autoSave: true);
 
 
-            var headsetSpec1 = new HeadsetSpecification
-            {
-                DriverSize = 50,
-                HasMicrophone = true,
-                IsNoiseCancelling = true,
-                IsSurroundSound = true,
-                Frequency = "20Hz - 20kHz",
-                Connectivity = "Wired",
-                MicrophoneType = "Omnidirectional",
-                Impedance = 32,
-                Sensitivity = 100,
-                Color = "Black"
-            };
-            await _headsetSpecRepository.InsertAsync(headsetSpec1, autoSave: true); // Lưu spec trước
-            var productHeadset1 = new Product
-            {
-                OriginalPrice = 1500000,
-                DiscountPercent = 5,
-                ProductName = "Logitech G Pro X",
-                Description = "High-quality gaming headset",
-                StockCount = 70,
-                CategoryId = headsets.Id,
-                // Gán FK cho spec
-                ManufacturerId = logitech.Id,
-                HeadsetSpecificationId = headsetSpec1.Id,
-                ImageUrl = "https://product.hstatic.net/200000722513/product/gvn_logitech_prox_79c556630c454086baf1bee06c577ab7_3471d9d886fd4dbe8ab5ae6bed9f4d78_grande.png"
-            };
-            productHeadset1.UrlSlug = UrlHelper.RemoveDiacritics(productHeadset1.ProductName);
-            await _productRepository.InsertAsync(productHeadset1, autoSave: true);
-
-            var laptopSpec1 = new LaptopSpecification
-            {
-                //ScreenSize = 15.6f,
-                //Resolution = "1920x1080",
-                //Processor = "Intel Core i7-12700H",
-                //RamSize = 16,
-                //StorageType = "SSD",
-                //StorageCapacity = 512,
-                //GpuType = "Integrated",
-                BatteryLife = "3 hours 30 minutes",
-                Weight = "1.95 Kg (4.30 lbs)",
-                //Color = "Black",
-                Warranty = "1 year",
-                Storage = "NVMe SSD",
-                //CoolingSystem = "Air",
-                //Ports = "USB-C, HDMI, Audio Jack",
-                GraphicsCard = "Intel® Core™ Ultra 9",
-                CPU = "Intel® Core™ Ultra 9",
-                //ScreenType = "IPS",
-                //ScreenRefreshRate = 144,
-                //ScreenBrightness = 300,
-                //ScreenAspectRatio = "16:9",
-                //ScreenColorGamut = "sRGB 100%",
-                //ScreenResponseTime = 3,
-                Display = "16-inch 2.5K (2560 x 1600, WQXGA) 16:10 OLED, 240Hz, 0.2ms, 500 nits, 100% DCI-P3, Glossy display, G-Sync / Adaptive-Sync, ROG Nebula Display",
-                //ScreenContrastRatio = "1000:1",
-                //ScreenColorDepth = 8,
-                //ScreenViewingAngle = 178,
-                //ScreenHDR = "HDR 400",
-                //ScreenAdaptiveSync = "G-Sync Compatible",
-                //ScreenFlickerFree = true,
-                //ScreenBlueLightFilter = true,
-                //ScreenTouch = false,
-                //ScreenAntiReflective = true,
-                //ScreenAntiGlare = true,
-                RAM = "64GB LPDDR5X 7467 on board",
-                OperatingSystem = "Windows 11 Home",
-
-            };
-            await _laptopSpecRepository.InsertAsync(laptopSpec1, autoSave: true); // Lưu spec trước
-            var productLaptop1 = new Product
-            {
-                OriginalPrice = 25000000,
-                DiscountPercent = 12,
-                ProductName = "ASUS ROG Zephyrus G16 GU605CX QR083W",
-                Description = "Powerful gaming laptop",
-                StockCount = 10,
-                CategoryId = laptops.Id,
-                ManufacturerId = asus.Id,
-                // Gán FK cho spec
-                LaptopSpecificationId = laptopSpec1.Id,
-                ImageUrl = "https://product.hstatic.net/200000722513/product/zephyrus_g16_gu605_grey_03_rgb_1_b58d513a9306445daf2980232fe2544b_grande.png"
-            };
-            productLaptop1.UrlSlug = UrlHelper.RemoveDiacritics(productLaptop1.ProductName);
-            await _productRepository.InsertAsync(productLaptop1, autoSave: true);
 
             var intelCpuSpec = new CpuSpecification
             {
@@ -813,33 +702,7 @@ namespace Acme.ProductSelling
             keyboardProduct2.UrlSlug = UrlHelper.RemoveDiacritics(keyboardProduct2.ProductName);
             await _productRepository.InsertAsync(keyboardProduct2, autoSave: true);
 
-            // 6. Mouse: SteelSeries Rival 3
-            var mouseSpec2 = new MouseSpecification
-            {
-                Dpi = 8500,
-                PollingRate = 1000,
-                SensorType = "Optical",
-                Weight = 77,
-                Connectivity = "Wired",
-                ButtonCount = 6,
-                BacklightColor = "RGB",
-                Color = "White"
-            };
-            await _mouseSpecRepository.InsertAsync(mouseSpec2, autoSave: true);
-            var productMouse2 = new Product
-            {
-                CategoryId = mice.Id,
-                MouseSpecificationId = mouseSpec2.Id,
-                ProductName = "SteelSeries Rival 3",
-                Description = "Lightweight RGB gaming mouse",
-                OriginalPrice = 800000,
-                DiscountPercent = 20,
-                StockCount = 120,
-                ManufacturerId = steelseries.Id,
-                ImageUrl = "https://product.hstatic.net/200000722513/product/thumbchuot_e01eec6957cc40a88aba550b80cffed2_74ec8f2dec0447c382614fa201a4fa93_grande.png"
-            };
-            productMouse2.UrlSlug = UrlHelper.RemoveDiacritics(productMouse2.ProductName);
-            await _productRepository.InsertAsync(productMouse2, autoSave: true);
+            
 
             // 7. Monitor: ASUS TUF Gaming VG27AQ
             var monitorSpec2 = new MonitorSpecification
@@ -951,6 +814,42 @@ namespace Acme.ProductSelling
             };
             productCpuCooler2.UrlSlug = UrlHelper.RemoveDiacritics(productCpuCooler2.ProductName);
             await _productRepository.InsertAsync(productCpuCooler2, autoSave: true);
+
+
+
+            #region Headset
+
+            var headsetSpec1 = new HeadsetSpecification
+            {
+                DriverSize = 50,
+                HasMicrophone = true,
+                IsNoiseCancelling = true,
+                IsSurroundSound = true,
+                Frequency = "20Hz - 20kHz",
+                Connectivity = "Wired",
+                MicrophoneType = "Omnidirectional",
+                Impedance = 32,
+                Sensitivity = 100,
+                Color = "Black"
+            };
+            await _headsetSpecRepository.InsertAsync(headsetSpec1, autoSave: true); // Lưu spec trước
+            var productHeadset1 = new Product
+            {
+                OriginalPrice = 1500000,
+                DiscountPercent = 5,
+                ProductName = "Logitech G Pro X",
+                Description = "High-quality gaming headset",
+                StockCount = 70,
+                CategoryId = headsets.Id,
+                // Gán FK cho spec
+                ManufacturerId = logitech.Id,
+                HeadsetSpecificationId = headsetSpec1.Id,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/gvn_logitech_prox_79c556630c454086baf1bee06c577ab7_3471d9d886fd4dbe8ab5ae6bed9f4d78_grande.png"
+            };
+            productHeadset1.UrlSlug = UrlHelper.RemoveDiacritics(productHeadset1.ProductName);
+            await _productRepository.InsertAsync(productHeadset1, autoSave: true);
+
+
             // 11. Headset: HyperX Cloud II
             var headsetSpec2 = new HeadsetSpecification
             {
@@ -980,6 +879,64 @@ namespace Acme.ProductSelling
             };
             productHeadset2.UrlSlug = UrlHelper.RemoveDiacritics(productHeadset2.ProductName);
             await _productRepository.InsertAsync(productHeadset2, autoSave: true);
+            #endregion
+            #region Laptop
+            var laptopSpec1 = new LaptopSpecification
+            {
+                //ScreenSize = 15.6f,
+                //Resolution = "1920x1080",
+                //Processor = "Intel Core i7-12700H",
+                //RamSize = 16,
+                //StorageType = "SSD",
+                //StorageCapacity = 512,
+                //GpuType = "Integrated",
+                BatteryLife = "3 hours 30 minutes",
+                Weight = "1.95 Kg (4.30 lbs)",
+                //Color = "Black",
+                Warranty = "1 year",
+                Storage = "NVMe SSD",
+                //CoolingSystem = "Air",
+                //Ports = "USB-C, HDMI, Audio Jack",
+                GraphicsCard = "Intel® Core™ Ultra 9",
+                CPU = "Intel® Core™ Ultra 9",
+                //ScreenType = "IPS",
+                //ScreenRefreshRate = 144,
+                //ScreenBrightness = 300,
+                //ScreenAspectRatio = "16:9",
+                //ScreenColorGamut = "sRGB 100%",
+                //ScreenResponseTime = 3,
+                Display = "16-inch 2.5K (2560 x 1600, WQXGA) 16:10 OLED, 240Hz, 0.2ms, 500 nits, 100% DCI-P3, Glossy display, G-Sync / Adaptive-Sync, ROG Nebula Display",
+                //ScreenContrastRatio = "1000:1",
+                //ScreenColorDepth = 8,
+                //ScreenViewingAngle = 178,
+                //ScreenHDR = "HDR 400",
+                //ScreenAdaptiveSync = "G-Sync Compatible",
+                //ScreenFlickerFree = true,
+                //ScreenBlueLightFilter = true,
+                //ScreenTouch = false,
+                //ScreenAntiReflective = true,
+                //ScreenAntiGlare = true,
+                RAM = "64GB LPDDR5X 7467 on board",
+                OperatingSystem = "Windows 11 Home",
+
+            };
+            await _laptopSpecRepository.InsertAsync(laptopSpec1, autoSave: true); // Lưu spec trước
+            var productLaptop1 = new Product
+            {
+                OriginalPrice = 25000000,
+                DiscountPercent = 12,
+                ProductName = "ASUS ROG Zephyrus G16 GU605CX QR083W",
+                Description = "Powerful gaming laptop",
+                StockCount = 10,
+                CategoryId = laptops.Id,
+                ManufacturerId = asus.Id,
+                // Gán FK cho spec
+                LaptopSpecificationId = laptopSpec1.Id,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/zephyrus_g16_gu605_grey_03_rgb_1_b58d513a9306445daf2980232fe2544b_grande.png"
+            };
+            productLaptop1.UrlSlug = UrlHelper.RemoveDiacritics(productLaptop1.ProductName);
+            await _productRepository.InsertAsync(productLaptop1, autoSave: true);
+
             // 12. Laptop: Dell XPS 13 9310
             var laptopSpec2 = new LaptopSpecification
             {
@@ -1009,7 +966,8 @@ namespace Acme.ProductSelling
 
             productLaptop2.UrlSlug = UrlHelper.RemoveDiacritics(productLaptop2.ProductName);
             await _productRepository.InsertAsync(productLaptop2, autoSave: true);
-
+            #endregion
+            #region Motherboard
             var motherboardSpec1 = new MotherboardSpecification
             {
                 Socket = "LGA1700",
@@ -1119,6 +1077,322 @@ namespace Acme.ProductSelling
             };
             motherboardProduct4.UrlSlug = UrlHelper.RemoveDiacritics(motherboardProduct4.ProductName);
             await _productRepository.InsertAsync(motherboardProduct4, autoSave: true);
+            #endregion
+            #region Mouse
+            var mouseSpec1 = new MouseSpecification
+            {
+                Dpi = 16000,
+                PollingRate = 1000,
+                SensorType = "Optical",
+                Weight = 80,
+                Connectivity = "Wired",
+                ButtonCount = 6,
+                BacklightColor = "RGB",
+                Color = "Black"
+            };
+            await _mouseSpecRepository.InsertAsync(mouseSpec1, autoSave: true);
+            var productMouse1 = new Product
+            {
+                OriginalPrice = 1000000,
+                DiscountPercent = 5,
+                ProductName = "Logitech G502 HERO",
+                Description = "High-performance gaming mouse",
+                StockCount = 150,
+                CategoryId = mice.Id,
+                ManufacturerId = logitech.Id,
+                MouseSpecificationId = mouseSpec1.Id,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/10001_01736316d2b443d0838e5a0741434420_grande.png"
+            };
+            productMouse1.UrlSlug = UrlHelper.RemoveDiacritics(productMouse1.ProductName);
+            await _productRepository.InsertAsync(productMouse1, autoSave: true);
+            var mouseSpec11 = new MouseSpecification
+            {
+                Dpi = 20000,
+                PollingRate = 1000,
+                SensorType = "Optical",
+                Weight = 82,
+                Connectivity = "Wired",
+                ButtonCount = 8,
+                BacklightColor = "RGB",
+                Color = "Black"
+            };
+            await _mouseSpecRepository.InsertAsync(mouseSpec11, autoSave: true);
+
+            var productMouse11= new Product
+            {
+                OriginalPrice = 1500000,
+                DiscountPercent = 10,
+                ProductName = "Razer DeathAdder V2",
+                Description = "Mang thiết kế kinh điển của DeathAdder với cải tiến về cảm biến, nút bấm siêu nhanh và nhẹ hơn.",
+                StockCount = 120,
+                CategoryId = mice.Id,
+                ManufacturerId = razer.Id,
+                MouseSpecificationId = mouseSpec11.Id,
+                ImageUrl = "https://assets2.razerzone.com/images/pnx.assets/14f056ebbd06023cdd8b1351d17cbdaf/razer-deathadder-v2-gallery01.jpg"
+            };
+            productMouse11.UrlSlug = UrlHelper.RemoveDiacritics(productMouse11.ProductName);
+            await _productRepository.InsertAsync(productMouse11, autoSave: true);
+            // 6.Mouse: SteelSeries Rival 3
+            var mouseSpec2 = new MouseSpecification
+            {
+                Dpi = 8500,
+                PollingRate = 1000,
+                SensorType = "Optical",
+                Weight = 77,
+                Connectivity = "Wired",
+                ButtonCount = 6,
+                BacklightColor = "RGB",
+                Color = "White"
+            };
+            await _mouseSpecRepository.InsertAsync(mouseSpec2, autoSave: true);
+            var productMouse2 = new Product
+            {
+                CategoryId = mice.Id,
+                MouseSpecificationId = mouseSpec2.Id,
+                ProductName = "SteelSeries Rival 3",
+                Description = "Lightweight RGB gaming mouse",
+                OriginalPrice = 800000,
+                DiscountPercent = 20,
+                StockCount = 120,
+                ManufacturerId = steelseries.Id,
+                ImageUrl = "https://product.hstatic.net/200000722513/product/thumbchuot_e01eec6957cc40a88aba550b80cffed2_74ec8f2dec0447c382614fa201a4fa93_grande.png"
+            };
+            productMouse2.UrlSlug = UrlHelper.RemoveDiacritics(productMouse2.ProductName);
+            await _productRepository.InsertAsync(productMouse2, autoSave: true);
+            // 3. Corsair Dark Core RGB Pro (Corsair)
+            var mouseSpec3 = new MouseSpecification
+            {
+                Dpi = 18000,
+                PollingRate = 2000,
+                SensorType = "Optical",
+                Weight = 133,
+                Connectivity = "Wireless/Bluetooth",
+                ButtonCount = 9,
+                BacklightColor = "RGB",
+                Color = "Black"
+            };
+            await _mouseSpecRepository.InsertAsync(mouseSpec3, autoSave: true);
+
+            var productMouse3 = new Product
+            {
+                OriginalPrice = 2000000,
+                DiscountPercent = 7,
+                ProductName = "Corsair Dark Core RGB Pro",
+                Description = "Chuột không dây đa kết nối, cảm biến cực chính xác và hỗ trợ sạc Qi-wireless.",
+                StockCount = 80,
+                CategoryId = mice.Id,
+                ManufacturerId = corsair.Id,
+                MouseSpecificationId = mouseSpec3.Id,
+                ImageUrl = "https://www.corsair.com/corsairmedia/sys_master/productcontent/hdc/h28/9061090201886/-Dark-Core-RGB-Pro-Gallery-01.png"
+            };
+            productMouse3.UrlSlug = UrlHelper.RemoveDiacritics(productMouse3.ProductName);
+            await _productRepository.InsertAsync(productMouse3, autoSave: true);
+
+            // 4. Logitech G Pro X Superlight (Logitech)
+            var mouseSpec4 = new MouseSpecification
+            {
+                Dpi = 25000,
+                PollingRate = 1000,
+                SensorType = "Optical",
+                Weight = 63,
+                Connectivity = "Wireless",
+                ButtonCount = 5,
+                BacklightColor = "RGB",
+                Color = "White"
+            };
+            await _mouseSpecRepository.InsertAsync(mouseSpec4, autoSave: true);
+
+            var productMouse4 = new Product
+            {
+                OriginalPrice = 3500000,
+                DiscountPercent = 5,
+                ProductName = "Logitech G Pro X Superlight",
+                Description = "Chuột không dây siêu nhẹ dành cho esports, pin trâu, cảm biến HERO 25K.",
+                StockCount = 60,
+                CategoryId = mice.Id,
+                ManufacturerId = logitech.Id,
+                MouseSpecificationId = mouseSpec4.Id,
+                ImageUrl = "https://resource.logitechg.com/w_600,c_limit,q_auto,f_auto,dpr_1.0/g_pro_x_superlight/gallery-1.png"
+            };
+            productMouse4.UrlSlug = UrlHelper.RemoveDiacritics(productMouse4.ProductName);
+            await _productRepository.InsertAsync(productMouse4, autoSave: true);
+
+            // 5. Cooler Master MM710 (Cooler Master)
+            var mouseSpec5 = new MouseSpecification
+            {
+                Dpi = 16000,
+                PollingRate = 1000,
+                SensorType = "Optical",
+                Weight = 53,
+                Connectivity = "Wired",
+                ButtonCount = 6,
+                BacklightColor = "No",
+                Color = "White"
+            };
+            await _mouseSpecRepository.InsertAsync(mouseSpec5, autoSave: true);
+
+            var productMouse5 = new Product
+            {
+                OriginalPrice = 1200000,
+                DiscountPercent = 8,
+                ProductName = "Cooler Master MM710",
+                Description = "Chuột lỗ siêu nhẹ 53g, cảm biến PMW3389, thiết kế siêu bền.",
+                StockCount = 90,
+                CategoryId = mice.Id,
+                ManufacturerId = coolerMaster.Id,
+                MouseSpecificationId = mouseSpec5.Id,
+                ImageUrl = "https://coolermaster.com/media/catalog/product/cache/1/image/1200x1200/9df78eab33525d08d6e5fb8d27136e95/mm710-gallery01.png"
+            };
+            productMouse5.UrlSlug = UrlHelper.RemoveDiacritics(productMouse5.ProductName);
+            await _productRepository.InsertAsync(productMouse5, autoSave: true);
+
+            // 6. SteelSeries Rival 3 (SteelSeries)
+            var mouseSpec6 = new MouseSpecification
+            {
+                Dpi = 8500,
+                PollingRate = 1000,
+                SensorType = "Optical",
+                Weight = 77,
+                Connectivity = "Wired",
+                ButtonCount = 6,
+                BacklightColor = "RGB",
+                Color = "Black"
+            };
+            await _mouseSpecRepository.InsertAsync(mouseSpec6, autoSave: true);
+
+            var productMouse6 = new Product
+            {
+                OriginalPrice = 700000,
+                DiscountPercent = 12,
+                ProductName = "SteelSeries Rival 3",
+                Description = "Chuột gaming phổ thông với cảm biến TrueMove Core, bền bỉ, RGB tùy chỉnh.",
+                StockCount = 200,
+                CategoryId = mice.Id,
+                ManufacturerId = steelseries.Id,
+                MouseSpecificationId = mouseSpec6.Id,
+                ImageUrl = "https://steelseries.com/cdn/shop/products/Rival3_ProductImage_1_grande.png"
+            };
+            productMouse6.UrlSlug = UrlHelper.RemoveDiacritics(productMouse6.ProductName);
+            await _productRepository.InsertAsync(productMouse6, autoSave: true);
+
+            // 7. HyperX Pulsefire Haste (HyperX)
+            var mouseSpec7 = new MouseSpecification
+            {
+                Dpi = 16000,
+                PollingRate = 1000,
+                SensorType = "Optical",
+                Weight = 59,
+                Connectivity = "Wired",
+                ButtonCount = 6,
+                BacklightColor = "RGB",
+                Color = "Pink"
+            };
+            await _mouseSpecRepository.InsertAsync(mouseSpec7, autoSave: true);
+
+            var productMouse7 = new Product
+            {
+                OriginalPrice = 1100000,
+                DiscountPercent = 9,
+                ProductName = "HyperX Pulsefire Haste",
+                Description = "Chuột siêu nhẹ 59g, honeycomb shell, dây HyperFlex không vướng.",
+                StockCount = 140,
+                CategoryId = mice.Id,
+                ManufacturerId = hyperx.Id,
+                MouseSpecificationId = mouseSpec7.Id,
+                ImageUrl = "https://hyperx.com/media/catalog/product/cache/1/image/1200x/9df78eab33525d08d6e5fb8d27136e95/p/u/pulsefire-haste-gallery01.png"
+            };
+            productMouse7.UrlSlug = UrlHelper.RemoveDiacritics(productMouse7.ProductName);
+            await _productRepository.InsertAsync(productMouse7, autoSave: true);
+
+            // 8. ASUS ROG Gladius III (ASUS)
+            var mouseSpec8 = new MouseSpecification
+            {
+                Dpi = 19000,
+                PollingRate = 1000,
+                SensorType = "Optical",
+                Weight = 89,
+                Connectivity = "Wired/Wireless",
+                ButtonCount = 6,
+                BacklightColor = "ARGB",
+                Color = "Black"
+            };
+            await _mouseSpecRepository.InsertAsync(mouseSpec8, autoSave: true);
+
+            var productMouse8 = new Product
+            {
+                OriginalPrice = 2200000,
+                DiscountPercent = 6,
+                ProductName = "ASUS ROG Gladius III",
+                Description = "Chuột gaming đa kết nối, switch Omron 80M click, RGB AURA Sync.",
+                StockCount = 75,
+                CategoryId = mice.Id,
+                ManufacturerId = asus.Id,
+                MouseSpecificationId = mouseSpec8.Id,
+                ImageUrl = "https://dlcdnrog.asus.com/rog/media/1670017436852.png"
+            };
+            productMouse8.UrlSlug = UrlHelper.RemoveDiacritics(productMouse8.ProductName);
+            await _productRepository.InsertAsync(productMouse8, autoSave: true);
+
+            // 9. MSI Clutch GM41 Lightweight (MSI)
+            var mouseSpec9 = new MouseSpecification
+            {
+                Dpi = 19000,
+                PollingRate = 8000,
+                SensorType = "Optical",
+                Weight = 65,
+                Connectivity = "Wired",
+                ButtonCount = 6,
+                BacklightColor = "RGB",
+                Color = "Black"
+            };
+            await _mouseSpecRepository.InsertAsync(mouseSpec9, autoSave: true);
+
+            var productMouse9 = new Product
+            {
+                OriginalPrice = 1300000,
+                DiscountPercent = 10,
+                ProductName = "MSI Clutch GM41 Lightweight",
+                Description = "Chuột siêu nhẹ 65g, cảm biến PixArt 3389, vỏ lỗ thoáng khí.",
+                StockCount = 100,
+                CategoryId = mice.Id,
+                ManufacturerId = msi.Id,
+                MouseSpecificationId = mouseSpec9.Id,
+                ImageUrl = "https://asset.msi.com/resize/image/global/product/product_5_20220224105048_61f9d024d22a7.png"
+            };
+            productMouse9.UrlSlug = UrlHelper.RemoveDiacritics(productMouse9.ProductName);
+            await _productRepository.InsertAsync(productMouse9, autoSave: true);
+
+            // 10. GIGABYTE AORUS M4 (Gigabyte)
+            var mouseSpec10 = new MouseSpecification
+            {
+                Dpi = 18000,
+                PollingRate = 1000,
+                SensorType = "Optical",
+                Weight = 85,
+                Connectivity = "Wired",
+                ButtonCount = 7,
+                BacklightColor = "ARGB",
+                Color = "White"
+            };
+            await _mouseSpecRepository.InsertAsync(mouseSpec10, autoSave: true);
+
+            var productMouse10 = new Product
+            {
+                OriginalPrice = 1400000,
+                DiscountPercent = 8,
+                ProductName = "GIGABYTE AORUS M4",
+                Description = "Chuột gaming tản nhiệt tốt, switch Omron, RGB ARGB 16.7 triệu màu.",
+                StockCount = 110,
+                CategoryId = mice.Id,
+                ManufacturerId = gigabyte.Id,
+                MouseSpecificationId = mouseSpec10.Id,
+                ImageUrl = "https://www.gigabyte.com/FileUpload/Image/Global/Products/m4-gallery-01.png"
+            };
+            productMouse10.UrlSlug = UrlHelper.RemoveDiacritics(productMouse10.ProductName);
+            await _productRepository.InsertAsync(productMouse10, autoSave: true);
+
+
+            #endregion Mouse
             if (await _productRepository.GetCountAsync() > 0)
             {
                 return;
