@@ -15,20 +15,20 @@
             ajax: abp.libs.datatables.createAjax(productService.getList), 
             columnDefs: [
                 {
-                    title: l('Actions'),
+                    title: l('Products:Actions'),
                     visible: abp.auth.isGranted('ProductSelling.Products.Edit') ||
                         abp.auth.isGranted('ProductSelling.Products.Delete'), 
                     rowAction: {
                         items: [
                             {
-                                text: l('Edit'),
+                                text: l('Product:Edit'),
                                 visible: abp.auth.isGranted('ProductSelling.Products.Edit'),
                                 action: function (data) {
                                     editModal.open({ id: data.record.id });
                                 }
                             },
                             {
-                                text: l('Delete'),
+                                text: l('Product:Delete'),
                                 visible: abp.auth.isGranted('ProductSelling.Products.Delete'),
                                 confirmMessage: function (data) {
                                     return l('ProductDeletionConfirmationMessage', data.record.name); 
@@ -45,41 +45,63 @@
                     }
                 },
                 {
-                    title: l('Name'), 
+                    title: l('Product:Name'),
                     data: "productName",
                     render: function (data, type, row) {
+                        var detailUrl = abp.appPath + 'admin/products/' + row.id;
 
-                        var detailUrl = abp.appPath + 'products/' + row.id; 
-                        return '<a href="' + detailUrl + '">' + data + '</a>'; 
+                        var shortName = data.length > 20 ? data.substring(0, 20) + '...' : data;
+
+                        return '<a href="' + detailUrl + '" title="' + data + '">' + shortName + '</a>';
                     },
-                    width: "5%",
+                    width: "10%"
                 },
                 {
-                    title: l('Description'), 
+                    title: l('Product:Description'), 
                     data: "description",
-                     
+                    render: function (data) {
+                        return truncateText(data, 50);
+                    }
                 },
                 {
-                    title: l('Category'), 
+                    title: l('Product:Category'), 
                     data: "categoryName" ,
                 },
                 {
-                    title: l('Price'), 
-                    data: "price",
+                    title: l('Product:OriginalPrice'), 
+                    data: "originalPrice",
                     render: function (data) { 
                         return data.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
 
                     }
                 },
                 {
-                    title: l('Stock'), 
+                    title: l('Product:DiscountedPrice'),
+                    data: "discountedPrice",
+                    render: function (data) {
+                        return data.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+                    }
+                },
+                {
+                    title: l('Product:DiscountPercent'),
+                    data: "discountPercent",
+                    render: function (data) {
+                        return data + '%';
+                    }
+                },
+                
+                {
+                    title: l('Product:Stock'), 
                     data: "stockCount",
                     width: "5%", 
                 },
             ]
         })
     );
-
+    function truncateText(text, maxLength) {
+        if (!text) return "";
+        return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+    }
     $('#NewProductButton').click(function (e) {
         e.preventDefault();
         createModal.open();

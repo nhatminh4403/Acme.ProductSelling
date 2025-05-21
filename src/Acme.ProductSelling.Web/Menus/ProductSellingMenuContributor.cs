@@ -35,22 +35,28 @@ public class ProductSellingMenuContributor : IMenuContributor
             )
         );
         context.Menu.AddItem(new ApplicationMenuItem(
-        "Categories",
-        l["Categories"],
-        icon: "fa-solid fa-list",
-        url: "/admin/Categories"
+            "Categories",
+            l["Categories"],
+            icon: "fa-solid fa-list",
+            url: "/admin/categories"
         ));
         context.Menu.AddItem(new ApplicationMenuItem(
-        "Products",
-        l["Products"],
-        icon: "fa-solid fa-list",
-        url: "/admin/Products"
+            "Products",
+            l["Products"],
+            icon: "fa-solid fa-list",
+            url: "/admin/products"
         ));
         context.Menu.AddItem(new ApplicationMenuItem(
-        "Orders",
-        l["Orders"],
-        icon: "fa-solid fa-list",
-        url: "/admin/Orders"
+            "Manufacturers",
+            l["Manufacturers"],
+            icon: "fa-solid fa-list",
+            url: "/admin/manufacturers"
+        ));
+        context.Menu.AddItem(new ApplicationMenuItem(
+            "Orders",
+            l["Orders"],
+            icon: "fa-solid fa-list",
+            url: "/admin/orders"
         ));
         var administration = context.Menu.GetAdministration();
         administration.Order = 6;

@@ -74,6 +74,8 @@ namespace Acme.ProductSelling.Web.Pages.Products
             };
             var categoryLookup = await _categoryAppService.GetCategoryLookupAsync();
 
+
+
             Categories = categoryLookup.Items
                 .Select(c => new SelectListItem(c.Name, c.Id.ToString()))
                 .ToList();

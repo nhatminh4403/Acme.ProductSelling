@@ -14,11 +14,11 @@
 
 }
 
-<abp-card class="px-3">
+<abp-card class="py-3 px-1">
     <abp-card-header>
         <abp-row>
-            <abp-column size-md="_6">
-                <abp-card-title>@L["Products"]</abp-card-title>
+            <abp-column size-md="_6" class="d-flex  justify-content-start align-items-center">
+                <abp-card-title class="mb-0 ms-3">@L["Products"]</abp-card-title>
             </abp-column>
             <abp-column size-md="_6" class="text-end">
                 @if (await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Products.Create))
@@ -32,6 +32,6 @@
         </abp-row>
     </abp-card-header>
     <abp-card-body>
-        <abp-table striped-rows="true" hoverable-rows="true" id="ProductsTable"></abp-table> 
+        <abp-table striped-rows="true" hoverable-rows="true" class="pt-2" id="ProductsTable"></abp-table> 
     </abp-card-body>
 </abp-card>

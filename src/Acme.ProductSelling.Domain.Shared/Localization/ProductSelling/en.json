@@ -34,6 +34,12 @@
     "Register:ButtonDefault": "Register",
     "AutoLogin:ErrorDefault": "Auto-login failed. Please log in manually.",
     "AutoLogin:WarnTitle": "Registration Succeeded, Auto-Login Failed",
-    "Button:Processing": "<i class=\"fas fa-spinner fa-spin me-1\"></i> Processing..."
+    "Button:Processing": "<i class=\"fas fa-spinner fa-spin me-1\"></i> Processing...",
+
+    "Admin:Earnings(Annual)": "Earnings (Annual)",
+    "Admin:Earnings(LastMonth)": "Earnings (Last Month)",
+    "Admin:Earnings(ThisMonth)": "Earnings (This Month)",
+    "Admin:TotalLastYear": "Total Last Year",
+    "Admin:LastYearStatistics": "Last Year Statistics"
   }
 }

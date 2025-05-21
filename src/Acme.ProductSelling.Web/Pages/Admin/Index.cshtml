@@ -3,123 +3,124 @@
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
 @using Acme.ProductSelling.Categories
+@using Newtonsoft.Json;
 @inject IStringLocalizer<ProductSellingResource> L
 @inject Volo.Abp.Users.ICurrentUser CurrentUser
 
 @model Acme.ProductSelling.Web.Admin.Pages.IndexModel
 @{
+    var lastYear = @DateTime.Now.Year - 1;
+    var monthlyData = Json.Serialize(Model.MoneyStatisticsList);
 }
+
 @section styles {
     <style>
-       /*  :root .lpx-brand-logo {
-            --lpx-logo: url(/images/monitor.png);
-            --lpx-logo-icon: url(/images/logo/leptonxlite/logo-light-thumbnail.png);
-        } */
+        .border-left-primary {
+            border-left: .25rem solid #4e73df !important;
+        }
+
+        .border-left-success {
+            border-left: .25rem solid #1cc88a !important;
+        }
+
+        .border-left-danger {
+            border-left: .25rem solid #e74a3b !important;
+        }
+
     </style>
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <link href="~/css/sb-admin-2.min.css" rel="stylesheet">
+
+}
+@section scripts {
+
+    <script src="~/js/chart.js/Chart.bundle.min.js"> </script>
+    <script>
+
+        var monthlyStatistics = @Html.Raw(monthlyData);
+
+    </script>
+    <script src="~/js/admin/chart-area-demo.js"></script>
 }
 
-
-<div class="row mb-3">
-    <div class="col-xl-6 col-12 d-flex">
-        <div class="card h-lg-100 w-100 overflow-hidden">
-            <div class="card-body">
-                <div class="starting-content pe-5">
-                    @if (!CurrentUser.IsAuthenticated)
-                    {
-                        <h3>@L["Welcome"]</h3>
-                        <p class="lead text-muted mb-2">@L["LongWelcomeMessage"]</p>
-                        <a href="/authentication/login" class="btn btn-primary mb-4"><i class="fa-solid fa-right-to-bracket me-1"></i><span>@L["Login"]</span></a>
-                    }
-
-                    <h4>Getting Started</h4>
-                    <p class="text-muted mb-2">
-                        Learn how to create and run
-                        a
-                        new web application using the application startup
-                        template.
-                    </p>
-                    <a href="https://abp.io/docs/latest/getting-started" class="btn btn-brand mb-2" target="_blank">
-                        Getting
-                        Started
-                    </a>
-
-                    <h4>Web Application Development Tutorial</h4>
-                    <p class="text-muted mb-2">
-                        Learn how to build an ABP based
-                        web
-                        application named Acme.BookStore.
-                    </p>
-                    <a href="https://abp.io/docs/latest/tutorials/book-store/part-1?UI=MVC&DB=EF" class="btn btn-primary soft mb-2" target="_blank">Explore Tutorial</a>
-
-                    <h4>Customize Lepton Theme</h4>
-                    <p class="text-muted mb-2">
-                        Learn how to customize LeptonX
-                        Theme
-                        as you wish.
-                    </p>
-                    <a href="https://abp.io/docs/commercial/latest/themes/lepton-x/index" class="btn btn-primary soft mb-5 mb-xl-0" target="_blank">Customize Lepton</a>
-                </div>
-                <img class="card-bg-image" src="/images/getting-started/bg-01.png">
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6 d-flex">
-        <div class="row">
-            <div class="col-12 d-flex">
-                <div class="card overflow-hidden mb-3">
-                    <div class="card-body d-flex flex-column">
-                        <div class="abp-support abp-logo mb-2"></div>
-                        <p class="text-muted mb-2">
-                            You can check for
-                            similar problems and solutions, or open a
-                            new topic to discuss your specific issue.
-                        </p>
-                        <a href="https://abp.io/support/questions" class="btn btn-brand soft" target="_blank">Visit Support</a>
-                        <img style="margin-bottom: -24px;" class="w-100 mt-auto" src="/images/getting-started/img-support.png">
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 d-flex">
-                <div class="card h-md-100 overflow-hidden">
-                    <div class="card-body d-flex flex-column">
-                        <div class="abp-blog abp-logo mb-2"></div>
-                        <p class="text-muted mb-2">
-                            You can find content
-                            on .NET development, cross-platform, ASP.NET
-                            application templates, ABP-related news, and
-                            more.
-                        </p>
-                        <a href="https://abp.io/blog" class="btn btn-brand soft" target="_blank">Visit Blog</a>
-
-                        <img style="margin-bottom: -24px;" class="w-100 mt-auto" src="/images/getting-started/img-blog.png">
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body p-0 py-1 px-3">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                @L["Admin:Earnings(LastMonth)"]
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalMoneyLastMonth VND</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-xl-3 col-md-6 d-flex">
-        <div class="card h-100 overflow-hidden">
-            <div class="card-body">
-                <div class="abp-community abp-logo mb-2"></div>
-                <p class="lead text-muted">
-                    A unique community platform
-                    for <span class="fw-bold">ABP Lovers!</span>
-                </p>
-                <p class="text-muted mb-2">
-                    Explore all ABP users'
-                    experiences with the ABP Framework, discover
-                    articles and videos on how to use ABP, and join
-                    raffles for a chance to win surprise gifts!
-                </p>
-                <a class="btn btn-brand soft mb-3" href="https://abp.io/community/" target="_blank">
-                    Join ABP
-                    Community
-                </a>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body p-0 py-1 px-3">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                @L["Admin:Earnings(ThisMonth)"]
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalMoneyThisMonth VND</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <img class="mt-3 w-100" src="/images/getting-started/img-community.png">
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body p-0 py-1 px-3">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                @L["Admin:Earnings(Annual)"]
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotatOrderPrice VND</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fa-solid fa-dong-sign fa-2x text-gray-300 fw-bold"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-xl-12 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">@L["Admin:LastYearStatistics"]: @lastYear</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="myAreaChart"></canvas>
+                    </div>
+                    <hr>
+                    @L["Admin:TotalLastYear"] @lastYear.
+                </div>
+            </div>
         </div>
     </div>
+
 </div>
+
+
 
 <div class="row">
     <div class="col-xl-3 col-lg-4">

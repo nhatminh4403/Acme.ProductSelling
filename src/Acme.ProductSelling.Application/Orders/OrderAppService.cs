@@ -47,10 +47,9 @@ namespace Acme.ProductSelling.Orders
         }
         public override async Task<PagedResultDto<OrderDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
-            var queryable = await Repository.GetQueryableAsync();   
-            
-            var query = queryable.Include(o => o.OrderItems)
-                .Include(o => o.OrderItems);
+            var queryable = await Repository.GetQueryableAsync();
+
+            var query = queryable.Include(o => o.OrderItems).AsNoTracking();
             var queryResult = await AsyncExecuter.ToListAsync(query);
 
             var orderDtos = ObjectMapper.Map<List<Order>, List<OrderDto>>(queryResult);
@@ -62,7 +61,6 @@ namespace Acme.ProductSelling.Orders
                 orderDtos
             );
         }
-
 
         public override async Task<OrderDto> CreateAsync(CreateOrderDto input)
         {

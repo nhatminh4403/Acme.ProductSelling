@@ -1,4 +1,40 @@
-﻿@page
+﻿@page "/admin/manufacturers"
+@using Acme.ProductSelling.Localization
+@using Acme.ProductSelling.Web.Pages.Categories
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Authorization
+@using Acme.ProductSelling.Permissions
+
+@inject IStringLocalizer<ProductSellingResource> L
+@inject IAuthorizationService AuthorizationService
 @model Acme.ProductSelling.Web.Pages.Manufacturers.IndexModel
 @{
 }
+@section Scripts {
+    <abp-script src="/Pages/Admin/Manufacturers/Index.js" />
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                @* Tiêu đề Card *@
+                <abp-card-title>@L["Manufacturers"]</abp-card-title>
+            </abp-column>
+            <abp-column size-md="_6" class="text-end">
+                @* Nút tạo mới - Chỉ hiển thị nếu user có quyền Create *@
+                @if (await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Manufacturers.Create))
+                {
+                    <abp-button id="NewCategoryButton"
+                                text="@L["CreateManufacturer"].Value"
+                                icon="plus"
+                                button-type="Primary" />
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        @* Tag Helper tạo bảng, DataTables sẽ gắn vào id này *@
+        <abp-table striped-rows="true" hoverable-rows="true" id="ManufacturersTable"></abp-table>
+    </abp-card-body>
+</abp-card>

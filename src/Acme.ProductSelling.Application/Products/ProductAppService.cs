@@ -101,7 +101,7 @@ namespace Acme.ProductSelling.Products
         public virtual async Task<ProductDto> GetProductBySlug(string slug)
         {
             var query = await Repository.GetQueryableAsync();
-            var product = await query.Include(p => p.Category)
+            var product = await query.AsNoTracking().Include(p => p.Category)
                                   .Include(p => p.MonitorSpecification)
                                   .Include(p => p.MouseSpecification)
                                   .Include(p => p.LaptopSpecification)
@@ -386,7 +386,7 @@ namespace Acme.ProductSelling.Products
             var queryable = await Repository.GetQueryableAsync();
             queryable = queryable.Include(p => p.Category).Include(p => p.Manufacturer);
             queryable = queryable.Where(p => p.CategoryId == input.CategoryId);
-            queryable = queryable.Where(p =>
+            queryable = queryable.AsNoTracking().Where(p =>
                     (p.DiscountedPrice ?? p.OriginalPrice) >= input.MinPrice &&
                     (p.DiscountedPrice ?? p.OriginalPrice) <= input.MaxPrice
                 );
@@ -405,7 +405,7 @@ namespace Acme.ProductSelling.Products
         {
             var queryable = await Repository.GetQueryableAsync();
             queryable = queryable.Include(p => p.Category).Include(p => p.Manufacturer);
-            queryable = queryable.Where(p => p.ProductName.Contains(input.Filter));
+            queryable = queryable.AsNoTracking().Where(p => p.ProductName.Contains(input.Filter));
 
             queryable = queryable
                 .OrderBy(input.Sorting ?? nameof(Product.ProductName))
