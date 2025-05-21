@@ -1,23 +1,20 @@
-﻿@model List<Acme.ProductSelling.Categories.CategoryLookupDto>
+﻿@model List<Acme.ProductSelling.Categories.CategoryWithManufacturersDto>
 @using Microsoft.Extensions.Localization
 @using Acme.ProductSelling.Localization
 @inject IStringLocalizer<ProductSellingResource> L
 
 @{
-    var categories = Model;
+    var categoriesWithManufacturer = Model;
 }
 
-@if (categories != null || categories.Any())
+@if (categoriesWithManufacturer != null || categoriesWithManufacturer.Any())
 {
-
     <ul class="dropdown-menu category-hover-menu" aria-labelledby="navbarDropdownCategories">
-        @foreach (var category in categories)
+        @foreach (var category in categoriesWithManufacturer)
         {
-            <!-- Electronics with Mega Menu (2 Rows) -->
-            @* href="#" *@
             <li class="has-submenu">
-                <a asp-page="/Products/ProductsByCategory" asp-route-CategoryId="@category.Id" class="category-link">
-                    @category.Name <i class="bi bi-chevron-right"></i>
+                <a asp-page="/Products/ProductsByCategory" asp-route-slug="@category.CategoryUrlSlug" class="category-link">
+                    @category.CategoryName <i class="bi bi-chevron-right"></i>
                 </a>
                 <div class="submenu dropdown-menu mega-menu" style="height: 100%; z-index:1001">
                     <div class="container-fluid">
@@ -26,14 +23,26 @@
                             <div class="col-md-3">
                                 <h6>@L["Brands"]</h6>
                                 <ul>
-                                    <li><a href="#">Televisions</a></li>
-                                    <li><a href="#">Projectors</a></li>
-                                    <li><a href="#">Soundbars</a></li>
-                                    <li><a href="#">Streaming</a></li>
+                                    @foreach (var manufacturer in category.Manufacturers.Take(3))
+                                    {
+                                        <li>
+                                            <a asp-page="/Products/ProductsByManufacturer"
+                                               asp-route-categoryUrlSlug="@category.CategoryUrlSlug"
+                                               asp-route-manufacturerUrlSlug="@manufacturer.UrlSlug">
+                                                @manufacturer.Name
+                                            </a>
+                                        </li>
+                                    }
+                                    <li>
+                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-slug="@category.CategoryUrlSlug">
+                                            <span>@L["SeeAll"]</span>
+                                        </a>
+                                    </li>
+                                   
                                 </ul>
                             </div>
                             <div class="col-md-3">
-                                <h6>Computers & Tablets</h6>
+                                <h6>Computers</h6>
                                 <ul>
                                     <li><a href="#">Laptops</a></li>
                                     <li><a href="#">Desktops</a></li>
@@ -46,21 +55,21 @@
                                 <ul>
                                     <li>
                                         <a asp-page="/Products/ProductsByPrice"
-                                           asp-route-CategoryId="@category.Id"
+                                           asp-route-slug="@category.CategoryUrlSlug"
                                            asp-route-PriceRangeAlias="@L["PriceRangeAlias:Under1Million"].Value">
                                             @L["Under1Million"]
                                         </a>
                                     </li>
                                     <li>
                                         <a asp-page="/Products/ProductsByPrice"
-                                           asp-route-CategoryId="@category.Id"
+                                           asp-route-slug="@category.CategoryUrlSlug"
                                            asp-route-PriceRangeAlias="@L["PriceRangeAlias:From1MillionTo5Million"].Value">
                                             @L["From1MillionTo5Million"]
                                         </a>
                                     </li>
                                     <li>
                                         <a asp-page="/Products/ProductsByPrice"
-                                           asp-route-CategoryId="@category.Id"
+                                           asp-route-slug="@category.CategoryUrlSlug"
                                            asp-route-PriceRangeAlias="@L["PriceRangeAlias:From5MillionTo20Million"].Value">
 
                                             @L["From5MillionTo20Million"]
@@ -69,7 +78,7 @@
                                     <li>
 
                                         <a asp-page="/Products/ProductsByPrice"
-                                           asp-route-CategoryId="@category.Id"
+                                           asp-route-slug="@category.CategoryUrlSlug"
                                            asp-route-PriceRangeAlias="@L["PriceRangeAlias:Over20Million"].Value">
 
                                             @L["Over20Million"]
@@ -78,7 +87,7 @@
                                 </ul>
                             </div>
                             <div class="col-md-3">
-                                <h6>Computer Accessories</h6>
+                                <h6>Accessories</h6>
                                 <ul>
                                     <li><a href="#">Keyboards</a></li>
                                     <li><a href="#">Printers</a></li>

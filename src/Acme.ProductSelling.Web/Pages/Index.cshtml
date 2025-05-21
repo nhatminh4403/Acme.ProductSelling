@@ -62,7 +62,7 @@
                                 foreach (var category in Model.BrandsWithAssociatedCategory.Items)
                                 {
                                     <li class="list-group-item list-group-item-action category-menu-item has-megamenu" style="padding:0">
-                                        <a asp-page="/Products/ProductsByCategory" asp-route-CategoryId="@category.Id"
+                                        <a asp-page="/Products/ProductsByCategory" asp-route-slug="@category.CategoryUrlSlug"
                                            class="d-flex justify-content-between align-items-center text-decoration-none text-dark">
                                             <span>@category.CategoryName</span>
                                             <i class="bi bi-chevron-right small"></i>
@@ -81,12 +81,12 @@
                                                                         @foreach (var manufacturer in category.Manufacturers.Take(4))
                                                                         {
                                                                             <a asp-page="/Products/ProductsByManufacturer"
-                                                                               asp-route-CategoryId="@category.Id"
-                                                                               asp-route-ManufacturerId="@manufacturer.Id">
+                                                                               asp-route-categoryUrlSlug="@category.CategoryUrlSlug"
+                                                                               asp-route-manufacturerUrlSlug="@manufacturer.UrlSlug">
                                                                                 @manufacturer.Name
                                                                             </a>
                                                                         }
-                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
+                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-slug="@category.CategoryUrlSlug">
                                                                             <span>@L["SeeAll"]</span>
                                                                         </a>
                                                                     </div>
@@ -105,7 +105,7 @@
                                                                         <a href="#">SUBCATEGORY_ITEM_2_4</a>
                                                                         <a href="#">SUBCATEGORY_ITEM_2_4</a>
 
-                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
+                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-slug="@category.CategoryUrlSlug">
                                                                             <span>@L["SeeAll"]</span>
                                                                         </a>
                                                                     </div>
@@ -124,7 +124,7 @@
                                                                         <a href="#">SUBCATEGORY_ITEM_2_4</a>
                                                                         <a href="#">SUBCATEGORY_ITEM_2_4</a>
 
-                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
+                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-slug="@category.CategoryUrlSlug">
                                                                             <span>@L["SeeAll"]</span>
                                                                         </a>
                                                                     </div>
@@ -143,7 +143,7 @@
                                                                         <a href="#">SUBCATEGORY_ITEM_2_4</a>
                                                                         <a href="#">SUBCATEGORY_ITEM_2_4</a>
 
-                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
+                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-slug="@category.CategoryUrlSlug">
                                                                             <span>@L["SeeAll"]</span>
                                                                         </a>
                                                                     </div>
@@ -162,7 +162,7 @@
                                                                         <a href="#">SUBCATEGORY_ITEM_2_4</a>
                                                                         <a href="#">SUBCATEGORY_ITEM_2_4</a>
 
-                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
+                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-slug="@category.CategoryUrlSlug">
                                                                             <span>@L["SeeAll"]</span>
                                                                         </a>
                                                                     </div>
@@ -184,7 +184,7 @@
                                                                         <a href="#">SUBCATEGORY_ITEM_2_4</a>
                                                                         <a href="#">SUBCATEGORY_ITEM_2_4</a>
 
-                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
+                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-slug="@category.CategoryUrlSlug">
                                                                             <span>@L["SeeAll"]</span>
                                                                         </a>
                                                                     </div>
@@ -203,7 +203,7 @@
                                                                         <a href="#">SUBCATEGORY_ITEM_2_4</a>
                                                                         <a href="#">SUBCATEGORY_ITEM_2_4</a>
 
-                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
+                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-slug="@category.CategoryUrlSlug">
                                                                             <span>@L["SeeAll"]</span>
                                                                         </a>
                                                                     </div>
@@ -222,7 +222,7 @@
                                                                         <a href="#">SUBCATEGORY_ITEM_2_4</a>
                                                                         <a href="#">SUBCATEGORY_ITEM_2_4</a>
 
-                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
+                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-slug="@category.CategoryUrlSlug">
                                                                             <span>@L["SeeAll"]</span>
                                                                         </a>
                                                                     </div>
@@ -241,7 +241,7 @@
                                                                         <a href="#">SUBCATEGORY_ITEM_2_4</a>
                                                                         <a href="#">SUBCATEGORY_ITEM_2_4</a>
 
-                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-CategoryId="@category.Id">
+                                                                        <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-slug="@category.CategoryUrlSlug">
                                                                             <span>@L["SeeAll"]</span>
                                                                         </a>
                                                                     </div>
@@ -254,22 +254,22 @@
                                                                     <h5 class="subcategory-title">@L["ByPrice"]</h5>
                                                                     <div class="subcategory-links">
                                                                         <a asp-page="/Products/ProductsByPrice"
-                                                                           asp-route-CategoryId="@category.Id"
+                                                                           asp-route-slug="@category.CategoryUrlSlug"
                                                                            asp-route-PriceRangeAlias="@L["PriceRangeAlias:Under1Million"].Value">
                                                                             @L["Under1Million"]
                                                                         </a>
                                                                         <a asp-page="/Products/ProductsByPrice"
-                                                                           asp-route-CategoryId="@category.Id"
+                                                                           asp-route-slug="@category.CategoryUrlSlug"
                                                                            asp-route-PriceRangeAlias="@L["PriceRangeAlias:From1MillionTo5Million"].Value">
                                                                             @L["From1MillionTo5Million"]
                                                                         </a>
                                                                         <a asp-page="/Products/ProductsByPrice"
-                                                                           asp-route-CategoryId="@category.Id"
+                                                                           asp-route-slug="@category.CategoryUrlSlug"
                                                                            asp-route-PriceRangeAlias="@L["PriceRangeAlias:From5MillionTo20Million"].Value">
                                                                             @L["From5MillionTo20Million"]
                                                                         </a>
                                                                         <a asp-page="/Products/ProductsByPrice"
-                                                                           asp-route-CategoryId="@category.Id"
+                                                                           asp-route-slug="@category.CategoryUrlSlug"
                                                                            asp-route-PriceRangeAlias="@L["PriceRangeAlias:Over20Million"].Value">
                                                                             @L["Over20Million"]
                                                                         </a>

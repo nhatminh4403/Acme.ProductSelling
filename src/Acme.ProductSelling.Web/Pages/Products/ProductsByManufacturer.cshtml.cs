@@ -1,4 +1,5 @@
 using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -14,6 +15,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
     {
         private readonly IProductAppService _productAppService;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IManufacturerRepository _manufacturerRepository;
         public PagedResultDto<ProductDto> Products { get; set; }
 
         public string Filter { get; set; }
@@ -21,27 +23,30 @@ namespace Acme.ProductSelling.Web.Pages.Products
         public int PageSize = 6;
         public int CurrentPage { get; set; } = 1;
         [BindProperty(SupportsGet = true)]
-        public Guid ManufacturerId { get; set; }
+        public string ManufacturerUrlSlug { get; set; }
         public string ManufacturerName { get; set; }
         [BindProperty(SupportsGet = true)]
-        public Guid CategoryId { get; set; }
+        public string CategoryUrlSlug { get; set; }
         public string CategoryName { get; set; }
         public PagerModel PagerModel { get; set; }
         //
-        public ProductsByManufacturerModel(IProductAppService productAppService,ICategoryRepository categoryRepository)
+        public ProductsByManufacturerModel(IProductAppService productAppService,ICategoryRepository categoryRepository,IManufacturerRepository manufacturerRepository)
         {
             _productAppService = productAppService;
             _categoryRepository = categoryRepository;
+            _manufacturerRepository = manufacturerRepository;
         }
 
         public async Task<IActionResult> OnGetAsync()
         {
             try
             {
+                var category = await _categoryRepository.GetBySlugAsync(CategoryUrlSlug);
+                var manufacturer = await _manufacturerRepository.GetBySlugAsync(ManufacturerUrlSlug);
                 var result = await _productAppService.GetProductByManufacturer(new GetProductsByManufacturer
                 {
-                    ManufacturerId = this.ManufacturerId,
-                    CategoryId = this.CategoryId,
+                    ManufacturerId = manufacturer.Id,
+                    CategoryId = category.Id,
                     CategoryName = this.CategoryName,
                     ManufacturerName = this.ManufacturerName,
                     Filter = this.Filter,
@@ -50,7 +55,6 @@ namespace Acme.ProductSelling.Web.Pages.Products
                     SkipCount = (CurrentPage - 1) * 6
                 });
                 Products = result;
-                var category = await _categoryRepository.GetAsync(CategoryId);
                 CategoryName = category.Name;
                 ManufacturerName = result.Items[0].ManufacturerName;
                 PagerModel = new PagerModel(Products.TotalCount, 3, CurrentPage, PageSize, "/");

@@ -1,6 +1,7 @@
 ﻿using Acme.ProductSelling.Categories;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.AspNetCore.Mvc;
 
 namespace Acme.ProductSelling.Web.Components.CategoriesMenu
@@ -17,8 +18,9 @@ namespace Acme.ProductSelling.Web.Components.CategoriesMenu
         {
 
             var categoryLookup = await _categoryAppService.GetCategoryLookupAsync();
-
-            return View(categoryLookup.Items); 
+            var brandsWithAssociatedCategory = await _categoryAppService.GetListWithManufacturersAsync();
+            ;
+            return View(brandsWithAssociatedCategory.Items); 
         }
 
     }

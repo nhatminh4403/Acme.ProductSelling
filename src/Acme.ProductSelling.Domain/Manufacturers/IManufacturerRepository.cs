@@ -10,5 +10,6 @@ namespace Acme.ProductSelling.Manufacturers
     public interface IManufacturerRepository : IRepository<Manufacturer, Guid>
     {
         Task<List<Manufacturer>> GetListAsync();
+        Task<Manufacturer> GetBySlugAsync(string slug);
     }
 }

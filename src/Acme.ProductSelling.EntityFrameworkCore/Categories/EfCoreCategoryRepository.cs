@@ -30,5 +30,11 @@ namespace Acme.ProductSelling.Categories
             var dbSet = await GetDbSetAsync();
             return await dbSet.FirstOrDefaultAsync(c => c.Id == id);
         }
+
+        public async Task<Category> GetBySlugAsync(string slug)
+        {
+            var dbSet = await GetDbSetAsync();
+            return await dbSet.FirstOrDefaultAsync(c => c.UrlSlug == slug);
+        }
     }
 }

@@ -20,7 +20,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
         private readonly ICategoryRepository _categoryRepository;
         // Nhận CategoryId từ route
         [BindProperty(SupportsGet = true)]
-        public Guid CategoryId { get; set; }
+        public string Slug { get; set; }
 
         // Nhận tham số phân trang từ query string
         [BindProperty(SupportsGet = true)]
@@ -43,9 +43,10 @@ namespace Acme.ProductSelling.Web.Pages.Products
         }
         public async Task<IActionResult> OnGetAsync()
         {
+            var category = await _categoryRepository.GetBySlugAsync(Slug);
             try
             {
-                var category = await _categoryRepository.GetAsync(CategoryId);
+                
                 CategoryName = category.Name;
                 ViewData["Title"] = CategoryName; // Đặt tiêu đề trang
             }
@@ -58,7 +59,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
             // Tạo input cho service
             var input = new GetProductsByCategoryInput
             {
-                CategoryId = this.CategoryId,
+                CategoryId = category.Id,
                 MaxResultCount = PageSize,
                 SkipCount = (CurrentPage - 1) * PageSize,
                 Sorting = "ProductName"

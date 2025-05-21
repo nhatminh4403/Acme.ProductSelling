@@ -29,7 +29,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
         public string Filter { get; set; }
         public string Sorting { get; set; } = "ProductName";
         [BindProperty(SupportsGet = true)]
-        public Guid CategoryId { get; set; }
+        public string Slug { get; set; }
         public string CategoryName { get; set; }
         public int PageSize = 6;
         public int CurrentPage { get; set; } = 1;
@@ -71,7 +71,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
                         // Không khớp alias nào
                         break;
                 }
-                var category = await _categoryRepository.GetAsync(CategoryId);
+                var category = await _categoryRepository.GetBySlugAsync(Slug);
                 CategoryName = category.Name;
                 var input = new GetProductsByPrice
                 {
@@ -79,7 +79,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
                     MaxPrice = MaxPrice,
                     Filter = Filter,
                     Sorting = Sorting,
-                    CategoryId = this.CategoryId,
+                    CategoryId = category.Id,
                     MaxResultCount = PageSize,
                     SkipCount = (CurrentPage - 1) * PageSize,
                 };

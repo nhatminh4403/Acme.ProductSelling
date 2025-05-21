@@ -23,6 +23,11 @@ namespace Acme.ProductSelling.Manufacturers
             var manufacturers = await GetDbSetAsync();
             return await manufacturers.ToListAsync();
         }
-       
+            
+        public async Task<Manufacturer> GetBySlugAsync(string slug)
+        {
+            var manufacturers = await GetDbSetAsync();
+            return await manufacturers.FirstOrDefaultAsync(c => c.UrlSlug == slug);
+        }
     }
 }

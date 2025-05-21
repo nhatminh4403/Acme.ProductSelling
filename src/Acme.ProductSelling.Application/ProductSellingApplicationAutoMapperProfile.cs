@@ -10,7 +10,7 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
 {
     public ProductSellingApplicationAutoMapperProfile()
     {
-        CreateMap<Manufacturer, ManufacturerDto>();
+        CreateMap<Manufacturer, ManufacturerDto>().ForMember(dest => dest.UrlSlug, opt => opt.MapFrom(src => src.UrlSlug));
         CreateMap<CreateUpdateManufacturerDto, Manufacturer>();
         CreateMap<Manufacturer, ManufacturerLookupDto>();
         CreateMap<Product, ProductDto>()
@@ -64,7 +64,7 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
                 .ForMember(dest => dest.HeadsetSpecificationId, opt => opt.Ignore())
                 .ForMember(dest => dest.HeadsetSpecification, opt => opt.Ignore());
         // --- Thêm mới Category Mappings ---
-        CreateMap<Category, CategoryDto>();
+        CreateMap<Category, CategoryDto>().ForMember(dest => dest.UrlSlug, opt => opt.MapFrom(src => src.UrlSlug));
         CreateMap<CreateUpdateCategoryDto, Category>();
         CreateMap<Category, CategoryLookupDto>();
         // --- Thêm mới Spec Mappings ---

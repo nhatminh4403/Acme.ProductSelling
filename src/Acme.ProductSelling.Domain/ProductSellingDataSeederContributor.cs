@@ -82,33 +82,33 @@ namespace Acme.ProductSelling
             }
 
             var monitors = await _categoryRepository.InsertAsync(
-                                                     await _categoryManager.CreateAsync("Monitors", "Displays", SpecificationType.Monitor));
+                                                     await _categoryManager.CreateAsync("Monitor", "Displays", SpecificationType.Monitor));
 
             var mice = await _categoryRepository.InsertAsync(
-                                                     await _categoryManager.CreateAsync("Mice", "Pointing devices", SpecificationType.Mouse));
+                                                     await _categoryManager.CreateAsync("Mouse", "Pointing devices", SpecificationType.Mouse));
 
             var keyboards = await _categoryRepository.InsertAsync(
-                                                        await _categoryManager.CreateAsync("Keyboards", "Input devices", SpecificationType.Keyboard));
+                                                        await _categoryManager.CreateAsync("Keyboard", "Input devices", SpecificationType.Keyboard));
             var laptops = await _categoryRepository.InsertAsync(
-                                                        await _categoryManager.CreateAsync("Laptops", "Portable computers", SpecificationType.Laptop));
+                                                        await _categoryManager.CreateAsync("Laptop", "Portable computers", SpecificationType.Laptop));
             var cpus = await _categoryRepository.InsertAsync(
-                                                        await _categoryManager.CreateAsync("CPUs", "Central Processing Units", SpecificationType.CPU));
+                                                        await _categoryManager.CreateAsync("CPU", "Central Processing Units", SpecificationType.CPU));
             var gpus = await _categoryRepository.InsertAsync(
                                                         await _categoryManager.CreateAsync("GPUs", "Graphics Cards", SpecificationType.GPU));
             var rams = await _categoryRepository.InsertAsync(
                                                         await _categoryManager.CreateAsync("RAM", "Memory Modules", SpecificationType.RAM));
             var motherboards = await _categoryRepository.InsertAsync(
-                                                        await _categoryManager.CreateAsync("Motherboards", "Mainboards", SpecificationType.Motherboard));
+                                                        await _categoryManager.CreateAsync("Motherboard", "Mainboards", SpecificationType.Motherboard));
             var storage = await _categoryRepository.InsertAsync(
                                                         await _categoryManager.CreateAsync("Storage", "SSDs and HDDs", SpecificationType.Storage));
             var psus = await _categoryRepository.InsertAsync(
-                                                        await _categoryManager.CreateAsync("PSUs", "Power Supply Units", SpecificationType.PSU));
+                                                        await _categoryManager.CreateAsync("PSU", "Power Supply Units", SpecificationType.PSU));
             var cases = await _categoryRepository.InsertAsync(
-                                                        await _categoryManager.CreateAsync("Cases", "Computer Chassis", SpecificationType.Case));
+                                                        await _categoryManager.CreateAsync("Case", "Computer Chassis", SpecificationType.Case));
             var coolers = await _categoryRepository.InsertAsync(
-                                                        await _categoryManager.CreateAsync("CPU Coolers", "Cooling Solutions", SpecificationType.CPUCooler));
+                                                        await _categoryManager.CreateAsync("CPU Cooler", "Cooling Solutions", SpecificationType.CPUCooler));
             var headsets = await _categoryRepository.InsertAsync(
-                                                        await _categoryManager.CreateAsync("Headsets", "Audio Devices", SpecificationType.Headset));
+                                                        await _categoryManager.CreateAsync("Headset", "Audio Devices", SpecificationType.Headset));
 
             #region Manufacturers
             List<Manufacturer> Manufacturers = new List<Manufacturer>();
@@ -121,7 +121,9 @@ namespace Acme.ProductSelling
                 Description = "ASUS is a multinational computer hardware and electronics company headquartered in Taipei, Taiwan. It is known for its innovative products, including motherboards, graphics cards, laptops, desktops, and peripherals. ASUS is recognized for its commitment to quality and performance.",
 
             };
+            asus.UrlSlug = UrlHelper.RemoveDiacritics(asus.Name);
             Manufacturers.Add(asus);
+
             var acer = new Manufacturer
             {
                 ContactInfo = "https://www.acer.com/",
@@ -129,7 +131,9 @@ namespace Acme.ProductSelling
                 Description = "Acer is a Taiwanese multinational hardware and electronics corporation specializing in advanced electronics technology. It is known for its laptops, desktops, monitors, and other computer peripherals. Acer focuses on providing innovative solutions for consumers and businesses.",
                 ManufacturerImage = "https://hoanghamobile.com/Uploads/2022/05/30/logo-acer-inkythuatso-2-01-27-15-50-00.jpg",
             };
+            acer.UrlSlug = UrlHelper.RemoveDiacritics(acer.Name);
             Manufacturers.Add(acer);
+
             var amd = new Manufacturer
             {
                 ContactInfo = "https://www.amd.com/",
@@ -137,7 +141,9 @@ namespace Acme.ProductSelling
                 Description = "AMD (Advanced Micro Devices) is an American multinational semiconductor company that develops computer processors and related technologies. It is known for its Ryzen CPUs and Radeon GPUs, which compete with Intel and NVIDIA products. AMD focuses on high-performance computing and graphics solutions.",
                 ManufacturerImage = "https://www.amd.com/content/dam/code/images/header/amd-header-logo.svg"
             };
+            amd.UrlSlug = UrlHelper.RemoveDiacritics(amd.Name);
             Manufacturers.Add(amd);
+
             var intel = new Manufacturer
             {
                 ContactInfo = "https://www.intel.com/",
@@ -145,7 +151,9 @@ namespace Acme.ProductSelling
                 Description = "Intel Corporation is an American multinational corporation and technology company headquartered in Santa Clara, California. It is known for its semiconductor products, including microprocessors, integrated circuits, and memory modules. Intel is a leader in computing innovation and technology.",
                 ManufacturerImage = "https://www.intel.com/content/dam/logos/intel-header-logo.svg"
             };
+            intel.UrlSlug = UrlHelper.RemoveDiacritics(intel.Name);
             Manufacturers.Add(intel);
+
             var logitech = new Manufacturer
             {
                 ContactInfo = "https://www.logitech.com/",
@@ -153,7 +161,9 @@ namespace Acme.ProductSelling
                 Description = "Logitech is a Swiss company that designs and manufactures computer peripherals and software. It is known for its mice, keyboards, webcams, and gaming accessories. Logitech focuses on creating innovative products that enhance the user experience.",
                 ManufacturerImage = "https://logos-world.net/wp-content/uploads/2020/11/Logitech-Symbol.png"
             };
+            logitech.UrlSlug = UrlHelper.RemoveDiacritics(logitech.Name);
             Manufacturers.Add(logitech);
+
             var corsair = new Manufacturer
             {
                 ContactInfo = "https://www.corsair.com/",
@@ -161,7 +171,9 @@ namespace Acme.ProductSelling
                 Description = "Corsair is an American computer peripherals and hardware company known for its high-performance gaming products, including memory modules, power supplies, cooling solutions, and gaming peripherals. Corsair focuses on delivering quality and performance to gamers and PC enthusiasts.",
                 ManufacturerImage = "https://gamebank.vn/kql/file/1908_new-corsair-logo-blog-image.png"
             };
+            corsair.UrlSlug = UrlHelper.RemoveDiacritics(corsair.Name);
             Manufacturers.Add(corsair);
+
             var coolerMaster = new Manufacturer
             {
                 ContactInfo = "https://www.coolermaster.com/",
@@ -169,7 +181,9 @@ namespace Acme.ProductSelling
                 Description = "Cooler Master is a Taiwanese computer hardware manufacturer known for its cooling solutions, power supplies, and computer cases. It focuses on providing innovative products for gamers and PC builders, including CPU coolers, cases, and peripherals.",
                 ManufacturerImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgxuDgNFwETbBYqgrfHipVKWsdklKC8DXE0A&s",
             };
+            coolerMaster.UrlSlug = UrlHelper.RemoveDiacritics(coolerMaster.Name);
             Manufacturers.Add(coolerMaster);
+
             var msi = new Manufacturer
             {
                 ContactInfo = "https://www.msi.com/",
@@ -177,7 +191,9 @@ namespace Acme.ProductSelling
                 Description = "MSI (Micro-Star International) is a Taiwanese multinational information technology corporation known for its computer hardware products, including motherboards, graphics cards, laptops, and gaming peripherals. MSI focuses on high-performance gaming and computing solutions.",
                 ManufacturerImage = "https://1000logos.net/wp-content/uploads/2018/10/MSI-Logo.png"
             };
+            msi.UrlSlug = UrlHelper.RemoveDiacritics(msi.Name);
             Manufacturers.Add(msi);
+
             var gigabyte = new Manufacturer
             {
                 ContactInfo = "https://www.gigabyte.com/",
@@ -185,7 +201,9 @@ namespace Acme.ProductSelling
                 Description = "Gigabyte Technology is a Taiwanese manufacturer of computer hardware products, including motherboards, graphics cards, laptops, and gaming peripherals. It is known for its high-performance components and innovative technology solutions.",
                 ManufacturerImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8WUdoxygpBfsejP7-9SVKuvYv_2C31-T_9w&s"
             };
+            gigabyte.UrlSlug = UrlHelper.RemoveDiacritics(gigabyte.Name);
             Manufacturers.Add(gigabyte);
+
             var razer = new Manufacturer
             {
                 ContactInfo = "https://www.razer.com/",
@@ -193,7 +211,9 @@ namespace Acme.ProductSelling
                 Description = "Razer Inc. is a global gaming hardware manufacturing company known for its high-performance gaming peripherals, laptops, and software. It focuses on creating innovative products for gamers, including mice, keyboards, headsets, and gaming laptops.",
                 ManufacturerImage = "https://logos-world.net/wp-content/uploads/2020/11/Razer-Symbol.jpg"
             };
+            razer.UrlSlug = UrlHelper.RemoveDiacritics(razer.Name);
             Manufacturers.Add(razer);
+
             var samsung = new Manufacturer
             {
                 ContactInfo = "https://www.samsung.com/",
@@ -201,7 +221,9 @@ namespace Acme.ProductSelling
                 Description = "Samsung Electronics is a South Korean multinational electronics company known for its consumer electronics, semiconductors, and telecommunications products. It is one of the largest manufacturers of smartphones, TVs, and memory chips in the world.",
                 ManufacturerImage = "https://1000logos.net/wp-content/uploads/2017/06/Font-Samsung-Logo.jpg"
             };
+            samsung.UrlSlug = UrlHelper.RemoveDiacritics(samsung.Name);
             Manufacturers.Add(samsung);
+
             var nvidia = new Manufacturer
             {
                 ContactInfo = "https://www.nvidia.com/",
@@ -209,7 +231,9 @@ namespace Acme.ProductSelling
                 Description = "NVIDIA Corporation is an American multinational technology company known for its graphics processing units (GPUs) and AI computing technology. It is a leader in the gaming, professional visualization, data center, and automotive markets.",
                 ManufacturerImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjPSt8IAZHIwQXUj8owif7VyiELZvOi0w1pA&s"
             };
+            nvidia.UrlSlug = UrlHelper.RemoveDiacritics(nvidia.Name);
             Manufacturers.Add(nvidia);
+
             var lg = new Manufacturer
             {
                 ContactInfo = "https://www.lg.com/",
@@ -217,7 +241,9 @@ namespace Acme.ProductSelling
                 Description = "LG Electronics is a South Korean multinational electronics company known for its consumer electronics, home appliances, and mobile communications. It is one of the largest manufacturers of TVs, refrigerators, and washing machines in the world.",
                 ManufacturerImage = "https://www.lg.com/content/dam/lge/common/logo/logo-lg-100-44.svg"
             };
+            lg.UrlSlug = UrlHelper.RemoveDiacritics(lg.Name);
             Manufacturers.Add(lg);
+
             var nzxt = new Manufacturer
             {
                 ContactInfo = "https://www.nzxt.com/",
@@ -225,7 +251,9 @@ namespace Acme.ProductSelling
                 Description = "NZXT is an American computer hardware company known for its PC cases, cooling solutions, and gaming peripherals. It focuses on providing innovative products for gamers and PC builders, including cases, power supplies, and cooling solutions.",
                 ManufacturerImage = "https://scontent.fsgn5-3.fna.fbcdn.net/v/t39.30808-1/357734767_742351191228829_4168876683057715556_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=104&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=uJiscYHQzqIQ7kNvwGZObEi&_nc_oc=AdlY_C0d8uJAp1ZwLsT2kEHRz2-tkF7aF6TQpTcfTuachJppQ4l1p1JMk2g6N4y0o-E&_nc_zt=24&_nc_ht=scontent.fsgn5-3.fna&_nc_gid=qLAResXVqOojqX9fVYrn5w&oh=00_AfFhE1XCW1wvV30ZLxx9AhDdWmogq8xD1ZFALmo1VNuYkw&oe=68192140"
             };
+            nzxt.UrlSlug = UrlHelper.RemoveDiacritics(nzxt.Name);
             Manufacturers.Add(nzxt);
+
             var gskill = new Manufacturer
             {
                 ContactInfo = "https://www.gskill.com/",
@@ -233,6 +261,7 @@ namespace Acme.ProductSelling
                 Description = "G.Skill is a Taiwanese manufacturer of computer memory modules and storage solutions. It is known for its high-performance RAM and SSD products, catering to gamers and PC enthusiasts. G.Skill focuses on delivering quality and performance in its products.",
                 ManufacturerImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUiA8ArpBa9OvMcC-3HpeaoeM2U57pQ_ytyQ&s"
             };
+            gskill.UrlSlug = UrlHelper.RemoveDiacritics(gskill.Name);
             Manufacturers.Add(gskill);
 
             var hyperx = new Manufacturer
@@ -242,7 +271,9 @@ namespace Acme.ProductSelling
                 Description = "HyperX is a gaming division of Kingston Technology Company, Inc. It is known for its high-performance gaming peripherals, memory modules, and storage solutions. HyperX focuses on delivering quality and performance for gamers and PC enthusiasts.",
                 ManufacturerImage = "https://brandlogos.net/wp-content/uploads/2022/08/hyperx-logo_brandlogos.net_w6acg.png"
             };
+            hyperx.UrlSlug = UrlHelper.RemoveDiacritics(hyperx.Name);
             Manufacturers.Add(hyperx);
+
             var steelseries = new Manufacturer
             {
                 ContactInfo = "https://steelseries.com/",
@@ -250,7 +281,9 @@ namespace Acme.ProductSelling
                 Description = "SteelSeries is a Danish manufacturer of gaming peripherals and accessories. It is known for its high-performance gaming mice, keyboards, headsets, and mousepads. SteelSeries focuses on creating innovative products for gamers.",
                 ManufacturerImage = "https://audio.vn/wp-content/uploads/2017/12/SteelSeries-logo.jpg"
             };
+            steelseries.UrlSlug = UrlHelper.RemoveDiacritics(steelseries.Name);
             Manufacturers.Add(steelseries);
+
             var dell = new Manufacturer
             {
                 ContactInfo = "https://www.dell.com/",
@@ -258,7 +291,9 @@ namespace Acme.ProductSelling
                 Description = "Dell Technologies is an American multinational technology company known for its computer hardware, software, and services. It is one of the largest manufacturers of PCs, servers, and storage solutions in the world.",
                 ManufacturerImage = "https://1000logos.net/wp-content/uploads/2017/07/Dell-Logo.png"
             };
+            dell.UrlSlug = UrlHelper.RemoveDiacritics(dell.Name);
             Manufacturers.Add(dell);
+
             var hp = new Manufacturer
             {
                 ContactInfo = "https://www.hp.com/",
@@ -266,7 +301,9 @@ namespace Acme.ProductSelling
                 Description = "HP Inc. is an American multinational information technology company known for its printers, PCs, and related products. It is one of the largest manufacturers of printers and computers in the world.",
                 ManufacturerImage = "https://www.logo.wine/a/logo/HP_Inc./HP_Inc.-Logo.wine.svg"
             };
+            hp.UrlSlug = UrlHelper.RemoveDiacritics(hp.Name);
             Manufacturers.Add(hp);
+
             var phanteks = new Manufacturer
             {
                 ContactInfo = "https://www.phanteks.com/",
@@ -274,7 +311,9 @@ namespace Acme.ProductSelling
                 Description = "Phanteks is a manufacturer of computer hardware products, including cases, cooling solutions, and power supplies. It focuses on providing innovative products for gamers and PC builders.",
                 ManufacturerImage = "https://seeklogo.com/images/P/phanteks-logo-51B95B5D26-seeklogo.com.png"
             };
+            phanteks.UrlSlug = UrlHelper.RemoveDiacritics(phanteks.Name);
             Manufacturers.Add(phanteks);
+
             var evga = new Manufacturer
             {
                 ContactInfo = "https://www.evga.com/",
@@ -282,7 +321,9 @@ namespace Acme.ProductSelling
                 Description = "EVGA Corporation is an American computer hardware company known for its graphics cards, motherboards, and power supplies. It focuses on providing high-performance products for gamers and PC enthusiasts.",
                 ManufacturerImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToVtUIKfXMaf4MeYXZXLZHVKDk9Nm4QMfvZA&s"
             };
+            evga.UrlSlug = UrlHelper.RemoveDiacritics(evga.Name);
             Manufacturers.Add(evga);
+
             var wd = new Manufacturer
             {
                 ContactInfo = "https://www.westerndigital.com/",
@@ -290,7 +331,9 @@ namespace Acme.ProductSelling
                 Description = "Western Digital Corporation is an American computer data storage company known for its hard drives and solid-state drives. It is one of the largest manufacturers of storage devices in the world.",
                 ManufacturerImage = "https://www.westerndigital.com/content/dam/store/en-us/assets/home-page/brand-logos/header-main-logo.svg"
             };
+            wd.UrlSlug = UrlHelper.RemoveDiacritics(wd.Name);
             Manufacturers.Add(wd);
+
             var noctua = new Manufacturer
             {
                 ContactInfo = "https://noctua.at/en/",
@@ -298,7 +341,9 @@ namespace Acme.ProductSelling
                 Description = "Noctua is an Austrian manufacturer of computer cooling solutions, including CPU coolers and fans. It is known for its high-performance and quiet cooling products.",
                 ManufacturerImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_4lSY7-yoIe1SVWV0Fpb6AfwjGeex8Egrkw&s"
             };
+            noctua.UrlSlug = UrlHelper.RemoveDiacritics(noctua.Name);
             Manufacturers.Add(noctua);
+
             var asrock = new Manufacturer
             {
                 ContactInfo = "https://www.asrock.com/",
@@ -306,7 +351,9 @@ namespace Acme.ProductSelling
                 Description = "ASRock Inc. is a Taiwanese manufacturer of motherboards, graphics cards, and other computer hardware. It is known for its innovative products and focuses on providing quality and performance.",
                 ManufacturerImage = "https://1000logos.net/wp-content/uploads/2021/05/ASRock-logo.png"
             };
+            asrock.UrlSlug = UrlHelper.RemoveDiacritics(asrock.Name);
             Manufacturers.Add(asrock);
+            Console.WriteLine(Manufacturers);
             await _manufacturerRepository.InsertManyAsync(Manufacturers, autoSave: true);
             #endregion
             #region products and specs

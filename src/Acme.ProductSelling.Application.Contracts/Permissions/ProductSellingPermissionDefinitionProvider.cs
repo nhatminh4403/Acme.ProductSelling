@@ -27,6 +27,11 @@ public class ProductSellingPermissionDefinitionProvider : PermissionDefinitionPr
         orderPermission.AddChild(ProductSellingPermissions.Orders.Edit, L("Permission:Orders.Edit"));
         orderPermission.AddChild(ProductSellingPermissions.Orders.Delete, L("Permission:Orders.Delete"));
 
+        var manufacturersPermission = myGroup.AddPermission(ProductSellingPermissions.Manufacturers.Default, L("Permission:Manufacturers"));
+        manufacturersPermission.AddChild(ProductSellingPermissions.Manufacturers.Create, L("Permission:Manufacturers.Create"));
+        manufacturersPermission.AddChild(ProductSellingPermissions.Manufacturers.Edit, L("Permission:Manufacturers.Edit"));
+        manufacturersPermission.AddChild(ProductSellingPermissions.Manufacturers.Delete, L("Permission:Manufacturers.Delete"));
+
     }
 
     private static LocalizableString L(string name)

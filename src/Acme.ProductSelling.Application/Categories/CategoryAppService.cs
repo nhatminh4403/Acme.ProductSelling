@@ -58,6 +58,7 @@ namespace Acme.ProductSelling.Categories
                     Id = category.Id,
                     CategoryName = category.Name,
                     ManufacturerCount = manufacturersInCategoryList.Count(),
+                    CategoryUrlSlug = category.UrlSlug,
                     Manufacturers = ObjectMapper.Map<List<Manufacturer>, List<ManufacturerDto>>(manufacturersInCategoryList)
                 };
 
