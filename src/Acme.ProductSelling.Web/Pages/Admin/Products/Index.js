@@ -49,7 +49,7 @@
                     title: l('Product:Name'),
                     data: "productName",
                     render: function (data, type, row) {
-                        var detailUrl = abp.appPath + 'admin/products/' + row.id;
+                        var detailUrl = abp.appPath + 'admin/products/detail/' + row.id;
 
                         var shortName = data.length > 20 ? data.substring(0, 20) + '...' : data;
 

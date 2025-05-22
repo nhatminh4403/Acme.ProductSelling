@@ -33,8 +33,15 @@
     "Admin:Earnings(Annual)": "Earnings (Annual)",
     "Admin:Earnings(LastMonth)": "Earnings (Last Month)",
     "Admin:Earnings(ThisMonth)": "Earnings (This Month)",
+    "Admin:Earnings(LastYear)": "Earnings (Last Year)",
     "Admin:TotalLastYear": "Total Last Year",
     "Admin:LastYearStatistics": "Last Year Statistics",
+
+    "Admin:Menu:Home": "Home",
+    "Admin:Menu:Products": "Products",
+    "Admin:Menu:Orders": "Orders",
+    "Admin:Menu:Categories": "Categories",
+    "Admin:Menu:Manufacturers": "Manufacturers",
 
     "Product:Products": "Products",
     "Product:AllProducts": "Products",
@@ -49,6 +56,9 @@
     "Product:Edit": "Edit",
     "Product:Delete": "Delete",
     "Product:CreateProduct": "Create Product",
+    "Product:ProductDetail": "Product Detail",
+    "Product:Manufacturer": "Manufacturer",
+
 
     "Order:Orders": "Orders",
     "Order:OrderDate": "Order Date",

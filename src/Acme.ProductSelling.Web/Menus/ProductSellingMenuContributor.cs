@@ -28,7 +28,7 @@ public class ProductSellingMenuContributor : IMenuContributor
         context.Menu.AddItem(
             new ApplicationMenuItem(
                 ProductSellingMenus.Home,
-                l["Menu:Home"],
+                l["Admin:Menu:Home"],
                 "/admin",
                 icon: "fa fa-home",
                 order: 1
@@ -36,25 +36,25 @@ public class ProductSellingMenuContributor : IMenuContributor
         );
         context.Menu.AddItem(new ApplicationMenuItem(
             "Categories",
-            l["Categories"],
+            l["Admin:Menu:Categories"],
             icon: "fa-solid fa-list",
             url: "/admin/categories"
         ));
         context.Menu.AddItem(new ApplicationMenuItem(
             "Products",
-            l["Products"],
+            l["Admin:Menu:Products"],
             icon: "fa-solid fa-list",
             url: "/admin/products"
         ));
         context.Menu.AddItem(new ApplicationMenuItem(
             "Manufacturers",
-            l["Manufacturers"],
+            l["Admin:Menu:Manufacturers"],
             icon: "fa-solid fa-list",
             url: "/admin/manufacturers"
         ));
         context.Menu.AddItem(new ApplicationMenuItem(
             "Orders",
-            l["Orders"],
+            l["Admin:Menu:Orders"],
             icon: "fa-solid fa-list",
             url: "/admin/orders"
         ));

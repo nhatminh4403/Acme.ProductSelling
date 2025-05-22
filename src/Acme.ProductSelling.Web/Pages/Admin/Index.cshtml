@@ -1,17 +1,18 @@
 ﻿@page "/admin"
-
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
 @using Acme.ProductSelling.Categories
 @using Newtonsoft.Json;
 @inject IStringLocalizer<ProductSellingResource> L
 @inject Volo.Abp.Users.ICurrentUser CurrentUser
+@inject IPageLayout PageLayoutMenu
 
 @model Acme.ProductSelling.Web.Admin.Pages.IndexModel
 @{
     var lastYear = @DateTime.Now.Year - 1;
     var monthlyData = Json.Serialize(Model.MoneyStatisticsList);
 }
+
 
 @section styles {
     <style>
@@ -27,6 +28,10 @@
             border-left: .25rem solid #e74a3b !important;
         }
 
+        .border-left-warning {
+            border-left: .25rem solid #f6c23e !important;
+
+        }
     </style>
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
@@ -83,6 +88,23 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body p-0 py-1 px-3">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                @L["Admin:Earnings(LastYear)"]
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotatOrderPrice VND</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-success shadow h-100 py-2">
                 <div class="card-body p-0 py-1 px-3">
                     <div class="row no-gutters align-items-center">
@@ -99,7 +121,6 @@
                 </div>
             </div>
         </div>
-
     </div>
     <div class="row">
         <div class="col-xl-12 col-lg-7">

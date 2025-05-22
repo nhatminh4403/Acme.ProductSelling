@@ -1,0 +1,22 @@
+﻿@model Volo.Abp.AspNetCore.Mvc.UI.Layout.ContentLayout
+
+@using Acme.ProductSelling.Localization
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Authorization
+@using Acme.ProductSelling.Permissions
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@inject IStringLocalizer<ProductSellingResource> L
+
+<div class="breadcrumb-container ms-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb border-0 bg-transparent">
+            <li class="breadcrumb-item">
+                <a href="/admin">
+                    <i class="fa-solid fa-house"></i>
+                    @L["Admin:Menu:Home"]
+                </a>
+            </li>
+
+        </ol>
+    </nav>
+</div>

@@ -13,7 +13,14 @@
     <abp-script src="/Pages/Admin/Products/Index.js" /> @* Link JS *@
 
 }
-
+<div class="container mt-4 user-select-none">
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+        <ol class="breadcrumb border-0">
+            <li class="breadcrumb-item"><a href="/">@L["Admin:Menu:Home"]</a></li>
+            <li class="breadcrumb-item active " aria-current="page">@L["Admin:Menu:Products"]</li>
+        </ol>
+    </nav>
+</div>
 <abp-card class="py-3 px-1">
     <abp-card-header>
         <abp-row>
