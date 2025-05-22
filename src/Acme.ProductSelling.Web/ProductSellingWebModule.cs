@@ -188,7 +188,7 @@ namespace Acme.ProductSelling.Web;
                     bundle.AddContributors(typeof(JQueryScriptContributor)); 
                     bundle.AddContributors(typeof(BootstrapScriptContributor)); 
                     bundle.AddContributors(typeof(DatatablesNetScriptContributor));
-                    bundle.AddFiles("/global-scripts.js");
+                    //bundle.AddFiles("/global-scripts.js");
                 }
                 );
         });

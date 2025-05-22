@@ -14,19 +14,19 @@
     <abp-script src="/Pages/Admin/Manufacturers/Index.js" />
 }
 
-<abp-card>
+<abp-card class="py-3 px-1">
     <abp-card-header>
         <abp-row>
-            <abp-column size-md="_6">
+            <abp-column size-md="_6" class="d-flex justify-content-start align-items-center">
                 @* Tiêu đề Card *@
-                <abp-card-title>@L["Manufacturers"]</abp-card-title>
+                <abp-card-title class="mb-0 ms-3">@L["Manufacturer:Manufacturers"]</abp-card-title>
             </abp-column>
             <abp-column size-md="_6" class="text-end">
                 @* Nút tạo mới - Chỉ hiển thị nếu user có quyền Create *@
                 @if (await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Manufacturers.Create))
                 {
                     <abp-button id="NewCategoryButton"
-                                text="@L["CreateManufacturer"].Value"
+                                text="@L["Manufacturer:CreateManufacturer"].Value"
                                 icon="plus"
                                 button-type="Primary" />
                 }

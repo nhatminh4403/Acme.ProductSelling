@@ -41,10 +41,10 @@
             padding: 0;
         }
         /* * {
-            outline: 1px dashed rgba(255,0,0,0.2);
-        }
+                    outline: 1px dashed rgba(255,0,0,0.2);
+                }
 
- */
+         */
     </style>
 </head>
 <body class="abp-application-layout bg-light d-flex flex-column min-vh-100">
@@ -62,16 +62,16 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center @(checkTitle ? "d-lg-none" : "")">
-                        <li class="nav-item dropdown category-dropdown-container me-2">
-                            <button class="btn btn-success dropdown-toggle d-flex align-items-center" type="button"
-                                    id="navbarDropdownCategories" aria-expanded="false">
-                                <i class="bi bi-list me-2"></i>
+                    <li class="nav-item dropdown category-dropdown-container me-2">
+                        <button class="btn btn-success dropdown-toggle d-flex align-items-center" type="button"
+                                id="navbarDropdownCategories" aria-expanded="false">
+                            <i class="bi bi-list me-2"></i>
                             @L["Categories"]
-                            </button>
-                            @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Components.CategoriesMenu.CategoriesMenuViewComponent))
-                        </li>
-                    </ul>
-                
+                        </button>
+                        @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Components.CategoriesMenu.CategoriesMenuViewComponent))
+                    </li>
+                </ul>
+
 
                 <form class="d-flex my-2 my-lg-0 flex-grow-1 mx-lg-2"
                       asp-page="/Products/ProductsByName" method="get">
@@ -110,10 +110,10 @@
                         <a href="/cart" id="shopping-cart-widget" class="btn btn-outline-dark me-2 position-relative flex-shrink-0"
                            aria-label="Cart">
                             <i class="bi bi-cart3 fs-5"></i>
-                            <span class="cart-item-count position-absolute top-0 start-100 
+                            <span class="cart-item-count position-absolute top-0 start-100
                                     translate-middle badge rounded-pill bg-danger d-none">0</span>
                         </a>
-                            @await Component.InvokeAsync(typeof(LanguageSwitchViewComponent))
+                        @await Component.InvokeAsync(typeof(LanguageSwitchViewComponent))
                     </div>
                 }
                 else
@@ -133,7 +133,7 @@
     </nav>
 
     <div style="background: #ececec">
-        
+
         @RenderBody()
     </div>
 
@@ -233,7 +233,7 @@
             </div>
         </div>
     </footer>
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -242,12 +242,14 @@
                 </div>
                 <div class="modal-body">
                     <form id="loginForm">
+                        @Html.AntiForgeryToken()
                         <div class="mb-3">
-                            <label for="loginEmail" class="form-label">Email</label><input type="text"
-                                                                                           class="form-control" id="loginEmail" required>
+                            <label for="loginEmail" class="form-label">Email</label>
+                            <input type="text" class="form-control" id="loginEmail" required>
                         </div>
                         <div class="mb-3">
-                            <label for="loginPassword" class="form-label">Password</label><input type="password" class="form-control" id="loginPassword" required>
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
                         </div>
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input"
@@ -322,16 +324,17 @@
         </div>
     </div>
     <script src="~/libs/abp/core/abp.js"></script>
-
     <abp-script-bundle name="@LeptonXLiteThemeBundles.Scripts.Global" />
 
     <script src="~/Abp/ServiceProxyScript" asp-append-version="true"></script>
     <script src="~/Abp/ApplicationLocalizationScript?cultureName=@CultureInfo.CurrentUICulture.Name"></script>
     @* <script src="~/libs/abp/core/"></script> *@
+
     <script src="~/libs/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     @await RenderSectionAsync("scripts", required: false)
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/global-scripts.js"></script>
 
 </body>
 </html>

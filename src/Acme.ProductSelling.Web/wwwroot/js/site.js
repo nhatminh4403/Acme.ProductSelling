@@ -1,12 +1,9 @@
-﻿// Write your Javascript code.
-
+﻿
 $(function () {
-    // Wait for ABP to be fully initialized
     $(document).on('abp.configurationInitialized', function () {
         initializeCartFunctionality();
     });
 
-    // Fallback initialization if the event doesn't fire within 1 second
     setTimeout(function () {
         if (typeof acme !== 'undefined' && acme.productSelling && acme.productSelling.carts) {
             initializeCartFunctionality();
@@ -24,9 +21,6 @@ $(function () {
         var cartService = acme.productSelling.carts.cart;
         var localizationResource = abp.localization.getResource('ProductSelling');
 
-        // Debug information
-
-        // Check authentication status directly from cookies or other sources
         var isUserLoggedIn = false;
 
         // Method 1: Check ABP
@@ -34,25 +28,21 @@ $(function () {
             isUserLoggedIn = !!abp.currentUser.isAuthenticated;
         }
 
-        // Method 2: Check if user section exists in DOM
         if ($('a[href="/Account/Logout"]').length > 0) {
             isUserLoggedIn = true;
         }
 
-        // Method 3: Check for authentication cookie presence (simplified)
         if (document.cookie.indexOf('.AspNetCore.') >= 0) {
             isUserLoggedIn = true;
         }
 
 
-        // Initialize cart widget based on determined authentication status
         if (isUserLoggedIn) {
             updateCartWidgetCount();
         } else {
             console.log("User not authenticated");
         }
 
-        // Add to cart button functionality User.Identities.Any(i => i.IsAuthenticated)
         $('body').on('click', '.add-to-cart-button', function (e) {
             e.preventDefault();
             var $button = $(this);

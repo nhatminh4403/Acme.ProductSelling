@@ -13,22 +13,12 @@
 @section scripts {
     <abp-script src="/Pages/Admin/Orders/Index.js" />
 }
-<abp-card>
+<abp-card class="py-3 px-1">
     <abp-card-header>
         <abp-row>
-            <abp-column size-md="_6">
+            <abp-column size-md="_6" class="d-flex justify-content-start align-items-center">
                 @* Tiêu đề Card *@
-                <abp-card-title>@L["Orders"]</abp-card-title>
-            </abp-column>
-            <abp-column size-md="_6" class="text-end">
-                @* Nút tạo mới - Chỉ hiển thị nếu user có quyền Create *@
-                @if (await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Categories.Create))
-                {
-                    <abp-button id="NewCategoryButton"
-                                text="@L["CreateOrder"].Value"
-                                icon="plus"
-                                button-type="Primary" />
-                }
+                <abp-card-title class="mb-0 ms-3">@L["Order:Orders"]</abp-card-title>
             </abp-column>
         </abp-row>
     </abp-card-header>

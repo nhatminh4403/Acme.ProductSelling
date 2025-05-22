@@ -14,10 +14,10 @@
 <form method="post" asp-page="/Categories/EditModal" asp-route-id="@Model.Id">
     <input type="hidden" asp-for="Id" />
     <abp-modal>
-        <abp-modal-header title="@L["EditCategory"].Value"></abp-modal-header>
+        <abp-modal-header title="@L["Category:EditCategory"].Value"></abp-modal-header>
         <abp-modal-body>
-            <abp-input asp-for="Category.Name" label="@L["Name"].Value" />
-            <abp-input asp-for="Category.Description" label="@L["Description"]" type="textarea" />
+            <abp-input asp-for="Category.Name" label="@L["Category:Name"].Value" />
+            <abp-input asp-for="Category.Description" label="@L["Category:Description"]" type="textarea" />
 
         </abp-modal-body>
         <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>

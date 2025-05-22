@@ -2,8 +2,8 @@
      var categoryService = acme.productSelling.categories.category; 
     var l = abp.localization.getResource('ProductSelling'); 
 
-    var createModal = new abp.ModalManager(abp.appPath + 'Categories/CreateModal'); 
-    var editModal = new abp.ModalManager(abp.appPath + 'Categories/EditModal');  
+    var createModal = new abp.ModalManager(abp.appPath + 'Admin/Categories/CreateModal'); 
+    var editModal = new abp.ModalManager(abp.appPath + 'Admin/Categories/EditModal');  
 
     var dataTable = $('#CategoriesTable').DataTable(
         abp.libs.datatables.normalizeConfiguration({ 
@@ -15,19 +15,19 @@
             ajax: abp.libs.datatables.createAjax(categoryService.getList), 
             columnDefs: [
                 {
-                    title: l('Actions'),
+                    title: l('Category:Actions'),
                     visible: abp.auth.isGranted('ProductSelling.Categories.Edit') || abp.auth.isGranted('ProductSelling.Categories.Delete'), // Hiện cột này nếu có quyền Edit hoặc Delete
                     rowAction: {
                         items: [
                             {
-                                text: l('Edit'),
+                                text: l('Category:Edit'),
                                 visible: abp.auth.isGranted('ProductSelling.Categories.Edit'),
                                 action: function (data) {
                                     editModal.open({ id: data.record.id });
                                 }
                             },
                             {
-                                text: l('Delete'),
+                                text: l('Category:Delete'),
                                 visible: abp.auth.isGranted('ProductSelling.Categories.Delete'),
                                 confirmMessage: function (data) {
                                     return l('CategoryDeletionConfirmationMessage', data.record.name); 
@@ -44,11 +44,11 @@
                     }
                 },
                 {
-                    title: l('Name'), 
+                    title: l('Category:Name'), 
                     data: "name"    
                 },
                 {
-                    title: l('Description'), 
+                    title: l('Category:Description'), 
                     data: "description"     
                 },
             ]

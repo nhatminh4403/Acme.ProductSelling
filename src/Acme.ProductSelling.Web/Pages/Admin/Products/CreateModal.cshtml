@@ -8,10 +8,10 @@
     Layout = null;
 }
 
-<form method="post" asp-page="/Products/CreateModal">
+<form method="post" asp-page="/Admin/Products/CreateModal">
     @* Hoặc EditModal với asp-route-id *@
     <abp-modal>
-        <abp-modal-header title="@L["CreateProduct"].Value"></abp-modal-header> @* Hoặc EditProduct *@
+        <abp-modal-header title="@L["Product:CreateProduct"].Value"></abp-modal-header> @* Hoặc EditProduct *@
         <abp-modal-body>
             <abp-validation-summary />
             <abp-alert-list />

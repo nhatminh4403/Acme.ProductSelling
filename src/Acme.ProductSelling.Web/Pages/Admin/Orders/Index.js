@@ -2,8 +2,8 @@
     var orderService = acme.productSelling.orders.order;
     var l = abp.localization.getResource('ProductSelling');
 
-    var createModal = new abp.ModalManager(abp.appPath + 'Orders/CreateModal');
-    var editModal = new abp.ModalManager(abp.appPath + 'Orders/EditModal');
+    var createModal = new abp.ModalManager(abp.appPath + 'Admin/Orders/CreateModal');
+    var editModal = new abp.ModalManager(abp.appPath + 'Admin/Orders/EditModal');
 
     // Cấu hình DataTables
     var dataTable = $('#OrdersTable').DataTable(
@@ -16,19 +16,19 @@
             ajax: abp.libs.datatables.createAjax(orderService.getList),
             columnDefs: [
                 {
-                    title: l('Actions'),
+                    title: l('Order:Actions'),
                     visible: abp.auth.isGranted('ProductSelling.Orders.Edit')
                         || abp.auth.isGranted('ProductSelling.Orders.Delete'),
                     items: [
                         {
-                            text: l('Edit'),
+                            text: l('Order:Edit'),
                             visible: abp.auth.isGranted('ProductSelling.Orders.Edit'),
                             action: function (data) {
                                 editModal.open({ id: data.record.id });
                             }
                         },
                         {
-                            text: l('Delete'),
+                            text: l('Order:Delete'),
                             visible: abp.auth.isGranted('ProductSelling.Orders.Delete'),
                             confirmMessage: function (data) {
                                 return l('OrderDeletionConfirmationMessage', data.record.name);
@@ -46,13 +46,17 @@
                 }
                 ,
                 {
-                    title: l('Name'),
+                    title: l('Order:OrderNumber'),
                     data: "name"
                 },
                 {
-                    title: l('Description'),
+                    title: l('Order:OrderDate'),
                     data: "description"
                 },
+                {
+                    title: l('Order:TotalAmount'),
+                    data: "totalAmount",
+                }
             ]
         })
     );

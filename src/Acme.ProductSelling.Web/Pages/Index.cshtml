@@ -15,7 +15,7 @@
     <abp-style src="/Pages/Index.css" />
     <style>
         .product-carousel .carousel-item .row {
-            margin-left: -0.5rem; 
+            margin-left: -0.5rem;
             margin-right: -0.5rem;
         }
 
@@ -25,7 +25,7 @@
         }
 
         .product-carousel .card {
-            margin-bottom: 0; 
+            margin-bottom: 0;
         }
 
         .carousel-control-prev, .carousel-control-next {
@@ -33,7 +33,7 @@
         }
 
         .carousel-control-prev-icon, .carousel-control-next-icon {
-            background-color: rgba(0,0,0,0.3); 
+            background-color: rgba(0,0,0,0.3);
             border-radius: 0.25rem;
             padding: 0.5rem;
         }
@@ -42,14 +42,14 @@
 @section scripts {
     <abp-script src="/Pages/Index.js" />
 }
-                                  
+
 @{
     ViewData["Title"] = L["Menu:AppName"];
     Layout = "/Views/Shared/_Layout.cshtml";
-    int productsPerSlide = 4; // Define how many products per carousel slide
+    int productsPerSlide = 4; 
 }
 
-                           
+
 <div class="container p-0">
     <div class="row">
         <div class="col-md-12 d-flex flex-column gap-1 ">
@@ -321,14 +321,13 @@
                 </div>
             </section>
 
-            <!-- START: Product Carousels by Category -->
             @if (Model.FeaturedProductCarousels != null && Model.FeaturedProductCarousels.Any())
             {
                 foreach (var featuredCategory in Model.FeaturedProductCarousels)
                 {
                     if (featuredCategory.Products == null || !featuredCategory.Products.Any())
                     {
-                        continue; // Skip if no products for this category
+                        continue; 
                     }
                     var carouselId = $"categoryCarousel_{featuredCategory.Category.Id.ToString().Replace("-", "")}";
                     <section class="container my-3 bg-light rounded py-3 product-carousel">
@@ -338,7 +337,6 @@
                         </div>
 
                         <div id="@carouselId" class="carousel slide" data-bs-ride="false">
-                            @* Changed to data-bs-ride="false" to prevent auto-sliding initially *@
                             <div class="carousel-inner">
                                 @for (int i = 0; i < featuredCategory.Products.Count; i += productsPerSlide)
                                 {
@@ -358,7 +356,11 @@
                                                         }
                                                         else
                                                         {
-                                                            <div class="text-center p-5 bg-light"> <i class="fas fa-image fa-3x text-secondary"></i> </div>
+                                                            <div class="text-center p-5 bg-light">
+                                                                <i class="fas fa-image fa-3x text-secondary">
+
+                                                                </i>
+                                                            </div>
                                                         }
                                                         <div class="card-body d-flex flex-column">
                                                             <div class="product-header mb-2">

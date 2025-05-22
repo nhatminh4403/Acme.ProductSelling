@@ -2,8 +2,8 @@
     var manufacturerService = acme.productSelling.manufacturers.manufacturer; 
     var l = abp.localization.getResource('ProductSelling'); 
 
-    var createModal = new abp.ModalManager(abp.appPath + 'Manufacturers/CreateModal'); 
-    var editModal = new abp.ModalManager(abp.appPath + 'Manufacturers/EditModal');  
+    var createModal = new abp.ModalManager(abp.appPath + 'Admin/Manufacturers/CreateModal'); 
+    var editModal = new abp.ModalManager(abp.appPath + 'Admin/Manufacturers/EditModal');  
 
     var dataTable = $('#ManufacturersTable').DataTable(
         abp.libs.datatables.normalizeConfiguration({ 
@@ -15,12 +15,12 @@
             ajax: abp.libs.datatables.createAjax(manufacturerService.getList), 
             columnDefs: [
                 {
-                    title: l('Actions'),
+                    title: l('Manufacturer:Actions'),
                     visible: abp.auth.isGranted('ProductSelling.Manufacturers.Edit') || abp.auth.isGranted('ProductSelling.Manufacturers.Delete'), // Hiện cột này nếu có quyền Edit hoặc Delete
                     rowAction: {
                         items: [
                             {
-                                text: l('Edit'),
+                                text: l('Manufacturer:Edit'),
                                 visible: abp.auth.isGranted('ProductSelling.Manufacturers.Edit'),
                                 action: function (data) {
                                     editModal.open({ id: data.record.id });
@@ -31,22 +31,22 @@
                     }
                 },
                 {
-                    title: l('Name'), 
+                    title: l('Manufacturer:Name'), 
                     data: "name"    
                 },
                 {
-                    title: l('Description'), 
+                    title: l('Manufacturer:Description'), 
                     data: "description",
                     render: function (data) {
                         return truncateText(data, 50);
                     }
                 },
                 {
-                    title: l('ContactInfo'),
+                    title: l('Manufacturer:ContactInfo'),
                     data: "contactInfo",
                 },
                 {
-                    title: l('Image'),
+                    title: l('Manufacturer:Image'),
                     data: "manufacturerImage",
                     render: function (data) {
                         if (!data) return '';

@@ -1,23 +1,23 @@
 ﻿$(function () {
-    var productService = acme.productSelling.products.product; 
+    var productService = acme.productSelling.products.product;
     var l = abp.localization.getResource('ProductSelling');
 
-    var createModal = new abp.ModalManager(abp.appPath + 'Products/CreateModal');
-    var editModal = new abp.ModalManager(abp.appPath + 'Products/EditModal');
+    var createModal = new abp.ModalManager(abp.appPath + 'Admin/Products/CreateModal');
+    var editModal = new abp.ModalManager(abp.appPath + 'Admin/Products/EditModal');
 
     var dataTable = $('#ProductsTable').DataTable(
         abp.libs.datatables.normalizeConfiguration({
             serverSide: true,
             paging: true,
-            order: [[1, "asc"]], 
+            order: [[1, "asc"]],
             searching: false,
             scrollX: true,
-            ajax: abp.libs.datatables.createAjax(productService.getList), 
+            ajax: abp.libs.datatables.createAjax(productService.getList),
             columnDefs: [
                 {
-                    title: l('Products:Actions'),
+                    title: l('Product:Actions'),
                     visible: abp.auth.isGranted('ProductSelling.Products.Edit') ||
-                        abp.auth.isGranted('ProductSelling.Products.Delete'), 
+                        abp.auth.isGranted('ProductSelling.Products.Delete'),
                     rowAction: {
                         items: [
                             {
@@ -31,7 +31,7 @@
                                 text: l('Product:Delete'),
                                 visible: abp.auth.isGranted('ProductSelling.Products.Delete'),
                                 confirmMessage: function (data) {
-                                    return l('ProductDeletionConfirmationMessage', data.record.name); 
+                                    return l('ProductDeletionConfirmationMessage', data.record.name);
                                 },
                                 action: function (data) {
                                     productService.delete(data.record.id)
@@ -42,7 +42,8 @@
                                 }
                             }
                         ]
-                    }
+                    },
+                    width: "10%",
                 },
                 {
                     title: l('Product:Name'),
@@ -52,56 +53,57 @@
 
                         var shortName = data.length > 20 ? data.substring(0, 20) + '...' : data;
 
-                        return '<a href="' + detailUrl + '" title="' + data + '">' + shortName + '</a>';
+                        return '<a href="' + detailUrl + '" class="text-decoration-none" title="' + data + '">' + shortName + '</a>';
                     },
-                    width: "10%"
+                    width: "10%",
+                    className: "text-end  "
                 },
                 {
-                    title: l('Product:Description'), 
-                    data: "description",
-                    render: function (data) {
-                        return truncateText(data, 50);
-                    }
+                    title: l('Product:Category'),
+                    data: "categoryName",
+                    width: "5%",
+                    className: "text-end"
+
                 },
                 {
-                    title: l('Product:Category'), 
-                    data: "categoryName" ,
-                },
-                {
-                    title: l('Product:OriginalPrice'), 
+                    title: l('Product:OriginalPrice'),
                     data: "originalPrice",
-                    render: function (data) { 
+                    render: function (data) {
                         return data.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
 
-                    }
+                    },
+                    width: "8%",
+                    className: "text-end"
                 },
                 {
                     title: l('Product:DiscountedPrice'),
                     data: "discountedPrice",
                     render: function (data) {
                         return data.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-                    }
+                    },
+                    className: "text-end",
+                    width: "8%",
                 },
                 {
                     title: l('Product:DiscountPercent'),
                     data: "discountPercent",
                     render: function (data) {
                         return data + '%';
-                    }
+                    },
+                    className: "text-end",
+                    width: "8%"
                 },
-                
+
                 {
-                    title: l('Product:Stock'), 
+                    title: l('Product:Stock'),
                     data: "stockCount",
-                    width: "5%", 
+                    className: "text-end",
+                    width: "8%",
                 },
             ]
         })
     );
-    function truncateText(text, maxLength) {
-        if (!text) return "";
-        return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
-    }
+
     $('#NewProductButton').click(function (e) {
         e.preventDefault();
         createModal.open();

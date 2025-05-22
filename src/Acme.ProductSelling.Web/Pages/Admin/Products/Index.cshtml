@@ -7,7 +7,7 @@
 @inject IStringLocalizer<ProductSellingResource> L
 @inject IAuthorizationService AuthorizationService
 @{
-    ViewData["Title"] = L["AllProducts"]; // Key localization "Products"
+    ViewData["Title"] = L["Product:AllProducts"]; // Key localization "Products"
 }
 @section scripts {
     <abp-script src="/Pages/Admin/Products/Index.js" /> @* Link JS *@
@@ -17,14 +17,14 @@
 <abp-card class="py-3 px-1">
     <abp-card-header>
         <abp-row>
-            <abp-column size-md="_6" class="d-flex  justify-content-start align-items-center">
-                <abp-card-title class="mb-0 ms-3">@L["Products"]</abp-card-title>
+            <abp-column size-md="_6" class="d-flex  justify-content-start align-items-center ">
+                <abp-card-title class="mb-0 ms-3">@L["Product:Products"]</abp-card-title>
             </abp-column>
             <abp-column size-md="_6" class="text-end">
                 @if (await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Products.Create))
                 {@* Key localization "CreateProduct" *@
                     <abp-button id="NewProductButton"
-                                text="@L["CreateProduct"].Value" 
+                                text="@L["Product:CreateProduct"].Value" 
                                 icon="plus"
                                 button-type="Primary" />
                 }
