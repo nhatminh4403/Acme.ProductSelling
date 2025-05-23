@@ -9,10 +9,20 @@
 
 @model Acme.ProductSelling.Web.Admin.Pages.IndexModel
 @{
-    var lastYear = @DateTime.Now.Year - 1;
     var monthlyData = Json.Serialize(Model.MoneyStatisticsList);
-}
+    var allYearlyData = Json.Serialize(Model.YearlyStatistics);
 
+}
+@section scripts {
+
+    <script src="~/js/chart.js/Chart.bundle.min.js"> </script>
+    <script>
+        var monthlyStatistics = @Html.Raw(monthlyData);
+        var allYearlyData = @Html.Raw(allYearlyData);
+        var selectedYear = @Model.SelectedYear;
+    </script>
+    <script src="~/js/admin/chart-area-demo.js"></script>
+}
 
 @section styles {
     <style>
@@ -30,7 +40,36 @@
 
         .border-left-warning {
             border-left: .25rem solid #f6c23e !important;
+        }
 
+        .year-selector {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+            .year-selector select {
+                background: rgba(255,255,255,0.9);
+                border: none;
+                border-radius: 8px;
+                padding: 8px 15px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+
+                .year-selector select:focus {
+                    background: white;
+                    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+                    outline: none;
+                }
+
+        .chart-loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #666;
         }
     </style>
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
@@ -38,19 +77,10 @@
     <link href="~/css/sb-admin-2.min.css" rel="stylesheet">
 
 }
-@section scripts {
 
-    <script src="~/js/chart.js/Chart.bundle.min.js"> </script>
-    <script>
-
-        var monthlyStatistics = @Html.Raw(monthlyData);
-
-    </script>
-    <script src="~/js/admin/chart-area-demo.js"></script>
-}
 
 <div class="container-fluid">
-    <div class="row mb-3">
+    <div class="row">
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body p-0 py-1 px-3">
@@ -95,7 +125,7 @@
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                 @L["Admin:Earnings(LastYear)"]
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotatOrderPrice VND</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalMoneyLastYear VND</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -123,235 +153,261 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-xl-12 col-lg-7">
+        <div class="col-xl-12 col-lg-12">
             <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">@L["Admin:LastYearStatistics"]: @lastYear</h6>
+                <div class="card-header year-selector py-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                    <div class="mb-2 mb-md-0">
+                        <h6 id="chartTitle" class="m-0 text-white font-weight-bold">
+                            <i class="fas fa-chart-line mr-2"></i>
+                            @L["Admin:YearlyRevenueStatistics"]: @Model.SelectedYear
+                        </h6>
+                        <small class="text-white-50">
+                            <i class="fas fa-chart-area mr-1"></i>
+                            @L["Admin:MonthlyRevenue"]
+                        </small>
+                    </div>
+                    <div class="mt-3 mt-md-0">
+                        <div class="d-inline-flex align-items-center">
+                            <label class="text-white mr-2 mb-0 font-weight-bold">@L["Admin:ChooseTheYearToDisplay"]:</label>
+                            <select id="yearSelect" class="form-control" onchange="changeYear()" style="width: auto;">
+                                @foreach (var year in Model.AvailableYears)
+                                {
+                                    <option value="@year" selected="@(year == Model.SelectedYear ? "true" : "false")">@year</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
                 </div>
+
                 <div class="card-body">
-                    <div class="chart-area">
+                    <div class="chart-loading">
+                        <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+                        <p class="mt-2">@L["Admin:Loading..."]</p>
+                    </div>
+                    <div class="chart-area" style="transition: opacity 0.3s ease;">
                         <canvas id="myAreaChart"></canvas>
                     </div>
                     <hr>
-                    @L["Admin:TotalLastYear"] @lastYear.
+                    <div id="yearTotal" class="text-center text-muted">
+                        @L["Admin:TotalRevenueForYear"] @Model.SelectedYear: @Model.GetTotalForYear(Model.SelectedYear).ToString("N0") VND
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-</div>
+    <div class="row">
+        <div class="col-xl-3 col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title text-body">More from ABP.IO</div>
+                </div>
+                <div class="card-body pt-0">
 
-
-
-<div class="row">
-    <div class="col-xl-3 col-lg-4">
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title text-body">More from ABP.IO</div>
-            </div>
-            <div class="card-body pt-0">
-
-                <div>
-                    <table class="table mb-0">
-                        <tbody>
-                            <tr>
-                                <td class="ps-0 d-flex">
-                                    <div class="rounded-circle me-2
+                    <div>
+                        <table class="table mb-0">
+                            <tbody>
+                                <tr>
+                                    <td class="ps-0 d-flex">
+                                        <div class="rounded-circle me-2
                                         flex-center bg-brand soft" style="width: 20px; height:
                                         20px;">
-                                        <i class="bi bi-check fs-4"></i>
-                                    </div>
-                                    <div> Latest Release Logs </div>
-                                </td>
-                                <td class="text-end pe-0 opacity-25">
-                                    <a href="https://github.com/abpframework/abp/releases" target="_blank">
-                                        <i class="bi
+                                            <i class="bi bi-check fs-4"></i>
+                                        </div>
+                                        <div> Latest Release Logs </div>
+                                    </td>
+                                    <td class="text-end pe-0 opacity-25">
+                                        <a href="https://github.com/abpframework/abp/releases" target="_blank">
+                                            <i class="bi
                                             bi-box-arrow-up-right
                                             text-dark"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="ps-0 d-flex">
-                                    <div class="rounded-circle me-2
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-0 d-flex">
+                                        <div class="rounded-circle me-2
                                         flex-center bg-brand soft" style="width: 20px; height:
                                         20px;">
-                                        <i class="bi bi-check fs-4"></i>
-                                    </div>
-                                    <div> Video Courses </div>
-                                </td>
-                                <td class="text-end pe-0 opacity-25">
-                                    <a href="https://abp.io/video-courses/essentials" target="_blank">
-                                        <i class="bi
+                                            <i class="bi bi-check fs-4"></i>
+                                        </div>
+                                        <div> Video Courses </div>
+                                    </td>
+                                    <td class="text-end pe-0 opacity-25">
+                                        <a href="https://abp.io/video-courses/essentials" target="_blank">
+                                            <i class="bi
                                             bi-box-arrow-up-right
                                             text-dark"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="ps-0 d-flex">
-                                    <div class="rounded-circle me-2
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-0 d-flex">
+                                        <div class="rounded-circle me-2
                                         flex-center bg-brand soft" style="width: 20px; height:
                                         20px;">
-                                        <i class="bi bi-check fs-4"></i>
-                                    </div>
-                                    <div> Samples </div>
-                                </td>
-                                <td class="text-end pe-0 opacity-25">
-                                    <a href="https://abp.io/docs/latest/Samples/Index" target="_blank">
-                                        <i class="bi
+                                            <i class="bi bi-check fs-4"></i>
+                                        </div>
+                                        <div> Samples </div>
+                                    </td>
+                                    <td class="text-end pe-0 opacity-25">
+                                        <a href="https://abp.io/docs/latest/Samples/Index" target="_blank">
+                                            <i class="bi
                                             bi-box-arrow-up-right
                                             text-dark"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="ps-0 d-flex">
-                                    <div class="rounded-circle me-2
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-0 d-flex">
+                                        <div class="rounded-circle me-2
                                         flex-center bg-brand soft" style="width: 20px; height:
                                         20px;">
-                                        <i class="bi bi-check fs-4"></i>
-                                    </div>
-                                    <div> Books </div>
-                                </td>
-                                <td class="text-end pe-0 opacity-25">
-                                    <a href="https://abp.io/books" target="_blank">
-                                        <i class="bi
+                                            <i class="bi bi-check fs-4"></i>
+                                        </div>
+                                        <div> Books </div>
+                                    </td>
+                                    <td class="text-end pe-0 opacity-25">
+                                        <a href="https://abp.io/books" target="_blank">
+                                            <i class="bi
                                             bi-box-arrow-up-right
                                             text-dark"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="ps-0 d-flex border-bottom-0">
-                                    <div class="rounded-circle me-2
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-0 d-flex border-bottom-0">
+                                        <div class="rounded-circle me-2
                                         flex-center bg-brand soft" style="width: 20px; height:
                                         20px;">
-                                        <i class="bi bi-check fs-4"></i>
-                                    </div>
-                                    <div> FAQ </div>
-                                </td>
-                                <td class="text-end pe-0 opacity-25
+                                            <i class="bi bi-check fs-4"></i>
+                                        </div>
+                                        <div> FAQ </div>
+                                    </td>
+                                    <td class="text-end pe-0 opacity-25
                                     border-bottom-0">
-                                    <a href="https://abp.io/faq" target="_blank">
-                                        <i class="bi
+                                        <a href="https://abp.io/faq" target="_blank">
+                                            <i class="bi
                                             bi-box-arrow-up-right
                                             text-dark"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-xl-6 col-lg-8 d-flex">
-        <div class="card">
-            <div class="card-body d-flex">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <p class="text-muted mb-0">THE OFFICIAL GUIDE</p>
-                        <h3>Mastering ABP Framework</h3>
-                        <p class="text-muted">
-                            Written by the creator of the ABP
-                            Framework, this book will help you gain a complete
-                            understanding of the framework
-                            and modern web application development techniques.
-                        </p>
-                        <div class="d-md-flex mb-2 mb-md-0">
-                            <a href="https://www.amazon.com/gp/product/B097Z2DM8Q" target="_blank" class="btn btn-primary soft
+        <div class="col-xl-6 col-lg-8 d-flex">
+            <div class="card">
+                <div class="card-body d-flex">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <p class="text-muted mb-0">THE OFFICIAL GUIDE</p>
+                            <h3>Mastering ABP Framework</h3>
+                            <p class="text-muted">
+                                Written by the creator of the ABP
+                                Framework, this book will help you gain a complete
+                                understanding of the framework
+                                and modern web application development techniques.
+                            </p>
+                            <div class="d-md-flex mb-2 mb-md-0">
+                                <a href="https://www.amazon.com/gp/product/B097Z2DM8Q" target="_blank" class="btn btn-primary soft
                                 me-md-2 mb-2 mb-md-0">
-                                Buy on Amazon US
-                            </a>
-                            <a href="https://www.packtpub.com/product/mastering-abp-framework/9781801079242" target="_blank" class="btn btn-primary soft mb-2
+                                    Buy on Amazon US
+                                </a>
+                                <a href="https://www.packtpub.com/product/mastering-abp-framework/9781801079242" target="_blank" class="btn btn-primary soft mb-2
                                 mb-md-0">
-                                Buy on PACKT
-                            </a>
+                                    Buy on PACKT
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <img class="w-100" src="/images/getting-started/book.png">
                         </div>
                     </div>
-                    <div class="col">
-                        <img class="w-100" src="/images/getting-started/book.png">
-                    </div>
-                </div>
 
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-xl-3 col-lg-4">
-        <div class="card">
-            <div class="card-header">
-                <div class="card-title text-body">Follow us on Social Media</div>
-            </div>
-            <div class="card-body pt-0">
-                <div>
-                    <table class="table mb-0">
-                        <tbody>
-                            <tr>
-                                <td class="ps-0 d-flex">
-                                    <img src="/images/getting-started/x-white.svg" class="me-2" style="background-color: black;">
-                                    <div>X.com</div>
-                                </td>
-                                <td class="text-end pe-0 opacity-25">
-                                    <a href="https://twitter.com/abpframework" target="_blank">
-                                        <i class="bi bi-box-arrow-up-right
+        <div class="col-xl-3 col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title text-body">Follow us on Social Media</div>
+                </div>
+                <div class="card-body pt-0">
+                    <div>
+                        <table class="table mb-0">
+                            <tbody>
+                                <tr>
+                                    <td class="ps-0 d-flex">
+                                        <img src="/images/getting-started/x-white.svg" class="me-2" style="background-color: black;">
+                                        <div>X.com</div>
+                                    </td>
+                                    <td class="text-end pe-0 opacity-25">
+                                        <a href="https://twitter.com/abpframework" target="_blank">
+                                            <i class="bi bi-box-arrow-up-right
                                             text-dark"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="ps-0 d-flex">
-                                    <img src="/images/getting-started/discord.svg" class="me-2">
-                                    <div>Discord</div>
-                                </td>
-                                <td class="text-end pe-0 opacity-25">
-                                    <a href="https://abp.io/community/discord" target="_blank">
-                                        <i class="bi bi-box-arrow-up-right
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-0 d-flex">
+                                        <img src="/images/getting-started/discord.svg" class="me-2">
+                                        <div>Discord</div>
+                                    </td>
+                                    <td class="text-end pe-0 opacity-25">
+                                        <a href="https://abp.io/community/discord" target="_blank">
+                                            <i class="bi bi-box-arrow-up-right
                                             text-dark"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="ps-0 d-flex">
-                                    <img src="/images/getting-started/stack-overflow.svg" class="me-2">
-                                    <div>Stack Overflow</div>
-                                </td>
-                                <td class="text-end pe-0 opacity-25">
-                                    <a href="https://stackoverflow.com/questions/tagged/abp" target="_blank">
-                                        <i class="bi bi-box-arrow-up-right
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-0 d-flex">
+                                        <img src="/images/getting-started/stack-overflow.svg" class="me-2">
+                                        <div>Stack Overflow</div>
+                                    </td>
+                                    <td class="text-end pe-0 opacity-25">
+                                        <a href="https://stackoverflow.com/questions/tagged/abp" target="_blank">
+                                            <i class="bi bi-box-arrow-up-right
                                             text-dark"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="ps-0 d-flex">
-                                    <img src="/images/getting-started/youtube.svg" class="me-2">
-                                    <div>YouTube</div>
-                                </td>
-                                <td class="text-end pe-0 opacity-25">
-                                    <a href="https://www.youtube.com/@@Volosoft" target="_blank">
-                                        <i class="bi bi-box-arrow-up-right
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-0 d-flex">
+                                        <img src="/images/getting-started/youtube.svg" class="me-2">
+                                        <div>YouTube</div>
+                                    </td>
+                                    <td class="text-end pe-0 opacity-25">
+                                        <a href="https://www.youtube.com/@@Volosoft" target="_blank">
+                                            <i class="bi bi-box-arrow-up-right
                                             text-dark"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="ps-0 d-flex border-bottom-0">
-                                    <img src="/images/getting-started/instagram.svg" class="me-2">
-                                    <div>Instagram</div>
-                                </td>
-                                <td class="text-end pe-0 opacity-25
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-0 d-flex border-bottom-0">
+                                        <img src="/images/getting-started/instagram.svg" class="me-2">
+                                        <div>Instagram</div>
+                                    </td>
+                                    <td class="text-end pe-0 opacity-25
                                     border-bottom-0">
-                                    <a href="https://www.instagram.com/abpframework/" target="_blank">
-                                        <i class="bi bi-box-arrow-up-right
+                                        <a href="https://www.instagram.com/abpframework/" target="_blank">
+                                            <i class="bi bi-box-arrow-up-right
                                             text-dark"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
