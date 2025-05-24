@@ -4,19 +4,26 @@
 @using Microsoft.Extensions.Localization
 @using Microsoft.AspNetCore.Authorization
 @using Acme.ProductSelling.Permissions
+@using Acme.ProductSelling.Categories
+@using Newtonsoft.Json
 @inject IStringLocalizer<ProductSellingResource> L
 @inject IAuthorizationService AuthorizationService
 @{
-    ViewData["Title"] = L["Product:AllProducts"]; // Key localization "Products"
+    ViewData["Title"] = L["Product:AllProducts"];
+    var categorySpecTypes = Json.Serialize(Model.CategorySpecTypesJson);
 }
 @section scripts {
-    <abp-script src="/Pages/Admin/Products/Index.js" /> @* Link JS *@
 
+    <abp-script src="/Pages/Admin/Products/Index.js" />
 }
-<div class="container mt-4 user-select-none">
+
+@section styles {
+    <link href="~/css/admin-product.css" rel="stylesheet" />
+}
+<div class="container user-select-none">
     <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
         <ol class="breadcrumb border-0">
-            <li class="breadcrumb-item"><a href="/">@L["Admin:Menu:Home"]</a></li>
+            <li class="breadcrumb-item"><a href="/admin">@L["Admin:Menu:Home"]</a></li>
             <li class="breadcrumb-item active " aria-current="page">@L["Admin:Menu:Products"]</li>
         </ol>
     </nav>
@@ -31,7 +38,7 @@
                 @if (await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Products.Create))
                 {@* Key localization "CreateProduct" *@
                     <abp-button id="NewProductButton"
-                                text="@L["Product:CreateProduct"].Value" 
+                                text="@L["Product:CreateProduct"].Value"
                                 icon="plus"
                                 button-type="Primary" />
                 }
@@ -39,6 +46,6 @@
         </abp-row>
     </abp-card-header>
     <abp-card-body>
-        <abp-table striped-rows="true" hoverable-rows="true" class="pt-2" id="ProductsTable"></abp-table> 
+        <abp-table striped-rows="true" hoverable-rows="true" class="pt-2" id="ProductsTable"></abp-table>
     </abp-card-body>
 </abp-card>

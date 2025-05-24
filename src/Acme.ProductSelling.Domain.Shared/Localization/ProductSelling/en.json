@@ -78,7 +78,10 @@
     "Product:CreateProduct": "Create Product",
     "Product:ProductDetail": "Product Detail",
     "Product:Manufacturer": "Manufacturer",
-
+    "Product:ImageUrlSource.Url": "Image Source URL",
+    "Product:ImageUrlSource.Upload": "Image From File",
+    "Product:ImageSource": "Image Source",
+    "Product:ImagePreview": "Image Preview",
 
     "Order:Orders": "Orders",
     "Order:OrderDate": "Order Date",

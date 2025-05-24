@@ -57,14 +57,14 @@
 
     $('#NewCategoryButton').click(function (e) {
         e.preventDefault();
-        createModal.open(); // Mở Create Modal
+        createModal.open(); 
     });
 
     createModal.onResult(function () {
-        dataTable.ajax.reload(); // Load lại dữ liệu bảng
+        dataTable.ajax.reload(); 
     });
     editModal.onResult(function () {
-        dataTable.ajax.reload(); // Load lại dữ liệu bảng
+        dataTable.ajax.reload(); 
     });
 
 });

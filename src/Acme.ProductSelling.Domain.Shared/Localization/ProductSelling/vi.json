@@ -77,6 +77,10 @@
     "Product:CreateProduct": "Tạo sản phẩm",
     "Product:ProductDetail": "Chi tiết sản phẩm",
     "Product:Manufacturer": "Nhà sản xuất",
+    "Product:ImageUrlSource.Url": "URL Ảnh",
+    "Product:ImageUrlSource.Upload": "Thêm từ file",
+    "Product:ImageSource": "Nguồn ảnh",
+    "Product:ImagePreview": "Xem ảnh",
 
     "Order:Orders": "Đơn hàng",
     "Order:OrderDate": "Ngày đặt hàng",
