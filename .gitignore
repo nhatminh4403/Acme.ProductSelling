@@ -272,3 +272,7 @@ src/Acme.ProductSelling.Blazor.Server.Tiered/Logs/*
 # IdentityServer temp files
 tempkey.rsa
 tempkey.jwk
+
+# Ignore languages appreared in Repository
+*.css -linguist-detectable
+*.js -linguist-detectable
