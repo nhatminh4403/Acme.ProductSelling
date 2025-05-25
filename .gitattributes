@@ -1,1 +1,5 @@
 **/wwwroot/libs/** linguist-vendored
+
+# Ignore languages appreared in Repository
+*.css -linguist-detectable=false
+*.js -linguist-detectable=false
