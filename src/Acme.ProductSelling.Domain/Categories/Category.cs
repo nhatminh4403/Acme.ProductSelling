@@ -14,7 +14,7 @@ namespace Acme.ProductSelling.Categories
         private Category()
         {
         }
-        internal Category(Guid id, string name, string description, string urlSlug, SpecificationType specType = SpecificationType.None) : base(id)
+        public Category(Guid id, string name, string description, string urlSlug, SpecificationType specType = SpecificationType.None) : base(id)
         {
             Name = name;
             Description = description;

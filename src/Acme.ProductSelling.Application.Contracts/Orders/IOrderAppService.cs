@@ -1,8 +1,4 @@
-﻿using Acme.ProductSelling.Categories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -19,6 +15,6 @@ namespace Acme.ProductSelling.Orders
         //Task<PagedResultDto<OrderDto>> GetListAsync(GetOrderListInput input);
         Task<OrderDto> GetByOrderNumberAsync(string orderNumber);
         Task<PagedResultDto<OrderDto>> GetListForCurrentUserAsync(PagedAndSortedResultRequestDto input);
-
+        Task ChangeOrderStatus(Guid orderId, OrderStatus newStatus);
     }
 }

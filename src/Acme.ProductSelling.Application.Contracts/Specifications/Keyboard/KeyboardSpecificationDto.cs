@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class KeyboardSpecificationDto :EntityDto<Guid>
+    public class KeyboardSpecificationDto : EntityDto<Guid>
     {
         public string KeyboardType { get; set; } // "Mechanical", "Membrane"
         public string SwitchType { get; set; } // Nullable "Cherry MX Blue", "Gateron Brown"

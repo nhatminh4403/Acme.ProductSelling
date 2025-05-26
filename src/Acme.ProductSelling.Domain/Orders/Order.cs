@@ -30,9 +30,50 @@ namespace Acme.ProductSelling.Orders
         // Tổng tiền đơn hàng (vẫn cần thiết)
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalAmount { get; set; }
+        public OrderStatus Status { get; private set; }
         public virtual ICollection<OrderItem> OrderItems { get; set; } =new HashSet<OrderItem>();
         
-       
+        private Order()
+        {
+        }
+
+        public Order(Guid id, string orderNumber, DateTime orderDate, Guid? customerId, string customerName, string customerPhone, string shippingAddress)
+            : base(id)
+        {
+            OrderNumber = Check.NotNullOrWhiteSpace(orderNumber, nameof(orderNumber), OrderConsts.MaxOrderNumberLength);
+            OrderDate = orderDate;
+            CustomerId = customerId;
+
+            CustomerName = Check.NotNullOrWhiteSpace(customerName, nameof(customerName), 100);
+            CustomerPhone = Check.Length(customerPhone, nameof(customerPhone), OrderConsts.MaxCustomerPhoneLentgth);
+
+            ShippingAddress = Check.NotNullOrWhiteSpace(shippingAddress, nameof(shippingAddress), 500);
+            Status = OrderStatus.Placed;
+        }
+        public void ChangeStatus(OrderStatus newStatus)
+        {
+            // (Tuỳ chọn) Kiểm tra tính hợp lệ của chuyển trạng thái
+            if (!IsValidTransition(Status, newStatus))
+            {
+                throw new BusinessException("Order:InvalidStatusTransition",
+                    $"Không thể đổi từ {Status} sang {newStatus}");
+            }
+            Status = newStatus;
+        }
+        private bool IsValidTransition(OrderStatus from, OrderStatus to)
+        {
+            // Ví dụ: chỉ cho Confirmed khi đang Placed
+            return (from, to) switch
+            {
+                (OrderStatus.Placed, OrderStatus.Pending) => true,
+                (OrderStatus.Pending, OrderStatus.Confirmed) => true,
+                (OrderStatus.Confirmed, OrderStatus.Processing) => true,
+                (OrderStatus.Processing, OrderStatus.Shipped) => true,
+                (OrderStatus.Placed, OrderStatus.Cancelled) => true,
+                (OrderStatus.Pending, OrderStatus.Cancelled) => true,
+                _ => false
+            };
+        }
         public virtual void AddOrderItem(Guid productId, string productName, decimal productPrice, int quantity)
         {
             var existingItem = OrderItems.FirstOrDefault(oi => oi.ProductId == productId);

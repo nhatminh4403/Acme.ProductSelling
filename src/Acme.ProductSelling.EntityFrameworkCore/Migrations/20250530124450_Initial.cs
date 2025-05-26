@@ -430,6 +430,345 @@ namespace Acme.ProductSelling.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AppCarts",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppCarts", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppCaseSpecifications",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SupportedMbFormFactor = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Material = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MaxGpuLength = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    MaxCpuCoolerHeight = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    MaxPsuLength = table.Column<float>(type: "real", nullable: false),
+                    CoolingSupport = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FanSupport = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RadiatorSupport = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DriveBays = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FrontPanelPorts = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppCaseSpecifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppCpuCoolerSpecifications",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CoolerType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SupportedSockets = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FanSize = table.Column<int>(type: "int", nullable: false),
+                    RadiatorSize = table.Column<int>(type: "int", nullable: true),
+                    Height = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    TdpSupport = table.Column<int>(type: "int", nullable: true),
+                    NoiseLevel = table.Column<int>(type: "int", nullable: true),
+                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LedLighting = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppCpuCoolerSpecifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppCpuSpecifications",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Socket = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CoreCount = table.Column<int>(type: "int", nullable: false),
+                    ThreadCount = table.Column<int>(type: "int", nullable: false),
+                    BaseClock = table.Column<float>(type: "real", nullable: false),
+                    BoostClock = table.Column<float>(type: "real", nullable: false),
+                    L3Cache = table.Column<int>(type: "int", nullable: false),
+                    Tdp = table.Column<int>(type: "int", nullable: false),
+                    HasIntegratedGraphics = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppCpuSpecifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppGpuSpecifications",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Chipset = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MemorySize = table.Column<int>(type: "int", nullable: false),
+                    MemoryType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BoostClock = table.Column<float>(type: "real", nullable: false),
+                    Interface = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RecommendedPsu = table.Column<int>(type: "int", nullable: false),
+                    Length = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppGpuSpecifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppHeadsetSpecifications",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Connectivity = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HasMicrophone = table.Column<bool>(type: "bit", nullable: false),
+                    IsSurroundSound = table.Column<bool>(type: "bit", nullable: false),
+                    IsNoiseCancelling = table.Column<bool>(type: "bit", nullable: false),
+                    DriverSize = table.Column<int>(type: "int", nullable: false),
+                    Frequency = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MicrophoneType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Impedance = table.Column<int>(type: "int", nullable: false),
+                    Sensitivity = table.Column<int>(type: "int", nullable: false),
+                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppHeadsetSpecifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppKeyboardSpecifications",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    KeyboardType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SwitchType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Layout = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Connectivity = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Backlight = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppKeyboardSpecifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppLaptopSpecifications",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CPU = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RAM = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Storage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Display = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GraphicsCard = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OperatingSystem = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BatteryLife = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Weight = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Warranty = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppLaptopSpecifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppMonitorSpecifications",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RefreshRate = table.Column<int>(type: "int", nullable: false),
+                    Resolution = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ScreenSize = table.Column<float>(type: "real", nullable: false),
+                    ResponseTime = table.Column<int>(type: "int", nullable: false),
+                    PanelType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ResponseTimeMs = table.Column<int>(type: "int", nullable: false),
+                    ColorGamut = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Brightness = table.Column<int>(type: "int", nullable: false),
+                    VesaMount = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppMonitorSpecifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppMotherboardSpecifications",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Socket = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Chipset = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FormFactor = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RamSlots = table.Column<int>(type: "int", nullable: false),
+                    MaxRam = table.Column<int>(type: "int", nullable: false),
+                    SupportedRamType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    M2Slots = table.Column<int>(type: "int", nullable: false),
+                    SataPorts = table.Column<int>(type: "int", nullable: false),
+                    HasWifi = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppMotherboardSpecifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppMouseSpecifications",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Dpi = table.Column<int>(type: "int", nullable: false),
+                    ButtonCount = table.Column<int>(type: "int", nullable: false),
+                    PollingRate = table.Column<int>(type: "int", nullable: false),
+                    SensorType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Weight = table.Column<int>(type: "int", nullable: false),
+                    Connectivity = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BacklightColor = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppMouseSpecifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppOrders",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OrderNumber = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CustomerName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    CustomerPhone = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    ShippingAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    DeleterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppOrders", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppPsuSpecifications",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Wattage = table.Column<int>(type: "int", nullable: false),
+                    EfficiencyRating = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Modularity = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FormFactor = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppPsuSpecifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppRamSpecifications",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RamType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Capacity = table.Column<int>(type: "int", nullable: false),
+                    Speed = table.Column<int>(type: "int", nullable: false),
+                    ModuleCount = table.Column<int>(type: "int", nullable: false),
+                    Timing = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Voltage = table.Column<float>(type: "real", nullable: false),
+                    HasRGB = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppRamSpecifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppStorageSpecifications",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    StorageType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Interface = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Capacity = table.Column<int>(type: "int", nullable: false),
+                    ReadSpeed = table.Column<int>(type: "int", nullable: false),
+                    WriteSpeed = table.Column<int>(type: "int", nullable: false),
+                    FormFactor = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Rpm = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppStorageSpecifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SpecificationType = table.Column<int>(type: "int", nullable: false),
+                    UrlSlug = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    DeleterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Manufacturers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ContactInfo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UrlSlug = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ManufacturerImage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    DeleterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Manufacturers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OpenIddictApplications",
                 columns: table => new
                 {
@@ -743,6 +1082,170 @@ namespace Acme.ProductSelling.Migrations
                         name: "FK_AbpUserTokens_AbpUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AbpUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppCartItems",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CartId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    ProductName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProductPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppCartItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AppCartItems_AppCarts_CartId",
+                        column: x => x.CartId,
+                        principalTable: "AppCarts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppOrderItems",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppOrderItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AppOrderItems_AppOrders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "AppOrders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OriginalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DiscountedPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    DiscountPercent = table.Column<double>(type: "float", nullable: false),
+                    StockCount = table.Column<int>(type: "int", nullable: false),
+                    UrlSlug = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ManufacturerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MonitorSpecificationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    MouseSpecificationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LaptopSpecificationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CpuSpecificationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    GpuSpecificationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    RamSpecificationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    MotherboardSpecificationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    StorageSpecificationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    PsuSpecificationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CaseSpecificationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CpuCoolerSpecificationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    KeyboardSpecificationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    HeadsetSpecificationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    DeleterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Products_AppCaseSpecifications_CaseSpecificationId",
+                        column: x => x.CaseSpecificationId,
+                        principalTable: "AppCaseSpecifications",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Products_AppCpuCoolerSpecifications_CpuCoolerSpecificationId",
+                        column: x => x.CpuCoolerSpecificationId,
+                        principalTable: "AppCpuCoolerSpecifications",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Products_AppCpuSpecifications_CpuSpecificationId",
+                        column: x => x.CpuSpecificationId,
+                        principalTable: "AppCpuSpecifications",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Products_AppGpuSpecifications_GpuSpecificationId",
+                        column: x => x.GpuSpecificationId,
+                        principalTable: "AppGpuSpecifications",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Products_AppHeadsetSpecifications_HeadsetSpecificationId",
+                        column: x => x.HeadsetSpecificationId,
+                        principalTable: "AppHeadsetSpecifications",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Products_AppKeyboardSpecifications_KeyboardSpecificationId",
+                        column: x => x.KeyboardSpecificationId,
+                        principalTable: "AppKeyboardSpecifications",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Products_AppLaptopSpecifications_LaptopSpecificationId",
+                        column: x => x.LaptopSpecificationId,
+                        principalTable: "AppLaptopSpecifications",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Products_AppMonitorSpecifications_MonitorSpecificationId",
+                        column: x => x.MonitorSpecificationId,
+                        principalTable: "AppMonitorSpecifications",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Products_AppMotherboardSpecifications_MotherboardSpecificationId",
+                        column: x => x.MotherboardSpecificationId,
+                        principalTable: "AppMotherboardSpecifications",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Products_AppMouseSpecifications_MouseSpecificationId",
+                        column: x => x.MouseSpecificationId,
+                        principalTable: "AppMouseSpecifications",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Products_AppPsuSpecifications_PsuSpecificationId",
+                        column: x => x.PsuSpecificationId,
+                        principalTable: "AppPsuSpecifications",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Products_AppRamSpecifications_RamSpecificationId",
+                        column: x => x.RamSpecificationId,
+                        principalTable: "AppRamSpecifications",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Products_AppStorageSpecifications_StorageSpecificationId",
+                        column: x => x.StorageSpecificationId,
+                        principalTable: "AppStorageSpecifications",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Products_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Products_Manufacturers_ManufacturerId",
+                        column: x => x.ManufacturerId,
+                        principalTable: "Manufacturers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -1063,6 +1566,43 @@ namespace Acme.ProductSelling.Migrations
                 column: "UserName");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AppCartItems_CartId",
+                table: "AppCartItems",
+                column: "CartId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppCartItems_ProductId",
+                table: "AppCartItems",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppCarts_UserId",
+                table: "AppCarts",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppOrderItems_OrderId",
+                table: "AppOrderItems",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppOrders_OrderNumber",
+                table: "AppOrders",
+                column: "OrderNumber",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_UrlSlug",
+                table: "Categories",
+                column: "UrlSlug");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Manufacturers_UrlSlug",
+                table: "Manufacturers",
+                column: "UrlSlug");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OpenIddictApplications_ClientId",
                 table: "OpenIddictApplications",
                 column: "ClientId");
@@ -1091,6 +1631,112 @@ namespace Acme.ProductSelling.Migrations
                 name: "IX_OpenIddictTokens_ReferenceId",
                 table: "OpenIddictTokens",
                 column: "ReferenceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_CaseSpecificationId",
+                table: "Products",
+                column: "CaseSpecificationId",
+                unique: true,
+                filter: "[CaseSpecificationId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_CategoryId",
+                table: "Products",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_CpuCoolerSpecificationId",
+                table: "Products",
+                column: "CpuCoolerSpecificationId",
+                unique: true,
+                filter: "[CpuCoolerSpecificationId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_CpuSpecificationId",
+                table: "Products",
+                column: "CpuSpecificationId",
+                unique: true,
+                filter: "[CpuSpecificationId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_GpuSpecificationId",
+                table: "Products",
+                column: "GpuSpecificationId",
+                unique: true,
+                filter: "[GpuSpecificationId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_HeadsetSpecificationId",
+                table: "Products",
+                column: "HeadsetSpecificationId",
+                unique: true,
+                filter: "[HeadsetSpecificationId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_KeyboardSpecificationId",
+                table: "Products",
+                column: "KeyboardSpecificationId",
+                unique: true,
+                filter: "[KeyboardSpecificationId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_LaptopSpecificationId",
+                table: "Products",
+                column: "LaptopSpecificationId",
+                unique: true,
+                filter: "[LaptopSpecificationId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_ManufacturerId",
+                table: "Products",
+                column: "ManufacturerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_MonitorSpecificationId",
+                table: "Products",
+                column: "MonitorSpecificationId",
+                unique: true,
+                filter: "[MonitorSpecificationId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_MotherboardSpecificationId",
+                table: "Products",
+                column: "MotherboardSpecificationId",
+                unique: true,
+                filter: "[MotherboardSpecificationId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_MouseSpecificationId",
+                table: "Products",
+                column: "MouseSpecificationId",
+                unique: true,
+                filter: "[MouseSpecificationId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_PsuSpecificationId",
+                table: "Products",
+                column: "PsuSpecificationId",
+                unique: true,
+                filter: "[PsuSpecificationId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_RamSpecificationId",
+                table: "Products",
+                column: "RamSpecificationId",
+                unique: true,
+                filter: "[RamSpecificationId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_StorageSpecificationId",
+                table: "Products",
+                column: "StorageSpecificationId",
+                unique: true,
+                filter: "[StorageSpecificationId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_UrlSlug",
+                table: "Products",
+                column: "UrlSlug");
         }
 
         /// <inheritdoc />
@@ -1172,10 +1818,19 @@ namespace Acme.ProductSelling.Migrations
                 name: "AbpUserTokens");
 
             migrationBuilder.DropTable(
+                name: "AppCartItems");
+
+            migrationBuilder.DropTable(
+                name: "AppOrderItems");
+
+            migrationBuilder.DropTable(
                 name: "OpenIddictScopes");
 
             migrationBuilder.DropTable(
                 name: "OpenIddictTokens");
+
+            migrationBuilder.DropTable(
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "AbpBlobContainers");
@@ -1196,7 +1851,58 @@ namespace Acme.ProductSelling.Migrations
                 name: "AbpUsers");
 
             migrationBuilder.DropTable(
+                name: "AppCarts");
+
+            migrationBuilder.DropTable(
+                name: "AppOrders");
+
+            migrationBuilder.DropTable(
                 name: "OpenIddictAuthorizations");
+
+            migrationBuilder.DropTable(
+                name: "AppCaseSpecifications");
+
+            migrationBuilder.DropTable(
+                name: "AppCpuCoolerSpecifications");
+
+            migrationBuilder.DropTable(
+                name: "AppCpuSpecifications");
+
+            migrationBuilder.DropTable(
+                name: "AppGpuSpecifications");
+
+            migrationBuilder.DropTable(
+                name: "AppHeadsetSpecifications");
+
+            migrationBuilder.DropTable(
+                name: "AppKeyboardSpecifications");
+
+            migrationBuilder.DropTable(
+                name: "AppLaptopSpecifications");
+
+            migrationBuilder.DropTable(
+                name: "AppMonitorSpecifications");
+
+            migrationBuilder.DropTable(
+                name: "AppMotherboardSpecifications");
+
+            migrationBuilder.DropTable(
+                name: "AppMouseSpecifications");
+
+            migrationBuilder.DropTable(
+                name: "AppPsuSpecifications");
+
+            migrationBuilder.DropTable(
+                name: "AppRamSpecifications");
+
+            migrationBuilder.DropTable(
+                name: "AppStorageSpecifications");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "Manufacturers");
 
             migrationBuilder.DropTable(
                 name: "AbpAuditLogs");

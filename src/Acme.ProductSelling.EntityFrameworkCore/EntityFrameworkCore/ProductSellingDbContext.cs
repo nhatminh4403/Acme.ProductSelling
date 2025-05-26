@@ -110,12 +110,6 @@ public class ProductSellingDbContext :
 
         /* Configure your own tables/entities inside here */
 
-        //builder.Entity<YourEntity>(b =>
-        //{
-        //    b.ToTable(ProductSellingConsts.DbTablePrefix + "YourEntities", ProductSellingConsts.DbSchema);
-        //    b.ConfigureByConvention(); //auto configure for the base class props
-        //    //...
-        //});
         builder.Entity<Category>(b =>
         {
             b.ToTable("Categories");
@@ -187,9 +181,9 @@ public class ProductSellingDbContext :
 
             b.Property(o => o.TotalAmount).HasColumnType("decimal(18,2)").IsRequired();
 
-            // Quan hệ 1-N với OrderItem
+      
             b.HasMany(o => o.OrderItems)
-             .WithOne() // Không cần navigation ngược lại từ OrderItem
+             .WithOne() 
              .HasForeignKey(oi => oi.OrderId)
              .IsRequired();
         });
@@ -197,31 +191,26 @@ public class ProductSellingDbContext :
         builder.Entity<OrderItem>(b =>
         {
             b.ToTable("AppOrderItems");
-            b.ConfigureByConvention(); // Cấu hình Id là key
+            b.ConfigureByConvention();
 
             b.Property(oi => oi.ProductName).IsRequired();
             b.Property(oi => oi.Price).HasColumnType("decimal(18,2)").IsRequired();
             b.Property(oi => oi.Quantity).IsRequired();
 
-            // Không cần cấu hình quan hệ với Product nếu không có navigation property
-
-            // Không cần cấu hình LineTotalAmount vì nó là computed property
         });
 
 
         builder.Entity<Cart>(b =>
         {
             b.ToTable("AppCarts");
-            b.ConfigureAuditedAggregateRoot(); // Cấu hình trường audit
+            b.ConfigureAuditedAggregateRoot(); 
 
-            // Tạo index duy nhất cho UserId để đảm bảo mỗi user chỉ có 1 giỏ hàng
             b.HasIndex(c => c.UserId).IsUnique();
 
-            // Cấu hình quan hệ 1-N với CartItem
-            b.HasMany(c => c.Items)          // Cart có nhiều Items
-             .WithOne()                      // Mỗi CartItem thuộc về một Cart
-             .HasForeignKey(ci => ci.CartId) // Khóa ngoại trong CartItem là CartId
-             .IsRequired();                  // CartItem phải thuộc về Cart
+            b.HasMany(c => c.Items)         
+             .WithOne()                      
+             .HasForeignKey(ci => ci.CartId) 
+             .IsRequired();                  
         });
 
         builder.Entity<CartItem>(b =>

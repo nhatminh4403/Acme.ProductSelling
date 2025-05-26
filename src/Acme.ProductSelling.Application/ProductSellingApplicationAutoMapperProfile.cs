@@ -37,6 +37,7 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
                 .ForMember(dest => dest.CpuCoolerSpecification, opt => opt.MapFrom(src => src.CpuCoolerSpecification))
                 .ForMember(dest => dest.KeyboardSpecification, opt => opt.MapFrom(src => src.KeyboardSpecification))
                 .ForMember(dest => dest.HeadsetSpecification, opt => opt.MapFrom(src => src.HeadsetSpecification));
+
         CreateMap<CreateUpdateProductDto, Product>().ForMember(dest => dest.MonitorSpecificationId, opt => opt.Ignore())
                 .ForMember(dest => dest.MonitorSpecification, opt => opt.Ignore())
                 .ForMember(dest => dest.MouseSpecificationId, opt => opt.Ignore())
@@ -65,7 +66,8 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
                 .ForMember(dest => dest.HeadsetSpecification, opt => opt.Ignore());
         // --- Thêm mới Category Mappings ---
         CreateMap<Category, CategoryDto>().ForMember(dest => dest.UrlSlug, opt => opt.MapFrom(src => src.UrlSlug));
-        CreateMap<CreateUpdateCategoryDto, Category>();
+        CreateMap<CategoryDto, CreateUpdateCategoryDto>().ForMember(dest => dest.UrlSlug, opt => opt.MapFrom(src => src.UrlSlug));
+        CreateMap<CreateUpdateCategoryDto, Category>().ForMember(dest => dest.UrlSlug, opt => opt.MapFrom(src => src.UrlSlug));
         CreateMap<Category, CategoryLookupDto>();
         // --- Thêm mới Spec Mappings ---
         CreateMap<CpuSpecification, CpuSpecificationDto>();

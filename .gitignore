@@ -272,3 +272,5 @@ src/Acme.ProductSelling.Blazor.Server.Tiered/Logs/*
 # IdentityServer temp files
 tempkey.rsa
 tempkey.jwk
+
+

@@ -30,6 +30,17 @@
     "AutoLogin:WarnTitle": "Registration Succeeded, Auto-Login Failed",
     "Button:Processing": "<i class=\"fas fa-spinner fa-spin me-1\"></i> Processing...",
 
+    "Dropdown:SelectCategory": "-- Select Category --",
+    "Dropdown:SelectManufacturer": "-- Select Manufacturer --",
+    "Product:Error:InvalidImageExtension": "Invalid image file extension. Allowed extensions are {0}.",
+    "Product:Error:ImageSizeExceedsLimit": "Image size exceeds the maximum limit of {0}.",
+    "Product:Error:ImageSaveFailed": "An error occurred while saving the image. Please try again.",
+    "Product:Error:ImageFileRequiredForUpload": "Product image file is required when 'Upload File' is selected.",
+    "Product:Error:ImageUrlRequired": "Image URL is required when 'Image URL' is selected.",
+    "Product:Error:InvalidImageUrlFormat": "The image URL format is invalid.",
+    "Product:Error:ImageRequired": "An image (URL or Upload) is required for the product.",
+    "Product:Error:ImageFileOrUrlRequired": "An image file or URL is required for the product.",
+
     "Admin:Earnings(Annual)": "Earnings (Annual)",
     "Admin:Earnings(LastMonth)": "Earnings (Last Month)",
     "Admin:Earnings(ThisMonth)": "Earnings (This Month)",

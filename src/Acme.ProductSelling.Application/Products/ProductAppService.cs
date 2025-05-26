@@ -2,7 +2,9 @@
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Specifications;
 using Acme.ProductSelling.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -123,73 +125,142 @@ namespace Acme.ProductSelling.Products
             }
             return ObjectMapper.Map<Product, ProductDto>(product);
         }
+        [Authorize(ProductSellingPermissions.Products.Create)]
         public override async Task<ProductDto> CreateAsync(CreateUpdateProductDto input)
         {
-            await CheckCreatePolicyAsync();
-
-            var category = await _categoryRepository.GetAsync(input.CategoryId);
-            var productEntity = ObjectMapper.Map<CreateUpdateProductDto, Product>(input);
-            typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(productEntity.Id, GuidGenerator.Create());
-            async Task<Guid?> CreateSpecificationAsync<TSpecDto, TSpecEntity>(
-                TSpecDto specDto,
-                IRepository<TSpecEntity, Guid> specRepository)
-                where TSpecEntity : class, Volo.Abp.Domain.Entities.IEntity<Guid>, new()
-                where TSpecDto : class
+            try
             {
-                if (specDto == null) return null;
+                await CheckCreatePolicyAsync();
 
-                var specEntity = ObjectMapper.Map<TSpecDto, TSpecEntity>(specDto);
-                typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(specEntity.Id, GuidGenerator.Create()); 
-                await specRepository.InsertAsync(specEntity, autoSave: false);
-                return specEntity.Id;
+                var productEntity = ObjectMapper.Map<CreateUpdateProductDto, Product>(input);
+
+                productEntity.UrlSlug = UrlHelper.RemoveDiacritics(productEntity.ProductName);
+                var category = await _categoryRepository.GetAsync(input.CategoryId);
+
+                await CreateAndLinkSpecificationsAsync(productEntity, input, category.SpecificationType);
+                await Repository.InsertAsync(productEntity, autoSave: true);
+                return await GetAsync(productEntity.Id);
             }
-
-            switch (category.SpecificationType)
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error creating product");
+                throw;
+            }
+        }
+        private async Task CreateAndLinkSpecificationsAsync(Product product, CreateUpdateProductDto dto, SpecificationType specType)
+        {
+            // This method handles creating the specific spec entity, saving it, and linking its ID to the product.
+            switch (specType)
             {
                 case SpecificationType.Monitor:
-                    productEntity.MonitorSpecificationId = await CreateSpecificationAsync(input.MonitorSpecification, _monitorSpecRepository);
+                    if (dto.MonitorSpecification != null)
+                    {
+                        var spec = ObjectMapper.Map<CreateUpdateMonitorSpecificationDto, MonitorSpecification>(dto.MonitorSpecification);
+                        spec = await _monitorSpecRepository.InsertAsync(spec, autoSave: true);
+                        product.MonitorSpecificationId = spec.Id;
+                    }
                     break;
                 case SpecificationType.Mouse:
-                    productEntity.MouseSpecificationId = await CreateSpecificationAsync(input.MouseSpecification, _mouseSpecRepository);
+                    if (dto.MouseSpecification != null)
+                    {
+                        var spec = ObjectMapper.Map<CreateUpdateMouseSpecificationDto, MouseSpecification>(dto.MouseSpecification);
+                        spec = await _mouseSpecRepository.InsertAsync(spec, autoSave: true);
+                        product.MouseSpecificationId = spec.Id;
+                    }
                     break;
                 case SpecificationType.Laptop:
-                    productEntity.LaptopSpecificationId = await CreateSpecificationAsync(input.LaptopSpecification, _laptopSpecRepository);
+                    if (dto.LaptopSpecification != null)
+                    {
+                        var spec = ObjectMapper.Map<CreateUpdateLaptopSpecificationDto, LaptopSpecification>(dto.LaptopSpecification);
+                        spec = await _laptopSpecRepository.InsertAsync(spec, autoSave: true);
+                        product.LaptopSpecificationId = spec.Id;
+                    }
                     break;
                 case SpecificationType.CPU:
-                    productEntity.CpuSpecificationId = await CreateSpecificationAsync(input.CpuSpecification, _cpuSpecRepository);
+                    if (dto.CpuSpecification != null)
+                    {
+                        var spec = ObjectMapper.Map<CreateUpdateCpuSpecificationDto, CpuSpecification>(dto.CpuSpecification);
+                        spec = await _cpuSpecRepository.InsertAsync(spec, autoSave: true);
+                        product.CpuSpecificationId = spec.Id;
+                    }
                     break;
                 case SpecificationType.GPU:
-                    productEntity.GpuSpecificationId = await CreateSpecificationAsync(input.GpuSpecification, _gpuSpecRepository);
+                    if (dto.GpuSpecification != null)
+                    {
+                        var spec = ObjectMapper.Map<CreateUpdateGpuSpecificationDto, GpuSpecification>(dto.GpuSpecification);
+                        spec = await _gpuSpecRepository.InsertAsync(spec, autoSave: true);
+                        product.GpuSpecificationId = spec.Id;
+                    }
                     break;
                 case SpecificationType.RAM:
-                    productEntity.RamSpecificationId = await CreateSpecificationAsync(input.RamSpecification, _ramSpecRepository);
+                    if (dto.RamSpecification != null)
+                    {
+                        var spec = ObjectMapper.Map<CreateUpdateRamSpecificationDto, RamSpecification>(dto.RamSpecification);
+                        spec = await _ramSpecRepository.InsertAsync(spec, autoSave: true);
+                        product.RamSpecificationId = spec.Id;
+                    }
                     break;
                 case SpecificationType.Motherboard:
-                    productEntity.MotherboardSpecificationId = await CreateSpecificationAsync(input.MotherboardSpecification, _motherboardSpecRepository);
+                    if (dto.MotherboardSpecification != null)
+                    {
+                        var spec = ObjectMapper.Map<CreateUpdateMotherboardSpecificationDto, MotherboardSpecification>(dto.MotherboardSpecification);
+                        spec = await _motherboardSpecRepository.InsertAsync(spec, autoSave: true);
+                        product.MotherboardSpecificationId = spec.Id;
+                    }
                     break;
                 case SpecificationType.Storage:
-                    productEntity.StorageSpecificationId = await CreateSpecificationAsync(input.StorageSpecification, _storageSpecRepository);
+                    if (dto.StorageSpecification != null)
+                    {
+                        var spec = ObjectMapper.Map<CreateUpdateStorageSpecificationDto, StorageSpecification>(dto.StorageSpecification);
+                        spec = await _storageSpecRepository.InsertAsync(spec, autoSave: true);
+                        product.StorageSpecificationId = spec.Id;
+                    }
                     break;
                 case SpecificationType.PSU:
-                    productEntity.PsuSpecificationId = await CreateSpecificationAsync(input.PsuSpecification, _psuSpecRepository);
+                    if (dto.PsuSpecification != null)
+                    {
+                        var spec = ObjectMapper.Map<CreateUpdatePsuSpecificationDto, PsuSpecification>(dto.PsuSpecification);
+                        spec = await _psuSpecRepository.InsertAsync(spec, autoSave: true);
+                        product.PsuSpecificationId = spec.Id;
+                    }
                     break;
                 case SpecificationType.Case:
-                    productEntity.CaseSpecificationId = await CreateSpecificationAsync(input.CaseSpecification, _caseSpecRepository);
+                    if (dto.CaseSpecification != null)
+                    {
+                        var spec = ObjectMapper.Map<CreateUpdateCaseSpecificationDto, CaseSpecification>(dto.CaseSpecification);
+                        spec = await _caseSpecRepository.InsertAsync(spec, autoSave: true);
+                        product.CaseSpecificationId = spec.Id;
+                    }
                     break;
                 case SpecificationType.CPUCooler:
-                    productEntity.CpuCoolerSpecificationId = await CreateSpecificationAsync(input.CpuCoolerSpecification, _cpuCoolerSpecRepository);
+                    if (dto.CpuCoolerSpecification != null)
+                    {
+                        var spec = ObjectMapper.Map<CreateUpdateCpuCoolerSpecificationDto, CpuCoolerSpecification>(dto.CpuCoolerSpecification);
+                        spec = await _cpuCoolerSpecRepository.InsertAsync(spec, autoSave: true);
+                        product.CpuCoolerSpecificationId = spec.Id;
+                    }
                     break;
                 case SpecificationType.Keyboard:
-                    productEntity.KeyboardSpecificationId = await CreateSpecificationAsync(input.KeyboardSpecification, _keyboardSpecRepository);
+                    if (dto.KeyboardSpecification != null)
+                    {
+                        var spec = ObjectMapper.Map<CreateUpdateKeyboardSpecificationDto, KeyboardSpecification>(dto.KeyboardSpecification);
+                        spec = await _keyboardSpecRepository.InsertAsync(spec, autoSave: true);
+                        product.KeyboardSpecificationId = spec.Id;
+                    }
                     break;
                 case SpecificationType.Headset:
-                    productEntity.HeadsetSpecificationId = await CreateSpecificationAsync(input.HeadsetSpecification, _headsetSpecRepository);
+                    if (dto.HeadsetSpecification != null)
+                    {
+                        var spec = ObjectMapper.Map<CreateUpdateHeadsetSpecificationDto, HeadsetSpecification>(dto.HeadsetSpecification);
+                        spec = await _headsetSpecRepository.InsertAsync(spec, autoSave: true);
+                        product.HeadsetSpecificationId = spec.Id;
+                    }
                     break;
-                default: break;
+                case SpecificationType.None:
+                default:
+                    // No specific specification to create or link
+                    break;
             }
-            await Repository.InsertAsync(productEntity, autoSave: true);
-            return await GetAsync(productEntity.Id);
-            
         }
         public override async Task<ProductDto> UpdateAsync(Guid id, CreateUpdateProductDto input)
         {
@@ -254,7 +325,7 @@ namespace Acme.ProductSelling.Products
         private async Task HandleSpecificationUpdateAsync<TSpecEntity, TSpecDto>(
             Guid? currentSpecId,
             TSpecDto inputDto,
-            IRepository<TSpecEntity, Guid> specRepository,  
+            IRepository<TSpecEntity, Guid> specRepository,
             Action<Guid?> setProductSpecIdAction)
             where TSpecEntity : class, Volo.Abp.Domain.Entities.IEntity<Guid>
             where TSpecDto : class
@@ -270,7 +341,6 @@ namespace Acme.ProductSelling.Products
                 else
                 {
                     var newSpec = ObjectMapper.Map<TSpecDto, TSpecEntity>(inputDto);
-                    typeof(Product).GetProperty(nameof(Product.Id))?.SetValue(newSpec, GuidGenerator.Create());
                     await specRepository.InsertAsync(newSpec, autoSave: true);
                     setProductSpecIdAction(newSpec.Id);
                 }

@@ -33,7 +33,7 @@ namespace Acme.ProductSelling.Orders
            IRepository<Product, Guid> productRepository,
            IGuidGenerator guidGenerator,
            ICurrentUser currentUser,
-                        IRepository<Cart, Guid> cartRepository ) : base(orderRepository)
+                        IRepository<Cart, Guid> cartRepository) : base(orderRepository)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
@@ -74,17 +74,16 @@ namespace Acme.ProductSelling.Orders
             {
                 throw new UserFriendlyException(L["ShoppingCartIsEmpty"]);
             }
-            var order = new Order
-            {
-                OrderNumber = orderNumber,
-                CustomerId = customerId,
-                CustomerName = customerName,
-                CustomerPhone = input.CustomerPhone,
-                ShippingAddress = input.ShippingAddress,
-                OrderDate = DateTime.UtcNow,
 
-            };
-
+            var order = new Order(
+                _guidGenerator.Create(),
+                orderNumber,
+                DateTime.UtcNow,
+                customerId,
+                customerName,
+                input.CustomerPhone,
+                input.ShippingAddress
+            );
 
             var productIds = input.Items.Select(i => i.ProductId).Distinct().ToList();
             var products = (await _productRepository.GetListAsync(p => productIds.Contains(p.Id)))
@@ -95,7 +94,7 @@ namespace Acme.ProductSelling.Orders
                 if (!products.TryGetValue(itemDto.ProductId, out var product))
                 {
                     throw new UserFriendlyException($"Product with ID {itemDto.ProductId} not found.");
-                    
+
                 }
                 if (product.StockCount < itemDto.Quantity)
                 {
@@ -107,7 +106,7 @@ namespace Acme.ProductSelling.Orders
                 order.AddOrderItem(product.Id, product.ProductName, product.OriginalPrice, itemDto.Quantity);
 
                 product.StockCount -= itemDto.Quantity;
-                await _productRepository.UpdateAsync(product, autoSave: false); 
+                await _productRepository.UpdateAsync(product, autoSave: false);
             }
             if (!order.OrderItems.Any())
             {
@@ -122,8 +121,8 @@ namespace Acme.ProductSelling.Orders
         [Authorize]
         public override async Task<OrderDto> GetAsync(Guid id)
         {
-            var order = await (await 
-                            _orderRepository.WithDetailsAsync(o => o.OrderItems)) 
+            var order = await (await
+                            _orderRepository.WithDetailsAsync(o => o.OrderItems))
                              .FirstOrDefaultAsync(o => o.Id == id);
 
             if (order == null)
@@ -131,41 +130,10 @@ namespace Acme.ProductSelling.Orders
                 throw new EntityNotFoundException(typeof(Order), id);
             }
 
-           
+
 
             return ObjectMapper.Map<Order, OrderDto>(order);
         }
-
-/*        [Authorize] // Bảo vệ nếu cần
-        public async Task<PagedResultDto<OrderDto>> GetListAsync(GetOrderListInput input)
-        {
-            var queryable = await _orderRepository.GetQueryableAsync();
-
-            if (input.CustomerId.HasValue) // Lọc theo KH nếu có ID
-            {
-                queryable = queryable.Where(o => o.CustomerId == input.CustomerId.Value);
-            }
-            // Bỏ lọc theo Status
-
-            if (!input.Filter.IsNullOrWhiteSpace())
-            {
-                queryable = queryable.Where(o => o.OrderNumber.Contains(input.Filter) ||
-                                                o.CustomerName.Contains(input.Filter));
-            }
-
-            var totalCount = await AsyncExecuter.CountAsync(queryable);
-
-            queryable = queryable
-                .OrderBy(input.Sorting ?? nameof(Order.OrderDate) + " DESC")
-                .PageBy(input);
-
-            var orders = await AsyncExecuter.ToListAsync(queryable);
-
-            return new PagedResultDto<OrderDto>(
-                totalCount,
-                ObjectMapper.Map<List<Order>, List<OrderDto>>(orders)
-            );
-        }*/
         public async Task<OrderDto> GetByOrderNumberAsync(string orderNumber)
         {
             var order = await _orderRepository.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
@@ -199,6 +167,22 @@ namespace Acme.ProductSelling.Orders
                 ObjectMapper.Map<List<Order>, List<OrderDto>>(orders)
             );
         }
-
+        [Authorize(ProductSellingPermissions.Orders.ChangeStatus)]
+        public async Task ChangeOrderStatus(Guid orderId, OrderStatus newStatus)
+        {
+            var order = await _orderRepository.GetAsync(orderId);
+            if (order == null)
+            {
+                throw new EntityNotFoundException(typeof(Order), orderId);
+            }
+            order.ChangeStatus(newStatus);
+            await _orderRepository.UpdateAsync(order, autoSave: true);
+        }
+        protected override OrderDto MapToGetOutputDto(Order entity)
+        {
+            var dto = base.MapToGetOutputDto(entity);
+            dto.Status = entity.Status;
+            return dto;
+        }
     }
 }

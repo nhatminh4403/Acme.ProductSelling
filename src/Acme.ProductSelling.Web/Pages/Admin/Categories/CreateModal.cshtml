@@ -2,22 +2,70 @@
 @model Acme.ProductSelling.Web.Pages.Categories.CreateModalModel
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
-@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal; 
+@using Acme.ProductSelling.Utils
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
 @inject IStringLocalizer<ProductSellingResource> L
 @{
-    Layout = null; @* Không sử dụng layout cho modal *@
+    Layout = null;
 }
 
-<form method="post" asp-page="/Categories/CreateModal">
+<form method="post" id="CategoryForm" asp-page="/Admin/Categories/CreateModal">
     <abp-modal>
         <abp-modal-header title="@L["Category:CreateCategory"].Value"></abp-modal-header>
         <abp-modal-body>
-            @* Dropdown chọn Category *@
-            <abp-input asp-for="Category.Name" label="@L["Category:Description"]" type="textarea" />
+            <abp-validation-summary />
+            <abp-alert-list />
 
+            <abp-input asp-for="Category.Name" label="@L["Category:Name"]" />
             <abp-input asp-for="Category.Description" label="@L["Category:Description"]" type="textarea" />
 
+            <abp-input asp-for="Category.UrlSlug" label="@L["Category:UrlSlug"]" readonly="true" />
         </abp-modal-body>
-        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel | AbpModalButtons.Save)"></abp-modal-footer>
     </abp-modal>
 </form>
+<script>
+    $(function () { // Đợi DOM sẵn sàng
+
+        var nameInput = $('#Category_Name');
+
+        var slugInput = $('#Category_UrlSlug'); 
+
+        if (nameInput.length && slugInput.length) {
+            nameInput.on('input keyup', function () { 
+                var nameValue = $(this).val();
+                var slugValue = generateSlug(nameValue);
+                slugInput.val(slugValue);
+            });
+
+            // Tùy chọn: Nếu Name có giá trị sẵn (khi edit), tạo slug ngay khi load
+            if (nameInput.val()) {
+                 slugInput.val(generateSlug(nameInput.val()));
+            }
+        }
+
+        function generateSlug(text) {
+            if (!text) {
+                return "";
+            }
+
+            text = text.replace(/Đ/g, 'D');
+            text = text.replace(/đ/g, 'd'); 
+
+            
+            text = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+
+            text = text.replace(/\s+/g, '-'); 
+
+            text = text.replace(/[^\w-]+/g, '');
+
+            text = text.toLowerCase();
+
+            text = text.replace(/-+/g, '-');
+            text = text.replace(/^-+|-+$/g, ''); 
+
+            return text;
+        }
+    });
+</script>
