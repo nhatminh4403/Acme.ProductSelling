@@ -2,7 +2,6 @@ using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
@@ -30,7 +29,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
         public string CategoryName { get; set; }
         public PagerModel PagerModel { get; set; }
         //
-        public ProductsByManufacturerModel(IProductAppService productAppService,ICategoryRepository categoryRepository,IManufacturerRepository manufacturerRepository)
+        public ProductsByManufacturerModel(IProductAppService productAppService, ICategoryRepository categoryRepository, IManufacturerRepository manufacturerRepository)
         {
             _productAppService = productAppService;
             _categoryRepository = categoryRepository;
@@ -59,7 +58,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
                 ManufacturerName = result.Items[0].ManufacturerName;
                 PagerModel = new PagerModel(Products.TotalCount, 3, CurrentPage, PageSize, "/");
                 return Page();
-                
+
             }
             catch (Exception ex)
             {

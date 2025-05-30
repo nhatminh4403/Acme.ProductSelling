@@ -1,4 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Acme.ProductSelling.Carts;
+using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Manufacturers;
+using Acme.ProductSelling.Orders;
+using Acme.ProductSelling.Products;
+using Acme.ProductSelling.Specifications;
+using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
@@ -9,17 +15,11 @@ using Volo.Abp.EntityFrameworkCore.Modeling;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.EntityFrameworkCore;
+using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
-using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
-using Acme.ProductSelling.Products;
-using Acme.ProductSelling.Categories;
-using Acme.ProductSelling.Specifications;
-using Acme.ProductSelling.Manufacturers;
-using Acme.ProductSelling.Orders;
-using Acme.ProductSelling.Carts;
 namespace Acme.ProductSelling.EntityFrameworkCore;
 
 [ReplaceDbContext(typeof(IIdentityDbContext))]
@@ -155,8 +155,11 @@ public class ProductSellingDbContext :
         builder.Entity<LaptopSpecification>(b => { b.ToTable("AppLaptopSpecifications"); /* Cấu hình cột nếu cần */ });
 
         builder.Entity<CpuSpecification>(b => { b.ToTable("AppCpuSpecifications"); /* Cấu hình cột nếu cần */ });
-        builder.Entity<GpuSpecification>(b => { b.ToTable("AppGpuSpecifications");
-            b.Property(s => s.Length).HasColumnType("decimal(18,2)"); });
+        builder.Entity<GpuSpecification>(b =>
+        {
+            b.ToTable("AppGpuSpecifications");
+            b.Property(s => s.Length).HasColumnType("decimal(18,2)");
+        });
         builder.Entity<RamSpecification>(b => { b.ToTable("AppRamSpecifications"); });
         builder.Entity<MotherboardSpecification>(b => { b.ToTable("AppMotherboardSpecifications"); });
         builder.Entity<StorageSpecification>(b => { b.ToTable("AppStorageSpecifications"); });
@@ -181,9 +184,9 @@ public class ProductSellingDbContext :
 
             b.Property(o => o.TotalAmount).HasColumnType("decimal(18,2)").IsRequired();
 
-      
+
             b.HasMany(o => o.OrderItems)
-             .WithOne() 
+             .WithOne()
              .HasForeignKey(oi => oi.OrderId)
              .IsRequired();
         });
@@ -203,20 +206,20 @@ public class ProductSellingDbContext :
         builder.Entity<Cart>(b =>
         {
             b.ToTable("AppCarts");
-            b.ConfigureAuditedAggregateRoot(); 
+            b.ConfigureAuditedAggregateRoot();
 
             b.HasIndex(c => c.UserId).IsUnique();
 
-            b.HasMany(c => c.Items)         
-             .WithOne()                      
-             .HasForeignKey(ci => ci.CartId) 
-             .IsRequired();                  
+            b.HasMany(c => c.Items)
+             .WithOne()
+             .HasForeignKey(ci => ci.CartId)
+             .IsRequired();
         });
 
         builder.Entity<CartItem>(b =>
         {
             b.ToTable("AppCartItems");
-            b.ConfigureByConvention(); 
+            b.ConfigureByConvention();
 
             b.HasIndex(ci => ci.ProductId);
         });

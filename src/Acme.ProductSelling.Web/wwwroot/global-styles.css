@@ -1,4 +1,4 @@
-/* Your Global Styles */
+﻿/* Your Global Styles */
 :root .lpx-brand-logo {
     --lpx-logo: url('/images/logo/leptonxlite/logo-light.png');
     --lpx-logo-icon: url('/images/logo/leptonxlite/logo-light-thumbnail.png');
@@ -24,14 +24,13 @@
     text-decoration: underline;
 }
 
-/* --- Styles for Main Hover Dropdown --- */
 .dropdown-menu.show {
     display: block;
     opacity: 1;
     visibility: visible;
 }
 
-/* --- Styles for Mega Menu Submenu --- */
+
 .category-hover-menu > .has-submenu {
     position: static;
 }
@@ -68,7 +67,7 @@
     position: absolute;
     top: 0;
     left: 100%;
-    width: 650px; /* Adjusted width slightly if needed */
+    width: 650px;
     max-width: calc(100vw - 40px);
     margin-top: 0;
     margin-left: 1px;
@@ -85,7 +84,7 @@
         display: block;
     }
 
-/* Mega Menu Content Styling */
+
 .mega-menu h6 {
     font-weight: bold;
     margin-bottom: 0.75rem;
@@ -115,7 +114,7 @@
     margin-left: 0.5rem;
 }
 
-/* Optional: Ensure image fits well */
+
 .mega-menu img.img-fluid {
     max-height: 100px;
     object-fit: cover;
@@ -140,5 +139,212 @@
         padding: 8px 16px;
     }
 
+/* Login */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
 
-/* Product Detail Page */
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+    .login-dropdown::before {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: transparent;
+        z-index: 999;
+    }
+
+    .login-dropdown:hover .login-dropdown-content {
+        display: block;
+        animation: fadeIn 0.2s ease-in-out;
+    }
+
+    .login-dropdown:hover .login-btn-main {
+        background-color: #157347 !important;
+        border-color: #146c43 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+.login-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 272px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1000;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    top: 100%;
+    right: 0;
+    margin-top: 5px;
+    padding: 16px;
+}
+
+    .login-dropdown-content:hover {
+        display: block;
+        animation: fadeIn 0.2s ease-in-out;
+    }
+
+    .login-dropdown-content::before {
+        content: '';
+        position: absolute;
+        top: -8px;
+        left: 0;
+        right: 0;
+        height: 8px;
+        background: transparent;
+    }
+
+.login-btn-main {
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-welcome-text {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #374151;
+    font-weight: 500;
+}
+
+    .dropdown-welcome-text i {
+        margin-right: 8px;
+        font-size: 16px;
+    }
+
+.dropdown-buttons {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.dropdown-btn-login {
+    flex: 1;
+    background-color: #1f2937;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+}
+
+    .dropdown-btn-login:hover {
+        background-color: #111827;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+.dropdown-btn-register {
+    flex: 1;
+    background-color: white;
+    color: #374151;
+    border: 1.5px solid #d1d5db;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+}
+
+    .dropdown-btn-register:hover {
+        background-color: #f9fafb;
+        border-color: #9ca3af;
+        color: #374151;
+        text-decoration: none;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+.dropdown-help-link {
+    display: flex;
+    align-items: center;
+    color: #6b7280;
+    font-size: 13px;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+    .dropdown-help-link:hover {
+        color: #374151;
+        text-decoration: none;
+    }
+
+    .dropdown-help-link i {
+        margin-right: 6px;
+        font-size: 14px;
+    }
+
+.dropdown-item-custom {
+    color: #212529;
+    text-decoration: none;
+    display: block;
+    padding: 10px 16px;
+    clear: both;
+    font-weight: 400;
+    line-height: 1.5;
+    white-space: nowrap;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    transition: all 0.15s ease-in-out;
+}
+
+    .dropdown-item-custom:hover {
+        background-color: #f8f9fa;
+        color: #0d6efd;
+    }
+
+    .dropdown-item-custom:first-child {
+        border-top-left-radius: 7px;
+        border-top-right-radius: 7px;
+    }
+
+    .dropdown-item-custom:last-child {
+        border-bottom-left-radius: 7px;
+        border-bottom-right-radius: 7px;
+    }
+
+@media (max-width: 576px) {
+    .login-dropdown-content {
+        min-width: 180px;
+        padding: 12px;
+    }
+
+    .dropdown-buttons {
+        flex-direction: column;
+    }
+
+    .dropdown-btn-login,
+    .dropdown-btn-register {
+        width: 100%;
+    }
+}

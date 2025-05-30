@@ -9,9 +9,12 @@
 @inject IAuthorizationService AuthorizationService
 @model Acme.ProductSelling.Web.Pages.Manufacturers.IndexModel
 @{
+    ViewData["Title"] = L["Admin:Menu:Categories"];
 }
 @section Scripts {
     <abp-script src="/Pages/Admin/Manufacturers/Index.js" />
+    <script src="~/js/admin/Index.js"></script>
+
 }
 
 <abp-card class="py-3 px-1">

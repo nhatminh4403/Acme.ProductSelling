@@ -1,5 +1,4 @@
-﻿using Acme.ProductSelling.EntityFrameworkCore;
-using Xunit;
+﻿using Xunit;
 
 namespace Acme.ProductSelling.EntityFrameworkCore;
 

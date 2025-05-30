@@ -9,9 +9,12 @@
 @inject IStringLocalizer<ProductSellingResource> L
 @inject IAuthorizationService AuthorizationService
 @{
+    ViewData["Title"] = L["Admin:AllOrders"];
 }
 @section scripts {
     <abp-script src="/Pages/Admin/Orders/Index.js" />
+    <script src="~/js/admin/Index.js"></script>
+
 }
 <abp-card class="py-3 px-1">
     <abp-card-header>

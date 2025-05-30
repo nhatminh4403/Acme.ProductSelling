@@ -2,10 +2,8 @@
 using Acme.ProductSelling.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Threading.Tasks;
-using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Categories
 {
@@ -13,7 +11,7 @@ namespace Acme.ProductSelling.Web.Pages.Categories
     public class EditModalModel : ProductSellingPageModel
     {
         [HiddenInput]
-        [BindProperty(SupportsGet = true)] 
+        [BindProperty(SupportsGet = true)]
         public Guid Id { get; set; }
 
         [BindProperty]
@@ -34,7 +32,7 @@ namespace Acme.ProductSelling.Web.Pages.Categories
         public async Task<IActionResult> OnPostAsync()
         {
             await _categoryAppService.UpdateAsync(Id, Category);
-            return NoContent(); 
+            return NoContent();
         }
     }
 }

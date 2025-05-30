@@ -1,4 +1,5 @@
-﻿using Volo.Abp.Account;
+using Volo.Abp.Account;
+using Volo.Abp.AspNetCore.SignalR;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
 using Volo.Abp.Modularity;
@@ -17,6 +18,7 @@ namespace Acme.ProductSelling;
     typeof(AbpTenantManagementApplicationContractsModule),
     typeof(AbpPermissionManagementApplicationContractsModule)
 )]
+[DependsOn(typeof(AbpAspNetCoreSignalRModule))]
 public class ProductSellingApplicationContractsModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)

@@ -3,10 +3,7 @@ using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,7 +29,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
             _categoryAppService = categoryAppService;
             _manufacturerAppService = manufacturerAppService;
         }
-        public async  Task OnGet()
+        public async Task OnGet()
         {
             var categoryLookup = await _categoryAppService.GetCategoryLookupAsync();
 
@@ -42,7 +39,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
             };
             Categories.AddRange(categoryLookup.Items
                 .Select(c => new SelectListItem(c.Name, c.Id.ToString()))
-                .ToList()); 
+                .ToList());
 
             CategorySpecTypesJson = categoryLookup.Items
                .ToDictionary(

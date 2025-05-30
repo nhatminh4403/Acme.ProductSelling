@@ -1,8 +1,9 @@
 ﻿using Acme.ProductSelling.Carts;
-using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Orders.Hubs;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -27,19 +28,21 @@ namespace Acme.ProductSelling.Orders
         private readonly IGuidGenerator _guidGenerator;
         private readonly ICurrentUser _currentUser;
         private readonly IRepository<Cart, Guid> _cartRepository;
-
+        private readonly IHubContext<OrderHub, IOrderClient> _orderHubContext;
         public OrderAppService(
-           IRepository<Order, Guid> orderRepository,
-           IRepository<Product, Guid> productRepository,
-           IGuidGenerator guidGenerator,
-           ICurrentUser currentUser,
-                        IRepository<Cart, Guid> cartRepository) : base(orderRepository)
+            IRepository<Order, Guid> orderRepository,
+            IRepository<Product, Guid> productRepository,
+            IGuidGenerator guidGenerator,
+            ICurrentUser currentUser,
+            IRepository<Cart, Guid> cartRepository,
+            IHubContext<OrderHub, IOrderClient> hubContext) : base(orderRepository)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
             _guidGenerator = guidGenerator;
             _currentUser = currentUser;
             _cartRepository = cartRepository;
+            _orderHubContext = hubContext;
             GetPolicyName = ProductSellingPermissions.Orders.Default;
             CreatePolicyName = ProductSellingPermissions.Orders.Create;
             UpdatePolicyName = ProductSellingPermissions.Orders.Edit;
@@ -167,6 +170,8 @@ namespace Acme.ProductSelling.Orders
                 ObjectMapper.Map<List<Order>, List<OrderDto>>(orders)
             );
         }
+
+
         [Authorize(ProductSellingPermissions.Orders.ChangeStatus)]
         public async Task ChangeOrderStatus(Guid orderId, OrderStatus newStatus)
         {
@@ -175,13 +180,28 @@ namespace Acme.ProductSelling.Orders
             {
                 throw new EntityNotFoundException(typeof(Order), orderId);
             }
+
+            var oldStatus = order.Status;
             order.ChangeStatus(newStatus);
             await _orderRepository.UpdateAsync(order, autoSave: true);
+
+            if (order.CustomerId.HasValue)
+            {
+                var message = $"Đơn hàng {order.OrderNumber} đã được cập nhật từ trạng thái {oldStatus} sang {newStatus}";
+                await _orderHubContext.Clients.
+                    User(order.CustomerId.Value.ToString()).
+                    RecieveOrderStatusUpdate(order.Id, order.OrderNumber, newStatus, message);
+            }
+            else
+            {
+                // Nếu không có CustomerId, không gửi thông báo
+                throw new UserFriendlyException(L["OrderHasNoCustomer"]);
+            }
         }
         protected override OrderDto MapToGetOutputDto(Order entity)
         {
             var dto = base.MapToGetOutputDto(entity);
-            dto.Status = entity.Status;
+            dto.OrderStatus = entity.Status;
             return dto;
         }
     }

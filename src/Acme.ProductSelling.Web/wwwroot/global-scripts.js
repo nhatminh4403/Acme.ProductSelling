@@ -203,7 +203,7 @@ $(function () {
                                 window.location.href = '/';
                             });
                     }
-                }, 500); // Reduced delay
+                }, 500);
             });
         });
     }

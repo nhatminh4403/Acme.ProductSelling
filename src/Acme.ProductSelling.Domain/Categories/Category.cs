@@ -9,7 +9,7 @@ namespace Acme.ProductSelling.Categories
         public string Name { get; set; }
         public string Description { get; set; }
         public SpecificationType SpecificationType { get; set; } = SpecificationType.None;
-        public string UrlSlug { get; set; } 
+        public string UrlSlug { get; set; }
         public ICollection<Product> Products { get; set; }
         private Category()
         {

@@ -1,11 +1,5 @@
-﻿using Acme.ProductSelling.Categories;
-using Acme.ProductSelling.Products;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Domain.Entities;
 namespace Acme.ProductSelling.Orders
@@ -21,11 +15,11 @@ namespace Acme.ProductSelling.Orders
         public Guid OrderId { get; set; }
         public OrderItem(Guid orderId, Guid productId, string productName, decimal price, int quantity)
         {
-            Id = Guid.NewGuid(); 
+            Id = Guid.NewGuid();
             OrderId = orderId;
             ProductId = productId;
             ProductName = Check.NotNullOrWhiteSpace(productName, nameof(productName));
-            Price = price; 
+            Price = price;
             SetQuantity(quantity);
         }
         public void SetQuantity(int quantity)

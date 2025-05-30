@@ -1,6 +1,5 @@
 ﻿using Acme.ProductSelling.Orders;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
@@ -51,6 +50,6 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
                 return RedirectToPage("/Index");
             }
         }
-       
+
     }
 }

@@ -94,7 +94,7 @@ namespace Acme.ProductSelling
             var cpus = await _categoryRepository.InsertAsync(
                                                         await _categoryManager.CreateAsync("CPU", "Central Processing Units", SpecificationType.CPU));
             var gpus = await _categoryRepository.InsertAsync(
-                                                        await _categoryManager.CreateAsync("GPUs", "Graphics Cards", SpecificationType.GPU));
+                                                        await _categoryManager.CreateAsync("GPU", "Graphics Cards", SpecificationType.GPU));
             var rams = await _categoryRepository.InsertAsync(
                                                         await _categoryManager.CreateAsync("RAM", "Memory Modules", SpecificationType.RAM));
             var motherboards = await _categoryRepository.InsertAsync(
@@ -376,7 +376,7 @@ namespace Acme.ProductSelling
                 CategoryId = cpus.Id,
                 OriginalPrice = 8500000,
                 DiscountPercent = 10,
-                 
+
                 ProductName = "Ryzen 7 7700X",
                 Description = "Powerful 8-core CPU",
 
@@ -403,7 +403,7 @@ namespace Acme.ProductSelling
                 RecommendedPsu = 700,
                 Length = 310f
             };
-            await _gpuSpecRepository.InsertAsync(gpuSpec1, autoSave: true); 
+            await _gpuSpecRepository.InsertAsync(gpuSpec1, autoSave: true);
             var productGpu1 = new Product
             {
                 OriginalPrice = 25000000,
@@ -749,7 +749,7 @@ namespace Acme.ProductSelling
             keyboardProduct2.UrlSlug = UrlHelper.RemoveDiacritics(keyboardProduct2.ProductName);
             await _productRepository.InsertAsync(keyboardProduct2, autoSave: true);
 
-            
+
 
             // 7. Monitor: ASUS TUF Gaming VG27AQ
             var monitorSpec2 = new MonitorSpecification
@@ -1165,7 +1165,7 @@ namespace Acme.ProductSelling
             };
             await _mouseSpecRepository.InsertAsync(mouseSpec11, autoSave: true);
 
-            var productMouse11= new Product
+            var productMouse11 = new Product
             {
                 OriginalPrice = 1500000,
                 DiscountPercent = 10,

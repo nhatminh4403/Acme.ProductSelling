@@ -1,7 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Toolbars;
-using Volo.Abp.Users;
 
 namespace Acme.ProductSelling.Web.Menus;
 

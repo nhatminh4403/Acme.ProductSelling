@@ -1,15 +1,14 @@
 ﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
 using System;
-using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Acme.ProductSelling.Permissions;
-using Microsoft.AspNetCore.Authorization;
+using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Products
 {

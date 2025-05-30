@@ -1,14 +1,23 @@
-﻿@page "/collections/{Slug}/price/{PriceRangeAlias}"
+﻿@page "/collections/{slug}/price/{PriceRangeAlias?}"
 @model Acme.ProductSelling.Web.Pages.Products.ProductByPriceModel
+@using System.Globalization
 
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
 @using Acme.ProductSelling.Categories
 @inject IStringLocalizer<ProductSellingResource> L
+
+@functions {
+    public string GetCategoryLocalizerName(string name)
+    {
+        string trimmedName = String.Concat(name.Where(c => !Char.IsWhiteSpace(c)));
+        return "Category:" + trimmedName;
+    }
+}
 @{
-    ViewData["Title"] = "Product By Price";
+    ViewData["Title"] =  L["Menu:ProductByPrice"];
     Layout = "/Views/Shared/_Layout.cshtml"; // Đặt layout cho trang này
-    var title = L["MinPrice"] + " " + Model.MinPrice + L["CategoryName"] + " " + Model.CategoryName + " " + L["MaxPrice"] + " " + Model.MaxPrice;
+    var title = L["MinPrice"] + " " + Model.MinPrice+  " " + L["CategoryName"] + " " + L[GetCategoryLocalizerName(Model.CategoryName)] + " " + L["MaxPrice"] + " " + Model.MaxPrice;
 }
 
 <div class="container mt-4">
@@ -37,13 +46,28 @@
                         }
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">
-                                <a asp-page="/Products/ProductDetail" asp-route-slug="@product.UrlSlug">@product.ProductName</a>
+                                <a asp-page="/Products/ProductDetail" asp-route-slug="@product.UrlSlug" class="text-decoration-none">@product.ProductName</a>
                             </h5>
-                            <p class="card-text mt-auto">
-                                <span class="fw-bold fs-5 text-danger">
-                                    @product.OriginalPrice.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))
-                                </span>
-                            </p>
+                            @if (product.DiscountPercent > 0)
+                            {
+                                <div class="card-text mt-auto">
+                                    <div class="text-muted text-decoration-line-through small mb-0">
+                                        @product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="fw-bold fs-6 text-danger">
+                                            @product.DiscountedPrice.Value.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
+                                        </span>
+                                        <span class="badge bg-danger small">-@product.DiscountPercent%</span>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="mt-auto fw-bold text-danger fs-6">
+                                    @product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
+                                </div>
+                            }
                             <a asp-page="/Products/ProductDetail" asp-route-slug="@product.UrlSlug"
                                class="btn btn-outline-primary btn-sm mt-2">
                                 @L["ViewDetails"]
@@ -56,12 +80,8 @@
 
         @* Component phân trang *@
         <div class="mt-4">
-            <abp-pagination-controls total-count="@Model.Products.TotalCount"
-                                     page-size="@Model.PageSize"
-                                     current-page="@Model.CurrentPage"
-                                     page-query-name="CurrentPage">
-                @* Tên query param cho số trang *@
-            </abp-pagination-controls>
+            <abp-paginator asp-page="/" show-info="true" model="Model.PagerModel" class="mb-4">
+            </abp-paginator>
         </div>
     }
     else

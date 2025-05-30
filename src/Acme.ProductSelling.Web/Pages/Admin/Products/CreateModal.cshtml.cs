@@ -6,22 +6,16 @@ using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Specifications;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
 using System.Threading.Tasks;
 using Volo.Abp;
-using Volo.Abp.Application.Dtos;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Products
@@ -110,7 +104,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
         public async Task<IActionResult> OnPostAsync()
         {
 
-            string imageSourceType = Request.Form["imageSourceType"]; 
+            string imageSourceType = Request.Form["imageSourceType"];
 
             if (imageSourceType == "url" && string.IsNullOrWhiteSpace(Product.ImageUrl))
             {
@@ -213,7 +207,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
 
                 return NoContent();
             }
-            catch (UserFriendlyException ex) 
+            catch (UserFriendlyException ex)
             {
                 Logger.LogWarning(ex, "User-friendly error creating product.");
                 // Add error to a specific field if possible, or general model error

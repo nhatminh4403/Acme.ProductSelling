@@ -15,8 +15,8 @@
 @inject IAuthorizationService AuthorizationService
 
 @{
-    var title = ViewData["Title"]?.ToString();
     var hasAdminPermission = await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Products.Default);
+    var title = ViewData["Title"]?.ToString();
     var titleAppName = L["Menu:AppName"].ToString();
     bool checkTitle = title.ToLower().Contains(titleAppName.ToLower());
 }
@@ -39,16 +39,18 @@
         * {
             margin: 0;
             padding: 0;
+            /* outline: 1px dashed rgba(255,0,0,0.2); */
         }
-        /* * {
-                    outline: 1px dashed rgba(255,0,0,0.2);
-                }
 
-         */
+        .input-group .form-control:focus {
+            box-shadow: none;
+            border-color: transparent;
+        }
+        
     </style>
 </head>
 <body class="abp-application-layout bg-light d-flex flex-column min-vh-100">
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+    <nav class="navbar navbar-expand-lg navbar-light border-bottom sticky-top border-black" style="background-color: aqua">
         <div class="container">
             <a class="navbar-brand" href="/" aria-label="Home">
                 <img src="~/images/monitor.png" alt="Home" style="width: 75px;aspect-ratio: 16 / 9;" />
@@ -75,12 +77,17 @@
 
                 <form class="d-flex my-2 my-lg-0 flex-grow-1 mx-lg-2"
                       asp-page="/Products/ProductsByName" method="get">
-                    <input class="form-control me-2 border-1 border-black" name="name" type="search" placeholder="@L["Search..."]"
-                           aria-label="@L["Search..."]">
-                    <button class="btn btn-outline-success" type="submit" style="white-space:nowrap">
-                        @L["Search"]
-                    </button>
+                    <div class="input-group  rounded bg-white">
+                        <input class="form-control border-0" name="name" type="search" autocomplete="off"
+                               placeholder="@L["Search..."]" aria-label="@L["Search..."]">
+                        <button class="btn border-0 border-start-0" type="submit" style="white-space: nowrap;">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
                 </form>
+                <div class="me-2">
+                    <a href="#" class="btn fw-bold text-success text-start shadow-none" style="font-size:small"> <span>Hotline <br /> 0123456789</span></a>
+                </div>
                 @if (CurrentUser.IsAuthenticated)
                 {
 
@@ -111,20 +118,43 @@
                            aria-label="Cart">
                             <i class="bi bi-cart3 fs-5"></i>
                             <span class="cart-item-count position-absolute top-0 start-100
-                                    translate-middle badge rounded-pill bg-danger d-none">0</span>
+                                            translate-middle badge rounded-pill bg-danger d-none">0</span>
                         </a>
-                        @await Component.InvokeAsync(typeof(LanguageSwitchViewComponent))
                     </div>
                 }
                 else
                 {
                     <div class="d-flex align-items-center ms-lg-auto">
-                        <button type="button" class="btn btn-success d-flex align-items-center flex-shrink-0 me-2"
-                                data-bs-toggle="modal" data-bs-target="#loginModal">
-                            <i class="bi bi-person-fill me-1"></i>
-                            @L["Login"]
-                        </button>
-                        @await Component.InvokeAsync(typeof(LanguageSwitchViewComponent))
+                        <div class="login-dropdown">
+                            <button type="button" class="btn btn-success d-flex align-items-center flex-shrink-0 me-2 login-btn-main">
+                                <i class="bi bi-person-fill me-1"></i>
+                                @L["Login"]
+                                <i class="bi bi-chevron-down ms-1" style="font-size: 0.8em;"></i>
+                            </button>
+                            <div class="login-dropdown-content">
+                                <!-- Text chào mừng -->
+                                <div class="dropdown-welcome-text">
+                                    <i class="bi bi-hand-thumbs-up"></i>
+                                    Xin chào, vui lòng đăng nhập
+                                </div>
+
+                                <!-- Container cho các nút -->
+                                <div class="dropdown-buttons">
+                                    <button class="dropdown-btn-login" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                        @L["Login"]
+                                    </button>
+                                    <button class="dropdown-btn-register" data-bs-toggle="modal" data-bs-target="#registerModal">
+                                        @L["Register"]
+                                    </button>
+                                </div>
+
+                                <!-- Link trợ giúp -->
+                                <a href="#" class="dropdown-help-link">
+                                    <i class="bi bi-question-circle"></i>
+                                    @L["Help"]
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 }
 
@@ -182,26 +212,37 @@
                         <li>Email: <a href="mailto:nhatminh4403@gmail.com" class="text-primary">nhatminh4403@gmail.com</a></li>
                     </ul>
                 </div>
-                <!-- Cột 5: Vận chuyển -->
+                <!-- Cột 5: Cách thức thanh toán và Ngôn ngữ -->
                 <div class="col-12 col-md-2 mb-4">
-                    <h6 class="fw-bold">CÁCH THỨC THANH TOÁN</h6>
-                    <div class="d-flex flex-wrap align-items-center gap-2">
-                        <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_1.png?v=8602"
-                             alt="Internet Banking" width="50">
-                        <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_2.png?v=8602" alt="JCB"
-                             width="50">
-                        <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_3.png?v=8602"
-                             alt="MasterCard" width="50">
-                        <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_4.png?v=8602" alt="ZaloPay"
-                             width="50">
-                        <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_5.png?v=8602" alt="Tiền mặt"
-                             width="50">
-                        <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_6.png?v=8602"
-                             alt="Trả góp 0%" width="50">
-                        <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_7.png?v=8602" alt="Visa"
-                             width="50">
-                        <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_8.png?v=8602" alt="Momo"
-                             width="50">
+                    <!-- Phần thanh toán -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold">CÁCH THỨC THANH TOÁN</h6>
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_1.png?v=8602"
+                                 alt="Internet Banking" width="50">
+                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_2.png?v=8602" alt="JCB"
+                                 width="50">
+                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_3.png?v=8602"
+                                 alt="MasterCard" width="50">
+                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_4.png?v=8602" alt="ZaloPay"
+                                 width="50">
+                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_5.png?v=8602" alt="Tiền mặt"
+                                 width="50">
+                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_6.png?v=8602"
+                                 alt="Trả góp 0%" width="50">
+                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_7.png?v=8602" alt="Visa"
+                                 width="50">
+                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_8.png?v=8602" alt="Momo"
+                                 width="50">
+                        </div>
+                    </div>
+
+                    <!-- Phần ngôn ngữ -->
+                    <div>
+                        <h6 class="fw-bold">NGÔN NGỮ</h6>
+                        <div class="mt-3">
+                            @await Component.InvokeAsync(typeof(LanguageSwitchViewComponent))
+                        </div>
                     </div>
                 </div>
 
@@ -237,7 +278,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="loginModalLabel">Login</h5><button type="button" class="btn-close"
+                    <h5 class="modal-title" id="loginModalLabel">@L["Login"]</h5><button type="button" class="btn-close"
                                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -269,7 +310,7 @@
                         Close
                     </button><button type="submit" class="btn btn-primary"
                                      form="loginForm">
-                        Login
+                        @L["Login"]
                     </button>
                 </div>
             </div>
@@ -335,6 +376,5 @@
     @await RenderSectionAsync("scripts", required: false)
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/global-scripts.js"></script>
-
 </body>
 </html>

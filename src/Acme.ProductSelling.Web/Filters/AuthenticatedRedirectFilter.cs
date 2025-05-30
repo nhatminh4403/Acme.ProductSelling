@@ -25,7 +25,7 @@ namespace Acme.ProductSelling.Web.Filters
             {
 
                 // List of paths to redirect (login and register)
-                if (path != null &&IsAuthPage(path))
+                if (path != null && IsAuthPage(path))
                 {
                     context.Result = new RedirectResult("/");
                     return;

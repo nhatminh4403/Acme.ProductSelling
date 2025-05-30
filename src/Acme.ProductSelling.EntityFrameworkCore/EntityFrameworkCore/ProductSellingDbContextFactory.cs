@@ -1,8 +1,7 @@
-﻿using System;
-using System.IO;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace Acme.ProductSelling.EntityFrameworkCore;
 
@@ -13,12 +12,12 @@ public class ProductSellingDbContextFactory : IDesignTimeDbContextFactory<Produc
     public ProductSellingDbContext CreateDbContext(string[] args)
     {
         var configuration = BuildConfiguration();
-        
+
         ProductSellingEfCoreEntityExtensionMappings.Configure();
 
         var builder = new DbContextOptionsBuilder<ProductSellingDbContext>()
             .UseSqlServer(configuration.GetConnectionString("Default"));
-        
+
         return new ProductSellingDbContext(builder.Options);
     }
 

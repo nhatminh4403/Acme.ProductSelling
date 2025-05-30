@@ -13,6 +13,6 @@ namespace Acme.ProductSelling.Orders
         public string ShippingAddress { get; set; }
         public decimal TotalAmount { get; set; }
         public List<OrderItemDto> OrderItems { get; set; } = new List<OrderItemDto>();
-        public OrderStatus Status { get; set; }
+        public OrderStatus OrderStatus { get; set; }
     }
 }

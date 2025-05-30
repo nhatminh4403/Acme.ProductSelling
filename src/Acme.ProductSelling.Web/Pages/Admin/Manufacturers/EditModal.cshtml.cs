@@ -2,10 +2,8 @@
 using Acme.ProductSelling.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Threading.Tasks;
-using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Manufacturers
 {
@@ -13,7 +11,7 @@ namespace Acme.ProductSelling.Web.Pages.Manufacturers
     public class EditModalModel : ProductSellingPageModel
     {
         [HiddenInput]
-        [BindProperty(SupportsGet = true)] 
+        [BindProperty(SupportsGet = true)]
         public Guid Id { get; set; }
 
         [BindProperty(SupportsGet = true)]
@@ -33,7 +31,7 @@ namespace Acme.ProductSelling.Web.Pages.Manufacturers
         public async Task<IActionResult> OnPostAsync()
         {
             await _manufacturerAppService.UpdateAsync(Id, Manufacturer);
-            return NoContent(); 
+            return NoContent();
         }
     }
 }

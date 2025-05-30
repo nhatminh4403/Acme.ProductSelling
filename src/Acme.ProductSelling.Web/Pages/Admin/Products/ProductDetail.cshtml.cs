@@ -1,11 +1,10 @@
+using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Threading.Tasks;
-using Acme.ProductSelling.Permissions;
-using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Web.Pages.Admin.Products
 {

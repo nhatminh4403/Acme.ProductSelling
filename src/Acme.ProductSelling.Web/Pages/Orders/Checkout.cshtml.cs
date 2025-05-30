@@ -1,14 +1,13 @@
-﻿using Acme.ProductSelling.Orders;
+﻿using Acme.ProductSelling.Carts;
+using Acme.ProductSelling.Orders;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
-using System.Linq;
-using Acme.ProductSelling.Carts;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Acme.ProductSelling.Web.Pages.Checkout
 {
@@ -87,8 +86,8 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
             }
             catch (UserFriendlyException ex)
             {
-                Alerts.Warning(ex.Message); 
-                return Page(); 
+                Alerts.Warning(ex.Message);
+                return Page();
             }
             catch (Exception ex)
             {

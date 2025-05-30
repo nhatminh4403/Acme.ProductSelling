@@ -1,12 +1,12 @@
-﻿using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RequestLocalization;
 using Microsoft.Extensions.DependencyInjection;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
 using Volo.Abp.AspNetCore.Mvc;
-using Volo.Abp.Localization;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Languages;
+using Volo.Abp.Localization;
 namespace Acme.ProductSelling.Web.Themes.LeptonXLite.Components.Toolbar.LanguageSwitch
 {
     public class LanguageSwitchViewComponent : AbpViewComponent

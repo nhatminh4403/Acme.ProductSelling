@@ -1,10 +1,8 @@
-﻿using Acme.ProductSelling.Categories;
-using Acme.ProductSelling.EntityFrameworkCore;
+﻿using Acme.ProductSelling.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
@@ -20,13 +18,13 @@ namespace Acme.ProductSelling.Products
         {
             var dbSet = await GetDbSetAsync();
             var product = await dbSet.FirstOrDefaultAsync(c => c.ProductName == name);
-            if(product == null)
+            if (product == null)
             {
                 throw new Exception($"Product with name {name} not found");
             }
             return product;
         }
-        public async Task<List<Product>> GetListAsync(int skipCount, 
+        public async Task<List<Product>> GetListAsync(int skipCount,
             int maxResultCount, string sorting, string filter = null)
         {
             var dbSet = await GetDbSetAsync();
@@ -41,7 +39,7 @@ namespace Acme.ProductSelling.Products
                               .Take(maxResultCount)
                               .ToListAsync();
         }
-        
+
         public async Task<List<Product>> GetListAsync()
         {
             var dbSet = await GetDbSetAsync();

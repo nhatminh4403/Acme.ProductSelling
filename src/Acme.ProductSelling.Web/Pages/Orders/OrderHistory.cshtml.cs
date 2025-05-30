@@ -1,10 +1,9 @@
 using Acme.ProductSelling.Orders;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
+using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Pagination;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Orders
@@ -20,7 +19,8 @@ namespace Acme.ProductSelling.Web.Pages.Orders
         [BindProperty(SupportsGet = true)]
         public string Sorting { get; set; }
 
-        public int PageSize { get; set; } = 10; 
+        public int PageSize { get; set; } = 10;
+        public PagerModel PagerModel { get; set; }
 
         public PagedResultDto<OrderDto> Orders { get; set; }
 
@@ -35,9 +35,11 @@ namespace Acme.ProductSelling.Web.Pages.Orders
             {
                 SkipCount = (CurrentPage - 1) * PageSize,
                 MaxResultCount = PageSize,
-                Sorting = Sorting 
+                Sorting = Sorting
             };
             Orders = await _orderAppService.GetListForCurrentUserAsync(input);
+
+            PagerModel = new PagerModel(Orders.TotalCount, 3, CurrentPage, PageSize, "/");
         }
     }
 }

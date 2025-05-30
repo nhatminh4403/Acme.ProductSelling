@@ -7,7 +7,7 @@
 @inject IStringLocalizer<ProductSellingResource> L
 @{
     Layout = "/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = L["AllProductsByName"];
+    ViewData["Title"] = L["AllProductsByName"]+" " + Model.Name;
 }
 
 <div class="container my-4 pb-1 bg-light rounded">

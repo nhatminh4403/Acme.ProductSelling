@@ -8,7 +8,7 @@
 
 @{
     Layout = "/Views/Shared/_Layout.cshtml"; 
-    ViewData["Title"] = L["AllProductsByCategory"];
+    ViewData["Title"] =  L["AllProductsByCategory"] + " " + Model.CategoryName;
 }
 <div class="container mt-4">
     <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">

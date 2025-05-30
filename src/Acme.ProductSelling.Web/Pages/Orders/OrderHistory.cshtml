@@ -9,7 +9,12 @@
     ViewData["Title"] = L["MyOrderHistory"];
     Layout = "/Views/Shared/_Layout.cshtml";
 }
-
+<style>
+        .status-updated-highlight {
+            background-color: #fff3cd; /* A light yellow, adjust as needed */
+            transition: background-color 0.5s ease-out;
+        }
+    </style>
 <abp-card>
     <abp-card-header>
         <abp-row>
@@ -31,6 +36,7 @@
                         <th>@L["OrderDate"]</th>
                         <th>@L["CustomerName"]</th> <!-- Or remove if it's always the current user -->
                         <th>@L["TotalAmount"]</th>
+                        <th>@L["OrderStatus"]</th>
                         <th>@L["Actions"]</th>
                     </tr>
                 </thead>
@@ -42,6 +48,7 @@
                             <td>@order.OrderDate.ToShortDateString() @order.OrderDate.ToShortTimeString()</td>
                             <td>@order.CustomerName</td>
                             <td>@order.TotalAmount.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                            <td class="order-status-cell">@L[order.OrderStatus.ToString()]</td>
                             <td>
                                 <a class="btn btn-sm btn-info" href="@Url.Page("/Orders/OrderDetail", new { id = order.Id })">
                                     @L["ViewDetails"]
@@ -54,13 +61,10 @@
                 </tbody>
             </abp-table>
 
-            <abp-pagination-controls total-count="Model.Orders.TotalCount"
-                                     page-size="Model.PageSize"
-                                     current-page="Model.CurrentPage"
-                                     page-name="/my-orders"
-                                     sort-param-name="Sorting"
-                                     current-sort="Model.Sorting">
-            </abp-pagination-controls>
+            <div class="mt-4">
+                <abp-paginator asp-page="/" show-info="true" model="Model.PagerModel" class="mb-4">
+                </abp-paginator>
+            </div>
         }
         else
         {
@@ -70,3 +74,108 @@
         }
     </abp-card-body>
 </abp-card>
+@section scripts {
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js" integrity="sha512-7SRCYIJtR6F8ocwW7UxW6wGKqbSyqREDbfCORCbGLatU0iugBLwyOXpzhkPyHIFdBO0K2VCu57fvP2Twgx1o2A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+ <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const hubUrl = "/signalr-hubs/orders"; // Must match the server-side MapHub path
+            const L = { // Simple localization helper for JS, ideally get this from server or a .json file
+                "Placed": "@L["Placed"]",
+                "Pending": "@L["Pending"]",
+                "Confirmed": "@L["Confirmed"]",
+                "Processing": "@L["Processing"]",
+                "Shipped": "@L["Shipped"]",
+                "Delivered": "@L["Delivered"]",
+                "Cancelled": "@L["Cancelled"]",
+                "Failed": "@L["Failed"]"
+                // Add other statuses if you have more
+            };
+
+            function getLocalizedStatus(statusText) {
+                return L[statusText] || statusText; // Fallback to raw statusText if not found
+            }
+
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl(hubUrl, {
+                    accessTokenFactory: () => {
+                        // Assuming your ABP app stores the token in localStorage with key 'token'
+                        // or a similar convention. Adjust if your token storage is different.
+                        // For ABP, it's often under a key like "AbpAuthToken" or related to oidc-client.
+                        // You might need a more robust way to get the token if it's complex.
+                        let token = localStorage.getItem('AbpAuthToken'); // Common for ABP
+                        if (!token) {
+                             // Try another common one if the first fails
+                             const oidcStorage = localStorage.getItem(`oidc.user:${window.abp.config.currentTenant.id || ''}:${window.abp.config.application.name}`);
+                             if(oidcStorage){
+                                 token = JSON.parse(oidcStorage).access_token;
+                             }
+                        }
+                        console.log("SignalR: Using token:", token ? "Token Found" : "No Token Found");
+                        return token;
+                    }
+                })
+                .withAutomaticReconnect([0, 2000, 5000, 10000, 20000, 30000])
+                .configureLogging(signalR.LogLevel.Information)
+                .build();
+
+            connection.on("ReceiveOrderStatusUpdate", (orderId, orderNumber, newStatusEnumValue, statusText) => {
+                console.log(`SignalR: Order Status Update Received for OrderHistory page:
+                    Order ID: ${orderId},
+                    Order Number: ${orderNumber},
+                    Status Text: ${statusText}`);
+
+                updateOrderStatusInTable(orderId, statusText);
+
+                // Optional: Show a toast notification
+                // abp.notify.info(`Order ${orderNumber} status updated to ${getLocalizedStatus(statusText)}.`);
+            });
+
+            function updateOrderStatusInTable(orderId, newStatusText) {
+                const orderRow = document.querySelector(`tr[data-order-id="${orderId}"]`);
+                if (orderRow) {
+                    const statusCell = orderRow.querySelector(".order-status-cell");
+                    if (statusCell) {
+                        statusCell.textContent = getLocalizedStatus(newStatusText); // Use localized status
+                        // Add a highlight class
+                        statusCell.classList.add("status-updated-highlight");
+                        setTimeout(() => {
+                            statusCell.classList.remove("status-updated-highlight");
+                        }, 3000);
+                    }
+                }
+            }
+
+            async function startSignalRConnection() {
+                try {
+                    // Check if a token exists before trying to connect
+                    let token = localStorage.getItem('AbpAuthToken');
+                    if (!token) {
+                         const oidcStorage = localStorage.getItem(`oidc.user:${window.abp.config.currentTenant.id || ''}:${window.abp.config.application.name}`);
+                         if(oidcStorage){
+                             token = JSON.parse(oidcStorage).access_token;
+                         }
+                    }
+
+                    if (!token) {
+                        console.warn("SignalR: No authentication token found. User-specific notifications will not work.");
+                        // Decide if you still want to connect for public notifications or just skip.
+                        // For this page (OrderHistory), connection without token is likely not useful.
+                        return;
+                    }
+
+                    await connection.start();
+                    console.log("SignalR: Connected to OrderHub for OrderHistory page.");
+                } catch (err) {
+                    console.error("SignalR: Connection failed for OrderHistory page: ", err);
+                }
+            }
+
+            connection.onclose(error => {
+                console.warn("SignalR: Connection closed for OrderHistory page.", error);
+            });
+
+            // Start the connection
+            startSignalRConnection();
+        });
+    </script>
+}

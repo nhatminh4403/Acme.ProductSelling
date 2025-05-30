@@ -1,12 +1,10 @@
-using System.Threading.Tasks;
 using Acme.ProductSelling.Localization;
-using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.MultiTenancy;
-using Volo.Abp.SettingManagement.Web.Navigation;
-using Volo.Abp.Authorization.Permissions;
+using System.Threading.Tasks;
 using Volo.Abp.Identity.Web.Navigation;
-using Volo.Abp.UI.Navigation;
+using Volo.Abp.SettingManagement.Web.Navigation;
 using Volo.Abp.TenantManagement.Web.Navigation;
+using Volo.Abp.UI.Navigation;
 
 namespace Acme.ProductSelling.Web.Menus;
 
@@ -61,7 +59,7 @@ public class ProductSellingMenuContributor : IMenuContributor
         var administration = context.Menu.GetAdministration();
         administration.Order = 6;
 
-        
+
         administration.SetSubItemOrder(IdentityMenuNames.GroupName, 1);
 
         if (MultiTenancyConsts.IsEnabled)

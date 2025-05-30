@@ -1,64 +1,52 @@
-using System.IO;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Acme.ProductSelling.EntityFrameworkCore;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.MultiTenancy;
-using Acme.ProductSelling.Permissions;
-using Acme.ProductSelling.Web.Menus;
+using Acme.ProductSelling.Web.Filters;
 using Acme.ProductSelling.Web.HealthChecks;
+using Acme.ProductSelling.Web.Menus;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Volo.Abp;
-using Volo.Abp.Studio;
-using Volo.Abp.AspNetCore.Mvc;
-using Volo.Abp.AspNetCore.Mvc.Localization;
-using Volo.Abp.AspNetCore.Mvc.UI;
-using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
-using Volo.Abp.Autofac;
-using Volo.Abp.AutoMapper;
-using Volo.Abp.Modularity;
-using Volo.Abp.PermissionManagement;
-using Volo.Abp.PermissionManagement.Web;
-using Volo.Abp.UI.Navigation.Urls;
-using Volo.Abp.UI;
-using Volo.Abp.UI.Navigation;
-using Volo.Abp.VirtualFileSystem;
-using Volo.Abp.Identity.Web;
-using Volo.Abp.FeatureManagement;
 using OpenIddict.Server.AspNetCore;
 using OpenIddict.Validation.AspNetCore;
-using Volo.Abp.TenantManagement.Web;
 using System;
-using System.Security.Cryptography.X509Certificates;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Extensions.DependencyInjection;
+using System.IO;
+using Volo.Abp;
 using Volo.Abp.Account.Web;
+using Volo.Abp.AspNetCore.Mvc;
+using Volo.Abp.AspNetCore.Mvc.Localization;
 using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
+using Volo.Abp.AspNetCore.Mvc.UI.Packages.Bootstrap;
+using Volo.Abp.AspNetCore.Mvc.UI.Packages.DatatablesNet;
+using Volo.Abp.AspNetCore.Mvc.UI.Packages.JQuery;
+using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
+using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
+using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Toolbars;
 using Volo.Abp.AspNetCore.Serilog;
-using Volo.Abp.Identity;
-using Volo.Abp.Swashbuckle;
+using Volo.Abp.Autofac;
+using Volo.Abp.AutoMapper;
+using Volo.Abp.FeatureManagement;
+using Volo.Abp.Identity.Web;
+using Volo.Abp.Modularity;
 using Volo.Abp.OpenIddict;
+using Volo.Abp.PermissionManagement;
 using Volo.Abp.Security.Claims;
-using Volo.Abp.SettingManagement.Web;
 using Volo.Abp.Studio.Client.AspNetCore;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic.Bundling;
-using Volo.Abp.AspNetCore.Mvc.UI.Packages;
-using Volo.Abp.AspNetCore.Mvc.UI.Packages.Bootstrap;
-using Volo.Abp.AspNetCore.Mvc.UI.Packages.JQuery;
-using Volo.Abp.AspNetCore.Mvc.UI.Packages.DatatablesNet;
-using Acme.ProductSelling.Web.Filters;
-using Microsoft.AspNetCore.Mvc;
+using Volo.Abp.Swashbuckle;
+using Volo.Abp.TenantManagement.Web;
+using Volo.Abp.UI.Navigation;
+using Volo.Abp.UI.Navigation.Urls;
+using Volo.Abp.VirtualFileSystem;
 namespace Acme.ProductSelling.Web;
+using Acme.ProductSelling.Orders.Hubs; // Your Hub namespace
+using Volo.Abp.AspNetCore.SignalR;
 
 [DependsOn(
     typeof(ProductSellingHttpApiModule),
@@ -72,10 +60,11 @@ namespace Acme.ProductSelling.Web;
     typeof(AbpTenantManagementWebModule),
     typeof(AbpFeatureManagementWebModule),
     typeof(AbpSwashbuckleModule),
-    typeof(AbpAspNetCoreSerilogModule)
+    typeof(AbpAspNetCoreSerilogModule),
+    typeof(AbpAspNetCoreSignalRModule)
 )]
 [DependsOn(typeof(AbpAspNetCoreMvcUiThemeSharedModule))]
-    public class ProductSellingWebModule : AbpModule
+public class ProductSellingWebModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)
     {
@@ -136,13 +125,13 @@ namespace Acme.ProductSelling.Web;
             {
                 options.DisableTransportSecurityRequirement = true;
             });
-            
+
             Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;
             });
         }
-        
+
         ConfigureBundles();
         ConfigureUrls(configuration);
         ConfigureHealthChecks(context);
@@ -161,6 +150,7 @@ namespace Acme.ProductSelling.Web;
         {
             options.Filters.AddService<AuthenticatedRedirectFilter>();
         });
+        context.Services.AddSignalR();
     }
 
 
@@ -185,8 +175,8 @@ namespace Acme.ProductSelling.Web;
                  LeptonXLiteThemeBundles.Scripts.Global,
                 bundle =>
                 {
-                    bundle.AddContributors(typeof(JQueryScriptContributor)); 
-                    bundle.AddContributors(typeof(BootstrapScriptContributor)); 
+                    bundle.AddContributors(typeof(JQueryScriptContributor));
+                    bundle.AddContributors(typeof(BootstrapScriptContributor));
                     bundle.AddContributors(typeof(DatatablesNetScriptContributor));
                     //bundle.AddFiles("/global-scripts.js");
                 }
@@ -312,8 +302,14 @@ namespace Acme.ProductSelling.Web;
         {
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "ProductSelling API");
         });
+        app.UseConfiguredEndpoints(endpoints =>
+        {
+            // Map your SignalR Hub
+            endpoints.MapHub<OrderHub>("/signalr-hubs/orders"); // <<< ADD THIS
+        });
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
         app.UseConfiguredEndpoints();
+
     }
 }

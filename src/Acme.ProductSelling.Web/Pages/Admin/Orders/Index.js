@@ -57,6 +57,10 @@
                     title: l('Order:TotalAmount'),
                     data: "totalAmount",
                 }
+                {
+                    title: l('Order:OrderStatus'),
+                    data: "orderStatus",
+                }
             ]
         })
     );

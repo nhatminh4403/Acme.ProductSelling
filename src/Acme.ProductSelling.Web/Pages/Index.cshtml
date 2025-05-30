@@ -49,7 +49,13 @@
     int productsPerSlide = 4; 
 }
 
-
+@functions {
+    public string GetCategoryLocalizerName(string name)
+    {
+        string trimmedName = String.Concat(name.Where(c => !Char.IsWhiteSpace(c)));
+        return "Category:" + trimmedName;
+    }
+}
 <div class="container p-0">
     <div class="row">
         <div class="col-md-12 d-flex flex-column gap-1 ">
@@ -64,7 +70,8 @@
                                     <li class="list-group-item list-group-item-action category-menu-item has-megamenu" style="padding:0">
                                         <a asp-page="/Products/ProductsByCategory" asp-route-slug="@category.CategoryUrlSlug"
                                            class="d-flex justify-content-between align-items-center text-decoration-none text-dark">
-                                            <span>@category.CategoryName</span>
+
+                                            <span>@L[GetCategoryLocalizerName(category.CategoryName)]</span>
                                             <i class="bi bi-chevron-right small"></i>
                                         </a>
                                         <div class="megamenu-data-source d-none">
@@ -332,8 +339,11 @@
                     var carouselId = $"categoryCarousel_{featuredCategory.Category.Id.ToString().Replace("-", "")}";
                     <section class="container my-3 bg-light rounded py-3 product-carousel">
                         <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3 ps-2">
-                            <h2 class="m-0">@L["ProductsFromCategory"] @featuredCategory.Category.Name</h2>
-                            <a asp-page="/Products/ProductsByCategory" asp-route-CategoryId="@featuredCategory.Category.Id" class="btn btn-sm btn-outline-primary">@L["SeeAll"] <i class="bi bi-arrow-right-short"></i></a>
+
+                            <h2 class="m-0">@L["ProductsFromCategory"] @L[GetCategoryLocalizerName(featuredCategory.Category.Name)]</h2>
+                            <a asp-page="/Products/ProductsByCategory"
+                               asp-route-slug="@featuredCategory.Category.UrlSlug"
+                               class="btn btn-sm btn-outline-primary">@L["SeeAll"] <i class="bi bi-arrow-right-short"></i></a>
                         </div>
 
                         <div id="@carouselId" class="carousel slide" data-bs-ride="false">

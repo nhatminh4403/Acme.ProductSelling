@@ -11,7 +11,7 @@
 @{
     var monthlyData = Json.Serialize(Model.MoneyStatisticsList);
     var allYearlyData = Json.Serialize(Model.YearlyStatistics);
-
+    ViewData["Title"] = L["Admin:Menu:Home"];
 }
 @section scripts {
 
@@ -23,6 +23,7 @@
 
     </script>
     <script src="~/js/admin/chart-area-demo.js"></script>
+    <script src="~/js/admin/Index.js"></script>
 }
 
 @section styles {

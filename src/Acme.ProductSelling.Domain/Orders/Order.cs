@@ -1,12 +1,9 @@
-﻿using Acme.ProductSelling.Payments;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Domain.Entities.Auditing;
 namespace Acme.ProductSelling.Orders
@@ -31,8 +28,8 @@ namespace Acme.ProductSelling.Orders
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalAmount { get; set; }
         public OrderStatus Status { get; private set; }
-        public virtual ICollection<OrderItem> OrderItems { get; set; } =new HashSet<OrderItem>();
-        
+        public virtual ICollection<OrderItem> OrderItems { get; set; } = new HashSet<OrderItem>();
+
         private Order()
         {
         }
@@ -88,7 +85,7 @@ namespace Acme.ProductSelling.Orders
             }
             CalculateTotals();
         }
-        public  void CalculateTotals()
+        public void CalculateTotals()
         {
             TotalAmount = OrderItems.Sum(oi => oi.LineTotalAmount);
             if (TotalAmount < 0)

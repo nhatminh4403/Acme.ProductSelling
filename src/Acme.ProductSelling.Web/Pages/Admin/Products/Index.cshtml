@@ -9,12 +9,14 @@
 @inject IStringLocalizer<ProductSellingResource> L
 @inject IAuthorizationService AuthorizationService
 @{
-    ViewData["Title"] = L["Product:AllProducts"];
+    ViewData["Title"] = L["Admin:Menu:Products"];
     var categorySpecTypes = Json.Serialize(Model.CategorySpecTypesJson);
 }
 @section scripts {
 
     <abp-script src="/Pages/Admin/Products/Index.js" />
+    <script src="~/js/admin/Index.js"></script>
+
 }
 
 @section styles {

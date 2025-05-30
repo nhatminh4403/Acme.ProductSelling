@@ -2,9 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Services;
@@ -168,10 +166,10 @@ namespace Acme.ProductSelling.Carts
                         product.DiscountedPrice.Value
                     );
                 }
-                    // Thêm hoặc cập nhật item trong giỏ hàng
+                // Thêm hoặc cập nhật item trong giỏ hàng
 
 
-                    await _cartRepository.UpdateAsync(cart, autoSave: true);
+                await _cartRepository.UpdateAsync(cart, autoSave: true);
             }
             catch (EntityNotFoundException)
             {

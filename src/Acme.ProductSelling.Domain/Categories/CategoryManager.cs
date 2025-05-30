@@ -15,7 +15,7 @@ namespace Acme.ProductSelling.Categories
         }
 
 
-        public async Task<Category> CreateAsync(string name, string description,SpecificationType specificationType)
+        public async Task<Category> CreateAsync(string name, string description, SpecificationType specificationType)
         {
             Check.NotNullOrWhiteSpace(name, nameof(name));
             // Kiểm tra xem Category đã tồn tại chưa

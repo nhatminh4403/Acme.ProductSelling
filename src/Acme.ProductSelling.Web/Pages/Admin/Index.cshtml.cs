@@ -2,12 +2,9 @@
 using Acme.ProductSelling.Orders;
 using Acme.ProductSelling.Permissions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
@@ -31,7 +28,7 @@ namespace Acme.ProductSelling.Web.Admin.Pages
         private PagedAndSortedResultRequestDto input { get; set; } = new();
         private readonly IOrderAppService _orderAppService;
 
-        public IndexModel(IOrderAppService orderAppService,IStringLocalizer<ProductSellingResource> stringLocalizer)
+        public IndexModel(IOrderAppService orderAppService, IStringLocalizer<ProductSellingResource> stringLocalizer)
         {
             _orderAppService = orderAppService;
             YearlyStatistics = new Dictionary<int, List<MoneyStatistics>>();
@@ -90,11 +87,11 @@ namespace Acme.ProductSelling.Web.Admin.Pages
 
                 for (int month = 1; month <= 12; month++)
                 {
-                    var monthLocalizer = _localizer["Admin:Month"+month];
+                    var monthLocalizer = _localizer["Admin:Month" + month];
 
                     monthlyData.Add(new MoneyStatistics
                     {
-                        Month =  $"{monthLocalizer}/{year}",
+                        Month = $"{monthLocalizer}/{year}",
                         Year = year,
                         MonthNumber = month,
                         MoneyTotal = 0

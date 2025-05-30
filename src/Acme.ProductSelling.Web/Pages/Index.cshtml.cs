@@ -2,11 +2,8 @@
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products;
-using Acme.ProductSelling.Utils;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -107,8 +104,8 @@ public class IndexModel : ProductSellingPageModel
             List<Product> productsFromRepo = await _productRepository.GetListAsync(
                 skipCount: skipCountForNewest,
                 maxResultCount: productsPerCarousel,
-                sorting: "CreationTime", 
-                filter: category.Id.ToString() 
+                sorting: "CreationTime",
+                filter: category.Id.ToString()
             );
 
             List<Product> correctlySortedProducts = productsFromRepo.OrderByDescending(p => p.CreationTime).ToList();
@@ -122,7 +119,7 @@ public class IndexModel : ProductSellingPageModel
                 });
             }
         }
-        
+
         PagerModel = new PagerModel(ProductList.TotalCount, 3, CurrentPage, PageSize, "/");
     }
 
