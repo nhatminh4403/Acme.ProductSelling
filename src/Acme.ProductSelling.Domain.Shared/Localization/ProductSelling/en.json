@@ -14,8 +14,8 @@
     "PriceRangeAlias:From1MillionTo5Million": "from-1million-to-5million",
     "PriceRangeAlias:From5MillionTo20Million": "from-5million-to-20million",
     "PriceRangeAlias:Over20Million": "over-20million",
-    "Help" : "Help",
-
+    "Help": "Help",
+    "Home:CategoryList": "Product Categories",
     "Login:Processing": "Your login request is being processed. Please wait...",
     "Login:Initiated": "Login Initiated",
     "Login:Success": "Login successful!",

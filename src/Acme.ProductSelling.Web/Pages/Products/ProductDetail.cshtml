@@ -39,7 +39,7 @@
                 {
                     id: '1',
                     name: 'AMD Ryzen 5 5600X',
-                    imageUrl: 'https://via.placeholder.com/200',
+                    imageUrl: 'https://placehold.co/200',
                     price: 4590000,
                     originalPrice: 5990000,
                     discountPercent: 23,
@@ -48,7 +48,7 @@
                 {
                     id: '2',
                     name: 'NVIDIA GeForce RTX 3060',
-                    imageUrl: 'https://via.placeholder.com/200',
+                    imageUrl: 'https://placehold.co/200',
                     price: 8490000,
                     originalPrice: 10990000,
                     discountPercent: 22,
@@ -57,7 +57,7 @@
                 {
                     id: '3',
                     name: 'Kingston HyperX DDR4 16GB',
-                    imageUrl: 'https://via.placeholder.com/200',
+                    imageUrl: 'https://placehold.co/200',
                     price: 1290000,
                     originalPrice: 1290000,
                     discountPercent: 0,
@@ -66,7 +66,7 @@
                 {
                     id: '4',
                     name: 'Samsung 970 EVO Plus 1TB',
-                    imageUrl: 'https://via.placeholder.com/200',
+                    imageUrl: 'https://placehold.co/200',
                     price: 2590000,
                     originalPrice: 3190000,
                     discountPercent: 19,
@@ -153,8 +153,8 @@
                     <button class="btn btn-primary btn-lg add-to-cart-button"
                             data-product-id="@Model.Product.Id"
                             data-product-name="@Model.Product.ProductName"
-                            data-product-price="@Model.Product.OriginalPrice"
-                    @(Model.Product.StockCount <= 0 ? "disabled" : "")>
+                             data-product-price="@(Model.Product.DiscountedPrice ?? Model.Product.OriginalPrice)"
+                             @(Model.Product.StockCount <= 0 ? "disabled" : "")>
                         <i class="fas fa-cart-plus me-2"></i>
                         @L[Model.Product.StockCount > 0 ? "AddToCart" : "OutOfStock"]
                     </button>

@@ -105,8 +105,8 @@ namespace Acme.ProductSelling.Orders
                         ($"Not enough stock for product '{product.ProductName}'." +
                         $" Available: {product.StockCount}, Requested: {itemDto.Quantity}");
                 }
-
-                order.AddOrderItem(product.Id, product.ProductName, product.OriginalPrice, itemDto.Quantity);
+                var priceToUse = product.DiscountedPrice ?? product.OriginalPrice;
+                order.AddOrderItem(product.Id, product.ProductName, priceToUse, itemDto.Quantity);
 
                 product.StockCount -= itemDto.Quantity;
                 await _productRepository.UpdateAsync(product, autoSave: false);

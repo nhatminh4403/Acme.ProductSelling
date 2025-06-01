@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Products;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -14,6 +15,7 @@ using Volo.Abp.Users;
 
 namespace Acme.ProductSelling.Carts
 {
+    [Authorize] // Chỉ cho phép người dùng đã đăng nhập truy cập
     public class CartAppService : ApplicationService, ICartAppService
     {
         private readonly IRepository<Cart, Guid> _cartRepository; // Repository cho Cart
@@ -88,14 +90,14 @@ namespace Acme.ProductSelling.Carts
                     {
                         if (products.TryGetValue(itemDto.ProductId, out var product))
                         {
-                            if (product.DiscountedPrice == null)
+                            itemDto.ProductName = product.ProductName;
+
+                            if (product.DiscountedPrice.HasValue)
                             {
-                                itemDto.ProductName = product.ProductName;
                                 itemDto.ProductPrice = product.DiscountedPrice.Value;
                             }
                             else
                             {
-                                itemDto.ProductName = product.ProductName;
                                 itemDto.ProductPrice = product.OriginalPrice;
                             }
                         }
@@ -146,26 +148,14 @@ namespace Acme.ProductSelling.Carts
                     throw new UserFriendlyException($"Not enough stock for '{product.ProductName}'." +
                         $" Available: {product.StockCount}, Requested total: {requestedQuantity}");
                 }
-                if (product.DiscountedPrice == null)
-                {
-                    cart.AddOrUpdateItem(
-                        input.ProductId,
-                        input.Quantity,
-                        _guidGenerator,
-                        product.ProductName,
-                        product.OriginalPrice
-                    );
-                }
-                else
-                {
-                    cart.AddOrUpdateItem(
-                        input.ProductId,
-                        input.Quantity,
-                        _guidGenerator,
-                        product.ProductName,
-                        product.DiscountedPrice.Value
-                    );
-                }
+                var priceToUse = product.DiscountedPrice ?? product.OriginalPrice;
+                cart.AddOrUpdateItem(
+                      input.ProductId,
+                      input.Quantity,
+                      _guidGenerator,
+                      product.ProductName,
+                      priceToUse
+                 );
                 // Thêm hoặc cập nhật item trong giỏ hàng
 
 
@@ -208,7 +198,6 @@ namespace Acme.ProductSelling.Carts
                 // Cập nhật số lượng qua phương thức của CartItem (hoặc Cart nếu logic phức tạp hơn)
                 itemToUpdate.SetQuantity(input.Quantity);
 
-                // Lưu thay đổi vào Cart Aggregate Root
                 await _cartRepository.UpdateAsync(cart, autoSave: true);
             }
             catch (EntityNotFoundException)
@@ -217,7 +206,7 @@ namespace Acme.ProductSelling.Carts
             }
             catch (UserFriendlyException)
             {
-                throw; // Re-throw UserFriendlyException
+                throw;
             }
             catch (Exception ex)
             {
@@ -230,12 +219,10 @@ namespace Acme.ProductSelling.Carts
         {
             try
             {
-                var cart = await GetOrCreateCurrentUserCartAsync(); // Lấy cart
+                var cart = await GetOrCreateCurrentUserCartAsync();
 
-                // Xóa item thông qua phương thức của Cart Aggregate Root
                 cart.RemoveItem(cartItemId);
 
-                // Lưu thay đổi vào Cart Aggregate Root
                 await _cartRepository.UpdateAsync(cart, autoSave: true);
             }
             catch (Exception ex)
@@ -249,13 +236,12 @@ namespace Acme.ProductSelling.Carts
         {
             try
             {
-                var cart = await GetOrCreateCurrentUserCartAsync(); // Lấy cart
+                var cart = await GetOrCreateCurrentUserCartAsync();
                 return cart.Items.Sum(i => i.Quantity);
             }
             catch (Exception ex)
             {
                 Logger.LogError($"Error in GetItemCountAsync: {ex.Message}");
-                // Trả về 0 thay vì ném lỗi để trải nghiệm người dùng tốt hơn
                 return 0;
             }
         }
@@ -264,12 +250,10 @@ namespace Acme.ProductSelling.Carts
         {
             try
             {
-                var cart = await GetOrCreateCurrentUserCartAsync(); // Lấy cart
+                var cart = await GetOrCreateCurrentUserCartAsync();
 
-                // Xóa item thông qua phương thức của Cart Aggregate Root
                 cart.ClearItems();
 
-                // Lưu thay đổi vào Cart Aggregate Root
                 await _cartRepository.UpdateAsync(cart, autoSave: true);
             }
             catch (Exception ex)
