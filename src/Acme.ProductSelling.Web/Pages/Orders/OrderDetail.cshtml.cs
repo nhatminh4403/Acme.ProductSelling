@@ -1,46 +1,44 @@
 using Acme.ProductSelling.Orders;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
-using Volo.Abp.Application.Dtos;
-using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Pagination;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Orders
 {
     [Authorize]
-    public class OrderHistoryModel : AbpPageModel
+    public class OrderDetailModel : AbpPageModel
     {
         private readonly IOrderAppService _orderAppService;
 
         [BindProperty(SupportsGet = true)]
-        public int CurrentPage { get; set; } = 1;
+        public Guid Id { get; set; }
 
-        [BindProperty(SupportsGet = true)]
-        public string Sorting { get; set; }
+        public OrderDto Order { get; set; }
 
-        public int PageSize { get; set; } = 10;
-        public PagerModel PagerModel { get; set; }
-
-        public PagedResultDto<OrderDto> Orders { get; set; }
-
-        public OrderHistoryModel(IOrderAppService orderAppService)
+        public OrderDetailModel(IOrderAppService orderAppService)
         {
             _orderAppService = orderAppService;
         }
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
-            var input = new PagedAndSortedResultRequestDto
+            if (string.IsNullOrEmpty(Id.ToString()))
             {
-                SkipCount = (CurrentPage - 1) * PageSize,
-                MaxResultCount = PageSize,
-                Sorting = Sorting
-            };
-            Orders = await _orderAppService.GetListForCurrentUserAsync(input);
+                return RedirectToPage("/Orders/OrderHistory");
+            }
 
-            PagerModel = new PagerModel(Orders.TotalCount, 3, CurrentPage, PageSize, "/");
+            Order = await _orderAppService.GetAsync(Id);
+
+            if (Order == null)
+            {
+                return RedirectToPage("/Orders/OrderHistory");
+            }
+
+            return Page();
         }
+
         public string GetStatusBadgeClass(OrderStatus status)
         {
             return status switch
@@ -56,4 +54,4 @@ namespace Acme.ProductSelling.Web.Pages.Orders
             };
         }
     }
-}
+} 

@@ -46,6 +46,7 @@ using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
 namespace Acme.ProductSelling.Web;
 using Acme.ProductSelling.Orders.Hubs; // Your Hub namespace
+using Acme.ProductSelling.Products;
 using Volo.Abp.AspNetCore.SignalR;
 
 [DependsOn(
@@ -151,6 +152,12 @@ public class ProductSellingWebModule : AbpModule
             options.Filters.AddService<AuthenticatedRedirectFilter>();
         });
         context.Services.AddSignalR();
+        context.Services.AddTransient<ISpecificationService, SpecificationService>();
+
+        Configure<AbpSignalROptions>(options =>
+        {
+            options.Hubs.AddOrUpdate<OrderHub>();
+        });
     }
 
 
@@ -306,7 +313,7 @@ public class ProductSellingWebModule : AbpModule
         app.UseConfiguredEndpoints(endpoints =>
         {
             // Map your SignalR Hub
-            endpoints.MapHub<OrderHub>("/signalr-hubs/orders"); // <<< ADD THIS
+            endpoints.MapHub<OrderHub>("/signalr-hubs/orders");
         });
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();

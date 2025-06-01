@@ -15,6 +15,6 @@ namespace Acme.ProductSelling.Orders
         //Task<PagedResultDto<OrderDto>> GetListAsync(GetOrderListInput input);
         Task<OrderDto> GetByOrderNumberAsync(string orderNumber);
         Task<PagedResultDto<OrderDto>> GetListForCurrentUserAsync(PagedAndSortedResultRequestDto input);
-        Task ChangeOrderStatus(Guid orderId, OrderStatus newStatus);
+        Task<OrderDto> UpdateStatusAsync(Guid id, UpdateOrderStatusDto input);
     }
 }

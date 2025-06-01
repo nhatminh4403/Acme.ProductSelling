@@ -1,0 +1,155 @@
+@page "/Orders/OrderDetail/{id:Guid}"
+@model Acme.ProductSelling.Web.Pages.Orders.OrderDetailModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Acme.ProductSelling.Localization
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<ProductSellingResource> L
+@{
+    ViewData["Title"] = L["OrderDetails"];
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <h2>@L["OrderDetails"]</h2>
+            </abp-column>
+            <abp-column size-md="_6" class="text-end">
+                <a href="@Url.Page("/Orders/OrderHistory")" class="btn btn-secondary">
+                    <i class="fa fa-arrow-left"></i> @L["BackToOrderHistory"]
+                </a>
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        @if (Model.Order != null)
+        {
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h4>@L["OrderInformation"]</h4>
+                    <table class="table table-borderless">
+                        <tr>
+                            <th>@L["OrderNumber"]:</th>
+                            <td>@Model.Order.OrderNumber</td>
+                        </tr>
+                        <tr>
+                            <th>@L["OrderDate"]:</th>
+                            <td>@Model.Order.OrderDate.ToString("g")</td>
+                        </tr>
+                        <tr>
+                            <th>@L["OrderStatus"]:</th>
+                            <td>
+                                <span class="badge bg-@Model.GetStatusBadgeClass(Model.Order.OrderStatus)" id="orderStatusBadge">
+                                    @L[Model.Order.OrderStatus.ToString()]
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>@L["TotalAmount"]:</th>
+                            <td>@Model.Order.TotalAmount.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h4>@L["CustomerInformation"]</h4>
+                    <table class="table table-borderless">
+                        <tr>
+                            <th>@L["CustomerName"]:</th>
+                            <td>@Model.Order.CustomerName</td>
+                        </tr>
+                        @* <tr>
+                            <th>@L["Email"]:</th>
+                            <td>@Model.Order.</td>
+                        </tr> *@
+                        <tr>
+                            <th>@L["PhoneNumber"]:</th>
+                            <td>@Model.Order.CustomerPhone</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <h4>@L["OrderItems"]</h4>
+            <abp-table striped-rows="true">
+                <thead>
+                    <tr>
+                        <th>@L["Product"]</th>
+                        <th>@L["UnitPrice"]</th>
+                        <th>@L["Quantity"]</th>
+                        <th>@L["Subtotal"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Order.OrderItems)
+                    {
+                        <tr>
+                            <td>@item.ProductName</td>
+                            <td>@item.Price.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                            <td>@item.Quantity</td>
+                            <td>@((item.Price * item.Quantity).ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")))</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-end"><strong>@L["Total"]:</strong></td>
+                        <td><strong>@Model.Order.TotalAmount.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</strong></td>
+                    </tr>
+                </tfoot>
+            </abp-table>
+
+            @* @if (!string.IsNullOrEmpty(Model.Order.Notes))
+            {
+                <div class="mt-4">
+                    <h4>@L["OrderNotes"]</h4>
+                    <p>@Model.Order.Notes</p>
+                </div>
+            } *@
+        }
+        else
+        {
+            <div class="alert alert-warning">
+                @L["OrderNotFound"]
+            </div>
+        }
+    </abp-card-body>
+</abp-card>
+
+@section scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+    <script src="~/js/orderSignalR.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            await window.orderSignalR.start();
+            await window.orderSignalR.joinOrderGroup('@Model.Order.Id');
+
+            window.orderSignalR.onOrderStatusUpdate('@Model.Order.Id', (update) => {
+                const statusBadge = document.getElementById('orderStatusBadge');
+                if (statusBadge) {
+                    statusBadge.textContent = update.newStatus;
+                    statusBadge.className = `badge bg-${getStatusBadgeClass(update.newStatus)}`;
+                    
+                    // Add highlight effect
+                    statusBadge.classList.add('status-updated-highlight');
+                    setTimeout(() => {
+                        statusBadge.classList.remove('status-updated-highlight');
+                    }, 2000);
+                }
+            });
+        });
+
+        function getStatusBadgeClass(status) {
+            switch (status) {
+                case 'Placed': return 'primary';
+                case 'Pending': return 'warning';
+                case 'Confirmed': return 'info';
+                case 'Processing': return 'info';
+                case 'Shipped': return 'primary';
+                case 'Delivered': return 'success';
+                case 'Cancelled': return 'danger';
+                default: return 'secondary';
+            }
+        }
+    </script>
+} 

@@ -12,9 +12,11 @@
     ViewData["Title"] = L["Admin:AllOrders"];
 }
 @section scripts {
-    <abp-script src="/Pages/Admin/Orders/Index.js" />
-    <script src="~/js/admin/Index.js"></script>
-
+    <abp-script-bundle>
+        <abp-script src="~/libs/signalr/browser/signalr.js" />
+        <abp-script src="/js/orderSignalR.js" />
+        <abp-script src="/Pages/Admin/Orders/Index.js" />
+    </abp-script-bundle>
 }
 <abp-card class="py-3 px-1">
     <abp-card-header>

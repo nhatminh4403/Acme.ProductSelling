@@ -4,6 +4,7 @@
 	"private": true,
 	"dependencies": {
 		"@abp/aspnetcore.mvc.ui.theme.leptonxlite": "~4.1.0",
+		"@abp/signalr": "^9.2.0",
 		"my-app": "file:"
 	}
 }

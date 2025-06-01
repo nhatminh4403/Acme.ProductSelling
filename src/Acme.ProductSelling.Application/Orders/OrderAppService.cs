@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Carts;
+using Acme.ProductSelling.Orders.BackgroundJobs;
 using Acme.ProductSelling.Orders.Hubs;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products;
@@ -14,6 +15,7 @@ using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Authorization;
+using Volo.Abp.BackgroundJobs;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
@@ -29,13 +31,15 @@ namespace Acme.ProductSelling.Orders
         private readonly ICurrentUser _currentUser;
         private readonly IRepository<Cart, Guid> _cartRepository;
         private readonly IHubContext<OrderHub, IOrderClient> _orderHubContext;
+        private readonly IBackgroundJobManager _backgroundJobManager;
         public OrderAppService(
             IRepository<Order, Guid> orderRepository,
             IRepository<Product, Guid> productRepository,
             IGuidGenerator guidGenerator,
             ICurrentUser currentUser,
             IRepository<Cart, Guid> cartRepository,
-            IHubContext<OrderHub, IOrderClient> hubContext) : base(orderRepository)
+            IHubContext<OrderHub, IOrderClient> hubContext,
+            IBackgroundJobManager backgroundJobManager) : base(orderRepository)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
@@ -43,6 +47,7 @@ namespace Acme.ProductSelling.Orders
             _currentUser = currentUser;
             _cartRepository = cartRepository;
             _orderHubContext = hubContext;
+            _backgroundJobManager = backgroundJobManager;
             GetPolicyName = ProductSellingPermissions.Orders.Default;
             CreatePolicyName = ProductSellingPermissions.Orders.Create;
             UpdatePolicyName = ProductSellingPermissions.Orders.Edit;
@@ -119,6 +124,18 @@ namespace Acme.ProductSelling.Orders
             order.CalculateTotals();
 
             await _orderRepository.InsertAsync(order, autoSave: true);
+
+            await _backgroundJobManager.EnqueueAsync<SetOrderPendingJobArgs>(
+                   new SetOrderPendingJobArgs { OrderId = order.Id },
+                   delay: TimeSpan.FromMinutes(5)
+
+               );
+
+            // Optional: Gửi thông báo real-time ngay khi đơn hàng được tạo
+            await _orderHubContext.Clients.All.ReceiveOrderStatusUpdate(
+                order.Id,
+                order.Status.ToString()
+            );
             return ObjectMapper.Map<Order, OrderDto>(order);
         }
         [Authorize]
@@ -132,9 +149,6 @@ namespace Acme.ProductSelling.Orders
             {
                 throw new EntityNotFoundException(typeof(Order), id);
             }
-
-
-
             return ObjectMapper.Map<Order, OrderDto>(order);
         }
         public async Task<OrderDto> GetByOrderNumberAsync(string orderNumber)
@@ -171,37 +185,49 @@ namespace Acme.ProductSelling.Orders
             );
         }
 
-
-        [Authorize(ProductSellingPermissions.Orders.ChangeStatus)]
-        public async Task ChangeOrderStatus(Guid orderId, OrderStatus newStatus)
+        [Authorize(ProductSellingPermissions.Orders.Edit)] // Phân quyền cho Admin
+        public async Task<OrderDto> UpdateStatusAsync(Guid id, UpdateOrderStatusDto input)
         {
-            var order = await _orderRepository.GetAsync(orderId);
-            if (order == null)
-            {
-                throw new EntityNotFoundException(typeof(Order), orderId);
-            }
+            var order = await _orderRepository.GetAsync(id);
 
-            var oldStatus = order.Status;
-            order.ChangeStatus(newStatus);
+            // Sử dụng phương thức trong Entity để thay đổi, logic ràng buộc nằm ở đó
+            order.SetStatus(input.NewStatus);
+
             await _orderRepository.UpdateAsync(order, autoSave: true);
 
-            if (order.CustomerId.HasValue)
-            {
-                var message = $"Đơn hàng {order.OrderNumber} đã được cập nhật từ trạng thái {oldStatus} sang {newStatus}";
-                await _orderHubContext.Clients.
-                    User(order.CustomerId.Value.ToString()).
-                    RecieveOrderStatusUpdate(order.Id, order.OrderNumber, newStatus, message);
-            }
-            else
-            {
-                // Nếu không có CustomerId, không gửi thông báo
-                throw new UserFriendlyException(L["OrderHasNoCustomer"]);
-            }
+            // GỬI THÔNG BÁO REAL-TIME
+            await _orderHubContext.Clients.All.ReceiveOrderStatusUpdate(
+                order.Id,
+                order.Status.ToString()
+            );
+
+            return ObjectMapper.Map<Order, OrderDto>(order);
         }
+        protected override async Task<Order> GetEntityByIdAsync(Guid id)
+        {
+            // Dùng WithDetailsAsync để tải các thực thể liên quan nếu cần
+            var order = await Repository.GetAsync(id, includeDetails: true);
+            return order;
+        }
+        protected override IQueryable<Order> ApplyDefaultSorting(IQueryable<Order> query)
+        {
+            return query.OrderByDescending(o => o.CreationTime);
+        }
+        protected override OrderDto MapToGetListOutputDto(Order entity)
+        {
+            var dto = base.MapToGetListOutputDto(entity);
+            dto.OrderStatus = entity.Status;
+            // Dịch và gán StatusText
+            dto.StatusText = L[entity.Status.ToString()];
+            return dto;
+        }
+
         protected override OrderDto MapToGetOutputDto(Order entity)
         {
             var dto = base.MapToGetOutputDto(entity);
             dto.OrderStatus = entity.Status;
+            // Dịch và gán StatusText
+            dto.StatusText = L[entity.Status.ToString()];
             return dto;
         }
     }

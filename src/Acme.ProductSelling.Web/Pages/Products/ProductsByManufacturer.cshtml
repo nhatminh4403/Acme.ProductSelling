@@ -8,13 +8,20 @@
 @inject IStringLocalizer<ProductSellingResource> L
 @{
     ViewData["Title"] = L["ProductByManufacturer"] + " " + Model.ManufacturerName;
-    Layout = "/Views/Shared/_Layout.cshtml"; // Đặt layout cho trang này
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+@functions {
+    public string GetCategoryLocalizerName(string name)
+    {
+        string trimmedName = String.Concat(name.Where(c => !Char.IsWhiteSpace(c)));
+        return "Category:" + trimmedName;
+    }
 }
 <div class="container mt-4">
     <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/">@L["Menu:Home"]</a></li>
-            <li class="breadcrumb-item active" aria-current="page">@L[Model.CategoryName] @L[Model.ManufacturerName]</li>
+            <li class="breadcrumb-item active" aria-current="page">@L[GetCategoryLocalizerName(Model.CategoryName)] @L[Model.ManufacturerName]</li>
         </ol>
     </nav>
 </div>
@@ -48,15 +55,21 @@
                                     </a>
                                 </h6>
                             </div>
-                            @if (product.DiscountPercent > 0)
+                            @if (product.DiscountPercent > 0 || product.DiscountedPrice.HasValue)
                             {
+
+                                var discountedPrice = product.DiscountedPrice.HasValue
+                                ? product.DiscountedPrice.Value.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
+                                : string.Empty;
+
+
                                 <div class="card-text mt-auto">
                                     <div class="text-muted text-decoration-line-through small mb-0">
                                         @product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
                                     </div>
                                     <div class="d-flex align-items-center gap-2">
                                         <span class="fw-bold fs-6 text-danger">
-                                            @product.DiscountedPrice.Value.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
+                                            @discountedPrice
                                         </span>
                                         <span class="badge bg-danger small">-@product.DiscountPercent%</span>
                                     </div>

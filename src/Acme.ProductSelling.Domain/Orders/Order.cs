@@ -47,30 +47,7 @@ namespace Acme.ProductSelling.Orders
             ShippingAddress = Check.NotNullOrWhiteSpace(shippingAddress, nameof(shippingAddress), 500);
             Status = OrderStatus.Placed;
         }
-        public void ChangeStatus(OrderStatus newStatus)
-        {
-            // (Tuỳ chọn) Kiểm tra tính hợp lệ của chuyển trạng thái
-            if (!IsValidTransition(Status, newStatus))
-            {
-                throw new BusinessException("Order:InvalidStatusTransition",
-                    $"Không thể đổi từ {Status} sang {newStatus}");
-            }
-            Status = newStatus;
-        }
-        private bool IsValidTransition(OrderStatus from, OrderStatus to)
-        {
-            // Ví dụ: chỉ cho Confirmed khi đang Placed
-            return (from, to) switch
-            {
-                (OrderStatus.Placed, OrderStatus.Pending) => true,
-                (OrderStatus.Pending, OrderStatus.Confirmed) => true,
-                (OrderStatus.Confirmed, OrderStatus.Processing) => true,
-                (OrderStatus.Processing, OrderStatus.Shipped) => true,
-                (OrderStatus.Placed, OrderStatus.Cancelled) => true,
-                (OrderStatus.Pending, OrderStatus.Cancelled) => true,
-                _ => false
-            };
-        }
+
         public virtual void AddOrderItem(Guid productId, string productName, decimal productPrice, int quantity)
         {
             var existingItem = OrderItems.FirstOrDefault(oi => oi.ProductId == productId);
@@ -90,6 +67,34 @@ namespace Acme.ProductSelling.Orders
             TotalAmount = OrderItems.Sum(oi => oi.LineTotalAmount);
             if (TotalAmount < 0)
                 TotalAmount = 0;
+        }
+        public void SetStatus(OrderStatus newStatus)
+        {
+
+            if (!IsNextStatusValid(newStatus))
+            {
+                throw new UserFriendlyException($"Cannot change status from {Status} to {newStatus}.");
+            }
+            Status = newStatus;
+        }
+        public void SetPendingStatus()
+        {
+            if (Status == OrderStatus.Placed)
+            {
+                Status = OrderStatus.Pending;
+            }
+        }
+
+        private bool IsNextStatusValid(OrderStatus newStatus)
+        {
+            // Cho phép hủy đơn hàng từ một số trạng thái nhất định
+            if (newStatus == OrderStatus.Cancelled &&
+                (Status == OrderStatus.Placed || Status == OrderStatus.Pending || Status == OrderStatus.Confirmed))
+            {
+                return true;
+            }
+            // Chỉ cho phép đi tới, không đi lùi
+            return (int)newStatus > (int)Status;
         }
     }
 }

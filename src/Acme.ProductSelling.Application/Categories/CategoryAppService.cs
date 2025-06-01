@@ -21,11 +21,13 @@ namespace Acme.ProductSelling.Categories
         private readonly IRepository<Product, Guid> _productRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IGuidGenerator _guidGenerator;
+        private readonly ILogger<CategoryAppService> _logger;
 
         public CategoryAppService(
                  ICategoryRepository categoryRepository,
                  IRepository<Product, Guid> productRepository,
-                 IGuidGenerator guidGenerator)
+                 IGuidGenerator guidGenerator,
+                 ILogger<CategoryAppService> logger)
                  : base(categoryRepository)
         {
             _categoryRepository = categoryRepository;
@@ -35,16 +37,18 @@ namespace Acme.ProductSelling.Categories
             UpdatePolicyName = ProductSellingPermissions.Categories.Edit;
             DeletePolicyName = ProductSellingPermissions.Categories.Delete;
             _guidGenerator = guidGenerator;
+            _logger = logger;
         }
 
         // Override CreateAsync to add comprehensive debugging
+
+        [Authorize(ProductSellingPermissions.Categories.Create)]
         public override async Task<CategoryDto> CreateAsync(CreateUpdateCategoryDto input)
         {
             try
             {
-                Logger.LogInformation($"CreateAsync started - Name: {input.Name}, Description: {input.Description}, UrlSlug: {input.UrlSlug}");
+                _logger.LogInformation("Creating new category: {Name}", input.Name);
 
-                // Create the entity using your constructor
                 var categoryId = _guidGenerator.Create();
                 var category = new Category(
                     categoryId,
@@ -54,32 +58,36 @@ namespace Acme.ProductSelling.Categories
                     SpecificationType.None
                 );
 
-                Logger.LogInformation($"Category entity created - ID: {category.Id}, Name: {category.Name}");
-
-                // Insert the entity
                 var insertedCategory = await Repository.InsertAsync(category, autoSave: true);
-                Logger.LogInformation($"Category inserted - ID: {insertedCategory.Id}");
+                _logger.LogInformation("Category created successfully: {Id}", insertedCategory.Id);
 
-                // Verify it was saved by retrieving it
-                var retrievedCategory = await Repository.FindAsync(insertedCategory.Id);
-                if (retrievedCategory != null)
-                {
-                    Logger.LogInformation($"Category successfully retrieved from database - ID: {retrievedCategory.Id}, Name: {retrievedCategory.Name}");
-                }
-                else
-                {
-                    Logger.LogError($"Category was not found in database after insertion - ID: {insertedCategory.Id}");
-                }
-
-                // Map to DTO and return
                 var result = ObjectMapper.Map<Category, CategoryDto>(insertedCategory);
-                Logger.LogInformation($"CreateAsync completed successfully - Result ID: {result.Id}");
-
                 return result;
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, $"Error in CreateAsync: {ex.Message}");
+                _logger.LogError(ex, "Error creating category: {Name}", input.Name);
+                throw;
+            }
+        }
+
+        [Authorize(ProductSellingPermissions.Categories.Edit)]
+        public override async Task<CategoryDto> UpdateAsync(Guid id, CreateUpdateCategoryDto input)
+        {
+            try
+            {
+                _logger.LogInformation("Updating category: {Id}", id);
+                var category = await Repository.GetAsync(id);
+                category.Name = input.Name;
+                category.Description = input.Description;
+                category.UrlSlug = input.UrlSlug;
+                var updatedCategory = await Repository.UpdateAsync(category, autoSave: true);
+                _logger.LogInformation("Category updated successfully: {Id}", updatedCategory.Id);
+                return ObjectMapper.Map<Category, CategoryDto>(updatedCategory);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating category: {Id}", id);
                 throw;
             }
         }
@@ -120,19 +128,5 @@ namespace Acme.ProductSelling.Categories
             return new ListResultDto<CategoryWithManufacturersDto>(categoryWithManufacturersDtos);
         }
 
-        // Keep the original MapToEntityAsync for reference, but it won't be used now
-        protected override Task<Category> MapToEntityAsync(CreateUpdateCategoryDto createInput)
-        {
-            Logger.LogInformation($"MapToEntityAsync called - this should NOT be called if using overridden CreateAsync");
-
-            var category = new Category(
-                _guidGenerator.Create(),
-                createInput.Name,
-                createInput.Description,
-                createInput.UrlSlug,
-                SpecificationType.None
-            );
-            return Task.FromResult(category);
-        }
     }
 }
