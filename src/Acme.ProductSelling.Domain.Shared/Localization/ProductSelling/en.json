@@ -15,18 +15,30 @@
     "PriceRangeAlias:From5MillionTo20Million": "from-5million-to-20million",
     "PriceRangeAlias:Over20Million": "over-20million",
     "Help": "Help",
+    "CloseButton": "Close",
     "Home:CategoryList": "Product Categories",
     "Login:Processing": "Your login request is being processed. Please wait...",
     "Login:Initiated": "Login Initiated",
     "Login:Success": "Login successful!",
     "Login:ErrorDefault": "Login failed. Please check your credentials.",
     "Login:ButtonDefault": "Login",
+    "Login:LoginButton": "Login",
+
+    "Register": "Register",
     "Register:Processing": "Your registration request is being processed. Please wait...",
     "Register:Initiated": "Registration Initiated",
     "Register:PasswordsDoNotMatch": "Passwords do not match.",
     "Register:SuccessAndLoggingIn": "Registration successful! Attempting to log you in...",
     "Register:ErrorDefault": "Registration failed. Please check your input.",
     "Register:ButtonDefault": "Register",
+    "Register:Password": "Password",
+
+    "Register:Email": "Email",
+    "Register:FullName": "Full Name",
+    "Register:ConfirmPassword": "Confirm Password",
+    "Register:HaveAnAccount?": "Already have an account?",
+    "Register:RegisterButton": "Register",
+
     "AutoLogin:ErrorDefault": "Auto-login failed. Please log in manually.",
     "AutoLogin:WarnTitle": "Registration Succeeded, Auto-Login Failed",
     "Button:Processing": "<i class=\"fas fa-spinner fa-spin me-1\"></i> Processing...",
@@ -314,6 +326,12 @@
     "AllCategories": "All Categories",
     "Category:UrlSlug": "URL Slug",
     "EditProduct": "Edit Product",
-    "Name": "Name"
+    "Name": "Name",
+    "Login:Email": "Email",
+    "Login:Password": "Password",
+    "Login:RememberMe": "Remember me",
+    "Login:ForgotPassword": "Forgot password?",
+    "Login:CreateAccount": "Create Account",
+    "Login:LoginHere": "Login Here"
   }
 }
