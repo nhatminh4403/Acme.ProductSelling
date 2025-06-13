@@ -3,37 +3,36 @@
 @using Acme.ProductSelling.Localization
 @inject IStringLocalizer<ProductSellingResource> L
 
-<h5>@L["Storage Details"]</h5>
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["StorageType"]</th>
+            <th>@L["Product:Storage:Type"]</th>
             <td>@Model.StorageType</td>
         </tr>
         <tr>
-            <th>@L["Interface"]</th>
+            <th>@L["Product:Storage:Interface"]</th>
             <td>@Model.Interface</td>
         </tr>
         <tr>
-            <th>@L["Capacity"]</th>
+            <th>@L["Product:Storage:Capacity"]</th>
             <td>@Model.Capacity GB</td>
         </tr>
         <tr>
-            <th>@L["ReadSpeed"]</th>
+            <th>@L["Product:Storage:ReadSpeed"]</th>
             <td>@Model.ReadSpeed MB/s</td>
         </tr>
         <tr>
-            <th>@L["WriteSpeed"]</th>
+            <th>@L["Product:Storage:WriteSpeed"]</th>
             <td>@Model.WriteSpeed MB/s</td>
         </tr>
         <tr>
-            <th>@L["FormFactor"]</th>
+            <th>@L["Product:Storage:FormFactor"]</th>
             <td>@Model.FormFactor</td>
         </tr>
         @if (Model.Rpm.HasValue)
         {
             <tr>
-                <th>@L["RPM"]</th>
+                <th>@L["Product:Storage:RPM"]</th>
                 <td>@Model.Rpm.Value RPM</td>
             </tr>
         }

@@ -2,28 +2,27 @@
 @using Microsoft.Extensions.Localization
 @using Acme.ProductSelling.Localization
 @inject IStringLocalizer<ProductSellingResource> L
-<h5>@L["Headset Details"]</h5>
 
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["Connectivity"]</th>
+            <th>@L["Product:Headset:Connectivity"]</th>
             <td>@Model.Connectivity</td>
         </tr>
         <tr>
-            <th>@L["HasMicrophone"]</th>
-            <td>@L[Model.HasMicrophone ? "Yes" : "No"]</td>
+            <th>@L["Product:Headset:HasMicrophone"]</th>
+            <td>@L[Model.HasMicrophone ? "Product:Yes" : "Product:No"]</td>
         </tr>
         <tr>
-            <th>@L["IsSurroundSound"]</th>
-            <td>@L[Model.IsSurroundSound ? "Yes" : "No"]</td>
+            <th>@L["Product:Headset:IsSurroundSound"]</th>
+            <td>@L[Model.IsSurroundSound ? "Product:Yes" : "Product:No"]</td>
         </tr>
         <tr>
-            <th>@L["IsNoiseCancelling"]</th>
-            <td>@L[Model.IsNoiseCancelling ? "Yes" : "No"]</td>
+            <th>@L["Product:Headset:IsNoiseCancelling"]</th>
+            <td>@L[Model.IsNoiseCancelling ? "Product:Yes" : "Product:No"]</td>
         </tr>
         <tr>
-            <th>@L["DriverSize"]</th>
+            <th>@L["Product:Headset:DriverSize"]</th>
             <td>@Model.DriverSize</td>
         </tr>
     </tbody>

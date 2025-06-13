@@ -3,31 +3,30 @@
 @using Acme.ProductSelling.Localization
 @inject IStringLocalizer<ProductSellingResource> L
 
-<h5>@L["GPU Details"]</h5>
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["Chipset"]</th>
+            <th>@L["Product:GPU:Chipset"]</th>
             <td>@Model.Chipset</td>
         </tr>
         <tr>
-            <th>@L["Memory"]</th>
+            <th>@L["Product:GPU:Memory"]</th>
             <td>@Model.MemorySize GB @Model.MemoryType</td>
         </tr>
         <tr>
-            <th>@L["BoostClock"]</th>
+            <th>@L["Product:GPU:BoostClock"]</th>
             <td>@Model.BoostClock MHz</td>
         </tr>
         <tr>
-            <th>@L["Interface"]</th>
+            <th>@L["Product:GPU:Interface"]</th>
             <td>@Model.Interface</td>
         </tr>
         <tr>
-            <th>@L["RecommendedPSU"]</th>
+            <th>@L["Product:GPU:RecommendedPSU"]</th>
             <td>@Model.RecommendedPsu W</td>
         </tr>
         <tr>
-            <th>@L["Length"]</th>
+            <th>@L["Product:GPU:Length"]</th>
             <td>@Model.Length mm</td>
         </tr>
     </tbody>

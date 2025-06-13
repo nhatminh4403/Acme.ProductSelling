@@ -3,40 +3,28 @@
 @using Acme.ProductSelling.Localization
 @inject IStringLocalizer<ProductSellingResource> L
 
-@* <h5>@L["Case Details"]</h5> *@
-@* <dl class="row mt-3">
-    <dt class="col-sm-4">@L["SupportedMbFormFactor"]</dt>
-    <dd class="col-sm-8">@Model.SupportedMbFormFactor</dd>
-    <dt class="col-sm-4">@L["Color"]</dt>
-    <dd class="col-sm-8">@Model.Color</dd>
-    <dt class="col-sm-4">@L["MaxCpuCoolerHeight"]</dt>
-    <dd class="col-sm-8">@Model.MaxCpuCoolerHeight</dd>
-    <dt class="col-sm-4">@L["MaxGpuLength"]</dt>
-    <dd class="col-sm-8">@Model.MaxGpuLength</dd>
-
-</dl> *@
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["SupportedMbFormFactor"]</th>
+            <th>@L["Product:Case:SupportedMbFormFactor"]</th>
             <td>
                 @Model.SupportedMbFormFactor
             </td>
         </tr>
         <tr>
-            <th>@L["Color"]</th>
+            <th>@L["Product:Case:Color"]</th>
             <td>
                 @Model.Color
             </td>
         </tr>
         <tr>
-            <th>@L["MaxCpuCoolerHeight"]</th>
+            <th>@L["Product:Case:MaxCpuCoolerHeight"]</th>
             <td>
                 @Model.MaxCpuCoolerHeight
             </td>
         </tr>
         <tr>
-            <th>@L["MaxGpuLength"]</th>
+            <th>@L["Product:Case:MaxGpuLength"]</th>
             <td>
                 @Model.MaxGpuLength
             </td>

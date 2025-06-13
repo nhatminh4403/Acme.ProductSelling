@@ -1,30 +1,28 @@
-﻿
-@using Microsoft.Extensions.Localization
+﻿@using Microsoft.Extensions.Localization
 @using Acme.ProductSelling.Localization
 @inject IStringLocalizer<ProductSellingResource> L
 @model Acme.ProductSelling.Specifications.KeyboardSpecificationDto
 
-<h5>@L["Keyboard Details"]</h5>
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["Connectivity"]</th>
+            <th>@L["Product:Keyboard:Connectivity"]</th>
             <td>@Model.Connectivity</td>
         </tr>
         <tr>
-            <th>@L["SwitchType"]</th>
+            <th>@L["Product:Keyboard:SwitchType"]</th>
             <td>@Model.SwitchType</td>
         </tr>
         <tr>
-            <th>@L["KeyboardType"]</th>
+            <th>@L["Product:Keyboard:Type"]</th>
             <td>@Model.KeyboardType</td>
         </tr>
         <tr>
-            <th>@L["Layout"]</th>
+            <th>@L["Product:Keyboard:Layout"]</th>
             <td>@Model.Layout</td>
         </tr>
         <tr>
-            <th>@L["Backlight"]</th>
+            <th>@L["Product:Keyboard:Backlight"]</th>
             <td>@Model.Backlight</td>
         </tr>
     </tbody>

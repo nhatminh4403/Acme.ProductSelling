@@ -3,44 +3,43 @@
 @using Acme.ProductSelling.Localization
 @inject IStringLocalizer<ProductSellingResource> L
 
-    <h5>@L["Monitor Details"]</h5>
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["RefreshRate"]</th>
+            <th>@L["Product:Monitor:RefreshRate"]</th>
             <td>@Model.RefreshRate Hz</td>
         </tr>
         <tr>
-            <th>@L["Resolution"]</th>
+            <th>@L["Product:Monitor:Resolution"]</th>
             <td>@Model.Resolution</td>
         </tr>
         <tr>
-            <th>@L["ScreenSize"]</th>
+            <th>@L["Product:Monitor:ScreenSize"]</th>
             <td>@Model.ScreenSize inches</td>
         </tr>
         <tr>
-            <th>@L["ResponseTime"]</th>
+            <th>@L["Product:Monitor:ResponseTime"]</th>
             <td>@Model.ResponseTime ms</td>
         </tr>
         <tr>
-            <th>@L["PanelType"]</th>
+            <th>@L["Product:Monitor:PanelType"]</th>
             <td>@Model.PanelType</td>
         </tr>
         <tr>
-            <th>@L["ResponseTimeMs"]</th>
+            <th>@L["Product:Monitor:ResponseTimeMs"]</th>
             <td>@Model.ResponseTimeMs ms</td>
         </tr>
         <tr>
-            <th>@L["ColorGamut"]</th>
+            <th>@L["Product:Monitor:ColorGamut"]</th>
             <td>@Model.ColorGamut</td>
         </tr>
         <tr>
-            <th>@L["Brightness"]</th>
+            <th>@L["Product:Monitor:Brightness"]</th>
             <td>@Model.Brightness nits</td>
         </tr>
         <tr>
-            <th>@L["VesaMount"]</th>
-            <td>@L[Model.VesaMount ? "Yes" : "No"]</td>
+            <th>@L["Product:Monitor:VesaMount"]</th>
+            <td>@L[Model.VesaMount ? "Product:Yes" : "Product:No"]</td>
         </tr>
     </tbody>
 </table>

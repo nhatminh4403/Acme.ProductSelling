@@ -3,32 +3,31 @@
 @using Acme.ProductSelling.Localization
 @inject IStringLocalizer<ProductSellingResource> L
 
-<h5>@L["CPU Details"]</h5>
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["Socket"]</th>
+            <th>@L["Product:CPU:Socket"]</th>
             <td>@Model.Socket</td>
         </tr>
         <tr>
-            <th>@L["CoresThreads"]</th>
+            <th>@L["Product:CPU:CoresThreads"]</th>
             <td>@Model.CoreCount / @Model.ThreadCount</td>
         </tr>
         <tr>
-            <th>@L["BaseBoostClock"]</th>
+            <th>@L["Product:CPU:BaseBoostClock"]</th>
             <td>@Model.BaseClock GHz / @Model.BoostClock GHz</td>
         </tr>
         <tr>
-            <th>@L["L3Cache"]</th>
+            <th>@L["Product:CPU:L3Cache"]</th>
             <td>@Model.L3Cache MB</td>
         </tr>
         <tr>
-            <th>@L["TDP"]</th>
+            <th>@L["Product:CPU:TDP"]</th>
             <td>@Model.Tdp W</td>
         </tr>
         <tr>
-            <th>@L["IntegratedGraphics"]</th>
-            <td>@L[Model.HasIntegratedGraphics ? "Yes" : "No"]</td>
+            <th>@L["Product:CPU:IntegratedGraphics"]</th>
+            <td>@L[Model.HasIntegratedGraphics ? "Product:Yes" : "Product:No"]</td>
         </tr>
     </tbody>
 </table>

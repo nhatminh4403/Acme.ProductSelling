@@ -3,32 +3,31 @@
 @using Acme.ProductSelling.Localization
 @inject IStringLocalizer<ProductSellingResource> L
 
-<h5>@L["RAM Details"]</h5>
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["Type"]</th>
+            <th>@L["Product:RAM:Type"]</th>
             <td>@Model.RamType</td>
         </tr>
         <tr>
-            <th>@L["Capacity"]</th>
+            <th>@L["Product:RAM:Capacity"]</th>
             <td>@Model.Capacity GB (@Model.ModuleCount modules)</td>
         </tr>
         <tr>
-            <th>@L["Speed"]</th>
+            <th>@L["Product:RAM:Speed"]</th>
             <td>@Model.Speed MT/s</td>
         </tr>
         <tr>
-            <th>@L["Timing"]</th>
+            <th>@L["Product:RAM:Timing"]</th>
             <td>@Model.Timing</td>
         </tr>
         <tr>
-            <th>@L["Voltage"]</th>
+            <th>@L["Product:RAM:Voltage"]</th>
             <td>@Model.Voltage V</td>
         </tr>
         <tr>
-            <th>@L["RGB"]</th>
-            <td>@L[Model.HasRGB ? "Yes" : "No"]</td>
+            <th>@L["Product:RAM:RGB"]</th>
+            <td>@L[Model.HasRGB ? "Product:Yes" : "Product:No"]</td>
         </tr>
     </tbody>
 </table>

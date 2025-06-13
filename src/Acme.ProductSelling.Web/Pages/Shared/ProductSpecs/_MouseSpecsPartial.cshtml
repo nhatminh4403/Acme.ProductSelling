@@ -3,39 +3,38 @@
 @using Acme.ProductSelling.Localization
 @inject IStringLocalizer<ProductSellingResource> L
 
-<h5>@L["Mouse Details"]</h5>
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["DPI"]</th>
+            <th>@L["Product:Mouse:DPI"]</th>
             <td>@Model.Dpi</td>
         </tr>
         <tr>
-            <th>@L["ButtonCount"]</th>
+            <th>@L["Product:Mouse:ButtonCount"]</th>
             <td>@Model.ButtonCount</td>
         </tr>
         <tr>
-            <th>@L["PollingRate"]</th>
+            <th>@L["Product:Mouse:PollingRate"]</th>
             <td>@Model.PollingRate Hz</td>
         </tr>
         <tr>
-            <th>@L["SensorType"]</th>
+            <th>@L["Product:Mouse:SensorType"]</th>
             <td>@Model.SensorType</td>
         </tr>
         <tr>
-            <th>@L["Weight"]</th>
+            <th>@L["Product:Mouse:Weight"]</th>
             <td>@Model.Weight g</td>
         </tr>
         <tr>
-            <th>@L["Connectivity"]</th>
+            <th>@L["Product:Mouse:Connectivity"]</th>
             <td>@Model.Connectivity</td>
         </tr>
         <tr>
-            <th>@L["Color"]</th>
+            <th>@L["Product:Mouse:Color"]</th>
             <td>@Model.Color</td>
         </tr>
         <tr>
-            <th>@L["BacklightColor"]</th>
+            <th>@L["Product:Mouse:BacklightColor"]</th>
             <td>@Model.BacklightColor</td>
         </tr>
     </tbody>

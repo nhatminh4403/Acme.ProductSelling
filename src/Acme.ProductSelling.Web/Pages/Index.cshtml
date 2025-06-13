@@ -46,14 +46,15 @@
 @{
     ViewData["Title"] = L["Menu:AppName"];
     Layout = "/Views/Shared/_Layout.cshtml";
-    int productsPerSlide = 4; 
+    int productsPerSlide = 4;
 }
 
 @functions {
     public string GetCategoryLocalizerName(string name)
     {
         string trimmedName = String.Concat(name.Where(c => !Char.IsWhiteSpace(c)));
-        return "Category:" + trimmedName;
+        
+        return L["Category:" + trimmedName];
     }
 }
 <div class="container p-0">
@@ -71,7 +72,7 @@
                                         <a asp-page="/Products/ProductsByCategory" asp-route-slug="@category.CategoryUrlSlug"
                                            class="d-flex justify-content-between align-items-center text-decoration-none text-dark">
 
-                                            <span>@L[GetCategoryLocalizerName(category.CategoryName)]</span>
+                                            <span>@GetCategoryLocalizerName(category.CategoryName)</span>
                                             <i class="bi bi-chevron-right small"></i>
                                         </a>
                                         <div class="megamenu-data-source d-none">
@@ -306,13 +307,13 @@
                             </div>
                             <div class="carousel-inner h-100">
                                 <div class="carousel-item active h-100">
-                                    <img src="https://file.hstatic.net/200000722513/file/thang_04_laptop_acer.png" class="d-block h-100 w-100" style="object-fit: cover;" alt="Banner 1">
+                                    <img src="https://file.hstatic.net/200000722513/file/thang_04_laptop_acer.png" class="d-block h-100 w-100" style="object-fit: cover;" alt="Banner 1" loading="lazy">
                                 </div>
                                 <div class="carousel-item h-100">
-                                    <img src="https://file.hstatic.net/200000722513/file/thang_04_laptop_rtx_50series_800x400.jpg" class="d-block h-100 w-100" style="object-fit: cover; " alt="Banner 2">
+                                    <img src="https://file.hstatic.net/200000722513/file/thang_04_laptop_rtx_50series_800x400.jpg" class="d-block h-100 w-100" style="object-fit: cover; " alt="Banner 2" loading="lazy">
                                 </div>
                                 <div class="carousel-item h-100">
-                                    <img src="https://file.hstatic.net/200000722513/file/gearvn-festival-505-slider.jpg" class="d-block h-100 w-100" style="object-fit: cover; " alt="Banner 3">
+                                    <img src="https://file.hstatic.net/200000722513/file/gearvn-festival-505-slider.jpg" class="d-block h-100 w-100" style="object-fit: cover; " alt="Banner 3" loading="lazy">
                                 </div>
                             </div>
                             <button class="carousel-control-prev" type="button" data-bs-target="#mainBannerCarousel" data-bs-slide="prev">
@@ -334,13 +335,13 @@
                 {
                     if (featuredCategory.Products == null || !featuredCategory.Products.Any())
                     {
-                        continue; 
+                        continue;
                     }
                     var carouselId = $"categoryCarousel_{featuredCategory.Category.Id.ToString().Replace("-", "")}";
                     <section class="container my-3 bg-light rounded py-3 product-carousel">
                         <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3 ps-2">
 
-                            <h2 class="m-0">@L["ProductsFromCategory"] @L[GetCategoryLocalizerName(featuredCategory.Category.Name)]</h2>
+                            <h2 class="m-0">@L["ProductsFromCategory"] @GetCategoryLocalizerName(featuredCategory.Category.Name)</h2>
                             <a asp-page="/Products/ProductsByCategory"
                                asp-route-slug="@featuredCategory.Category.UrlSlug"
                                class="btn btn-sm btn-outline-primary">@L["SeeAll"] <i class="bi bi-arrow-right-short"></i></a>
@@ -360,7 +361,7 @@
                                                         @if (!string.IsNullOrWhiteSpace(product.ImageUrl))
                                                         {
                                                             <a asp-page="/Products/ProductDetail" asp-route-slug="@product.UrlSlug">
-                                                                <img src="@product.ImageUrl" class="card-img-top p-3"
+                                                                <img src="@product.ImageUrl" class="card-img-top p-3" loading="lazy"
                                                                      alt="@product.ProductName" style="max-height: 180px; object-fit: contain;">
                                                             </a>
                                                         }
@@ -445,11 +446,12 @@
                             <div class="col-category">
                                 <a asp-page="/Products/ProductsByCategory" asp-route-CategoryId="@category.Id" class="text-decoration-none category-link">
                                     <div class="category-item-wrapper">
-                                        <img src="https://placehold.co/80x80?text= + category.Name.Substring(0,1) : category.ImageUrl)"
+                                        <img src="@( $"https://placehold.co/80x80?text={category.Name.Substring(0,1)}" )"
+                                             loading="lazy"
                                              alt="@category.Name" class="img-fluid category-img mb-2"
                                              style="width: 80px; height: 80px; object-fit: cover;"> @* Added style for consistent image size *@
 
-                                        <div class="category-name text-dark text-center">@category.Name</div> @* Added text-center *@
+                                        <div class="category-name text-dark text-center">@GetCategoryLocalizerName(category.Name)</div> @* Added text-center *@
                                     </div>
                                 </a>
                             </div>

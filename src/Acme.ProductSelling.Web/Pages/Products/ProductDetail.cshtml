@@ -128,8 +128,7 @@
                 </div>
                 <div class="col-md-5">
                     <h2>@Model.Product.ProductName</h2>
-                    <p class="text-muted">@L["Manufacturer"]: @Model.Product.ManufacturerName</p>
-                    <p>@Model.Product.Description</p>
+                    <p class="text-muted">@L["Product:Manufacturer"]: @Model.Product.ManufacturerName</p>
 
                     @if (Model.Product.DiscountPercent > 0)
                     {
@@ -274,8 +273,8 @@
                         <hr />
                         <button class="btn btn-sm btn-outline-primary toggle-button d-block mx-auto"
                                 onclick="toggleContent('content2', this)">
-                            <span class="show-more-text">Expand</span>
-                            <span class="show-less-text d-none">Collapse</span>
+                            <span class="show-more-text">@L["Expand"]</span>
+                            <span class="show-less-text d-none">@L["Collapse"]</span>
                             <i class="bi bi-chevron-down ms-1"></i>
                         </button>
                     </div>

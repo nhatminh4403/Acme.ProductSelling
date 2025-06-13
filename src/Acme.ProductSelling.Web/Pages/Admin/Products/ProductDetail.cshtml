@@ -23,7 +23,7 @@
         <div class="col-md-7 text-center border border-black">
             @if (!string.IsNullOrWhiteSpace(Model.Product.ImageUrl))
             {
-                <img src="@Model.Product.ImageUrl" class="img-fluid rounded border" style="max-width: 250px;" alt="@Model.Product.ProductName">
+                <img src="@Model.Product.ImageUrl" class="img-fluid rounded border" style="max-width: 250px;" alt="@Model.Product.ProductName" loading="lazy">
             }
             else
             {

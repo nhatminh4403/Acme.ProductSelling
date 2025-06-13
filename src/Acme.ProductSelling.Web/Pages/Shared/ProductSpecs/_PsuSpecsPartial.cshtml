@@ -3,24 +3,22 @@
 @using Acme.ProductSelling.Localization
 @inject IStringLocalizer<ProductSellingResource> L
 
-<h5>@L["PSU Details"]</h5>
-
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["Wattage"]</th>
+            <th>@L["Product:PSU:Wattage"]</th>
             <td>@Model.Wattage W</td>
         </tr>
         <tr>
-            <th>@L["EfficiencyRating"]</th>
+            <th>@L["Product:PSU:EfficiencyRating"]</th>
             <td>@Model.EfficiencyRating</td>
         </tr>
         <tr>
-            <th>@L["Modularity"]</th>
+            <th>@L["Product:PSU:Modularity"]</th>
             <td>@Model.Modularity</td>
         </tr>
         <tr>
-            <th>@L["FormFactor"]</th>
+            <th>@L["Product:PSU:FormFactor"]</th>
             <td>@Model.FormFactor</td>
         </tr>
     </tbody>

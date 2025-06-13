@@ -3,47 +3,46 @@
 @using Acme.ProductSelling.Localization
 @inject IStringLocalizer<ProductSellingResource> L
 
-<h5>@L["MotherboardDetail"]</h5>
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["Socket"]</th>
+            <th>@L["Product:Motherboard:Socket"]</th>
             <td>@Model.Socket</td>
         </tr>
         <tr>
-            <th>@L["Chipset"]</th>
+            <th>@L["Product:Motherboard:Chipset"]</th>
             <td>@Model.Chipset</td>
         </tr>
         <tr>
-            <th>@L["RAMSlots"]</th>
+            <th>@L["Product:Motherboard:RAMSlots"]</th>
             <td>@Model.RamSlots</td>
         </tr>
         <tr>
-            <th>@L["MaxRam"]</th>
+            <th>@L["Product:Motherboard:MaxRam"]</th>
             <td>@Model.MaxRam GB</td>
         </tr>
         <tr>
-            <th>@L["FormFactor"]</th>
+            <th>@L["Product:Motherboard:FormFactor"]</th>
             <td>@Model.FormFactor</td>
         </tr>
 @*         <tr>
-            <th>@L["StorageSlots"]</th>
+            <th>@L["Product:Motherboard:StorageSlots"]</th>
             <td>@Model.Stor</td>
         </tr> *@
         <tr>
-            <th>@L["SupportedRamType"]</th>
+            <th>@L["Product:Motherboard:SupportedRamType"]</th>
             <td>@Model.SupportedRamType</td>
         </tr>
         <tr>
-            <th>@L["HasWifi"]</th>
-            <td>@(Model.HasWifi ? L["Yes"] : L["No"])</td>
+            <th>@L["Product:Motherboard:HasWifi"]</th>
+            <td>@(Model.HasWifi ? L["Product:Yes"] : L["Product:No"])</td>
         </tr>
         <tr>
-            <th>@L["SataPorts"]</th>
+            <th>@L["Product:Motherboard:SataPorts"]</th>
             <td>@Model.SataPorts</td>
         </tr>
         <tr>
-            <th>@L["M2Slots"]</th>
+            <th>@L["Product:Motherboard:M2Slots"]</th>
             <td>@Model.M2Slots</td>
         </tr>
     </tbody>

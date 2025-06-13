@@ -53,7 +53,7 @@
     <nav class="navbar navbar-expand-lg navbar-light border-bottom sticky-top border-black" style="background-color: aqua">
         <div class="container">
             <a class="navbar-brand" href="/" aria-label="Home">
-                <img src="~/images/monitor.png" alt="Home" style="width: 75px;aspect-ratio: 16 / 9;" />
+                <img src="~/images/monitor.png" alt="Home" style="width: 75px;aspect-ratio: 16 / 9;" loading="lazy" />
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -218,21 +218,21 @@
                     <div class="mb-4">
                         <h6 class="fw-bold">CÁCH THỨC THANH TOÁN</h6>
                         <div class="d-flex flex-wrap align-items-center gap-2">
-                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_1.png?v=8602"
+                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_1.png?v=8602" loading="lazy"
                                  alt="Internet Banking" width="50">
-                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_2.png?v=8602" alt="JCB"
+                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_2.png?v=8602" alt="JCB" loading="lazy"
                                  width="50">
-                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_3.png?v=8602"
+                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_3.png?v=8602" loading="lazy"
                                  alt="MasterCard" width="50">
-                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_4.png?v=8602" alt="ZaloPay"
+                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_4.png?v=8602" alt="ZaloPay" loading="lazy"
                                  width="50">
-                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_5.png?v=8602" alt="Tiền mặt"
+                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_5.png?v=8602" alt="Tiền mặt" loading="lazy"
                                  width="50">
-                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_6.png?v=8602"
+                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_6.png?v=8602" loading="lazy"
                                  alt="Trả góp 0%" width="50">
-                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_7.png?v=8602" alt="Visa"
+                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_7.png?v=8602" alt="Visa" loading="lazy"
                                  width="50">
-                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_8.png?v=8602" alt="Momo"
+                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_8.png?v=8602" alt="Momo" loading="lazy"
                                  width="50">
                         </div>
                     </div>
@@ -254,21 +254,21 @@
                 <div class="col-md-6 mb-3 mb-md-0 text-decoration-none">
                     <span class="fw-bold me-3">KẾT NỐI VỚI CHÚNG TÔI</span>
                     <a href="#" class="me-2 text-decoration-none">
-                        <img src="https://file.hstatic.net/200000636033/file/facebook_1_0e31d70174824ea184c759534430deec.png"
+                        <img src="https://file.hstatic.net/200000636033/file/facebook_1_0e31d70174824ea184c759534430deec.png" loading="lazy"
                              alt="FB" width="30">
                     </a>
                     <a href="#" class="me-2 text-decoration-none">
-                        <img src="https://file.hstatic.net/200000722513/file/tiktok-logo_fe1e020f470a4d679064cec31bc676e4.png"
+                        <img src="https://file.hstatic.net/200000722513/file/tiktok-logo_fe1e020f470a4d679064cec31bc676e4.png" loading="lazy"
                              alt="TikTok" width="30">
                     </a>
                     <a href="#" class="me-2">
-                        <img src="https://file.hstatic.net/200000636033/file/youtube_1_d8de1f41ca614424aca55aa0c2791684.png"
+                        <img src="https://file.hstatic.net/200000636033/file/youtube_1_d8de1f41ca614424aca55aa0c2791684.png" loading="lazy"
                              alt="YouTube" width="30">
                     </a>
 
                 </div>
                 <div class="col-md-6 text-md-end text-decoration-none">
-                    <img src="https://theme.hstatic.net/200000722513/1001090675/14/logo-bct.png?v=8602"
+                    <img src="https://theme.hstatic.net/200000722513/1001090675/14/logo-bct.png?v=8602" loading="lazy"
                          alt="Đã thông báo Bộ Công Thương" width="150">
                 </div>
             </div>
@@ -285,32 +285,31 @@
                     <form id="loginForm">
                         @Html.AntiForgeryToken()
                         <div class="mb-3">
-                            <label for="loginEmail" class="form-label">Email</label>
+                            <label for="loginEmail" class="form-label">@L["Login:Email"]</label>
                             <input type="text" class="form-control" id="loginEmail" required>
                         </div>
                         <div class="mb-3">
-                            <label for="loginPassword" class="form-label">Password</label>
+                            <label for="loginPassword" class="form-label">@L["Login:Password"]</label>
                             <input type="password" class="form-control" id="loginPassword" required>
                         </div>
                         <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input"
-                                   id="rememberMeCheck"><label class="form-check-label"
-                                                               for="rememberMeCheck">Remember</label>
+                            <input type="checkbox" class="form-check-input" id="rememberMeCheck">
+                            <label class="form-check-label" for="rememberMeCheck">@L["Login:RememberMe"]</label>
                         </div>
                         <p class="text-center small">
-                            <a href="#">Forgot password?</a> |
-                            <a data-bs-toggle="modal"
-                               data-bs-target="#registerModal" data-bs-dismiss="modal">Create Account</a>
+                            <a href="#">@L["Login:ForgotPassword"]</a> |
+                            <a data-bs-toggle="modal" data-bs-target="#registerModal" class="text-decoration-underline"
+                            data-bs-dismiss="modal">@L["Login:CreateAccount"]</a>
                         </p>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary"
                             data-bs-dismiss="modal">
-                        Close
+                        @L["CloseButton"]
                     </button><button type="submit" class="btn btn-primary"
                                      form="loginForm">
-                        @L["Login"]
+                        @L["Login:LoginButton"]
                     </button>
                 </div>
             </div>
@@ -320,45 +319,46 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="registerModalLabel">Register</h5>
+                    <h5 class="modal-title" id="registerModalLabel">@L["Register"]</h5>
                     <button type="button" class="btn-close"
                             data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="registerForm">
                         <div class="mb-3">
-                            <label for="registerName" class="form-label">Full Name</label>
+                            <label for="registerName" class="form-label">@L["Register:FullName"]</label>
                             <input type="text" class="form-control" id="registerName" required>
                         </div>
                         <div class="mb-3">
-                            <label for="registerEmail" class="form-label">Email</label>
+                            <label for="registerEmail" class="form-label">@L["Register:Email"]</label>
                             <input type="email"
                                    class="form-control" id="registerEmail" required>
                         </div>
                         <div class="mb-3">
-                            <label for="registerPassword" class="form-label">Password</label>
+                            <label for="registerPassword" class="form-label">@L["Register:Password"]</label>
                             <input type="password" class="form-control" id="registerPassword" required>
                         </div>
                         <div class="mb-3">
                             <label for="registerConfirmPassword" class="form-label">
-                                Confirm
-                                Password
+                                @L["Register:ConfirmPassword"]
                             </label>
+                                
+                            
                             <input type="password" class="form-control" id="registerConfirmPassword" required>
                         </div>
-                        <p class="text-center small">
-                            Already have an account? <a data-bs-toggle="modal"
-                                                        data-bs-target="#loginModal" data-bs-dismiss="modal">Login Here</a>
+                        <p class="text-center small">@L["Register:HaveAnAccount?"]
+                            <a data-bs-toggle="modal" class="text-decoration-underline text-primary"
+                            data-bs-target="#loginModal" data-bs-dismiss="modal">@L["Login:LoginHere"]</a>
                         </p>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary"
                             data-bs-dismiss="modal">
-                        Close
+                        @L["CloseButton"]
                     </button><button type="submit" class="btn btn-primary"
                                      form="registerForm">
-                        Register
+                        @L["Register:RegisterButton"]
                     </button>
                 </div>
             </div>

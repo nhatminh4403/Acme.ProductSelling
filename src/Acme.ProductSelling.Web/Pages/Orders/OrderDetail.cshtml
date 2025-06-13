@@ -8,8 +8,8 @@
     ViewData["Title"] = L["OrderDetails"];
     Layout = "/Views/Shared/_Layout.cshtml";
 }
-
-<abp-card>
+<div class="container mt-4">
+    <abp-card>
     <abp-card-header>
         <abp-row>
             <abp-column size-md="_6">
@@ -115,6 +115,8 @@
         }
     </abp-card-body>
 </abp-card>
+</div>
+
 
 @section scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
