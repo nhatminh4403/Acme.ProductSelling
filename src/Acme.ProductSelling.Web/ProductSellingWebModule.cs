@@ -310,11 +310,11 @@ public class ProductSellingWebModule : AbpModule
         {
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "ProductSelling API");
         });
-        app.UseConfiguredEndpoints(endpoints =>
-        {
-            // Map your SignalR Hub
-            endpoints.MapHub<OrderHub>("/signalr-hubs/orders");
-        });
+        //app.UseConfiguredEndpoints(endpoints =>
+        //{
+        //    // Map your SignalR Hub
+        //    endpoints.MapHub<OrderHub>("/signalr-hubs/orders");
+        //});
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
         app.UseConfiguredEndpoints();

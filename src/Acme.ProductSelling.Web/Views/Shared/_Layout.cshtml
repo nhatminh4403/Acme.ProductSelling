@@ -10,6 +10,9 @@
 @using Microsoft.AspNetCore.Authorization
 @using Acme.ProductSelling.Permissions
 @using Volo.Abp.Users
+@using Volo.Abp.AspNetCore.Mvc.UI.RazorPages
+@using Volo.Abp.AspNetCore.Mvc.UI.Bundling
+
 @inject ICurrentUser CurrentUser
 @inject IStringLocalizer<ProductSellingResource> L
 @inject IAuthorizationService AuthorizationService
@@ -374,7 +377,7 @@
     <script src="~/libs/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     @await RenderSectionAsync("scripts", required: false)
-    <script src="~/js/cart.js" asp-append-version="true"></script>
+    <script src="~/js/cart.js"></script>
     <script src="~/global-scripts.js"></script>
 </body>
 </html>

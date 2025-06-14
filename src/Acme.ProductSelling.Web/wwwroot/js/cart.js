@@ -1,24 +1,17 @@
 ﻿$(function () {
-    // Global flag to prevent multiple initializations
+
     window.cartInitialized = false;
 
-    // Multiple initialization strategies to ensure script works
-
-    // Strategy 1: Listen for ABP configuration initialized event
     $(document).on('abp.configurationInitialized', function () {
-        console.log('ABP configuration initialized - attempting cart initialization');
         tryInitializeCart();
     });
 
-    // Strategy 2: Listen for document ready and ABP ready
     $(document).ready(function () {
-        console.log('Document ready - checking for ABP');
         waitForABP();
     });
 
-    // Strategy 3: Fallback timer-based initialization
     var initAttempts = 0;
-    var maxAttempts = 20; // Try for up to 10 seconds (20 * 500ms)
+    var maxAttempts = 20;
 
     function waitForABP() {
         if (typeof abp !== 'undefined' &&
@@ -26,49 +19,38 @@
             typeof acme !== 'undefined' &&
             acme.productSelling &&
             acme.productSelling.carts) {
-
-            console.log('ABP and services are ready');
             tryInitializeCart();
             return;
         }
 
         initAttempts++;
         if (initAttempts < maxAttempts) {
-            console.log(`Waiting for ABP... attempt ${initAttempts}/${maxAttempts}`);
             setTimeout(waitForABP, 500);
         } else {
             console.warn('ABP initialization timeout - some features may not work');
-            // Still try to initialize with basic functionality
             tryInitializeCart();
         }
     }
 
     function tryInitializeCart() {
         if (window.cartInitialized) {
-            console.log('Cart already initialized, skipping');
             return;
         }
 
-        // Check if minimum requirements are met
         if (typeof $ === 'undefined') {
             console.error('jQuery is not loaded');
             return;
         }
 
-        console.log('Initializing cart functionality');
         initializeCartFunctionality();
     }
 
     function initializeCartFunctionality() {
-        // Prevent multiple initialization
         if (window.cartInitialized) {
             return;
         }
         window.cartInitialized = true;
 
-        console.log('Cart functionality initialized');
-
-        // Safe service access with fallbacks
         var cartService = null;
         var localizationResource = null;
 
@@ -83,14 +65,13 @@
             if (typeof abp !== 'undefined' && abp.localization) {
                 localizationResource = abp.localization.getResource('ProductSelling');
             } else {
-                // Fallback localization function
                 localizationResource = function (key) {
                     var fallbacks = {
-                        'InvalidProduct': 'Invalid product',
-                        'AddingToCart': 'Adding...',
-                        'CartServiceNotAvailable': 'Cart service not available',
-                        'ItemAddedToCart': 'Item added to cart',
-                        'CouldNotAddItemToCart': 'Could not add item to cart'
+                        'Cart:InvalidProduct': 'Invalid product',
+                        'Cart:AddingToCart': 'Adding...',
+                        'Cart:CartServiceNotAvailable': 'Cart service not available',
+                        'Cart:ItemAddedToCart': 'Item added to cart',
+                        'Cart:CouldNotAddItemToCart': 'Could not add item to cart'
                     };
                     return fallbacks[key] || key;
                 };
@@ -101,14 +82,12 @@
 
         function isUserAuthenticated() {
             try {
-                // Primary check: ABP current user
                 if (typeof abp !== 'undefined' &&
                     abp.currentUser &&
                     abp.currentUser.isAuthenticated) {
                     return true;
                 }
 
-                // Fallback checks
                 if ($('a[href="/Account/Logout"]').length > 0) {
                     return true;
                 }
@@ -127,21 +106,15 @@
             return false;
         }
 
-        // Initialize cart count if user is authenticated
         if (isUserAuthenticated()) {
             updateCartWidgetCount();
         }
 
-        // Event handler for add to cart buttons
         $('body').off('click.cart').on('click.cart', '.add-to-cart-button', function (e) {
             e.preventDefault();
             var $button = $(this);
 
-            console.log('Add to cart button clicked');
-
-            // Check authentication status
             if (!isUserAuthenticated()) {
-                console.log('User not authenticated, redirecting to login');
                 var returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
                 var basePath = '';
 
@@ -158,12 +131,10 @@
 
             var productId = $button.data('product-id');
             if (!productId) {
-                console.warn('No product ID found');
-                showNotification('warn', localizationResource('InvalidProduct'));
+                showNotification('warn', localizationResource('Cart:InvalidProduct'));
                 return;
             }
 
-            // Get quantity
             var quantityInputId = '#quantity-for-' + productId;
             var $quantityInput = $(quantityInputId);
 
@@ -179,38 +150,30 @@
                 }
             }
 
-            // Disable button and show loading state
             $button.prop('disabled', true).addClass('disabled');
             var originalButtonHtml = $button.html();
-            $button.html('<i class="fas fa-spinner fa-spin me-1"></i>' + localizationResource('AddingToCart'));
+            $button.html('<i class="fas fa-spinner fa-spin me-1"></i>' + localizationResource('Cart:AddingToCart'));
 
             function resetButton() {
                 $button.prop('disabled', false).removeClass('disabled');
                 $button.html(originalButtonHtml);
             }
 
-            // Validate cart service
             if (!cartService || typeof cartService.addItem !== 'function') {
-                console.error('Cart service not available');
-                showNotification('error', localizationResource('CartServiceNotAvailable'));
+                showNotification('error', localizationResource('Cart:CartServiceNotAvailable'));
                 resetButton();
                 return;
             }
-
-            console.log('Adding item to cart:', { ProductId: productId, Quantity: quantity });
 
             cartService.addItem({
                 ProductId: productId,
                 Quantity: parseInt(quantity)
             }).then(function (result) {
-                console.log('Item added to cart successfully:', result);
-                showNotification('success', localizationResource('ItemAddedToCart'));
+                showNotification('success', localizationResource('Cart:ItemAddedToCart'));
                 updateCartWidgetCount();
                 resetButton();
             }).catch(function (error) {
-                console.error("Add to cart error:", error);
-
-                var errorMessage = localizationResource('CouldNotAddItemToCart');
+                var errorMessage = localizationResource('Cart:CouldNotAddItemToCart');
 
                 if (error && error.message) {
                     errorMessage = error.message;
@@ -225,13 +188,11 @@
             });
         });
 
-        // Helper function for notifications
         function showNotification(type, message) {
             try {
                 if (typeof abp !== 'undefined' && abp.notify) {
                     abp.notify[type](message);
                 } else {
-                    // Fallback to alert or console
                     if (type === 'error') {
                         alert('Error: ' + message);
                     } else if (type === 'warn') {
@@ -239,11 +200,9 @@
                     } else {
                         alert(message);
                     }
-                    console.log(type.toUpperCase() + ':', message);
                 }
             } catch (error) {
                 console.error('Error showing notification:', error);
-                console.log(type.toUpperCase() + ':', message);
             }
         }
     }
@@ -263,12 +222,12 @@
             var $countElement = $cartButton.find('.badge');
 
             if ($cartButton.length === 0) {
-                console.log('Cart button not found');
                 return;
             }
 
             if ($countElement.length === 0) {
-                $countElement = $('<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>');
+                $countElement =
+                    $('<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>');
                 $cartButton.append($countElement);
             }
 
@@ -296,13 +255,11 @@
             }
 
             if (!cartService || typeof cartService.getItemCount !== 'function') {
-                console.log('Cart service or getItemCount not available');
                 $countElement.addClass('d-none');
                 return;
             }
 
             cartService.getItemCount().then(function (count) {
-                console.log('Cart count updated:', count);
                 $countElement.text(count || 0);
                 if (count && count > 0) {
                     $countElement.removeClass('d-none');
@@ -318,6 +275,5 @@
         }
     }
 
-    // Expose updateCartWidgetCount globally for other scripts to use
     window.updateCartWidgetCount = updateCartWidgetCount;
 });

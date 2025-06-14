@@ -127,7 +127,7 @@ namespace Acme.ProductSelling.Orders
 
             await _backgroundJobManager.EnqueueAsync<SetOrderPendingJobArgs>(
                    new SetOrderPendingJobArgs { OrderId = order.Id },
-                   delay: TimeSpan.FromMinutes(5)
+                   delay: TimeSpan.FromSeconds(30) // Delay 30 seconds before setting to pending status
 
                );
 

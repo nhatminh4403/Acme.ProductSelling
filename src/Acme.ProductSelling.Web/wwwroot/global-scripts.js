@@ -209,16 +209,13 @@ $(function () {
     }
 });
 
-// Enhanced Login and Register functionality - FIXED FOR ABP API
 $(function () {
     // Function to get CSRF token
     function getCSRFToken() {
-        // Try multiple ways to get the token
         var token = $('input[name="__RequestVerificationToken"]').val() ||
             $('meta[name="__RequestVerificationToken"]').attr('content') ||
             document.querySelector('input[name="__RequestVerificationToken"]')?.value ||
             (typeof abp !== 'undefined' && abp.security ? abp.security.antiForgery.getToken() : null);
-
         return token;
     }
 
@@ -229,14 +226,12 @@ $(function () {
             'Accept': 'application/json'
         };
 
-        // Add CSRF token if available
         var csrfToken = getCSRFToken();
         if (csrfToken) {
             headers['RequestVerificationToken'] = csrfToken;
             headers['X-CSRF-TOKEN'] = csrfToken;
         }
 
-        // Add ABP tenant header if available
         if (typeof abp !== 'undefined' && abp.multiTenancy && abp.multiTenancy.getTenantIdCookie) {
             var tenantId = abp.multiTenancy.getTenantIdCookie();
             if (tenantId) {
@@ -260,94 +255,145 @@ $(function () {
             }
         }
 
-        // Fallback translations
         const fallbackTranslations = {
-            'Login:Processing': 'Processing login...',
-            'Login:Initiated': 'Login Started',
-            'Login:Success': 'Login successful!',
-            'Login:ErrorDefault': 'Login failed. Please check your credentials and try again.',
-            'Login:ErrorTitle': 'Login Error',
-            'Login:ButtonDefault': 'Login',
-            'Register:Processing': 'Processing registration...',
-            'Register:Initiated': 'Registration Started',
-            'Register:SuccessAndLoggingIn': 'Registration successful! Logging you in...',
-            'Register:ErrorDefault': 'Registration failed. Please check your input and try again.',
-            'Register:ButtonDefault': 'Register',
-            'Register:PasswordsDoNotMatch': 'Passwords do not match.',
-            'Validation:ErrorTitle': 'Validation Error',
-            'AutoLogin:ErrorDefault': 'Registration was successful, but auto-login failed. Please log in manually.',
-            'AutoLogin:WarnTitle': 'Auto-login Warning'
+            'Login:Processing': 'Đang xử lý đăng nhập...',
+            'Login:Initiated': 'Bắt đầu đăng nhập',
+            'Login:Success': 'Đăng nhập thành công!',
+            'Login:ErrorDefault': 'Đăng nhập thất bại. Vui lòng kiểm tra thông tin và thử lại.',
+            'Login:ErrorTitle': 'Lỗi đăng nhập',
+            'Login:ButtonDefault': 'Đăng nhập',
+            'Register:Processing': 'Đang xử lý đăng ký...',
+            'Register:Initiated': 'Bắt đầu đăng ký',
+            'Register:SuccessAndLoggingIn': 'Đăng ký thành công! Đang đăng nhập...',
+            'Register:ErrorDefault': 'Đăng ký thất bại. Vui lòng kiểm tra thông tin và thử lại.',
+            'Register:ButtonDefault': 'Đăng ký',
+            'Register:PasswordsDoNotMatch': 'Mật khẩu không khớp.',
+            'Validation:ErrorTitle': 'Lỗi xác thực',
+            'AutoLogin:ErrorDefault': 'Đăng ký thành công nhưng tự động đăng nhập thất bại. Vui lòng đăng nhập thủ công.',
+            'AutoLogin:WarnTitle': 'Cảnh báo tự động đăng nhập'
         };
 
         return fallbackTranslations[key] || key;
     };
 
-    // Enhanced notification system
-    function showTemporaryNotificationAndProceed(message, title, delayMilliseconds, actionCallback, notificationOptions = {}) {
-        if (typeof abp !== 'undefined' && abp.notify && abp.notify.info) {
-            const mergedOptions = { timeOut: delayMilliseconds, ...notificationOptions };
-            abp.notify.info(message, title, mergedOptions);
-        } else {
-            console.log((title ? title + ": " : "") + message);
+    // FIXED: Enhanced notification system - prevent duplicates
+    var activeNotifications = new Set();
+
+    function showUniqueNotification(message, title, type = 'info', options = {}) {
+        // Create unique key for notification
+        const notificationKey = `${type}-${title}-${message}`;
+
+        // Prevent duplicate notifications
+        if (activeNotifications.has(notificationKey)) {
+            return;
         }
 
-        setTimeout(function () {
-            actionCallback();
-        }, delayMilliseconds);
+        activeNotifications.add(notificationKey);
+
+        // Remove from active set after delay
+        setTimeout(() => {
+            activeNotifications.delete(notificationKey);
+        }, options.timeOut || 5000);
+
+        if (typeof abp !== 'undefined' && abp.notify && abp.notify[type]) {
+            abp.notify[type](message, title, options);
+        } else {
+            console.log(`${type.toUpperCase()}: ${title ? title + ": " : ""}${message}`);
+        }
     }
 
-    // Initialize ABP notify system with fallbacks
+    // FIXED: Simplified notification function without auto-proceed
+    function showNotification(message, title, type = 'info', options = {}) {
+        showUniqueNotification(message, title, type, options);
+    }
+
+    // Initialize ABP notify system with fallbacks and duplicate prevention
     window.abp = window.abp || {};
     abp.notify = abp.notify || {};
     abp.message = abp.message || {};
 
+    // Override ABP notify functions to prevent duplicates
+    const originalNotify = {
+        success: abp.notify.success,
+        error: abp.notify.error,
+        info: abp.notify.info,
+        warn: abp.notify.warn
+    };
+
     if (typeof abp.notify.success !== 'function') {
-        abp.notify.success = function (message, title) {
-            console.log("Success:", (title ? title + ": " : "") + message);
-            if (typeof toastr !== 'undefined') {
-                toastr.success(message, title);
-            } else {
-                alert("Success: " + message);
-            }
+        abp.notify.success = function (message, title, options) {
+            showUniqueNotification(message, title, 'success', options);
         };
-    }
-    if (typeof abp.notify.error !== 'function') {
-        abp.notify.error = function (message, title) {
-            console.error("Error:", (title ? title + ": " : "") + message);
-            if (typeof toastr !== 'undefined') {
-                toastr.error(message, title);
-            } else {
-                alert("Error: " + message);
-            }
-        };
-    }
-    if (typeof abp.notify.info !== 'function') {
-        abp.notify.info = function (message, title, options) {
-            console.info("Info:", (title ? title + ": " : "") + message);
-            if (typeof toastr !== 'undefined') {
-                toastr.info(message, title, options);
-            }
-        };
-    }
-    if (typeof abp.notify.warn !== 'function') {
-        abp.notify.warn = function (message, title) {
-            console.warn("Warning:", (title ? title + ": " : "") + message);
-            if (typeof toastr !== 'undefined') {
-                toastr.warning(message, title);
-            } else {
-                alert("Warning: " + message);
+    } else {
+        abp.notify.success = function (message, title, options) {
+            const notificationKey = `success-${title}-${message}`;
+            if (!activeNotifications.has(notificationKey)) {
+                activeNotifications.add(notificationKey);
+                setTimeout(() => activeNotifications.delete(notificationKey), 5000);
+                originalNotify.success.call(this, message, title, options);
             }
         };
     }
 
-    // --- ENHANCED LOGIN LOGIC - FIXED FOR ABP API ---
+    if (typeof abp.notify.error !== 'function') {
+        abp.notify.error = function (message, title, options) {
+            showUniqueNotification(message, title, 'error', options);
+        };
+    } else {
+        abp.notify.error = function (message, title, options) {
+            const notificationKey = `error-${title}-${message}`;
+            if (!activeNotifications.has(notificationKey)) {
+                activeNotifications.add(notificationKey);
+                setTimeout(() => activeNotifications.delete(notificationKey), 5000);
+                originalNotify.error.call(this, message, title, options);
+            }
+        };
+    }
+
+    if (typeof abp.notify.info !== 'function') {
+        abp.notify.info = function (message, title, options) {
+            showUniqueNotification(message, title, 'info', options);
+        };
+    } else {
+        abp.notify.info = function (message, title, options) {
+            const notificationKey = `info-${title}-${message}`;
+            if (!activeNotifications.has(notificationKey)) {
+                activeNotifications.add(notificationKey);
+                setTimeout(() => activeNotifications.delete(notificationKey), 5000);
+                originalNotify.info.call(this, message, title, options);
+            }
+        };
+    }
+
+    if (typeof abp.notify.warn !== 'function') {
+        abp.notify.warn = function (message, title, options) {
+            showUniqueNotification(message, title, 'warn', options);
+        };
+    } else {
+        abp.notify.warn = function (message, title, options) {
+            const notificationKey = `warn-${title}-${message}`;
+            if (!activeNotifications.has(notificationKey)) {
+                activeNotifications.add(notificationKey);
+                setTimeout(() => activeNotifications.delete(notificationKey), 5000);
+                originalNotify.warn.call(this, message, title, options);
+            }
+        };
+    }
+
+    // --- ENHANCED LOGIN LOGIC ---
     var $loginModalElement = $('#loginModal');
     var loginForm = $('#loginForm');
     var loginButton, originalLoginButtonText;
+    var isLoginInProgress = false; // Prevent multiple submissions
 
     if (loginForm.length) {
         loginForm.on('submit', function (e) {
             e.preventDefault();
+
+            // Prevent multiple submissions
+            if (isLoginInProgress) {
+                return;
+            }
 
             // Enhanced validation
             if (typeof $.fn.validate === 'function' && !loginForm.valid()) {
@@ -359,15 +405,15 @@ $(function () {
             const password = $('#loginPassword').val();
 
             if (!email || !password) {
-                abp.notify.error('Please fill in all required fields.', 'Validation Error');
+                showNotification('Vui lòng điền đầy đủ thông tin bắt buộc.', 'Lỗi xác thực', 'error');
                 return;
             }
 
+            isLoginInProgress = true;
             loginButton = $(this).find('button[type="submit"]');
             originalLoginButtonText = loginButton.html();
-            loginButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Processing...');
+            loginButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Đang xử lý...');
 
-            // FIXED: Correct ABP API login payload
             var loginData = {
                 userNameOrEmailAddress: email,
                 password: password,
@@ -379,8 +425,11 @@ $(function () {
                 rememberMe: loginData.rememberMe
             });
 
-            function performLogin() {
-                // FIXED: Use proper ABP API call with correct headers
+            // Show processing notification
+            showNotification(L('Login:Processing'), L('Login:Initiated'), 'info', { timeOut: 1000 });
+
+            // Perform login after short delay
+            setTimeout(() => {
                 $.ajax({
                     url: '/api/account/login',
                     type: 'POST',
@@ -406,7 +455,7 @@ $(function () {
                         } catch (e) {
                             errorData = {
                                 error: {
-                                    message: `Server error (${xhr.status}): ${xhr.statusText || error}`,
+                                    message: `Lỗi server (${xhr.status}): ${xhr.statusText || error}`,
                                     details: xhr.responseText
                                 }
                             };
@@ -414,20 +463,13 @@ $(function () {
                         handleLoginError(errorData);
                     },
                     complete: function () {
-                        // Reset button state
+                        isLoginInProgress = false;
                         if (loginButton) {
-                            loginButton.prop('disabled', false).html(originalLoginButtonText || 'Login');
+                            loginButton.prop('disabled', false).html(originalLoginButtonText || 'Đăng nhập');
                         }
                     }
                 });
-            }
-
-            showTemporaryNotificationAndProceed(
-                L('Login:Processing'),
-                L('Login:Initiated'),
-                800,
-                performLogin
-            );
+            }, 800);
         });
     }
 
@@ -445,8 +487,8 @@ $(function () {
                 console.warn("Could not hide login modal:", e);
             }
         }
-
         abp.notify.success(L('Login:Success'));
+        showNotification(L('Login:Success'), '', 'success', { timeOut: 2000 });
 
         // Enhanced redirect logic
         setTimeout(() => {
@@ -464,7 +506,6 @@ $(function () {
 
         var errorMessage;
 
-        // Handle ABP error format
         if (error && error.error) {
             if (error.error.message) {
                 errorMessage = error.error.message;
@@ -479,7 +520,6 @@ $(function () {
             errorMessage = error;
         }
 
-        // Handle validation errors (common ABP pattern)
         if (error && error.error && error.error.validationErrors) {
             var validationMessages = [];
             for (var key in error.error.validationErrors) {
@@ -496,14 +536,14 @@ $(function () {
             errorMessage = L('Login:ErrorDefault');
         }
 
-        abp.notify.error(errorMessage, L('Login:ErrorTitle'));
+        showNotification(errorMessage, L('Login:ErrorTitle'), 'error');
     }
 
     // Enhanced modal reset
     if ($loginModalElement.length) {
         $loginModalElement.on('hidden.bs.modal', function (event) {
+            isLoginInProgress = false;
             if (loginForm.length && loginForm[0]) {
-                // Reset validation if jQuery Validate is present
                 if (typeof loginForm.validate === 'function') {
                     try {
                         loginForm.validate().resetForm();
@@ -511,64 +551,64 @@ $(function () {
                         console.warn("Could not reset validation:", e);
                     }
                 }
-                // Remove Bootstrap validation classes
                 loginForm.find('.is-invalid').removeClass('is-invalid');
                 loginForm.find('.invalid-feedback').remove();
-                // Reset form
                 loginForm[0].reset();
             }
-            // Reset button
             if (loginButton) {
                 loginButton.prop('disabled', false).html(originalLoginButtonText || L('Login:ButtonDefault'));
             }
         });
     }
 
-    // --- ENHANCED REGISTER LOGIC - FIXED FOR ABP API ---
+    // --- ENHANCED REGISTER LOGIC ---
     var registerModalElement = document.getElementById('registerModal');
     var registerForm = $('#registerForm');
     var registerButton, originalRegisterButtonText;
+    var isRegisterInProgress = false;
 
     if (registerForm.length) {
         registerForm.on('submit', function (e) {
             e.preventDefault();
 
-            // Enhanced validation
+            if (isRegisterInProgress) {
+                return;
+            }
+
             if (typeof $.fn.validate === 'function' && !registerForm.valid()) {
                 return;
             }
 
-            // Client-side validation
             const name = $('#registerName').val().trim();
             const email = $('#registerEmail').val().trim();
             const password = $('#registerPassword').val();
             const confirmPassword = $('#registerConfirmPassword').val();
 
             if (!name || !email || !password || !confirmPassword) {
-                abp.notify.error('Please fill in all required fields.', 'Validation Error');
+                showNotification('Vui lòng điền đầy đủ thông tin bắt buộc.', 'Lỗi xác thực', 'error');
                 return;
             }
 
             if (password !== confirmPassword) {
-                abp.notify.error(L('Register:PasswordsDoNotMatch'), L('Validation:ErrorTitle'));
+                showNotification(L('Register:PasswordsDoNotMatch'), L('Validation:ErrorTitle'), 'error');
                 return;
             }
 
             if (password.length < 6) {
-                abp.notify.error('Password must be at least 6 characters long.', 'Validation Error');
+                showNotification('Mật khẩu phải có ít nhất 6 ký tự.', 'Lỗi xác thực', 'error');
                 return;
             }
 
+            isRegisterInProgress = true;
             registerButton = $(this).find('button[type="submit"]');
             originalRegisterButtonText = registerButton.html();
-            registerButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Processing...');
+            registerButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Đang xử lý...');
 
-            // FIXED: Correct ABP API register payload
             var currentRegisterData = {
                 userName: name,
                 emailAddress: email,
                 password: password,
-                appName: "ProductSelling" // Add your app name if required
+                appName: "ProductSelling"
             };
 
             console.log("Attempting registration with data:", {
@@ -577,8 +617,9 @@ $(function () {
                 appName: currentRegisterData.appName
             });
 
-            function performRegistration() {
-                // FIXED: Use proper ABP API call
+            showNotification(L('Register:Processing'), L('Register:Initiated'), 'info', { timeOut: 1000 });
+
+            setTimeout(() => {
                 $.ajax({
                     url: '/api/account/register',
                     type: 'POST',
@@ -604,7 +645,7 @@ $(function () {
                         } catch (e) {
                             errorData = {
                                 error: {
-                                    message: `Registration failed (${xhr.status}): ${xhr.statusText || error}`,
+                                    message: `Đăng ký thất bại (${xhr.status}): ${xhr.statusText || error}`,
                                     details: xhr.responseText
                                 }
                             };
@@ -612,28 +653,21 @@ $(function () {
                         handleRegisterError(errorData);
                     },
                     complete: function () {
+                        isRegisterInProgress = false;
                         if (registerButton) {
-                            registerButton.prop('disabled', false).html(originalRegisterButtonText || 'Register');
+                            registerButton.prop('disabled', false).html(originalRegisterButtonText || 'Đăng ký');
                         }
                     }
                 });
-            }
-
-            showTemporaryNotificationAndProceed(
-                L('Register:Processing'),
-                L('Register:Initiated'),
-                800,
-                performRegistration
-            );
+            }, 800);
         });
     }
 
     function handleRegisterSuccess(result, registeredUserData) {
         console.log("Processing registration success:", result);
 
-        abp.notify.success(L('Register:SuccessAndLoggingIn'));
+        showNotification(L('Register:SuccessAndLoggingIn'), '', 'success');
 
-        // Hide register modal
         if (registerModalElement) {
             var modalInstance = bootstrap.Modal.getInstance(registerModalElement);
             if (modalInstance) {
@@ -641,7 +675,6 @@ $(function () {
             }
         }
 
-        // Attempt auto-login
         setTimeout(() => {
             attemptAutoLogin(registeredUserData.emailAddress, registeredUserData.password);
         }, 1000);
@@ -652,7 +685,6 @@ $(function () {
 
         var errorMessage;
 
-        // Handle ABP error format
         if (error && error.error) {
             if (error.error.message) {
                 errorMessage = error.error.message;
@@ -667,7 +699,6 @@ $(function () {
             errorMessage = error;
         }
 
-        // Handle validation errors
         if (error && error.error && error.error.validationErrors) {
             var validationMessages = [];
             for (var key in error.error.validationErrors) {
@@ -684,7 +715,7 @@ $(function () {
             errorMessage = L('Register:ErrorDefault');
         }
 
-        abp.notify.error(errorMessage, 'Registration Error');
+        showNotification(errorMessage, 'Lỗi đăng ký', 'error');
     }
 
     function attemptAutoLogin(userNameOrEmail, password) {
@@ -696,7 +727,6 @@ $(function () {
             rememberMe: false
         };
 
-        // Use same login logic as main login
         $.ajax({
             url: '/api/account/login',
             type: 'POST',
@@ -706,7 +736,7 @@ $(function () {
             timeout: 10000,
             success: function (loginResult) {
                 console.log("Auto-login successful:", loginResult);
-                abp.notify.success(L('Login:Success'));
+                showNotification(L('Login:Success'), '', 'success');
 
                 setTimeout(() => {
                     var returnUrl = new URLSearchParams(window.location.search).get('ReturnUrl');
@@ -735,7 +765,7 @@ $(function () {
                     // Use default message
                 }
 
-                abp.notify.warn(errorMessage, L('AutoLogin:WarnTitle'));
+                showNotification(errorMessage, L('AutoLogin:WarnTitle'), 'warn');
             }
         });
     }
@@ -743,8 +773,8 @@ $(function () {
     // Enhanced register modal reset
     if (registerModalElement) {
         registerModalElement.addEventListener('hidden.bs.modal', function (event) {
+            isRegisterInProgress = false;
             if (registerForm.length && registerForm[0]) {
-                // Reset validation
                 if (typeof registerForm.validate === 'function') {
                     try {
                         registerForm.validate().resetForm();
@@ -752,20 +782,13 @@ $(function () {
                         console.warn("Could not reset register validation:", e);
                     }
                 }
-                // Remove Bootstrap validation classes
                 registerForm.find('.is-invalid').removeClass('is-invalid');
                 registerForm.find('.invalid-feedback').remove();
-                // Reset form
                 registerForm[0].reset();
             }
-            // Reset button
             if (registerButton) {
                 registerButton.prop('disabled', false).html(originalRegisterButtonText || L('Register:ButtonDefault'));
             }
         });
     }
 });
-
-
-//Cart
-

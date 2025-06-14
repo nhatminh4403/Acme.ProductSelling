@@ -334,6 +334,25 @@
     "Login:RememberMe": "Remember me",
     "Login:ForgotPassword": "Forgot password?",
     "Login:CreateAccount": "Create Account",
-    "Login:LoginHere": "Login Here"
+    "Login:LoginHere": "Login Here",
+
+    "Cart:InvalidProduct": "Invalid product",
+    "Cart:AddingToCart": "Adding...",
+    "Cart:CartServiceNotAvailable": "Cart service not available",
+    "Cart:ItemAddedToCart": "Item added to cart",
+    "Cart:CouldNotAddItemToCart": "Could not add item to cart",
+    "Cart:LoggingOut": "Logging out...",
+    "Cart:PleaseWait": "Please wait",
+    "Cart:LogoutComplete": "Logout Complete",
+    "Cart:LogoutSuccess": "You have been logged out successfully.",
+    "Cart:Processing": "Processing...",
+    "Cart:ValidationError": "Validation Error",
+    "Cart:PleaseFillAllFields": "Please fill in all required fields.",
+    "Cart:PasswordLength": "Password must be at least 6 characters long.",
+    "Cart:RegistrationError": "Registration Error",
+
+    "SignalR:OrderStatusUpdated": "Order status updated",
+    "SignalR:ConnectionError": "SignalR Connection Error",
+    "SignalR:HubConnected": "Order SignalR Hub Connected."
   }
 }

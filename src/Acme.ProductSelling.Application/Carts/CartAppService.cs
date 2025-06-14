@@ -12,7 +12,7 @@ using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
 using Volo.Abp.Users;
-
+using Microsoft.AspNetCore.Mvc;
 namespace Acme.ProductSelling.Carts
 {
     [Authorize] // Chỉ cho phép người dùng đã đăng nhập truy cập
@@ -37,8 +37,7 @@ namespace Acme.ProductSelling.Carts
 
         private Guid GetCurrentUserId()
         {
-            // Do có [Authorize] ở class, về lý thuyết Id sẽ không bao giờ null
-            // Nhưng kiểm tra lại cho chắc chắn
+
             return _currentUser.Id ?? throw new AbpAuthorizationException("User is not authenticated.");
         }
 
@@ -114,7 +113,7 @@ namespace Acme.ProductSelling.Carts
                 throw new UserFriendlyException("Failed to retrieve shopping cart. Please try again.");
             }
         }
-
+        [IgnoreAntiforgeryToken]
         public async Task AddItemAsync(AddToCartInput input)
         {
             try

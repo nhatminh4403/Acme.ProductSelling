@@ -328,6 +328,25 @@
     "Category:UrlSlug": "URL Slug",
     "EditProduct": "Chỉnh sửa sản phẩm",
     "Name": "Tên",
-    "Admin:Dashboard": "Bảng điều khiển"
+    "Admin:Dashboard": "Bảng điều khiển",
+
+    "Cart:InvalidProduct": "Sản phẩm không hợp lệ",
+    "Cart:AddingToCart": "Đang thêm...",
+    "Cart:CartServiceNotAvailable": "Dịch vụ giỏ hàng không khả dụng",
+    "Cart:ItemAddedToCart": "Đã thêm sản phẩm vào giỏ hàng",
+    "Cart:CouldNotAddItemToCart": "Không thể thêm sản phẩm vào giỏ hàng",
+    "Cart:LoggingOut": "Đang đăng xuất...",
+    "Cart:PleaseWait": "Vui lòng đợi",
+    "Cart:LogoutComplete": "Đăng xuất hoàn tất",
+    "Cart:LogoutSuccess": "Bạn đã đăng xuất thành công.",
+    "Cart:Processing": "Đang xử lý...",
+    "Cart:ValidationError": "Lỗi xác thực",
+    "Cart:PleaseFillAllFields": "Vui lòng điền đầy đủ thông tin.",
+    "Cart:PasswordLength": "Mật khẩu phải có ít nhất 6 ký tự.",
+    "Cart:RegistrationError": "Lỗi đăng ký",
+
+    "SignalR:OrderStatusUpdated": "Cập nhật trạng thái đơn hàng",
+    "SignalR:ConnectionError": "Lỗi kết nối SignalR",
+    "SignalR:HubConnected": "Đã kết nối SignalR Hub đơn hàng."
   }
 }
