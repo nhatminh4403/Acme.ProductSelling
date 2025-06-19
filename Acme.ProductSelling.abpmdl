@@ -100,6 +100,10 @@
     "Acme.ProductSelling.Domain": {
       "path": "src/Acme.ProductSelling.Domain/Acme.ProductSelling.Domain.abppkg",
       "folder": "src"
+    },
+    "Acme.ProductSelling.PaymentGateway": {
+      "path": "src/Acme.ProductSelling.PaymentGateway/Acme.ProductSelling.PaymentGateway.abppkg",
+      "folder": "src"
     }
   }
 }

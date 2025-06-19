@@ -1,4 +1,4 @@
-@page "/Orders/OrderDetail/{id:Guid}"
+﻿@page "/Orders/OrderDetail/{id:Guid}"
 @model Acme.ProductSelling.Web.Pages.Orders.OrderDetailModel
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Acme.ProductSelling.Localization
@@ -116,42 +116,26 @@
     </abp-card-body>
 </abp-card>
 </div>
-
-
+@functions {
+    // Helper để lấy class màu cho badge
+    string GetStatusBadgeClass(Acme.ProductSelling.Orders.OrderStatus status)
+    {
+        return status switch
+        {
+            Acme.ProductSelling.Orders.OrderStatus.Placed => "bg-info",
+            Acme.ProductSelling.Orders.OrderStatus.Pending => "bg-light text-dark",
+            Acme.ProductSelling.Orders.OrderStatus.Confirmed => "bg-primary",
+            Acme.ProductSelling.Orders.OrderStatus.Processing => "bg-warning",
+            Acme.ProductSelling.Orders.OrderStatus.Shipped => "bg-success",
+            Acme.ProductSelling.Orders.OrderStatus.Delivered => "bg-dark",
+            Acme.ProductSelling.Orders.OrderStatus.Cancelled => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+}
 @section scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
-    <script src="~/js/orderSignalR.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", async () => {
-            await window.orderSignalR.start();
-            await window.orderSignalR.joinOrderGroup('@Model.Order.Id');
-
-            window.orderSignalR.onOrderStatusUpdate('@Model.Order.Id', (update) => {
-                const statusBadge = document.getElementById('orderStatusBadge');
-                if (statusBadge) {
-                    statusBadge.textContent = update.newStatus;
-                    statusBadge.className = `badge bg-${getStatusBadgeClass(update.newStatus)}`;
-                    
-                    // Add highlight effect
-                    statusBadge.classList.add('status-updated-highlight');
-                    setTimeout(() => {
-                        statusBadge.classList.remove('status-updated-highlight');
-                    }, 2000);
-                }
-            });
-        });
-
-        function getStatusBadgeClass(status) {
-            switch (status) {
-                case 'Placed': return 'primary';
-                case 'Pending': return 'warning';
-                case 'Confirmed': return 'info';
-                case 'Processing': return 'info';
-                case 'Shipped': return 'primary';
-                case 'Delivered': return 'success';
-                case 'Cancelled': return 'danger';
-                default: return 'secondary';
-            }
-        }
-    </script>
-} 
+    <abp-script-bundle>
+        <abp-script src="/libs/signalr/browser/signalr.js"/>
+        <abp-script src="/js/orderSignalR.js" />
+    </abp-script-bundle>
+}

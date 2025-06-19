@@ -74,9 +74,16 @@
         }
         else
         {
+            
             <div class="alert alert-info">
                 @L["NoOrdersFound"]
+
             </div>
+            <div class="text-center">
+                <a asp-page="/Index" class="btn btn-primary">@L["ContinueShopping"]</a>
+
+            </div>
+
         }
     </abp-card-body>
 </abp-card>
@@ -89,7 +96,7 @@
         return status switch
         {
             Acme.ProductSelling.Orders.OrderStatus.Placed => "bg-info",
-            Acme.ProductSelling.Orders.OrderStatus.Pending => "bg-light text-dark",
+            Acme.ProductSelling.Orders.OrderStatus.Pending => "bg-light text-dark border-1",
             Acme.ProductSelling.Orders.OrderStatus.Confirmed => "bg-primary",
             Acme.ProductSelling.Orders.OrderStatus.Processing => "bg-warning",
             Acme.ProductSelling.Orders.OrderStatus.Shipped => "bg-success",
@@ -101,7 +108,6 @@
 }
 @section scripts {
     <abp-script-bundle>
-        <abp-script src="~/libs/signalr/browser/signalr.js"/>
-        <abp-script src="~/js/orderSignalR.js" />
+
     </abp-script-bundle>
 }

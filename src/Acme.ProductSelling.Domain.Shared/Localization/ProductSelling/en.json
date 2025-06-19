@@ -8,7 +8,8 @@
     "Welcome": "Welcome",
     "CategoryDeletionConfirmationMessage": "Are you sure you want to delete this category?",
     "SuccessfullyDeleted": "Successfully deleted",
-
+    "Or": "Or",
+    "BackToOrderHistory": "Return to History",
     "ProductDeletionConfirmationMessage": "Are you sure you want to delete this product?",
     "PriceRangeAlias:Under1Million": "under-1million",
     "PriceRangeAlias:From1MillionTo5Million": "from-1million-to-5million",

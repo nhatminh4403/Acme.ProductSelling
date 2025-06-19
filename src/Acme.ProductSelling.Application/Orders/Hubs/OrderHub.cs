@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Threading.Tasks;
 using Volo.Abp.AspNetCore.SignalR;
@@ -31,9 +30,9 @@ namespace Acme.ProductSelling.Orders.Hubs
             await base.OnConnectedAsync();
         }
 
-        public Task ReceiveOrderStatusUpdate(Guid orderId, string newStatus)
+        public Task ReceiveOrderStatusUpdate(Guid orderId, string newStatus, string statusTextLocalized)
         {
-            return Clients.Caller.ReceiveOrderStatusUpdate(orderId, newStatus);
+            return Clients.Caller.ReceiveOrderStatusUpdate(orderId, newStatus, statusTextLocalized);
         }
     }
 }

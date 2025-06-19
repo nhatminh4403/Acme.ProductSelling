@@ -1,6 +1,5 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Permissions;
-using Acme.ProductSelling.Specifications;
 using Acme.ProductSelling.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +13,6 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
-using Volo.Abp.ObjectMapping;
 namespace Acme.ProductSelling.Products
 {
     public class ProductAppService : CrudAppService<

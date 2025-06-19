@@ -6,7 +6,6 @@ using Volo.Abp.Modularity;
 using Volo.Abp.PermissionManagement;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
-using Volo.Abp.BackgroundWorkers;
 namespace Acme.ProductSelling;
 [DependsOn(
     typeof(ProductSellingDomainModule),

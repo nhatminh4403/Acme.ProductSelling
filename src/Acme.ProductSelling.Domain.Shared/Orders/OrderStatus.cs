@@ -2,12 +2,12 @@
 {
     public enum OrderStatus
     {
-        Placed,     
-        Pending,     
-        Confirmed,   
-        Processing,   
-        Shipped,     
-        Delivered,  
+        Placed,
+        Pending,
+        Confirmed,
+        Processing,
+        Shipped,
+        Delivered,
         Cancelled
     }
 }

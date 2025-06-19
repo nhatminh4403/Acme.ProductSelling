@@ -39,6 +39,7 @@
     "Menu:AppName": "XComputer",
     "LongWelcomeMessage": "Chào mừng bạn đến với ứng dụng. Đây là một dự án khởi đầu dựa trên nền tảng ABP. Để biết thêm thông tin, hãy truy cập",
     "Welcome": "Chào mừng",
+    "Or": "Hoặc",
     "CategoryDeletionConfirmationMessage": "Bạn có chắc chắn muốn xóa danh mục này không?",
     "SuccessfullyDeleted": "Xóa thành công",
     "Expand": "Mở rộng",
@@ -321,7 +322,8 @@
     "Cancelled": "Đã hủy",
     "Failed": "Thất bại",
     "NoOrdersFound": "Không tìm thấy đơn hàng",
-
+    "ViewOrderHistory": "Xem lịch sử đặt hàng",
+    "BackToOrderHistory":"Trở về Lịch sử đặt hàng",
     "Menu:ProductByPrice": "Sản phẩm theo giá",
     "Admin:AllOrders": "Tất cả đơn hàng",
     "AllCategories": "Tất cả danh mục",

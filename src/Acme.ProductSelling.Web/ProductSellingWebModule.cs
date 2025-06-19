@@ -187,6 +187,7 @@ public class ProductSellingWebModule : AbpModule
                     bundle.AddContributors(typeof(DatatablesNetScriptContributor));
                     bundle.AddFiles("/js/cart.js");
                     bundle.AddFiles("/global-scripts.js");
+                    //bundle.AddFiles("/js/orderSignalR.js");
                 }
                 );
         });
@@ -310,14 +311,14 @@ public class ProductSellingWebModule : AbpModule
         {
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "ProductSelling API");
         });
-        //app.UseConfiguredEndpoints(endpoints =>
-        //{
-        //    // Map your SignalR Hub
-        //    endpoints.MapHub<OrderHub>("/signalr-hubs/orders");
-        //});
+        app.UseConfiguredEndpoints(endpoints =>
+        {
+            // Map your SignalR Hub
+            endpoints.MapHub<OrderHub>("/signalr-hubs/orders");
+        });
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
-        app.UseConfiguredEndpoints();
+        //app.UseConfiguredEndpoints();
 
     }
 }

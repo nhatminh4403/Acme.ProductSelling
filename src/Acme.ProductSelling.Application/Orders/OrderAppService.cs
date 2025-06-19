@@ -86,7 +86,7 @@ namespace Acme.ProductSelling.Orders
             var order = new Order(
                 _guidGenerator.Create(),
                 orderNumber,
-                DateTime.UtcNow,
+                DateTime.Now,
                 customerId,
                 customerName,
                 input.CustomerPhone,
@@ -127,14 +127,15 @@ namespace Acme.ProductSelling.Orders
 
             await _backgroundJobManager.EnqueueAsync<SetOrderPendingJobArgs>(
                    new SetOrderPendingJobArgs { OrderId = order.Id },
-                   delay: TimeSpan.FromSeconds(30) // Delay 30 seconds before setting to pending status
+                   delay: TimeSpan.FromSeconds(10) // Delay 30 seconds before setting to pending status
 
                );
 
             // Optional: Gửi thông báo real-time ngay khi đơn hàng được tạo
             await _orderHubContext.Clients.All.ReceiveOrderStatusUpdate(
                 order.Id,
-                order.Status.ToString()
+                order.Status.ToString(),
+                L[order.Status.ToString()]
             );
             return ObjectMapper.Map<Order, OrderDto>(order);
         }
@@ -171,7 +172,7 @@ namespace Acme.ProductSelling.Orders
             var currentUserId = _currentUser.Id.Value;
 
             var queryable = (await _orderRepository.GetQueryableAsync())
-                            .Where(o => o.CustomerId == currentUserId);
+                            .Where(o => o.CustomerId == currentUserId).AsNoTracking();
             var totalCount = await AsyncExecuter.CountAsync(queryable);
 
             var orders = await AsyncExecuter.ToListAsync(
@@ -198,7 +199,8 @@ namespace Acme.ProductSelling.Orders
             // GỬI THÔNG BÁO REAL-TIME
             await _orderHubContext.Clients.All.ReceiveOrderStatusUpdate(
                 order.Id,
-                order.Status.ToString()
+                order.Status.ToString(),
+                L[order.Status.ToString()]
             );
 
             return ObjectMapper.Map<Order, OrderDto>(order);

@@ -87,13 +87,11 @@ namespace Acme.ProductSelling.Orders
 
         private bool IsNextStatusValid(OrderStatus newStatus)
         {
-            // Cho phép hủy đơn hàng từ một số trạng thái nhất định
             if (newStatus == OrderStatus.Cancelled &&
                 (Status == OrderStatus.Placed || Status == OrderStatus.Pending || Status == OrderStatus.Confirmed))
             {
                 return true;
             }
-            // Chỉ cho phép đi tới, không đi lùi
             return (int)newStatus > (int)Status;
         }
     }
