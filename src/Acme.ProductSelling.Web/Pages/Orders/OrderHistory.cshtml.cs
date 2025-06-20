@@ -27,6 +27,7 @@ namespace Acme.ProductSelling.Web.Pages.Orders
         public OrderHistoryModel(IOrderAppService orderAppService)
         {
             _orderAppService = orderAppService;
+            Orders = new PagedResultDto<OrderDto>();
         }
 
         public async Task OnGetAsync()
