@@ -30,7 +30,7 @@ namespace Acme.ProductSelling.Orders.BackgroundJobs
             _orderRepository = orderRepository;
             _orderHubContext = orderHubContext;
             _localizer = localizer;
-            _logger = logger; // Khởi tạo logger
+            _logger = logger; 
             _distributedEventBus = distributedEventBus;
         }
 

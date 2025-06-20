@@ -97,7 +97,7 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
         CreateMap<LaptopSpecification, LaptopSpecificationDto>();
         CreateMap<CreateUpdateLaptopSpecificationDto, LaptopSpecification>();
 
-        CreateMap<Order, OrderDto>();
+        CreateMap<Order, OrderDto>().ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => src.Status));
         CreateMap<CreateOrderDto, Order>()
             .ForMember(dest => dest.OrderItems, opt => opt.Ignore())
             .ForMember(dest => dest.TotalAmount, opt => opt.Ignore());

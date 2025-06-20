@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Auditing;
 using Volo.Abp.Authorization;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.Domain.Entities;
@@ -161,6 +162,7 @@ namespace Acme.ProductSelling.Orders
             }
             return ObjectMapper.Map<Order, OrderDto>(order);
         }
+        [DisableAuditing]
         [Authorize]
         public async Task<PagedResultDto<OrderDto>> GetListForCurrentUserAsync(PagedAndSortedResultRequestDto input)
         {
@@ -172,7 +174,10 @@ namespace Acme.ProductSelling.Orders
             var currentUserId = _currentUser.Id.Value;
 
             var queryable = (await _orderRepository.GetQueryableAsync())
-                            .Where(o => o.CustomerId == currentUserId).AsNoTracking();
+                            .Where(o => o.CustomerId == currentUserId);
+            queryable = queryable.AsNoTracking()
+                                 .Include(o => o.OrderItems) // Include OrderItems for details
+                                 .OrderByDescending(o => o.CreationTime); // Default sort by CreationTime descending
             var totalCount = await AsyncExecuter.CountAsync(queryable);
 
             var orders = await AsyncExecuter.ToListAsync(
@@ -180,9 +185,17 @@ namespace Acme.ProductSelling.Orders
                     .OrderBy(input.Sorting ?? $"{nameof(Order.OrderDate)} DESC") // Default sort by OrderDate descending
                     .PageBy(input)
             );
+            var orderDtos = orders.Select(MapToGetOutputDto).ToList();
+
+            // Quan trọng: Áp dụng lại logic dịch thuật giống như trong các phương thức MapTo... khác
+            foreach (var dto in orderDtos)
+            {
+                dto.StatusText = L[dto.OrderStatus.ToString()];
+            }
+
             return new PagedResultDto<OrderDto>(
                 totalCount,
-                ObjectMapper.Map<List<Order>, List<OrderDto>>(orders)
+                orderDtos
             );
         }
 
