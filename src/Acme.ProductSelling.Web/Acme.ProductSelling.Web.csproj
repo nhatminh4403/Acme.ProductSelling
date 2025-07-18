@@ -19,16 +19,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Controllers\**" />
     <Compile Remove="Data\**" />
     <Compile Remove="Logs\**" />
-    <Content Remove="Controllers\**" />
     <Content Remove="Data\**" />
     <Content Remove="Logs\**" />
-    <EmbeddedResource Remove="Controllers\**" />
     <EmbeddedResource Remove="Data\**" />
     <EmbeddedResource Remove="Logs\**" />
-    <None Remove="Controllers\**" />
     <None Remove="Data\**" />
     <None Remove="Logs\**" />
   </ItemGroup>

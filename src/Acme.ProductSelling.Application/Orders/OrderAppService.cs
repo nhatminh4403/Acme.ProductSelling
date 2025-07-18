@@ -1,11 +1,13 @@
 ﻿using Acme.ProductSelling.Carts;
 using Acme.ProductSelling.Orders.BackgroundJobs;
 using Acme.ProductSelling.Orders.Hubs;
+using Acme.ProductSelling.Payments;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using NUglify.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,8 +25,7 @@ using Volo.Abp.Guids;
 using Volo.Abp.Users;
 namespace Acme.ProductSelling.Orders
 {
-    public class OrderAppService : CrudAppService<Order, OrderDto,
-        Guid, PagedAndSortedResultRequestDto, CreateOrderDto>, IOrderAppService
+    public class OrderAppService : ApplicationService, IOrderAppService
     {
         private readonly IRepository<Order, Guid> _orderRepository;
         private readonly IRepository<Product, Guid> _productRepository;
@@ -33,6 +34,9 @@ namespace Acme.ProductSelling.Orders
         private readonly IRepository<Cart, Guid> _cartRepository;
         private readonly IHubContext<OrderHub, IOrderClient> _orderHubContext;
         private readonly IBackgroundJobManager _backgroundJobManager;
+        private readonly IPaymentGatewayResolver _paymentGatewayResolver;
+        private readonly IOrderNotificationService _orderNotificationService;
+
         public OrderAppService(
             IRepository<Order, Guid> orderRepository,
             IRepository<Product, Guid> productRepository,
@@ -40,7 +44,9 @@ namespace Acme.ProductSelling.Orders
             ICurrentUser currentUser,
             IRepository<Cart, Guid> cartRepository,
             IHubContext<OrderHub, IOrderClient> hubContext,
-            IBackgroundJobManager backgroundJobManager) : base(orderRepository)
+            IBackgroundJobManager backgroundJobManager,
+            IPaymentGatewayResolver gatewayResolver,
+            IOrderNotificationService orderNotificationService)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
@@ -49,36 +55,40 @@ namespace Acme.ProductSelling.Orders
             _cartRepository = cartRepository;
             _orderHubContext = hubContext;
             _backgroundJobManager = backgroundJobManager;
-            GetPolicyName = ProductSellingPermissions.Orders.Default;
-            CreatePolicyName = ProductSellingPermissions.Orders.Create;
-            UpdatePolicyName = ProductSellingPermissions.Orders.Edit;
-            DeletePolicyName = ProductSellingPermissions.Orders.Delete;
+            _paymentGatewayResolver = gatewayResolver;
+            _orderNotificationService = orderNotificationService;
+
+            //GetPolicyName = ProductSellingPermissions.Orders.Default;
+            //CreatePolicyName = ProductSellingPermissions.Orders.Create;
+            //UpdatePolicyName = ProductSellingPermissions.Orders.Edit;
+            //DeletePolicyName = ProductSellingPermissions.Orders.Delete;
         }
-        public override async Task<PagedResultDto<OrderDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+        public async Task<PagedResultDto<OrderDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
-            var queryable = await Repository.GetQueryableAsync();
+            var query = (await _orderRepository.GetQueryableAsync())
+                .Include(o => o.OrderItems);
 
-            var query = queryable.Include(o => o.OrderItems).AsNoTracking();
-            var queryResult = await AsyncExecuter.ToListAsync(query);
-
-            var orderDtos = ObjectMapper.Map<List<Order>, List<OrderDto>>(queryResult);
-
-            var totalCount = await Repository.GetCountAsync();
+            var totalCount = await AsyncExecuter.CountAsync(query);
+            var items = await AsyncExecuter.
+                ToListAsync(query.OrderBy(input.Sorting ?? "CreationTime DESC").PageBy(input));
 
             return new PagedResultDto<OrderDto>(
                 totalCount,
-                orderDtos
+                ObjectMapper.Map<List<Order>, List<OrderDto>>(items)
             );
         }
 
-        public override async Task<OrderDto> CreateAsync(CreateOrderDto input)
+
+        public async Task<CreateOrderResultDto> CreateAsync(CreateOrderDto input)
         {
-            var orderNumber = $"DH-{DateTime.UtcNow:yyyyMMddHHmmss}-{_guidGenerator.Create().ToString("N").Substring(0, 6)}";
+            var orderNumber =
+                $"DH-{DateTime.UtcNow:yyyyMMddHHmmss}" +
+                $"-{_guidGenerator.Create().ToString("N").Substring(0, 6)}";
 
             var customerId = _currentUser.Id;
-            var customerName = input.CustomerName;
-            var cart = await (await _cartRepository.WithDetailsAsync(c => c.Items)) // Include Items
+            var cart = await (await _cartRepository.WithDetailsAsync(c => c.Items))
                                   .FirstOrDefaultAsync(c => c.UserId == customerId);
+
             if (cart == null || !cart.Items.Any())
             {
                 throw new UserFriendlyException(L["ShoppingCartIsEmpty"]);
@@ -89,9 +99,10 @@ namespace Acme.ProductSelling.Orders
                 orderNumber,
                 DateTime.Now,
                 customerId,
-                customerName,
+                input.CustomerName,
                 input.CustomerPhone,
-                input.ShippingAddress
+                input.ShippingAddress,
+                input.PaymentMethod
             );
 
             var productIds = input.Items.Select(i => i.ProductId).Distinct().ToList();
@@ -123,25 +134,35 @@ namespace Acme.ProductSelling.Orders
             }
 
             order.CalculateTotals();
+            var gateway = _paymentGatewayResolver.Resolve(input.PaymentMethod);
+
+            // B4: Xử lý qua gateway
+            var gatewayResult = await gateway.ProcessAsync(order);
+
+            order.SetStatus(gatewayResult.NextOrderStatus);
 
             await _orderRepository.InsertAsync(order, autoSave: true);
 
-            await _backgroundJobManager.EnqueueAsync<SetOrderPendingJobArgs>(
-                   new SetOrderPendingJobArgs { OrderId = order.Id },
-                   delay: TimeSpan.FromSeconds(10) // Delay 30 seconds before setting to pending status
+            if (order.PaymentMethod == "COD" && order.Status == OrderStatus.Placed)
+            {
+                await _backgroundJobManager.EnqueueAsync<SetOrderPendingJobArgs>(
+                    new SetOrderPendingJobArgs { OrderId = order.Id },
+                    delay: TimeSpan.FromMinutes(5)
+                );
+            }
 
-               );
+            // B8: Gửi thông báo
+            await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
 
-            // Optional: Gửi thông báo real-time ngay khi đơn hàng được tạo
-            await _orderHubContext.Clients.All.ReceiveOrderStatusUpdate(
-                order.Id,
-                order.Status.ToString(),
-                L[order.Status.ToString()]
-            );
-            return ObjectMapper.Map<Order, OrderDto>(order);
+            return new CreateOrderResultDto
+            {
+                Order = ObjectMapper.Map<Order, OrderDto>(order),
+                RedirectUrl = gatewayResult.RedirectUrl
+            };
+
         }
         [Authorize]
-        public override async Task<OrderDto> GetAsync(Guid id)
+        public async Task<OrderDto> GetAsync(Guid id)
         {
             var order = await (await
                             _orderRepository.WithDetailsAsync(o => o.OrderItems))
@@ -162,9 +183,11 @@ namespace Acme.ProductSelling.Orders
             }
             return ObjectMapper.Map<Order, OrderDto>(order);
         }
+
         [DisableAuditing]
         [Authorize]
-        public async Task<PagedResultDto<OrderDto>> GetListForCurrentUserAsync(PagedAndSortedResultRequestDto input)
+        public async Task<PagedResultDto<OrderDto>>
+            GetListForCurrentUserAsync(PagedAndSortedResultRequestDto input)
         {
             if (!_currentUser.IsAuthenticated || _currentUser.Id == null)
             {
@@ -174,28 +197,21 @@ namespace Acme.ProductSelling.Orders
             var currentUserId = _currentUser.Id.Value;
 
             var queryable = (await _orderRepository.GetQueryableAsync())
-                            .Where(o => o.CustomerId == currentUserId);
-            queryable = queryable.AsNoTracking()
-                                 .Include(o => o.OrderItems) // Include OrderItems for details
-                                 .OrderByDescending(o => o.CreationTime); // Default sort by CreationTime descending
+                            .Where(o => o.CustomerId == currentUserId)
+                            .Include(o => o.OrderItems)
+                             .OrderByDescending(o => o.CreationTime).AsNoTracking();
+
             var totalCount = await AsyncExecuter.CountAsync(queryable);
 
             var orders = await AsyncExecuter.ToListAsync(
                 queryable
-                    .OrderBy(input.Sorting ?? $"{nameof(Order.OrderDate)} DESC") // Default sort by OrderDate descending
+                    .OrderBy(input.Sorting ?? $"{nameof(Order.OrderDate)} DESC")
                     .PageBy(input)
             );
-            var orderDtos = orders.Select(MapToGetOutputDto).ToList();
-
-            // Quan trọng: Áp dụng lại logic dịch thuật giống như trong các phương thức MapTo... khác
-            foreach (var dto in orderDtos)
-            {
-                dto.StatusText = L[dto.OrderStatus.ToString()];
-            }
 
             return new PagedResultDto<OrderDto>(
                 totalCount,
-                orderDtos
+                 ObjectMapper.Map<List<Order>, List<OrderDto>>(orders)
             );
         }
 
@@ -204,7 +220,6 @@ namespace Acme.ProductSelling.Orders
         {
             var order = await _orderRepository.GetAsync(id);
 
-            // Sử dụng phương thức trong Entity để thay đổi, logic ràng buộc nằm ở đó
             order.SetStatus(input.NewStatus);
 
             await _orderRepository.UpdateAsync(order, autoSave: true);
@@ -218,32 +233,25 @@ namespace Acme.ProductSelling.Orders
 
             return ObjectMapper.Map<Order, OrderDto>(order);
         }
-        protected override async Task<Order> GetEntityByIdAsync(Guid id)
+
+        [Authorize]
+        public async Task DeleteAsync(Guid id)
         {
-            // Dùng WithDetailsAsync để tải các thực thể liên quan nếu cần
-            var order = await Repository.GetAsync(id, includeDetails: true);
-            return order;
-        }
-        protected override IQueryable<Order> ApplyDefaultSorting(IQueryable<Order> query)
-        {
-            return query.OrderByDescending(o => o.CreationTime);
-        }
-        protected override OrderDto MapToGetListOutputDto(Order entity)
-        {
-            var dto = base.MapToGetListOutputDto(entity);
-            dto.OrderStatus = entity.Status;
-            // Dịch và gán StatusText
-            dto.StatusText = L[entity.Status.ToString()];
-            return dto;
+            var order = await _orderRepository.GetAsync(id, includeDetails: true); // include OrderItems
+            if (order.CustomerId != CurrentUser.Id) throw new AbpAuthorizationException("Không có quyền.");
+
+            order.CancelByUser();
+
+            order.OrderItems.ForEach(async item =>
+            {
+                var product = await _productRepository.GetAsync(item.ProductId);
+                product.StockCount += item.Quantity;
+                await _productRepository.UpdateAsync(product, autoSave: true);
+            });
+
+            await _orderRepository.UpdateAsync(order);
+            await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
         }
 
-        protected override OrderDto MapToGetOutputDto(Order entity)
-        {
-            var dto = base.MapToGetOutputDto(entity);
-            dto.OrderStatus = entity.Status;
-            // Dịch và gán StatusText
-            dto.StatusText = L[entity.Status.ToString()];
-            return dto;
-        }
     }
 }

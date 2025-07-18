@@ -15,7 +15,6 @@ namespace Acme.ProductSelling.Orders
         public string OrderNumber { get; set; }
         public DateTime OrderDate { get; set; }
         public Guid? CustomerId { get; set; }
-        // Thông tin khách hàng cơ bản
         [Required]
         [StringLength(100)]
         public string CustomerName { get; set; }
@@ -24,9 +23,11 @@ namespace Acme.ProductSelling.Orders
         public string CustomerPhone { get; set; }
         [Required]
         public string ShippingAddress { get; set; }
-        // Tổng tiền đơn hàng (vẫn cần thiết)
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalAmount { get; set; }
+        [Required]
+        public string PaymentMethod { get; set; } // Thêm phương thức thanh toán
+
         public OrderStatus Status { get; private set; }
         public virtual ICollection<OrderItem> OrderItems { get; set; } = new HashSet<OrderItem>();
 
@@ -34,7 +35,9 @@ namespace Acme.ProductSelling.Orders
         {
         }
 
-        public Order(Guid id, string orderNumber, DateTime orderDate, Guid? customerId, string customerName, string customerPhone, string shippingAddress)
+        public Order(Guid id, string orderNumber, DateTime orderDate, Guid? customerId,
+            string customerName, string customerPhone,
+            string shippingAddress, string payingMethod)
             : base(id)
         {
             OrderNumber = Check.NotNullOrWhiteSpace(orderNumber, nameof(orderNumber), OrderConsts.MaxOrderNumberLength);
@@ -42,10 +45,15 @@ namespace Acme.ProductSelling.Orders
             CustomerId = customerId;
 
             CustomerName = Check.NotNullOrWhiteSpace(customerName, nameof(customerName), 100);
-            CustomerPhone = Check.Length(customerPhone, nameof(customerPhone), OrderConsts.MaxCustomerPhoneLentgth);
+            CustomerPhone = Check.Length(customerPhone,
+                                            nameof(customerPhone),
+                                            OrderConsts.MaxCustomerPhoneLentgth);
 
-            ShippingAddress = Check.NotNullOrWhiteSpace(shippingAddress, nameof(shippingAddress), 500);
+            ShippingAddress = Check.NotNullOrWhiteSpace(shippingAddress,
+                                                        nameof(shippingAddress),
+                                                        500);
             Status = OrderStatus.Placed;
+            PaymentMethod = Check.NotNullOrWhiteSpace(payingMethod, nameof(payingMethod), 100);
         }
 
         public virtual void AddOrderItem(Guid productId, string productName, decimal productPrice, int quantity)
@@ -57,7 +65,11 @@ namespace Acme.ProductSelling.Orders
             }
             else
             {
-                var newItem = new OrderItem(Id, productId, productName, productPrice, quantity);
+                var newItem = new OrderItem(Id,
+                                            productId,
+                                            productName,
+                                            productPrice,
+                                            quantity);
                 OrderItems.Add(newItem);
             }
             CalculateTotals();
@@ -73,7 +85,8 @@ namespace Acme.ProductSelling.Orders
 
             if (!IsNextStatusValid(newStatus))
             {
-                throw new UserFriendlyException($"Cannot change status from {Status} to {newStatus}.");
+                throw new UserFriendlyException
+                    ($"Cannot change status from {Status} to {newStatus}.");
             }
             Status = newStatus;
         }
@@ -85,6 +98,22 @@ namespace Acme.ProductSelling.Orders
             }
         }
 
+        public void MarkAsPaid()
+        {
+            if (Status == OrderStatus.PendingPayment)
+            {
+                SetStatus(OrderStatus.Placed); // Hoặc Confirmed tùy quy trình của bạn
+            }
+        }
+
+        public void CancelByUser()
+        {
+            if (Status != OrderStatus.Placed)
+            {
+                throw new UserFriendlyException("Bạn chỉ có thể hủy đơn hàng khi nó ở trạng thái 'Vừa đặt hàng'.");
+            }
+            SetStatus(OrderStatus.Cancelled);
+        }
         private bool IsNextStatusValid(OrderStatus newStatus)
         {
             if (newStatus == OrderStatus.Cancelled &&

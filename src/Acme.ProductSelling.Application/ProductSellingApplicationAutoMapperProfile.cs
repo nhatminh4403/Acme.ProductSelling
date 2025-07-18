@@ -23,7 +23,6 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
                 .ForMember(dest => dest.CategorySpecificationType, opt => opt.MapFrom(src => src.Category.SpecificationType))
                 .ForMember(dest => dest.ManufacturerName,
                               opt => opt.MapFrom(src => src.Manufacturer.Name))
-                // Map các spec con (AutoMapper sẽ tự map nếu tên và kiểu khớp)
                 .ForMember(dest => dest.MonitorSpecification, opt => opt.MapFrom(src => src.MonitorSpecification))
                 .ForMember(dest => dest.MouseSpecification, opt => opt.MapFrom(src => src.MouseSpecification))
                 .ForMember(dest => dest.LaptopSpecification, opt => opt.MapFrom(src => src.LaptopSpecification)) // Giả sử có
@@ -97,10 +96,14 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
         CreateMap<LaptopSpecification, LaptopSpecificationDto>();
         CreateMap<CreateUpdateLaptopSpecificationDto, LaptopSpecification>();
 
-        CreateMap<Order, OrderDto>().ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => src.Status));
+        CreateMap<Order, OrderDto>()
+            .ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => src.Status))
+             .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod));
         CreateMap<CreateOrderDto, Order>()
             .ForMember(dest => dest.OrderItems, opt => opt.Ignore())
-            .ForMember(dest => dest.TotalAmount, opt => opt.Ignore());
+            .ForMember(dest => dest.TotalAmount, opt => opt.Ignore())
+            .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod));
+
         CreateMap<CreateOrderItemDto, OrderItem>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.OrderId, opt => opt.Ignore())

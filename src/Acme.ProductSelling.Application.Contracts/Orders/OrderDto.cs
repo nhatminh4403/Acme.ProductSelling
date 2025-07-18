@@ -15,5 +15,6 @@ namespace Acme.ProductSelling.Orders
         public List<OrderItemDto> OrderItems { get; set; } = new List<OrderItemDto>();
         public OrderStatus OrderStatus { get; set; }
         public string StatusText { get; set; }
+        public string PaymentMethod { get; set; } // Thêm phương thức thanh toán
     }
 }

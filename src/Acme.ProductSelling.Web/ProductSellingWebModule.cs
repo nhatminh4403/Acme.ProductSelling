@@ -1,5 +1,4 @@
 using Acme.ProductSelling.PaymentGateway;
-using Acme.ProductSelling;
 #region using directives
 using Acme.ProductSelling.EntityFrameworkCore;
 using Acme.ProductSelling.Localization;
@@ -53,6 +52,7 @@ using Volo.Abp.AspNetCore.SignalR;
 #endregion
 
 namespace Acme.ProductSelling.Web;
+
 [DependsOn(
     typeof(AcmeProductSellingPaymentGatewayModule),
     typeof(ProductSellingHttpApiClientModule),
@@ -68,11 +68,12 @@ namespace Acme.ProductSelling.Web;
     typeof(AbpFeatureManagementWebModule),
     typeof(AbpSwashbuckleModule),
     typeof(AbpAspNetCoreSerilogModule),
-    typeof(AbpAspNetCoreSignalRModule)
-)]
-[DependsOn(typeof(AcmeProductSellingPaymentGatewayModule),
+    typeof(AbpAspNetCoreSignalRModule),
+    typeof(AcmeProductSellingPaymentGatewayModule),
     typeof(ProductSellingHttpApiClientModule),
-    typeof(AbpAspNetCoreMvcUiThemeSharedModule))]
+    typeof(AbpAspNetCoreMvcUiThemeSharedModule)
+)]
+
 public class ProductSellingWebModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)

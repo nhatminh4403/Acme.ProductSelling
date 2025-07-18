@@ -1,5 +1,5 @@
-using Acme.ProductSelling.PaymentGateway;
 using Acme.ProductSelling.MultiTenancy;
+using Acme.ProductSelling.PaymentGateway;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Volo.Abp.AuditLogging;

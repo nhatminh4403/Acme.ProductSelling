@@ -10,6 +10,8 @@ namespace Acme.ProductSelling.Orders
         public string CustomerPhone { get; set; }
         [Required]
         public string ShippingAddress { get; set; }
+        [Required]
+        public string PaymentMethod { get; set; } // Thêm phương thức thanh toán
         public List<CreateOrderItemDto> Items { get; set; } = new List<CreateOrderItemDto>();
     }
 }
