@@ -1,3 +1,4 @@
+using Acme.ProductSelling.PaymentGateway;
 using Volo.Abp.Account;
 using Volo.Abp.AspNetCore.SignalR;
 using Volo.Abp.FeatureManagement;
@@ -10,6 +11,8 @@ using Volo.Abp.TenantManagement;
 namespace Acme.ProductSelling;
 
 [DependsOn(
+    typeof(AcmeProductSellingPaymentGatewayModule),
+    typeof(ProductSellingDomainModule),
     typeof(ProductSellingDomainSharedModule),
     typeof(AbpFeatureManagementApplicationContractsModule),
     typeof(AbpSettingManagementApplicationContractsModule),
@@ -18,7 +21,9 @@ namespace Acme.ProductSelling;
     typeof(AbpTenantManagementApplicationContractsModule),
     typeof(AbpPermissionManagementApplicationContractsModule)
 )]
-[DependsOn(typeof(AbpAspNetCoreSignalRModule))]
+[DependsOn(typeof(AcmeProductSellingPaymentGatewayModule),
+    typeof(ProductSellingDomainModule),
+    typeof(AbpAspNetCoreSignalRModule))]
 public class ProductSellingApplicationContractsModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)

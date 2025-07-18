@@ -1,4 +1,5 @@
-﻿using Volo.Abp.Account;
+using Acme.ProductSelling.PaymentGateway;
+using Volo.Abp.Account;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
@@ -8,6 +9,7 @@ using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
 namespace Acme.ProductSelling;
 [DependsOn(
+    typeof(AcmeProductSellingPaymentGatewayModule),
     typeof(ProductSellingDomainModule),
     typeof(ProductSellingApplicationContractsModule),
     typeof(AbpPermissionManagementApplicationModule),

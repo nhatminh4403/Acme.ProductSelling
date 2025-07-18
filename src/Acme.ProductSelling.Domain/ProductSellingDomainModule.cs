@@ -1,3 +1,4 @@
+using Acme.ProductSelling.PaymentGateway;
 using Acme.ProductSelling.MultiTenancy;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -20,6 +21,7 @@ using Volo.Abp.TenantManagement;
 namespace Acme.ProductSelling;
 
 [DependsOn(
+    typeof(AcmeProductSellingPaymentGatewayModule),
     typeof(ProductSellingDomainSharedModule),
     typeof(AbpAuditLoggingDomainModule),
     typeof(AbpCachingModule),

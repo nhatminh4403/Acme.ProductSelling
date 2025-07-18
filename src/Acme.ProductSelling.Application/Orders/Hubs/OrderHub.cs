@@ -5,7 +5,7 @@ using Volo.Abp.AspNetCore.SignalR;
 using Volo.Abp.Users;
 namespace Acme.ProductSelling.Orders.Hubs
 {
-    [Authorize]
+
     public class OrderHub : AbpHub<IOrderClient>
     {
         private readonly ICurrentUser _currentUser;
@@ -14,7 +14,7 @@ namespace Acme.ProductSelling.Orders.Hubs
         {
             _currentUser = currentUser;
         }
-
+        [Authorize]
         public override async Task OnConnectedAsync()
         {
             if (_currentUser.Id.HasValue)
@@ -29,7 +29,7 @@ namespace Acme.ProductSelling.Orders.Hubs
 
             await base.OnConnectedAsync();
         }
-
+        [Authorize]
         public Task ReceiveOrderStatusUpdate(Guid orderId, string newStatus, string statusTextLocalized)
         {
             return Clients.Caller.ReceiveOrderStatusUpdate(orderId, newStatus, statusTextLocalized);

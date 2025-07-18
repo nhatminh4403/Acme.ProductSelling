@@ -444,7 +444,7 @@
                         foreach (var category in Model.CategoryList.Items)
                         {
                             <div class="col-category">
-                                <a asp-page="/Products/ProductsByCategory" asp-route-CategoryId="@category.Id" class="text-decoration-none category-link">
+                                <a asp-page="/Products/ProductsByCategory" asp-route-slug="@category.UrlSlug" class="text-decoration-none category-link">
                                     <div class="category-item-wrapper">
                                         <img src="@( $"https://placehold.co/80x80?text={category.Name.Substring(0,1)}" )"
                                              loading="lazy"

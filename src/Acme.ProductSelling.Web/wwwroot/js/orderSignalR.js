@@ -3,13 +3,15 @@
     var l = abp.localization.getResource('ProductSelling');
 
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/signalr-hubs/orders") // Endpoint đã cấu hình trong WebModule
+        .withUrl("/signalr-hubs/orders", {
+            accessTokenFactory: () => {
+                return localStorage.getItem('access_token'); // hoặc key phù hợp với app của bạn
+            }
+        })
         .withAutomaticReconnect() // Tự động kết nối lại
         .build();
 
     connection.on("ReceiveOrderStatusUpdate", function (orderId, newStatus, newStatusText) {
-        console.log(`SignalR: Order [${orderId}] status updated to [${newStatus}]`);
-
         var staticRow = $(`#OrderHistoryTable tr[data-order-id='${orderId}']`);
         if (staticRow.length) {
             var statusCell = staticRow.find('.order-status-cell');
@@ -63,9 +65,8 @@
     // 4. BẮT ĐẦU KẾT NỐI
     function startConnection() {
         connection.start()
-            .then(() => console.log("Order SignalR Hub Connected."))
+            .then(() => {})
             .catch((err) => {
-                console.error("SignalR Connection Error: ", err.toString());
                 setTimeout(startConnection, 5000); // Thử kết nối lại sau 5 giây nếu thất bại
             });
     }

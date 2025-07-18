@@ -32,6 +32,9 @@
     "Volo.Abp.FeatureManagement": {
       "version": "9.1.0",
       "isInstalled": true
+    },
+    "Volo.Abp.BackgroundJobs": {
+      "version": "9.2.2"
     }
   },
   "folders": {

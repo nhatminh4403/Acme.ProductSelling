@@ -1,3 +1,6 @@
+using Acme.ProductSelling.PaymentGateway;
+using Acme.ProductSelling;
+#region using directives
 using Acme.ProductSelling.EntityFrameworkCore;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.MultiTenancy;
@@ -44,12 +47,15 @@ using Volo.Abp.TenantManagement.Web;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
-namespace Acme.ProductSelling.Web;
 using Acme.ProductSelling.Orders.Hubs; // Your Hub namespace
 using Acme.ProductSelling.Products;
 using Volo.Abp.AspNetCore.SignalR;
+#endregion
 
+namespace Acme.ProductSelling.Web;
 [DependsOn(
+    typeof(AcmeProductSellingPaymentGatewayModule),
+    typeof(ProductSellingHttpApiClientModule),
     typeof(ProductSellingHttpApiModule),
     typeof(ProductSellingApplicationModule),
     typeof(ProductSellingEntityFrameworkCoreModule),
@@ -64,7 +70,9 @@ using Volo.Abp.AspNetCore.SignalR;
     typeof(AbpAspNetCoreSerilogModule),
     typeof(AbpAspNetCoreSignalRModule)
 )]
-[DependsOn(typeof(AbpAspNetCoreMvcUiThemeSharedModule))]
+[DependsOn(typeof(AcmeProductSellingPaymentGatewayModule),
+    typeof(ProductSellingHttpApiClientModule),
+    typeof(AbpAspNetCoreMvcUiThemeSharedModule))]
 public class ProductSellingWebModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)
@@ -319,6 +327,7 @@ public class ProductSellingWebModule : AbpModule
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
         //app.UseConfiguredEndpoints();
-
+        app.UseExceptionHandler("/Error");
+        app.UseStatusCodePagesWithReExecute("/Error/Error");
     }
 }

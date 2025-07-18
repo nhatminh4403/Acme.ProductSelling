@@ -1,0 +1,13 @@
+﻿@page "/loi"
+@model Acme.ProductSelling.Web.Views.Shared.ErrorModel
+
+@{
+    ViewData["Title"] = "Có lỗi xảy ra";
+}
+<div class="text-center mt-5">
+    <h1>Đã xảy ra lỗi!</h1>
+    <p>Xin lỗi, đã có lỗi xảy ra trong quá trình xử lý yêu cầu của bạn.</p>
+    <button onclick="window.history.back()" class="btn btn-primary mt-3">Quay về trang trước</button>
+    <br />
+    <a href="/" class="mt-2 d-block">Hoặc quay về trang chủ</a>
+</div>

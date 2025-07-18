@@ -1,17 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\common.props" />
-
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <RootNamespace>Acme.ProductSelling</RootNamespace>
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Acme.ProductSelling.Domain.Shared\Acme.ProductSelling.Domain.Shared.csproj" />
+    <ProjectReference Include="../Acme.ProductSelling.Domain/Acme.ProductSelling.Domain.csproj" />
+    <ProjectReference Include="../Acme.ProductSelling.PaymentGateway/Acme.ProductSelling.PaymentGateway.csproj" />
   </ItemGroup>
-  
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
@@ -24,5 +22,4 @@
     <PackageReference Include="Volo.Abp.Account.Application.Contracts" Version="9.2.0" />
     <PackageReference Include="Volo.Abp.TenantManagement.Application.Contracts" Version="9.2.0" />
   </ItemGroup>
-
 </Project>
