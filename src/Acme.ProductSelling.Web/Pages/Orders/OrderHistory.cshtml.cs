@@ -1,7 +1,9 @@
-using Acme.ProductSelling.Orders;
+﻿using Acme.ProductSelling.Orders;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
+using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Pagination;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
@@ -41,6 +43,20 @@ namespace Acme.ProductSelling.Web.Pages.Orders
             Orders = await _orderAppService.GetListForCurrentUserAsync(input);
 
             PagerModel = new PagerModel(Orders.TotalCount, 3, CurrentPage, PageSize, "/");
+        }
+
+        public async Task<IActionResult> OnPostCancelOrderAsync(Guid orderId)
+        {
+            try
+            {
+                await _orderAppService.DeleteAsync(orderId);
+                Alerts.Success(L["OrderCancelledSuccessfully"]);
+            }
+            catch (UserFriendlyException ex)
+            {
+                Alerts.Warning(ex.Message);
+            }
+            return RedirectToPage(); // Tải lại trang lịch sử
         }
         public string GetStatusBadgeClass(OrderStatus status)
         {

@@ -47,15 +47,13 @@ namespace Acme.ProductSelling.Web.Pages.Carts
             {
                 // Gọi service để cập nhật
                 await _cartAppService.UpdateItemAsync(input);
-                // Tải lại trang để hiển thị giỏ hàng mới
                 return RedirectToPage();
             }
             catch (UserFriendlyException ex)
             {
-                // Hiển thị lỗi cho người dùng (ví dụ: không đủ hàng)
-                // Lưu lỗi vào TempData hoặc một cách khác để hiển thị trên trang sau khi redirect
-                Alerts.Warning(ex.Message); // Sử dụng hệ thống Alert của ABP
-                return RedirectToPage(); // Vẫn tải lại trang
+
+                Alerts.Warning(ex.Message); 
+                return RedirectToPage(); 
             }
             catch (Exception ex) // Lỗi không mong muốn
             {
@@ -65,16 +63,15 @@ namespace Acme.ProductSelling.Web.Pages.Carts
             }
         }
 
-        // Page Handler xử lý khi người dùng nhấn nút Remove
         public async Task<IActionResult> OnPostRemoveItemAsync(Guid cartItemId)
         {
             try
             {
                 await _cartAppService.RemoveItemAsync(cartItemId);
-                Alerts.Success("Item removed from cart."); // Thông báo thành công
-                return RedirectToPage(); // Tải lại trang
+                Alerts.Success("Item removed from cart."); 
+                return RedirectToPage();
             }
-            catch (Exception ex) // Lỗi không mong muốn
+            catch (Exception ex) 
             {
                 Logger.LogError(ex, "Error removing cart item.");
                 Alerts.Danger("An error occurred while removing the item.");

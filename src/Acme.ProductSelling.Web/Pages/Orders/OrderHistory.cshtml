@@ -11,82 +11,91 @@
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 <style>
-        .status-updated-highlight {
-            background-color: #fff3cd; /* A light yellow, adjust as needed */
-            transition: background-color 0.5s ease-out;
-        }
+    .status-updated-highlight {
+        background-color: #fff3cd; /* A light yellow, adjust as needed */
+        transition: background-color 0.5s ease-out;
+    }
 </style>
 <div class="container mt-4">
-<abp-card>
-    <abp-card-header>
-        <abp-row>
-            <abp-column size-md="_6">
-                <h2>@L["MyOrderHistory"]</h2>
-            </abp-column>
-            <abp-column size-md="_6" class="text-end">
-                @* Optional: Add any actions like "Refresh" or "Filter" later *@
-            </abp-column>
-        </abp-row>
-    </abp-card-header>
-    <abp-card-body>
-        @if (Model.Orders != null && Model.Orders.Items.Any())
-        {
-            <abp-table striped-rows="true" id="OrderHistoryTable">
-                <thead>
-                    <tr>
-                        <th>@L["OrderNumber"]</th>
-                        <th>@L["OrderDate"]</th>
-                        <th>@L["CustomerName"]</th> <!-- Or remove if it's always the current user -->
-                        <th>@L["TotalAmount"]</th>
-                        <th>@L["OrderStatus"]</th>
-                        <th>@L["Actions"]</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var order in Model.Orders.Items)
-                    {
-                        <tr data-order-id="@order.Id">
-                            <td>@order.OrderNumber</td>
-                            <td>@order.OrderDate.ToShortDateString() @order.OrderDate.ToShortTimeString()</td>
-                            <td>@order.CustomerName</td>
-                            <td>@order.TotalAmount.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
-                            <td class="order-status-cell">
-                                <span class="badge bg-@Model.GetStatusBadgeClass(order.OrderStatus)">
-                                    @L[order.OrderStatus.ToString()]
-                                </span>
-                            </td>
-                            <td>
-                                <a class="btn btn-sm btn-info" href="@Url.Page("/Orders/OrderDetail", new { id = order.Id })">
-                                    @L["ViewDetails"]
-                                </a>
-                                @* Or link to your existing order confirmation/detail page if it can take an orderId/orderNumber *@
-                                @* Example: <a class="btn btn-sm btn-info" href="@Url.Page("/Checkout/OrderConfirmation", new { orderId = order.Id, orderNumber = order.OrderNumber })">@L["ViewDetails"]</a> *@
-                            </td>
+    <abp-card>
+        <abp-card-header>
+            <abp-row>
+                <abp-column size-md="_6">
+                    <h2>@L["MyOrderHistory"]</h2>
+                </abp-column>
+                <abp-column size-md="_6" class="text-end">
+                    @* Optional: Add any actions like "Refresh" or "Filter" later *@
+                </abp-column>
+            </abp-row>
+        </abp-card-header>
+        <abp-card-body>
+            @if (Model.Orders != null && Model.Orders.Items.Any())
+            {
+                <abp-table striped-rows="true" id="OrderHistoryTable">
+                    <thead>
+                        <tr>
+                            <th>@L["OrderNumber"]</th>
+                            <th>@L["OrderDate"]</th>
+                            <th>@L["CustomerName"]</th> <!-- Or remove if it's always the current user -->
+                            <th>@L["TotalAmount"]</th>
+                            <th>@L["OrderStatus"]</th>
+                            <th>@L["Actions"]</th>
                         </tr>
-                    }
-                </tbody>
-            </abp-table>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.Orders.Items)
+                        {
+                            <tr data-order-id="@order.Id">
+                                <td>@order.OrderNumber</td>
+                                <td>@order.OrderDate.ToShortDateString() @order.OrderDate.ToShortTimeString()</td>
+                                <td>@order.CustomerName</td>
+                                <td>@order.TotalAmount.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                                <td class="order-status-cell">
+                                    <span class="badge bg-@Model.GetStatusBadgeClass(order.OrderStatus)">
+                                        @L[order.OrderStatus.ToString()]
+                                    </span>
+                                </td>
+                                <td class="order-actions-cell">
+                                    <a class="btn btn-sm btn-info" href="@Url.Page("/Orders/OrderDetail", new { id = order.Id })">
+                                        @L["ViewDetails"]
+                                    </a>
+                                    @if (order.OrderStatus == Acme.ProductSelling.Orders.OrderStatus.Placed)
+                                    {
+                                        <form method="post" asp-page-handler="CancelOrder"
+                                              class="d-inline cancel-order-form"
+                                              onsubmit="return confirm('@L["AreYouSureYouWantToCancelOrder"]')">
+                                            <input type="hidden" name="orderId" value="@order.Id" />
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                @L["Cancel"]
+                                            </button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </abp-table>
 
-            <div class="mt-4">
-                <abp-paginator asp-page="/" show-info="true" model="Model.PagerModel" class="mb-4">
-                </abp-paginator>
-            </div>
-        }
-        else
-        {
-            
-            <div class="alert alert-info">
-                @L["NoOrdersFound"]
+                <div class="mt-4">
+                    <abp-paginator asp-page="/" show-info="true" model="Model.PagerModel" class="mb-4">
+                    </abp-paginator>
+                </div>
+            }
+            else
+            {
 
-            </div>
-            <div class="text-center">
-                <a asp-page="/Index" class="btn btn-primary">@L["ContinueShopping"]</a>
+                <div class="alert alert-info">
+                    @L["NoOrdersFound"]
 
-            </div>
+                </div>
+                <div class="text-center">
+                    <a asp-page="/Index" class="btn btn-primary">@L["ContinueShopping"]</a>
 
-        }
-    </abp-card-body>
-</abp-card>
+                </div>
+
+            }
+        </abp-card-body>
+    </abp-card>
 </div>
 
 @functions {

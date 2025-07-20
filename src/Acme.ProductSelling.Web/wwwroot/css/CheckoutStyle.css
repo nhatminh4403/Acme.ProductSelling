@@ -1,0 +1,103 @@
+﻿/* Custom styles for payment method buttons */
+
+.payment-method-container {
+    display: flex; /* Kích hoạt Flexbox */
+    flex-wrap: wrap; /* Cho phép các item xuống hàng */
+    margin: -5px; /* Kỹ thuật bù trừ khoảng cách do padding của item */
+    border: none; /* Bỏ border cũ bao ngoài */
+}
+
+.payment-method-option {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #dee2e6; /* Đường viền cho mỗi nút */
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    background-color: #fff;
+    /* ----- PHẦN MỚI ----- */
+    flex-basis: calc(50% - 10px); /* Chiếm 50% trừ đi khoảng cách */
+    margin: 5px; /* Tạo khoảng cách giữa các nút */
+    /* ----- KẾT THÚC PHẦN MỚI ----- */
+}
+
+    .payment-method-option:hover {
+        border-color: #86b7fe; /* Màu border khi hover, giống focus của Bootstrap */
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+
+    /* Kiểu dáng khi một nút được chọn */
+    .payment-method-option.selected {
+        border-color: #0d6efd; /* Màu primary của Bootstrap */
+        background-color: #e7f1ff; /* Một màu nền nhạt để làm nổi bật */
+    }
+
+
+    /* Ẩn radio button gốc */
+    .payment-method-option input[type="radio"] {
+        display: none;
+    }
+
+    /* Kiểu dáng cho icon radio tùy chỉnh */
+    .payment-method-option .radio-icon {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #adb5bd;
+        border-radius: 50%;
+        margin-right: 15px;
+        position: relative;
+        flex-shrink: 0;
+        transition: border-color 0.2s ease-in-out;
+    }
+
+    /* Thay đổi màu border của icon khi được chọn */
+    .payment-method-option input[type="radio"]:checked + .radio-icon {
+        border-color: #0d6efd;
+    }
+
+        /* Vòng tròn nhỏ bên trong khi được chọn */
+        .payment-method-option input[type="radio"]:checked + .radio-icon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background-color: #0d6efd;
+            border-radius: 50%;
+        }
+
+    .payment-method-option .payment-logo {
+        width: 50px;
+        height: 50px; /* Thêm height để giữ tỉ lệ */
+        margin-right: 15px;
+        object-fit: contain;
+    }
+
+    .payment-method-option .payment-details {
+        flex-grow: 1;
+    }
+
+        .payment-method-option .payment-details h6 {
+            margin-bottom: 0.25rem;
+        }
+
+        .payment-method-option .payment-details p {
+            margin-bottom: 0;
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+
+/* Media query cho màn hình nhỏ (mobile) */
+@media (max-width: 767px) {
+    .payment-method-option {
+        flex-basis: 100%; /* Trên mobile, mỗi nút chiếm 1 hàng */
+        margin: 5px 0;
+    }
+
+    .payment-method-container {
+        margin: 0;
+    }
+}

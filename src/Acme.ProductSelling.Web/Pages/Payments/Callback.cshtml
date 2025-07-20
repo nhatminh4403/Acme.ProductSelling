@@ -1,0 +1,28 @@
+﻿@page
+@model Acme.ProductSelling.Web.Pages.Payments.CallbackModel
+
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Acme.ProductSelling.Localization
+@using Microsoft.Extensions.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Packages.SignalR
+@inject IStringLocalizer<ProductSellingResource> L
+@inject Volo.Abp.Users.ICurrentUser CurrentUser
+@{
+    ViewData["Title"] = L["PaymentCallback"];
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+<div class="container text-center mt-5">
+    @if (Model.IsSuccess)
+    {
+        <i class="fa fa-check-circle fa-5x text-success"></i>
+        <h1 class="mt-3">@L["PaymentSuccessful"]</h1>
+    }
+    else
+    {
+        <i class="fa fa-times-circle fa-5x text-danger"></i>
+        <h1 class="mt-3">@L["PaymentFailed"]</h1>
+    }
+    <p class="lead">@Model.Message</p>
+    <p>@L["YouWillBeRedirectedToOrderHistory"]</p>
+    <a asp-page="/Orders/OrderHistory" class="btn btn-primary">@L["ViewOrderHistory"]</a>
+</div>

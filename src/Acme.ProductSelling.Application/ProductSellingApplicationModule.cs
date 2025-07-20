@@ -17,7 +17,8 @@ namespace Acme.ProductSelling;
     typeof(AbpIdentityApplicationModule),
     typeof(AbpAccountApplicationModule),
     typeof(AbpTenantManagementApplicationModule),
-    typeof(AbpSettingManagementApplicationModule)
+    typeof(AbpSettingManagementApplicationModule),
+    typeof(AcmeProductSellingPaymentGatewayModule)
     )]
 public class ProductSellingApplicationModule : AbpModule
 {

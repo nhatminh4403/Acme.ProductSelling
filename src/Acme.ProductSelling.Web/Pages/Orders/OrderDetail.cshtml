@@ -10,44 +10,49 @@
 }
 <div class="container mt-4">
     <abp-card>
-    <abp-card-header>
-        <abp-row>
-            <abp-column size-md="_6">
-                <h2>@L["OrderDetails"]</h2>
-            </abp-column>
-            <abp-column size-md="_6" class="text-end">
-                <a href="@Url.Page("/Orders/OrderHistory")" class="btn btn-secondary">
-                    <i class="fa fa-arrow-left"></i> @L["BackToOrderHistory"]
-                </a>
-            </abp-column>
-        </abp-row>
-    </abp-card-header>
-    <abp-card-body>
-        @if (Model.Order != null)
-        {
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <h4>@L["OrderInformation"]</h4>
-                    <table class="table table-borderless">
-                        <tr>
-                            <th>@L["OrderNumber"]:</th>
-                            <td>@Model.Order.OrderNumber</td>
-                        </tr>
-                        <tr>
-                            <th>@L["OrderDate"]:</th>
-                            <td>@Model.Order.OrderDate.ToString("g")</td>
-                        </tr>
-                        <tr>
-                            <th>@L["OrderStatus"]:</th>
-                            <td>
-                                <span class="badge bg-@Model.GetStatusBadgeClass(Model.Order.OrderStatus)" id="orderStatusBadge">
-                                    @L[Model.Order.OrderStatus.ToString()]
-                                </span>
+        <abp-card-header>
+            <abp-row>
+                <abp-column size-md="_6">
+                    <h2>@L["OrderDetails"]</h2>
+                </abp-column>
+                <abp-column size-md="_6" class="text-end">
+                    <a href="@Url.Page("/Orders/OrderHistory")" class="btn btn-secondary">
+                        <i class="fa fa-arrow-left"></i> @L["BackToOrderHistory"]
+                    </a>
+                </abp-column>
+            </abp-row>
+        </abp-card-header>
+        <abp-card-body>
+            @if (Model.Order != null)
+            {
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h4>@L["OrderInformation"]</h4>
+                        <table class="table table-borderless">
+                            <tr>
+                                <th>@L["OrderNumber"]:</th>
+                                <td>@Model.Order.OrderNumber</td>
+                            </tr>
+                            <tr>
+                                <th>@L["OrderDate"]:</th>
+                                <td>@Model.Order.OrderDate.ToString("g")</td>
+                            </tr>
+                            <tr>
+                                <th>@L["OrderStatus"]:</th>
+                                <td>
+                                    <span class="badge @Model.GetStatusBadgeClass(Model.Order.OrderStatus)" id="orderStatusBadge">
+                                        @L[Model.Order.OrderStatus.ToString()]
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>@L["TotalAmount"]:</th>
+                                <td>
+                                    @(Model
+                                                                    .Order
+                                                                    .TotalAmount
+                                                                    .ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")))
                             </td>
-                        </tr>
-                        <tr>
-                            <th>@L["TotalAmount"]:</th>
-                            <td>@Model.Order.TotalAmount.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
                         </tr>
                     </table>
                 </div>
@@ -62,59 +67,76 @@
                             <th>@L["Email"]:</th>
                             <td>@Model.Order.</td>
                         </tr> *@
-                        <tr>
-                            <th>@L["PhoneNumber"]:</th>
-                            <td>@Model.Order.CustomerPhone</td>
-                        </tr>
-                    </table>
+                            <tr>
+                                <th>@L["PhoneNumber"]:</th>
+                                <td>@Model.Order.CustomerPhone</td>
+                            </tr>
+                        </table>
+                    @if (Model.Order.OrderStatus == Acme.ProductSelling.Orders.OrderStatus.Placed)
+                        {
+                            <div id="cancelOrderContainer">
+                                <div class="alert alert-info d-flex justify-content-between align-items-center">
+                                    <span>@L["YouCanCancelThisOrderWithinTheGracePeriod"]</span>
+                                    <form method="post" asp-page-handler="Cancel" onsubmit="return confirm('@L["AreYouSureYouWantToCancelOrder"]')">
+                                        <input type="hidden" name="orderId" value="@Model.Order.Id" />
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="fa fa-times"></i> @L["CancelOrder"]
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+
+                        }
+                    </div>
                 </div>
-            </div>
 
-            <h4>@L["OrderItems"]</h4>
-            <abp-table striped-rows="true">
-                <thead>
-                    <tr>
-                        <th>@L["Product"]</th>
-                        <th>@L["UnitPrice"]</th>
-                        <th>@L["Quantity"]</th>
-                        <th>@L["Subtotal"]</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Order.OrderItems)
-                    {
+                <h4>@L["OrderItems"]</h4>
+                <abp-table striped-rows="true">
+                    <thead>
                         <tr>
-                            <td>@item.ProductName</td>
-                            <td>@item.Price.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
-                            <td>@item.Quantity</td>
-                            <td>@((item.Price * item.Quantity).ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")))</td>
+                            <th>@L["Product"]</th>
+                            <th>@L["UnitPrice"]</th>
+                            <th>@L["Quantity"]</th>
+                            <th>@L["Subtotal"]</th>
                         </tr>
-                    }
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="3" class="text-end"><strong>@L["Total"]:</strong></td>
-                        <td><strong>@Model.Order.TotalAmount.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</strong></td>
-                    </tr>
-                </tfoot>
-            </abp-table>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Order.OrderItems)
+                        {
+                            <tr>
+                                <td>@item.ProductName</td>
+                                <td>@item.Price.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                                <td>@item.Quantity</td>
+                                <td>
+                                    @((item.Price * item.Quantity).ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")))
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>@L["Total"]:</strong></td>
+                            <td><strong>@Model.Order.TotalAmount.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</strong></td>
+                        </tr>
+                    </tfoot>
+                </abp-table>
 
-            @* @if (!string.IsNullOrEmpty(Model.Order.Notes))
+                @* @if (!string.IsNullOrEmpty(Model.Order.Notes))
             {
                 <div class="mt-4">
                     <h4>@L["OrderNotes"]</h4>
                     <p>@Model.Order.Notes</p>
                 </div>
             } *@
-        }
-        else
-        {
-            <div class="alert alert-warning">
-                @L["OrderNotFound"]
-            </div>
-        }
-    </abp-card-body>
-</abp-card>
+            }
+            else
+            {
+                <div class="alert alert-warning">
+                    @L["OrderNotFound"]
+                </div>
+            }
+        </abp-card-body>
+    </abp-card>
 </div>
 @functions {
     // Helper để lấy class màu cho badge
@@ -135,7 +157,7 @@
 }
 @section scripts {
     <abp-script-bundle>
-        <abp-script src="/libs/signalr/browser/signalr.js"/>
+        <abp-script src="/libs/signalr/browser/signalr.js" />
         <abp-script src="/js/orderSignalR.js" />
     </abp-script-bundle>
 }

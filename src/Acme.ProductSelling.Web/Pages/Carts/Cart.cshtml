@@ -3,6 +3,7 @@
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
 @using Acme.ProductSelling.Categories
+@using System.Globalization
 @inject IStringLocalizer<ProductSellingResource> L
 
 
@@ -38,34 +39,29 @@
                         <tr>
                            
                             <td>
-                                <a asp-page="/ProductDetail" asp-route-id="@item.ProductId" class="text-dark text-decoration-none fw-bold">
+                                <a asp-page="/ProductDetail"
+                                asp-route-id="@item.ProductId" class="text-dark text-decoration-none fw-bold">
                                     @item.ProductName
                                 </a>
                                 @* Có thể thêm các thông tin khác như thuộc tính sản phẩm nếu cần *@
                             </td>
-                            <td class="text-end">@item.ProductPrice.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                            <td class="text-end">@item.ProductPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</td>
                             <td class="text-center">
-                                @* Form để cập nhật số lượng *@
                                 <form method="post" asp-page-handler="UpdateItem" class="d-inline-flex align-items-center justify-content-center">
-                                    @* Input ẩn chứa ID của CartItem *@
                                     <input type="hidden" name="cartItemId" value="@item.Id" />
-                                    @* Ô nhập số lượng *@
                                     <input type="number" name="quantity" class="form-control form-control-sm text-center me-2" value="@item.Quantity" min="1" max="100" style="width: 70px;" required />
-                                    @* Nút Update *@
                                     <button type="submit" class="btn btn-sm btn-outline-primary" title="@L["UpdateQuantity"].Value">
-                                        <i class="fas fa-sync-alt"></i> @* Icon update *@
+                                        <i class="fas fa-sync-alt"></i> 
                                     </button>
                                 </form>
                             </td>
-                            <td class="text-end fw-bold">@item.LineTotal.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                            <td class="text-end fw-bold">@item.LineTotal.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</td>
                             <td class="text-center">
                                 @* Form để xóa item *@
                                 <form method="post" asp-page-handler="RemoveItem" class="d-inline-block">
-                                    @* Input ẩn chứa ID của CartItem *@
                                     <input type="hidden" name="cartItemId" value="@item.Id" />
-                                    @* Nút Remove *@
                                     <button type="submit" class="btn btn-sm btn-outline-danger" title="@L["RemoveItem"].Value">
-                                        <i class="fas fa-trash-alt"></i> @* Icon xóa *@
+                                        <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </form>
                             </td>
@@ -83,12 +79,11 @@
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 @L["Subtotal"]
-                                <span>@Model.Cart.TotalPrice.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</span>
+                                <span>@Model.Cart.TotalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</span>
                             </li>
-                            @* Thêm các dòng khác nếu có phí ship, giảm giá *@
                             <li class="list-group-item d-flex justify-content-between align-items-center fw-bold fs-5">
                                 @L["Total"]
-                                <span>@Model.Cart.TotalPrice.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</span> @* Tạm thời chỉ có Subtotal *@
+                                <span>@Model.Cart.TotalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</span> @* Tạm thời chỉ có Subtotal *@
                             </li>
                         </ul>
                         <div class="d-grid gap-2 mt-3">

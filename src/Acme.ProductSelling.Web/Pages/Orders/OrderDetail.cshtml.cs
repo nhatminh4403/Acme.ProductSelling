@@ -1,8 +1,9 @@
-using Acme.ProductSelling.Orders;
+﻿using Acme.ProductSelling.Orders;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using Volo.Abp;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Orders
@@ -38,7 +39,23 @@ namespace Acme.ProductSelling.Web.Pages.Orders
 
             return Page();
         }
+        // ... trong class OrderDetailModel
+        public async Task<IActionResult> OnPostCancelAsync(Guid orderId)
+        {
+            try
+            {
+                await _orderAppService.DeleteAsync(orderId);
+                Alerts.Success(L["OrderCancelledSuccessfully"]);
 
+                // Tải lại dữ liệu trang sau khi hủy
+                return RedirectToPage(new { id = orderId });
+            }
+            catch (UserFriendlyException ex)
+            {
+                Alerts.Warning(ex.Message);
+                return RedirectToPage(new { id = orderId });
+            }
+        }
         public string GetStatusBadgeClass(OrderStatus status)
         {
             return status switch

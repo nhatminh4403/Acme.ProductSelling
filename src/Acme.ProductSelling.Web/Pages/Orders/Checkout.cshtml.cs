@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
+using Volo.Abp.Users;
 
 namespace Acme.ProductSelling.Web.Pages.Checkout
 {
@@ -15,9 +16,9 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
     public class CheckoutModel : AbpPageModel
     {
         [BindProperty]
-        public CreateOrderDto OrderInput { get; set; } // DTO đơn giản
+        public CreateOrderDto OrderInput { get; set; } 
         [BindProperty]
-        public CartDto CurrentCart { get; set; }
+        public CartDto CurrentCart { get; private set; }
         private readonly ICartAppService _cartAppService;
 
         private readonly IOrderAppService _orderAppService;
@@ -31,8 +32,8 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
 
         public async Task<IActionResult> OnGetAsync()
         {
-            CurrentCart = await _cartAppService.GetAsync(); // Lấy giỏ hàng hiện tại
-            if (!CurrentCart.CartItems.Any())
+            CurrentCart = await _cartAppService.GetAsync(); 
+            if (CurrentCart == null || !CurrentCart.CartItems.Any())
             {
                 return RedirectToPage("/" + "Cart".ToLower());
             }
@@ -48,7 +49,7 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
         public async Task<IActionResult> OnPostAsync()
         {
             CurrentCart = await _cartAppService.GetAsync();
-            if (!CurrentCart.CartItems.Any())
+            if (CurrentCart == null || !CurrentCart.CartItems.Any())
             {
                 Alerts.Warning(L["ShoppingCartIsEmptyCannotPlaceOrder"]);
                 return RedirectToPage("/Cart");
@@ -67,22 +68,24 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
                     var modelStateVal = ModelState[modelStateKey];
                     foreach (var error in modelStateVal.Errors)
                     {
-                        Console.WriteLine($"Key: {modelStateKey}, Error: {error.ErrorMessage}");
+                        Logger.LogWarning($"ModelState Error - Key: {modelStateKey}, Error: {error.ErrorMessage}");
+                         Console.WriteLine($"Key: {modelStateKey}, Error: {error.ErrorMessage}");
                     }
                 }
-                CurrentCart = await _cartAppService.GetAsync();
                 return Page();
             }
             try
             {
 
                 var createdOrder = await _orderAppService.CreateAsync(OrderInput);
-
+                if(!string.IsNullOrEmpty(createdOrder.RedirectUrl))
+                {
+                    return Redirect(createdOrder.RedirectUrl);
+                }
                 await _cartAppService.ClearAsync();
 
-                // Chuyển hướng đến trang xác nhận
                 return RedirectToPage("/Orders/OrderConfirmation",
-                    new { orderId = createdOrder.Id, orderNumber = createdOrder.OrderNumber });
+                    new { orderId = createdOrder.Order.Id, orderNumber = createdOrder.Order.OrderNumber });
             }
             catch (UserFriendlyException ex)
             {
