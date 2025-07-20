@@ -286,8 +286,8 @@
 
     "NoFeaturedProductsFound": "No Featured Products Found",
     "NoCategoriesFound": "No Categories Found",
-    "NoProductsFoundInCategory": "No Products Found in Category",
-    "NoProductsFoundWithKeyword": "No Products Found with Keyword",
+    "NoProductsFoundInCategory": "No products found in category",
+    "NoProductsFoundWithKeyword": "No products found with keyword",
     "NoSpecificSpecifications": "No Specific Specifications",
     "NoSpecificSpecificationsForThisCategory": "No Specific Specifications for This Category",
 
@@ -354,6 +354,34 @@
 
     "SignalR:OrderStatusUpdated": "Order status updated",
     "SignalR:ConnectionError": "SignalR Connection Error",
-    "SignalR:HubConnected": "Order SignalR Hub Connected."
+    "SignalR:HubConnected": "Order SignalR Hub Connected.",
+    "InvalidProductOrQuantity": "InvalidProductOrQuantity",
+    "CashOnDelivery": "Cash on Delivery",
+    "PayWhenYouReceiveTheGoods": "Pay when you receive the goods",
+    "PayViaVnPay": "Pay via VNPay",
+    "UseCreditDebitCardOrVnPayApp": "Use credit/debit card or VNPay app",
+    "PayViaMoMo": "Pay via MoMo Wallet",
+    "PayViaPaypal": "Pay via Paypal",
+    "PaySafelyViaStripe": "Pay safely via Stripe",
+    "ShoppingCartIsEmptyCannotPlaceOrder": "Your shopping cart is empty. Cannot place order.",
+    "OrderInformation": "Order Information",
+    "CustomerInformation": "Customer Information",
+    "PhoneNumber": "Phone Number",
+    "YouCanCancelThisOrderWithinTheGracePeriod": "You can cancel this order within the grace period.",
+    "AreYouSureYouWantToCancelOrder": "Are you sure you want to cancel this order?",
+    "CancelOrder": "Cancel Order",
+    "OrderNotFound": "Order not found",
+    "OrderCancelledSuccessfully": "Order cancelled successfully",
+    "Cancel": "Cancel",
+    "PaymentCallback": "Payment Callback",
+    "PaymentSuccessful": "Payment Successful",
+    "PaymentFailed": "Payment Failed",
+    "YouWillBeRedirectedToOrderHistory": "You will be redirected to your order history shortly.",
+    "PaymentSuccessfulThankYou": "Payment successful. Thank you!",
+    "PaymentFailedPleaseTryAgain": "Payment failed. Please try again.",
+    "ErrorOccurred": "An error has occurred!",
+    "SorryErrorOccurred": "Sorry, an error occurred while processing your request.",
+    "GoBack": "Go back",
+    "OrGoHome": "Or go to home page"
   }
 }
