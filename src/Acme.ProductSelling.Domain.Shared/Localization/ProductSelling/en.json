@@ -17,6 +17,7 @@
     "PriceRangeAlias:Over20Million": "over-20million",
     "Help": "Help",
     "CloseButton": "Close",
+    "UnknownCategory": "Unknown Category",
     "Home:CategoryList": "Product Categories",
     "Login:Processing": "Your login request is being processed. Please wait...",
     "Login:Initiated": "Login Initiated",
@@ -322,6 +323,8 @@
     "Delivered": "Delivered",
     "Cancelled": "Cancelled",
     "Failed": "Failed",
+    "CustomerPhone": "Your Phone Number",
+    "ShippingAddress": "Your Address",
     "NoOrdersFound": "No Orders Found",
 
     "Menu:ProductByPrice": "Products by Price",

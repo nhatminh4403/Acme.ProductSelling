@@ -1,4 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿using Acme.ProductSelling.Localization;
+using JetBrains.Annotations;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -106,11 +108,11 @@ namespace Acme.ProductSelling.Orders
             }
         }
 
-        public void CancelByUser()
+        public void CancelByUser(IStringLocalizer<ProductSellingResource> localizer = null)
         {
             if (Status != OrderStatus.Placed)
             {
-                throw new UserFriendlyException("Bạn chỉ có thể hủy đơn hàng khi nó ở trạng thái 'Vừa đặt hàng'.");
+                throw new UserFriendlyException(localizer["OrderCancelOnlyWhenPlaced"]);
             }
             SetStatus(OrderStatus.Cancelled);
         }
@@ -121,7 +123,7 @@ namespace Acme.ProductSelling.Orders
             {
                 return true;
             }
-            return (int)newStatus > (int)Status;
+            return (int)newStatus >= (int)Status;
         }
     }
 }

@@ -14,7 +14,6 @@ namespace Acme.ProductSelling.Orders.Hubs
         {
             _currentUser = currentUser;
         }
-        [Authorize]
         public override async Task OnConnectedAsync()
         {
             if (_currentUser.Id.HasValue)
@@ -29,7 +28,6 @@ namespace Acme.ProductSelling.Orders.Hubs
 
             await base.OnConnectedAsync();
         }
-        [Authorize]
         public Task ReceiveOrderStatusUpdate(Guid orderId, string newStatus, string statusTextLocalized)
         {
             return Clients.Caller.ReceiveOrderStatusUpdate(orderId, newStatus, statusTextLocalized);

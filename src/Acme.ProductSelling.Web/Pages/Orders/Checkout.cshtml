@@ -3,6 +3,7 @@
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
 @using System.Globalization
+@using Acme.ProductSelling.Payments
 @inject IStringLocalizer<ProductSellingResource> L
 @{
     ViewData["Title"] = L["Checkout"];
@@ -31,7 +32,12 @@
 
                         <!-- Phương thức 1: COD (mặc định) -->
                         <label for="paymentCod" class="payment-method-option">
-                            <input asp-for="OrderInput.PaymentMethod" type="radio" id="paymentCod" value="COD" checked="checked" name="OrderInput.PaymentMethod" />
+                            <input asp-for="OrderInput.PaymentMethod"
+                                   type="radio"
+                                   id="paymentCod"
+                                   value="@PaymentConst.COD"
+                                   checked="checked"
+                                   name="OrderInput.PaymentMethod" />
                             <span class="radio-icon"></span>
                             <img src="https://cdn.iconscout.com/icon/free/png-512/free-cod-icon-download-in-svg-png-gif-file-formats--credit-debit-bank-transaction-payment-methods-vol-1-pack-business-icons-32259.png?f=webp&w=512" alt="COD Logo" class="payment-logo" />
                             <div class="payment-details">
@@ -42,7 +48,11 @@
 
                         <!-- Phương thức 2: VNPay -->
                         <label for="paymentVnPay" class="payment-method-option">
-                            <input asp-for="OrderInput.PaymentMethod" type="radio" id="paymentVnPay" value="VnPay" name="OrderInput.PaymentMethod" />
+                            <input asp-for="OrderInput.PaymentMethod"
+                                   type="radio"
+                                   id="paymentVnPay"
+                                   value="VnPay"
+                                   name="OrderInput.PaymentMethod" />
                             <span class="radio-icon"></span>
                             <img src="https://vinadesign.vn/uploads/thumbnails/800/2023/05/vnpay-logo-vinadesign-25-12-59-16.jpg" alt="VNPay Logo" class="payment-logo" />
                             <div class="payment-details">
@@ -53,7 +63,11 @@
 
                         <!-- Phương thức 3: MoMo (Ví dụ) -->
                         <label for="paymentMoMo" class="payment-method-option">
-                            <input asp-for="OrderInput.PaymentMethod" type="radio" id="paymentMoMo" value="MoMo" name="OrderInput.PaymentMethod" />
+                            <input asp-for="OrderInput.PaymentMethod"
+                                   type="radio"
+                                   id="paymentMoMo"
+                                   value="MoMo"
+                                   name="OrderInput.PaymentMethod" />
                             <span class="radio-icon"></span>
                             <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png?20201011055544" alt="MoMo Logo" class="payment-logo" />
                             <div class="payment-details">
@@ -64,7 +78,11 @@
 
                         <!-- Phương thức 4: Thẻ quốc tế (Ví dụ) -->
                         <label for="paymentStripe" class="payment-method-option">
-                            <input asp-for="OrderInput.PaymentMethod" type="radio" id="paymentStripe" value="Stripe" name="OrderInput.PaymentMethod" />
+                            <input asp-for="OrderInput.PaymentMethod"
+                                   type="radio"
+                                   id="PayPal"
+                                   value="PayPal"
+                                   name="OrderInput.PaymentMethod" />
                             <span class="radio-icon"></span>
                             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/PayPal_Logo_Icon_2014.svg/730px-PayPal_Logo_Icon_2014.svg.png?20230314143227" alt="International Card" class="payment-logo" />
                             <div class="payment-details">

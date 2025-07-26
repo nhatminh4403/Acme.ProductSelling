@@ -6,7 +6,7 @@ namespace Acme.ProductSelling.Payments
 {
     public class CodPaymentGateway : IPaymentGateway, ITransientDependency
     {
-        public string Name => "COD";
+        public string Name => PaymentConst.COD;
         public Task<PaymentGatewayResult> ProcessAsync(Order order)
         {
             return Task.FromResult(new PaymentGatewayResult

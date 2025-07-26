@@ -63,25 +63,38 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
                                 .ToList();
             if (!ModelState.IsValid)
             {
+
+                Logger.LogWarning("--- BẮT ĐẦU KIỂM TRA MODELSTATE LỖI ---");
                 foreach (var modelStateKey in ModelState.Keys)
                 {
                     var modelStateVal = ModelState[modelStateKey];
                     foreach (var error in modelStateVal.Errors)
                     {
-                        Logger.LogWarning($"ModelState Error - Key: {modelStateKey}, Error: {error.ErrorMessage}");
-                         Console.WriteLine($"Key: {modelStateKey}, Error: {error.ErrorMessage}");
+                        Logger.LogWarning($"Key: {modelStateKey} | Error: {error.ErrorMessage}");
                     }
                 }
+                CurrentCart = await _cartAppService.GetAsync();
+                Logger.LogWarning("--- KẾT THÚC KIỂM TRA MODELSTATE LỖI ---");
                 return Page();
             }
             try
             {
+                Logger.LogInformation("ModelState hợp lệ. Bắt đầu gọi OrderAppService.CreateAsync.");
+                Logger.LogInformation("Phương thức thanh toán đã chọn: {PaymentMethod}", OrderInput.PaymentMethod);
 
                 var createdOrder = await _orderAppService.CreateAsync(OrderInput);
-                if(!string.IsNullOrEmpty(createdOrder.RedirectUrl))
+                if(createdOrder == null || createdOrder.Order == null)
                 {
+                    Console.WriteLine("Order creation failed, createdOrder or Order is null.");
+                }
+                Console.WriteLine("Creating order with input id: " + createdOrder);
+
+                if (!string.IsNullOrEmpty(createdOrder.RedirectUrl))
+                {
+                    Console.WriteLine($"Redirecting to: {createdOrder.RedirectUrl}");
                     return Redirect(createdOrder.RedirectUrl);
                 }
+
                 await _cartAppService.ClearAsync();
 
                 return RedirectToPage("/Orders/OrderConfirmation",

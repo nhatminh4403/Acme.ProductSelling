@@ -2,17 +2,13 @@
 @model Acme.ProductSelling.Web.Pages.Products.ProductsByCategoryModel
 @using Acme.ProductSelling.Localization
 @using System.Globalization
-
 @using Microsoft.Extensions.Localization
+@using Acme.ProductSelling.Web.Helpers
+
 @inject IStringLocalizer<ProductSellingResource> L
 
 @functions {
-    public string GetCategoryLocalizerName(string name)
-    {
-        string trimmedName = String.Concat(name.Where(c => !Char.IsWhiteSpace(c)));
 
-        return L["Category:" + trimmedName];
-    }
 }
 @{
     Layout = "/Views/Shared/_Layout.cshtml"; 
@@ -22,7 +18,7 @@
     <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
         <ol class="breadcrumb border-0">
             <li class="breadcrumb-item"><a href="/">@L["Menu:Home"]</a></li>
-            <li class="breadcrumb-item active" aria-current="page">@GetCategoryLocalizerName(Model.CategoryName)</li>
+            <li class="breadcrumb-item active" aria-current="page">@HelperMethods.GetCategoryLocalizerName(Model.CategoryName,L)</li>
         </ol>
     </nav>
 </div>

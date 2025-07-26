@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Carts;
+using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Orders.BackgroundJobs;
 using Acme.ProductSelling.Orders.Hubs;
 using Acme.ProductSelling.Payments;
@@ -7,6 +8,8 @@ using Acme.ProductSelling.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using NUglify.Helpers;
 using System;
 using System.Collections.Generic;
@@ -22,6 +25,7 @@ using Volo.Abp.BackgroundJobs;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
+using Volo.Abp.Security.Encryption;
 using Volo.Abp.Users;
 namespace Acme.ProductSelling.Orders
 {
@@ -36,7 +40,7 @@ namespace Acme.ProductSelling.Orders
         private readonly IBackgroundJobManager _backgroundJobManager;
         private readonly IPaymentGatewayResolver _paymentGatewayResolver;
         private readonly IOrderNotificationService _orderNotificationService;
-
+        private readonly IStringLocalizer<ProductSellingResource> _localizer;
         public OrderAppService(
             IRepository<Order, Guid> orderRepository,
             IRepository<Product, Guid> productRepository,
@@ -46,7 +50,8 @@ namespace Acme.ProductSelling.Orders
             IHubContext<OrderHub, IOrderClient> hubContext,
             IBackgroundJobManager backgroundJobManager,
             IPaymentGatewayResolver gatewayResolver,
-            IOrderNotificationService orderNotificationService)
+            IOrderNotificationService orderNotificationService,
+            IStringLocalizer<ProductSellingResource> localizer)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
@@ -58,6 +63,7 @@ namespace Acme.ProductSelling.Orders
             _paymentGatewayResolver = gatewayResolver;
             _orderNotificationService = orderNotificationService;
 
+            _localizer = localizer;
             //GetPolicyName = ProductSellingPermissions.Orders.Default;
             //CreatePolicyName = ProductSellingPermissions.Orders.Create;
             //UpdatePolicyName = ProductSellingPermissions.Orders.Edit;
@@ -78,89 +84,100 @@ namespace Acme.ProductSelling.Orders
             );
         }
 
-
         public async Task<CreateOrderResultDto> CreateAsync(CreateOrderDto input)
         {
-            var orderNumber =
-                $"DH-{DateTime.UtcNow:yyyyMMddHHmmss}" +
-                $"-{_guidGenerator.Create().ToString("N").Substring(0, 6)}";
+            Logger.LogInformation($"B1: Bắt đầu tiến trình tạo đơn hàng cho user {_currentUser.Id}.");
 
-            var customerId = _currentUser.Id;
+            // B1: Lấy giỏ hàng của người dùng từ CSDL
             var cart = await (await _cartRepository.WithDetailsAsync(c => c.Items))
-                                  .FirstOrDefaultAsync(c => c.UserId == customerId);
+                                  .FirstOrDefaultAsync(c => c.UserId == _currentUser.Id);
 
             if (cart == null || !cart.Items.Any())
             {
+                Logger.LogWarning("Tạo đơn hàng thất bại: Giỏ hàng trống.");
                 throw new UserFriendlyException(L["ShoppingCartIsEmpty"]);
             }
+            Logger.LogInformation($"B2: Lấy giỏ hàng thành công với {cart.Items.Count} sản phẩm.");
 
+            // B2: Tạo thực thể Order
             var order = new Order(
-                _guidGenerator.Create(),
-                orderNumber,
+                GuidGenerator.Create(),
+                $"DH-{DateTime.UtcNow:yyyyMMddHHmmss}-{GuidGenerator.Create().ToString("N").Substring(0, 6)}",
                 DateTime.Now,
-                customerId,
+                _currentUser.Id,
                 input.CustomerName,
                 input.CustomerPhone,
                 input.ShippingAddress,
                 input.PaymentMethod
             );
 
-            var productIds = input.Items.Select(i => i.ProductId).Distinct().ToList();
-            var products = (await _productRepository.GetListAsync(p => productIds.Contains(p.Id)))
-                           .ToDictionary(p => p.Id);
+            // B3: Kiểm tra và thêm sản phẩm
+            var productIdsInCart = cart.Items.Select(i => i.ProductId).Distinct().ToList();
+            var productsInDb = (await _productRepository.GetListAsync(p => productIdsInCart.Contains(p.Id)))
+                               .ToDictionary(p => p.Id);
 
-            foreach (var itemDto in input.Items)
+            foreach (var cartItem in cart.Items)
             {
-                if (!products.TryGetValue(itemDto.ProductId, out var product))
+                if (!productsInDb.TryGetValue(cartItem.ProductId, out var product))
                 {
-                    throw new UserFriendlyException($"Product with ID {itemDto.ProductId} not found.");
-
+                    throw new UserFriendlyException($"Sản phẩm '{cartItem.ProductName}' không còn tồn tại.");
                 }
-                if (product.StockCount < itemDto.Quantity)
+                if (product.StockCount < cartItem.Quantity)
                 {
-                    throw new UserFriendlyException
-                        ($"Not enough stock for product '{product.ProductName}'." +
-                        $" Available: {product.StockCount}, Requested: {itemDto.Quantity}");
+                    throw new UserFriendlyException($"Không đủ số lượng cho sản phẩm '{product.ProductName}'.");
                 }
-                var priceToUse = product.DiscountedPrice ?? product.OriginalPrice;
-                order.AddOrderItem(product.Id, product.ProductName, priceToUse, itemDto.Quantity);
-
-                product.StockCount -= itemDto.Quantity;
-                await _productRepository.UpdateAsync(product, autoSave: false);
+                order.AddOrderItem(product.Id, product.ProductName,
+                    product.DiscountedPrice ?? product.OriginalPrice, cartItem.Quantity);
+                product.StockCount -= cartItem.Quantity;
+                await _productRepository.UpdateAsync(product);
             }
-            if (!order.OrderItems.Any())
-            {
-                throw new UserFriendlyException(L["NoValidItemsInCartToOrder"]);
-            }
+            Logger.LogInformation($"B3: Đã thêm {order.OrderItems.Count} sản phẩm vào đơn hàng và giảm stock.");
 
+
+            // B4: Tính tổng tiền và xử lý qua gateway
             order.CalculateTotals();
+            Logger.LogInformation("B4: Gọi GatewayResolver cho phương thức: {PaymentMethod}", input.PaymentMethod);
+
             var gateway = _paymentGatewayResolver.Resolve(input.PaymentMethod);
 
-            // B4: Xử lý qua gateway
             var gatewayResult = await gateway.ProcessAsync(order);
 
             order.SetStatus(gatewayResult.NextOrderStatus);
 
-            await _orderRepository.InsertAsync(order, autoSave: true);
+            Logger.LogInformation("B5: Gateway xử lý thành công. Trạng thái tiếp theo là {NextStatus}.", gatewayResult.NextOrderStatus);
 
+
+            // B6: Lưu đơn hàng
+            await _orderRepository.InsertAsync(order, autoSave: true);
+            Logger.LogInformation("B6: Đã lưu đơn hàng {OrderId} vào CSDL.", order.Id);
+
+
+            // B7: Lên lịch job cho COD
             if (order.PaymentMethod == "COD" && order.Status == OrderStatus.Placed)
             {
                 await _backgroundJobManager.EnqueueAsync<SetOrderPendingJobArgs>(
                     new SetOrderPendingJobArgs { OrderId = order.Id },
                     delay: TimeSpan.FromMinutes(5)
                 );
+                Logger.LogInformation("B7: Đã lên lịch background job cho đơn hàng COD.");
             }
 
-            // B8: Gửi thông báo
+            // B8: Dọn dẹp giỏ hàng
+            await _cartRepository.DeleteAsync(cart.Id, autoSave: true);
+            Logger.LogInformation("B8: Đã xóa giỏ hàng {CartId}.", cart.Id);
+
+            // B9: Gửi thông báo
             await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
+            Logger.LogInformation("B9: Đã gửi thông báo SignalR. Hoàn tất tạo đơn hàng.");
+
 
             return new CreateOrderResultDto
             {
                 Order = ObjectMapper.Map<Order, OrderDto>(order),
                 RedirectUrl = gatewayResult.RedirectUrl
             };
-
         }
+
         [Authorize]
         public async Task<OrderDto> GetAsync(Guid id)
         {
@@ -240,7 +257,7 @@ namespace Acme.ProductSelling.Orders
             var order = await _orderRepository.GetAsync(id, includeDetails: true); // include OrderItems
             if (order.CustomerId != CurrentUser.Id) throw new AbpAuthorizationException("Không có quyền.");
 
-            order.CancelByUser();
+            order.CancelByUser(_localizer);
 
             order.OrderItems.ForEach(async item =>
             {

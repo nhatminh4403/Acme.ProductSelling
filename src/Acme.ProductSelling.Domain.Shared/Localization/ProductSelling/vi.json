@@ -31,7 +31,7 @@
     "AutoLogin:ErrorDefault": "Tự động đăng nhập thất bại. Vui lòng đăng nhập thủ công.",
     "AutoLogin:WarnTitle": "Đăng Ký Thành Công, Tự Động Đăng Nhập Thất Bại",
     "Button:Processing": "<i class=\"fas fa-spinner fa-spin me-1\"></i> Đang xử lý...",
-
+    "UnknownCategory": "Danh mục không tồn tại",
     "Home:CategoryList": "Danh mục sản phẩm",
     "Help": "Trợ giúp",
     "AppName": "XComputer",
@@ -312,6 +312,8 @@
 
     "MyOrderHistory": "Lịch sử đơn hàng",
     "CustomerName": "Tên khách hàng",
+    "CustomerPhone": "Số điện thoại của bạn",
+    "ShippingAddress": "Địa chỉ của bạn",
     "OrderStatus": "Trạng thái đơn hàng",
     "Placed": "Đã đặt",
     "Pending": "Đang chờ",
@@ -323,7 +325,7 @@
     "Failed": "Thất bại",
     "NoOrdersFound": "Không tìm thấy đơn hàng",
     "ViewOrderHistory": "Xem lịch sử đặt hàng",
-    "BackToOrderHistory":"Trở về Lịch sử đặt hàng",
+    "BackToOrderHistory": "Trở về Lịch sử đặt hàng",
     "Menu:ProductByPrice": "Sản phẩm theo giá",
     "Admin:AllOrders": "Tất cả đơn hàng",
     "AllCategories": "Tất cả danh mục",

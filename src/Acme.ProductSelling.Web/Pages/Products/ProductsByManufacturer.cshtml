@@ -1,7 +1,7 @@
 ﻿@page "/collections/{CategoryUrlSlug}--{ManufacturerUrlSlug}"
 @model Acme.ProductSelling.Web.Pages.Products.ProductsByManufacturerModel
 @using System.Globalization
-
+@using Acme.ProductSelling.Web.Helpers
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
 @using Acme.ProductSelling.Categories
@@ -11,17 +11,12 @@
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 @functions {
-    public string GetCategoryLocalizerName(string name)
-    {
-        string trimmedName = String.Concat(name.Where(c => !Char.IsWhiteSpace(c)));
-        return "Category:" + trimmedName;
-    }
 }
 <div class="container mt-4">
     <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/">@L["Menu:Home"]</a></li>
-            <li class="breadcrumb-item active" aria-current="page">@L[GetCategoryLocalizerName(Model.CategoryName)] @L[Model.ManufacturerName]</li>
+            <li class="breadcrumb-item active" aria-current="page">@HelperMethods.GetCategoryLocalizerName(Model.CategoryName,L) @L[Model.ManufacturerName]</li>
         </ol>
     </nav>
 </div>

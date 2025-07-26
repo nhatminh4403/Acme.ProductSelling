@@ -7,6 +7,7 @@ using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Pagination;
@@ -27,6 +28,7 @@ public class IndexModel : ProductSellingPageModel
     private readonly ICategoryRepository _categoryRepository;
     private readonly IManufacturerAppService _manufacturerAppService;
     private readonly IManufacturerRepository _manufacturerRepository;
+    private readonly HttpClient _httpClient;
     public PagedResultDto<ProductDto> ProductList { get; set; }
 
     public PagedResultDto<CategoryDto> CategoryList { get; set; }
@@ -38,7 +40,8 @@ public class IndexModel : ProductSellingPageModel
     public List<FeaturedCategoryProductsDto> FeaturedProductCarousels { get; set; }
     public IndexModel(IProductAppService productAppService, ICategoryAppService categoryAppService,
         IStringLocalizer<ProductSellingResource> localizer, ICategoryRepository categoryRepository,
-        IManufacturerAppService manufacturerAppService, IManufacturerRepository manufacturerRepository, IProductRepository productRepository)
+        IManufacturerAppService manufacturerAppService, IManufacturerRepository manufacturerRepository,
+        IProductRepository productRepository)
     {
         _productAppService = productAppService;
         _localizer = localizer;
@@ -47,6 +50,7 @@ public class IndexModel : ProductSellingPageModel
         _manufacturerAppService = manufacturerAppService;
         _manufacturerRepository = manufacturerRepository;
         _productRepository = productRepository;
+        _httpClient = new HttpClient();
     }
 
     public async Task OnGetAsync()

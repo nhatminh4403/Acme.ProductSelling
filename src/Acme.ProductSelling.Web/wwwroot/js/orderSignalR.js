@@ -4,8 +4,11 @@
     // 1. KẾT NỐI HUB
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("/signalr-hubs/orders", {
-            // Cách lấy token đúng chuẩn ABP
-            accessTokenFactory: () => abp.auth.getToken()
+            accessTokenFactory: () => {
+                const token = abp.auth.getToken();
+                console.log("Token gửi lên SignalR:", token); // Check token ở đây
+                return token;
+            }
         })
         .withAutomaticReconnect()
         .build();

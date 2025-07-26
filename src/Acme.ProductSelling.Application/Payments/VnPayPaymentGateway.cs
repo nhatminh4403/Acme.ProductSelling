@@ -9,7 +9,7 @@ namespace Acme.ProductSelling.Payments
 {
     public class VnPayPaymentGateway : IPaymentGateway, ITransientDependency
     {
-        public string Name => "VnPay";
+        public string Name => PaymentConst.VnPay;
         private readonly IVnPayService _vnPayService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
