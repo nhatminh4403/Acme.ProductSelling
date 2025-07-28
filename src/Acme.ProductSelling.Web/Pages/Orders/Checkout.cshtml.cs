@@ -1,5 +1,6 @@
 ﻿using Acme.ProductSelling.Carts;
 using Acme.ProductSelling.Orders;
+using Acme.ProductSelling.Payments;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -96,7 +97,7 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
                 }
 
                 await _cartAppService.ClearAsync();
-
+                
                 return RedirectToPage("/Orders/OrderConfirmation",
                     new { orderId = createdOrder.Order.Id, orderNumber = createdOrder.Order.OrderNumber });
             }

@@ -2,10 +2,11 @@
 @model Acme.ProductSelling.Web.Pages.Orders.OrderDetailModel
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Acme.ProductSelling.Localization
+@using System.Globalization
 @using Microsoft.Extensions.Localization
 @inject IStringLocalizer<ProductSellingResource> L
 @{
-    ViewData["Title"] = L["OrderDetails"];
+    ViewData["Title"] = L["Title:OrderDetails"];
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 <div class="container mt-4">
@@ -13,7 +14,7 @@
         <abp-card-header>
             <abp-row>
                 <abp-column size-md="_6">
-                    <h2>@L["OrderDetails"]</h2>
+                    <h2>@L["Order:OrderDetails"]</h2>
                 </abp-column>
                 <abp-column size-md="_6" class="text-end">
                     <a href="@Url.Page("/Orders/OrderHistory")" class="btn btn-secondary">
@@ -27,57 +28,61 @@
             {
                 <div class="row mb-4">
                     <div class="col-md-6">
-                        <h4>@L["OrderInformation"]</h4>
-                        <table class="table table-borderless">
+                        <h4>@L["Order:OrderInformation"]</h4>
+                        <table class="table table-borderless" style="table-layout: fixed;">
                             <tr>
-                                <th>@L["OrderNumber"]:</th>
+                                <th>@L["Order:OrderNumber"]:</th>
                                 <td>@Model.Order.OrderNumber</td>
                             </tr>
                             <tr>
-                                <th>@L["OrderDate"]:</th>
+                                <th>@L["Order:OrderDate"]:</th>
                                 <td>@Model.Order.OrderDate.ToString("g")</td>
                             </tr>
                             <tr>
-                                <th>@L["OrderStatus"]:</th>
+                                <th>@L["Order:OrderStatus"]:</th>
                                 <td>
-                                    <span class="badge @Model.GetStatusBadgeClass(Model.Order.OrderStatus)" id="orderStatusBadge">
+                                    <span class="badge bg-@(Model.GetStatusBadgeClass(Model.Order.OrderStatus))"
+                                          id="orderStatusBadge">
                                         @L[Model.Order.OrderStatus.ToString()]
                                     </span>
                                 </td>
                             </tr>
                             <tr>
-                                <th>@L["TotalAmount"]:</th>
+                                <th>@L["Order:TotalAmount"]:</th>
                                 <td>
-                                    @(Model
-                                                                    .Order
-                                                                    .TotalAmount
-                                                                    .ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")))
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col-md-6">
-                    <h4>@L["CustomerInformation"]</h4>
-                    <table class="table table-borderless">
-                        <tr>
-                            <th>@L["CustomerName"]:</th>
-                            <td>@Model.Order.CustomerName</td>
-                        </tr>
-                        @* <tr>
-                            <th>@L["Email"]:</th>
-                            <td>@Model.Order.</td>
-                        </tr> *@
+                                    @(Model.Order.TotalAmount.ToString("C0", CultureInfo.GetCultureInfo("vi-VN")))
+                                </td>
+                            </tr>
                             <tr>
-                                <th>@L["PhoneNumber"]:</th>
-                                <td>@Model.Order.CustomerPhone</td>
+                                <th>@L["Order:PaymentMethod"]:</th>
+                                <td>@GetPaymentMethodLocalization(Model.Order.PaymentMethod)</td>
                             </tr>
                         </table>
-                    @if (Model.Order.OrderStatus == Acme.ProductSelling.Orders.OrderStatus.Placed)
+                    </div>
+                    <div class="col-md-6">
+                        <h4>@L["Order:CustomerInformation"]</h4>
+                        <table class="table table-borderless th-middle" style="table-layout: fixed;">
+                            <tr>
+                                <th>@L["Order:CustomerName"]:</th>
+                                <td>@Model.Order.CustomerName</td>
+                            </tr>
+                            
+                            <tr>
+                                <th>@L["Order:PhoneNumber"]:</th>
+                                <td>@Model.Order.CustomerPhone</td>
+                            </tr>
+                            <tr>
+                                <th>@L["Order:ShippingAddress"]:</th>
+                                <td>@Model.Order.ShippingAddress</td>
+                            </tr>
+                        </table>
+                        @if (Model.Order.OrderStatus == Acme.ProductSelling.Orders.OrderStatus.Placed)
                         {
                             <div id="cancelOrderContainer">
                                 <div class="alert alert-info d-flex justify-content-between align-items-center">
                                     <span>@L["YouCanCancelThisOrderWithinTheGracePeriod"]</span>
-                                    <form method="post" asp-page-handler="Cancel" onsubmit="return confirm('@L["AreYouSureYouWantToCancelOrder"]')">
+                                    <form method="post" asp-page-handler="Cancel"
+                                          onsubmit="return confirm('@L["AreYouSureYouWantToCancelOrder"]')">
                                         <input type="hidden" name="orderId" value="@Model.Order.Id" />
                                         <button type="submit" class="btn btn-danger">
                                             <i class="fa fa-times"></i> @L["CancelOrder"]
@@ -105,29 +110,23 @@
                         {
                             <tr>
                                 <td>@item.ProductName</td>
-                                <td>@item.Price.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                                <td>@item.Price.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</td>
                                 <td>@item.Quantity</td>
                                 <td>
-                                    @((item.Price * item.Quantity).ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")))
-                                </td>
-                            </tr>
-                        }
+                                    @((item.Price * item.Quantity)
+                                                                .ToString("C0", CultureInfo.GetCultureInfo("vi-VN")))
+                        </td>
+                    </tr>
+                                        }
                     </tbody>
                     <tfoot>
                         <tr>
                             <td colspan="3" class="text-end"><strong>@L["Total"]:</strong></td>
-                            <td><strong>@Model.Order.TotalAmount.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</strong></td>
+                            <td><strong>@Model.Order.TotalAmount.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</strong></td>
                         </tr>
                     </tfoot>
                 </abp-table>
 
-                @* @if (!string.IsNullOrEmpty(Model.Order.Notes))
-            {
-                <div class="mt-4">
-                    <h4>@L["OrderNotes"]</h4>
-                    <p>@Model.Order.Notes</p>
-                </div>
-            } *@
             }
             else
             {
@@ -140,20 +139,18 @@
 </div>
 @functions {
     // Helper để lấy class màu cho badge
-    string GetStatusBadgeClass(Acme.ProductSelling.Orders.OrderStatus status)
+    string GetPaymentMethodLocalization(string paymentMethod)
     {
-        return status switch
-        {
-            Acme.ProductSelling.Orders.OrderStatus.Placed => "bg-info",
-            Acme.ProductSelling.Orders.OrderStatus.Pending => "bg-light text-dark",
-            Acme.ProductSelling.Orders.OrderStatus.Confirmed => "bg-primary",
-            Acme.ProductSelling.Orders.OrderStatus.Processing => "bg-warning",
-            Acme.ProductSelling.Orders.OrderStatus.Shipped => "bg-success",
-            Acme.ProductSelling.Orders.OrderStatus.Delivered => "bg-dark",
-            Acme.ProductSelling.Orders.OrderStatus.Cancelled => "bg-danger",
-            _ => "bg-secondary"
-        };
+        string localization = "Order:PaymentMethod:" + paymentMethod;
+        return L[localization] ?? paymentMethod;
     }
+}
+@section styles {
+    <style>
+        .th-middle th {
+            vertical-align: middle !important;
+        }
+    </style>
 }
 @section scripts {
     <abp-script-bundle>

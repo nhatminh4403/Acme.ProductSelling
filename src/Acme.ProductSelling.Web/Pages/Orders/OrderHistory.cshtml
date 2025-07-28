@@ -1,8 +1,9 @@
-﻿@page "/OrderHistory"
+﻿@page "/history-order"
 @model Acme.ProductSelling.Web.Pages.Orders.OrderHistoryModel
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
+@using System.Globalization
 @using Volo.Abp.AspNetCore.Mvc.UI.Packages.SignalR
 @inject IStringLocalizer<ProductSellingResource> L
 @inject Volo.Abp.Users.ICurrentUser CurrentUser
@@ -34,11 +35,11 @@
                 <abp-table striped-rows="true" id="OrderHistoryTable">
                     <thead>
                         <tr>
-                            <th>@L["OrderNumber"]</th>
-                            <th>@L["OrderDate"]</th>
-                            <th>@L["CustomerName"]</th> <!-- Or remove if it's always the current user -->
-                            <th>@L["TotalAmount"]</th>
-                            <th>@L["OrderStatus"]</th>
+                            <th>@L["Order:OrderNumber"]</th>
+                            <th>@L["Order:OrderDate"]</th>
+                            <th>@L["Order:CustomerName"]</th>
+                            <th>@L["Order:TotalAmount"]</th>
+                            <th>@L["Order:OrderStatus"]</th>
                             <th>@L["Actions"]</th>
                         </tr>
                     </thead>
@@ -47,9 +48,12 @@
                         {
                             <tr data-order-id="@order.Id">
                                 <td>@order.OrderNumber</td>
-                                <td>@order.OrderDate.ToShortDateString() @order.OrderDate.ToShortTimeString()</td>
+                                <td>
+                                    @order.OrderDate.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+
                                 <td>@order.CustomerName</td>
-                                <td>@order.TotalAmount.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                                <td>@order.TotalAmount.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</td>
                                 <td class="order-status-cell">
                                     <span class="badge bg-@Model.GetStatusBadgeClass(order.OrderStatus)">
                                         @L[order.OrderStatus.ToString()]
@@ -99,7 +103,7 @@
 </div>
 
 @functions {
-    // Helper để lấy class màu cho badge
+
     string GetStatusBadgeClass(Acme.ProductSelling.Orders.OrderStatus status)
     {
         return status switch

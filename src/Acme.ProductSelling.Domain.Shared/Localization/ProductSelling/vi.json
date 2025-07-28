@@ -44,6 +44,11 @@
     "SuccessfullyDeleted": "Xóa thành công",
     "Expand": "Mở rộng",
     "Collapse": "Thu nhỏ",
+
+    "Title:OrderDetails": "Chi tiết đơn hàng",
+
+
+
     "ProductDeletionConfirmationMessage": "Bạn có chắc chắn muốn xóa sản phẩm này không?",
     "PriceRangeAlias:Under1Million": "duoi-1-trieu",
     "PriceRangeAlias:From1MillionTo5Million": "tu-1-trieu-den-5-trieu",
@@ -112,6 +117,21 @@
     "Order:Delete": "Xóa",
     "Order:OrderNumber": "Mã đơn hàng",
     "Order:TotalAmount": "Tổng số tiền",
+    "Order:CustomerName": "Tên khách hàng",
+    "Order:CustomerEmail": "Email khách hàng",
+    "Order:CustomerPhone": "Số điện thoại khách hàng",
+    "Order:ShippingAddress": "Địa chỉ giao hàng",
+    "Order:PaymentMethod": "Phương thức thanh toán",
+    "Order:PaymentMethod:COD": "Thanh toán khi nhận hàng",
+    "Order:PaymentMethod:VnPay": "Thanh toán qua VNPay",
+    "Order:PaymentMethod:MoMo": "Thanh toán qua Ví MoMo",
+    "Order:PaymentMethod:Paypal": "Thanh toán qua Paypal",
+    "Order:OrderStatus": "Trạng thái đơn hàng",
+    "Order:OrderDetails": "Chi tiết đơn hàng",
+    "Order:OrderStatusHistory": "Lịch sử trạng thái đơn hàng",
+    "Order:OrderInformation": "Thông tin đơn hàng",
+    "Order:CustomerInformation": "Thông tin khách hàng",
+    "Order:PhoneNumber": "Số điện thoại",
 
     "Category:CreateCategory": "Tạo danh mục",
     "Category:Categories": "Danh mục",
@@ -167,6 +187,7 @@
     "Product:Case:SupportedMbFormFactor": "Chuẩn bo mạch chủ hỗ trợ",
     "Product:Case:MaxCpuCoolerHeight": "Chiều cao tối đa tản nhiệt CPU",
     "Product:Case:MaxGpuLength": "Chiều dài tối đa GPU",
+    "Product:Case:Color": "Màu sắc",
 
     "Product:CPU:Details": "Thông số CPU",
     "Product:CPU:CoresThreads": "Số nhân/Luồng",
@@ -314,7 +335,7 @@
     "CustomerName": "Tên khách hàng",
     "CustomerPhone": "Số điện thoại của bạn",
     "ShippingAddress": "Địa chỉ của bạn",
-    "OrderStatus": "Trạng thái đơn hàng",
+    "Order:OrderStatus": "Trạng thái đơn hàng",
     "Placed": "Đã đặt",
     "Pending": "Đang chờ",
     "Confirmed": "Đã xác nhận",

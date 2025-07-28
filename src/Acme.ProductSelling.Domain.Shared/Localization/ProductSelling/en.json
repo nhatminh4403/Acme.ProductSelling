@@ -18,6 +18,13 @@
     "Help": "Help",
     "CloseButton": "Close",
     "UnknownCategory": "Unknown Category",
+
+
+    "Title:OrderDetails": "Order Details",
+
+
+
+
     "Home:CategoryList": "Product Categories",
     "Login:Processing": "Your login request is being processed. Please wait...",
     "Login:Initiated": "Login Initiated",
@@ -119,6 +126,15 @@
     "Order:Delete": "Delete",
     "Order:OrderNumber": "Order Number",
     "Order:TotalAmount": "Total Amount",
+    "Order:OrderInformation": "Order Infomation",
+    "Order:PhoneNumber": "Phone Number",
+    "Order:CustomerInformation": "Customer Information",
+    "Order:ShippingAddress": "Shipping Address",
+    "Order:PaymentMethod": "Payment Method",
+    "Order:PaymentMethod:COD": "COD",
+    "Order:PaymentMethod:VNPay": "VNPay",
+    "Order:PaymentMethod:MoMo": "MoMo",
+    "Order:PaymentMethod:Paypal": "Paypal",
 
     "Category:CreateCategory": "Create Category",
     "Category:Categories": "Categories",
@@ -173,6 +189,7 @@
     "Product:Case:SupportedMbFormFactor": "Supported Motherboard Form Factor",
     "Product:Case:MaxCpuCoolerHeight": "Maximum CPU Cooler Height",
     "Product:Case:MaxGpuLength": "Maximum GPU Length",
+    "Product:Case:Color": "Color",
 
     "Product:CPU:Details": "CPU Details",
     "Product:CPU:CoresThreads": "Cores/Threads",
@@ -259,7 +276,7 @@
     "OrderConfirmation": "Order Confirmation",
     "ThankYouForYourOrder": "Thank You for Your Order",
     "YourOrderHasBeenPlaced": "Your Order Has Been Placed",
-    "OrderDetails": "Order Details",
+    "Order:OrderDetails": "Order Details",
     "ShippingInformation": "Shipping Information",
     "Phone": "Phone",
     "Address": "Address",
@@ -313,8 +330,8 @@
     "Subtotal": "Subtotal",
 
     "MyOrderHistory": "My Order History",
-    "CustomerName": "Customer Name",
-    "OrderStatus": "Order Status",
+    "Order:CustomerName": "Customer Name",
+    "Order:OrderStatus": "Order Status",
     "Placed": "Placed",
     "Pending": "Pending",
     "Confirmed": "Confirmed",
@@ -368,7 +385,7 @@
     "PaySafelyViaStripe": "Pay safely via Stripe",
     "ShoppingCartIsEmptyCannotPlaceOrder": "Your shopping cart is empty. Cannot place order.",
     "OrderInformation": "Order Information",
-    "CustomerInformation": "Customer Information",
+
     "PhoneNumber": "Phone Number",
     "YouCanCancelThisOrderWithinTheGracePeriod": "You can cancel this order within the grace period.",
     "AreYouSureYouWantToCancelOrder": "Are you sure you want to cancel this order?",

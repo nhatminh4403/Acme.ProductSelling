@@ -1,5 +1,4 @@
 ﻿
-
 namespace Acme.ProductSelling.Payments
 {
     public static class PaymentConst

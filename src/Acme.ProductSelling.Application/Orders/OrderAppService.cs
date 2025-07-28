@@ -69,6 +69,23 @@ namespace Acme.ProductSelling.Orders
             //UpdatePolicyName = ProductSellingPermissions.Orders.Edit;
             //DeletePolicyName = ProductSellingPermissions.Orders.Delete;
         }
+        [Authorize]
+        public async Task<OrderDto> GetPendingForCurrentUserAsync()
+        {
+            if (!_currentUser.Id.HasValue)
+            {
+                return null;
+            }
+
+            var pendingOrder = await (await _orderRepository.WithDetailsAsync(o => o.OrderItems))
+                .FirstOrDefaultAsync(o =>
+                    o.CustomerId == _currentUser.Id &&
+                    o.Status == OrderStatus.PendingPayment &&
+                    o.PaymentMethod != PaymentConst.COD
+                );
+
+            return ObjectMapper.Map<Order, OrderDto>(pendingOrder);
+        }
         public async Task<PagedResultDto<OrderDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
             var query = (await _orderRepository.GetQueryableAsync())
@@ -86,6 +103,43 @@ namespace Acme.ProductSelling.Orders
 
         public async Task<CreateOrderResultDto> CreateAsync(CreateOrderDto input)
         {
+            var orders = await _orderRepository.GetListAsync(o => o.CustomerId == _currentUser.Id &&
+                                                             o.Status == OrderStatus.PendingPayment &&
+                                                             o.PaymentMethod != PaymentConst.COD,
+                                                             includeDetails: true);
+            var existingPendingOrder = orders.FirstOrDefault();
+
+            if (existingPendingOrder != null)
+            {
+                // ... Toàn bộ logic tái sử dụng đơn hàng giữ nguyên ...
+                Logger.LogInformation(
+                    $"Phát hiện đơn hàng online {existingPendingOrder.OrderNumber} đang chờ thanh toán." +
+                    "Tái sử dụng đơn hàng này.");
+
+                existingPendingOrder.CustomerName = input.CustomerName;
+                existingPendingOrder.CustomerPhone = input.CustomerPhone;
+                existingPendingOrder.ShippingAddress = input.ShippingAddress;
+
+                // Quan trọng: Cập nhật phương thức thanh toán mới mà người dùng chọn
+                existingPendingOrder.PaymentMethod = input.PaymentMethod;
+
+                // Không giảm stock, không xóa giỏ hàng vì đã làm ở lần đầu tiên.
+                // Chỉ cần tạo lại link thanh toán.
+                var gatewayReturn = _paymentGatewayResolver.Resolve(input.PaymentMethod);
+                var gatewayReturnResult = await gatewayReturn.ProcessAsync(existingPendingOrder);
+
+                // Đơn hàng có thể sẽ đổi trạng thái nếu người dùng chọn COD thay vì VNPay
+                existingPendingOrder.SetStatus(gatewayReturnResult.NextOrderStatus);
+
+                await _orderRepository.UpdateAsync(existingPendingOrder, autoSave: true);
+
+                return new CreateOrderResultDto
+                {
+                    Order = ObjectMapper.Map<Order, OrderDto>(existingPendingOrder),
+                    RedirectUrl = gatewayReturnResult.RedirectUrl
+                };
+            }
+
             Logger.LogInformation($"B1: Bắt đầu tiến trình tạo đơn hàng cho user {_currentUser.Id}.");
 
             // B1: Lấy giỏ hàng của người dùng từ CSDL
@@ -162,11 +216,9 @@ namespace Acme.ProductSelling.Orders
                 Logger.LogInformation("B7: Đã lên lịch background job cho đơn hàng COD.");
             }
 
-            // B8: Dọn dẹp giỏ hàng
             await _cartRepository.DeleteAsync(cart.Id, autoSave: true);
             Logger.LogInformation("B8: Đã xóa giỏ hàng {CartId}.", cart.Id);
 
-            // B9: Gửi thông báo
             await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
             Logger.LogInformation("B9: Đã gửi thông báo SignalR. Hoàn tất tạo đơn hàng.");
 
@@ -241,7 +293,6 @@ namespace Acme.ProductSelling.Orders
 
             await _orderRepository.UpdateAsync(order, autoSave: true);
 
-            // GỬI THÔNG BÁO REAL-TIME
             await _orderHubContext.Clients.All.ReceiveOrderStatusUpdate(
                 order.Id,
                 order.Status.ToString(),
