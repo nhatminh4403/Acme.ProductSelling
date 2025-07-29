@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Payments
@@ -9,6 +10,11 @@ namespace Acme.ProductSelling.Web.Pages.Payments
 
         [BindProperty(SupportsGet = true)]
         public string vnp_ResponseCode { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string OrderId { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public string OrderNumber { get; set; }
 
         public string Message { get; private set; }
         public bool IsSuccess { get; private set; }

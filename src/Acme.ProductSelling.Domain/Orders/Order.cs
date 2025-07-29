@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Localization;
+using Acme.ProductSelling.Payments;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Localization;
 using System;
@@ -54,7 +55,14 @@ namespace Acme.ProductSelling.Orders
             ShippingAddress = Check.NotNullOrWhiteSpace(shippingAddress,
                                                         nameof(shippingAddress),
                                                         500);
-            Status = OrderStatus.Placed;
+            if (payingMethod.Equals(PaymentConst.COD, StringComparison.OrdinalIgnoreCase))
+            {
+                Status = OrderStatus.Placed;
+            }
+            else // Các phương thức online khác (VnPay, MoMo, PayPal...)
+            {
+                Status = OrderStatus.PendingPayment;
+            }
             PaymentMethod = Check.NotNullOrWhiteSpace(payingMethod, nameof(payingMethod), 100);
         }
 
@@ -102,15 +110,18 @@ namespace Acme.ProductSelling.Orders
 
         public void MarkAsPaid()
         {
-            if (Status == OrderStatus.PendingPayment)
+            if (Status != OrderStatus.PendingPayment)
             {
-                SetStatus(OrderStatus.Placed); // Hoặc Confirmed tùy quy trình của bạn
+                throw new UserFriendlyException(
+                    $"Chỉ có thể đánh dấu thanh toán thành công cho đơn hàng " +
+                    $"đang ở trạng thái 'PendingPayment'. Trạng thái hiện tại: {Status}.");
             }
+            Status = OrderStatus.Placed;
         }
 
         public void CancelByUser(IStringLocalizer<ProductSellingResource> localizer = null)
         {
-            if (Status != OrderStatus.Placed)
+            if (Status != OrderStatus.Placed && Status != OrderStatus.PendingPayment)
             {
                 throw new UserFriendlyException(localizer["OrderCancelOnlyWhenPlaced"]);
             }
@@ -119,7 +130,10 @@ namespace Acme.ProductSelling.Orders
         private bool IsNextStatusValid(OrderStatus newStatus)
         {
             if (newStatus == OrderStatus.Cancelled &&
-                (Status == OrderStatus.Placed || Status == OrderStatus.Pending || Status == OrderStatus.Confirmed))
+                (Status == OrderStatus.Placed
+                || Status == OrderStatus.Pending
+                || Status == OrderStatus.PendingPayment
+                || Status == OrderStatus.Confirmed))
             {
                 return true;
             }

@@ -11,6 +11,5 @@
         public string CurrCode { get; set; }
         public string Locale { get; set; }
         public string PaymentBackReturnUrl { get; set; }
-        public string IpnUrl { get; set; }
     }
 }

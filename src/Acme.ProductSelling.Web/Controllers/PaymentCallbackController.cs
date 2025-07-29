@@ -3,18 +3,22 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Volo.Abp.AspNetCore.Mvc;
 using Acme.ProductSelling.Payments;
+using Acme.ProductSelling.Orders;
+using System;
 
 
 namespace Acme.ProductSelling.Web.Controllers
 {
     [Route("/api/payment")]
-    public class PaymentCallbackController : Controller  
+    public class PaymentCallbackController : Controller
     {
         private readonly IPaymentCallbackAppService _callbackAppService;
-
-        public PaymentCallbackController(IPaymentCallbackAppService callbackAppService)
+        private readonly IOrderAppService _orderAppService;
+        public PaymentCallbackController(IPaymentCallbackAppService callbackAppService,
+                                            IOrderAppService orderAppService)
         {
             _callbackAppService = callbackAppService;
+            _orderAppService = orderAppService;
         }
 
         [HttpGet("vnpay-ipn")]
@@ -27,10 +31,25 @@ namespace Acme.ProductSelling.Web.Controllers
             // VNPay yêu cầu phải trả về một chuỗi JSON với RspCode và Message
             // để xác nhận đã nhận được IPN.
             // Nếu không trả về đúng định dạng, VNPay sẽ gửi lại IPN nhiều lần.
-            if (result != null && !string.IsNullOrEmpty(result.RspCode))
+            if (result != null && !string.IsNullOrEmpty(result.VnPayResponseCode))
             {
                 // Trả về nội dung chính xác mà VNPay mong đợi
-                return Content($"{{\"RspCode\":\"{result.RspCode}\",\"Message\":\"{result.Message}\"}}", "application/json");
+                if (result.Success || result.VnPayResponseCode == "00")
+                {
+
+                    // Convert result.OrderId (string) to Guid before passing to GetAsync
+                    var orderIdGuid = Guid.Parse(result.OrderId);
+                    var order = await _orderAppService.GetAsync(orderIdGuid);
+
+                    if (order == null)
+                    {
+                        return Content("{\"RspCode\":\"01\",\"Message\":\"Order not found\"}", "application/json");
+                    }
+                    //{vnp_ResponseCode}/{OrderId}/{OrderNumber}
+                    RedirectToPage("/Orders/OrderConfirmation",
+                        new { vnp_ResponseCode = result.VnPayResponseCode, OrderId = order.Id, OrderNumber = order.OrderNumber });
+                }
+                return Content($"{{\"VnPayResponseCode\":\"{result.VnPayResponseCode}\",\"OrderDescription\":\"{result.OrderDescription}\"}}", "application/json");
             }
 
             // Trường hợp lỗi không xác định

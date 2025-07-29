@@ -36,8 +36,8 @@ namespace Acme.ProductSelling.VNPay.Services
             vnpay.AddRequestData("vnp_OrderType", "other"); //default value: other
             vnpay.AddRequestData("vnp_ReturnUrl", _options.PaymentBackReturnUrl);
 
-            vnpay.AddRequestData("vnp_TxnRef", model.OrderId); // Mã tham chiếu của giao dịch tại hệ thống của merchant. Mã này là duy nhất dùng để phân biệt các đơn hàng gửi sang VNPAY. Không được trùng lặp trong ngày
-
+             //vnpay.AddRequestData("vnp_TxnRef", tick); // << THAY ĐỔI DÒNG NÀY...
+            vnpay.AddRequestData("vnp_TxnRef", model.OrderId);
             var paymentUrl = vnpay.CreateRequestUrl(_options.BaseUrl, _options.HashSecret);
 
             return paymentUrl;
@@ -53,8 +53,8 @@ namespace Acme.ProductSelling.VNPay.Services
                     vnpay.AddResponseData(key, value.ToString());
                 }
             }
-
-            var vnp_orderId = Convert.ToInt64(vnpay.GetResponseData("vnp_TxnRef"));
+            //var vnp_orderId = Convert.ToInt64(vnpay.GetResponseData("vnp_TxnRef")); // << THAY ĐỔI DÒNG NÀY...
+            var vnp_orderId = vnpay.GetResponseData("vnp_TxnRef");
             var vnp_TransactionId = Convert.ToInt64(vnpay.GetResponseData("vnp_TransactionNo"));
             var vnp_SecureHash = collections.FirstOrDefault(p => p.Key == "vnp_SecureHash").Value;
             var vnp_ResponseCode = vnpay.GetResponseData("vnp_ResponseCode");
@@ -74,7 +74,7 @@ namespace Acme.ProductSelling.VNPay.Services
                 Success = true,
                 PaymentMethod = "VnPay",
                 OrderDescription = vnp_OrderInfo,
-                OrderId = vnp_orderId.ToString(),
+                 OrderId = vnp_orderId.ToString(),
                 TransactionId = vnp_TransactionId.ToString(),
                 Token = vnp_SecureHash,
                 VnPayResponseCode = vnp_ResponseCode
