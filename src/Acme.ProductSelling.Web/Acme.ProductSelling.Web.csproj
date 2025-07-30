@@ -57,6 +57,8 @@
     <ProjectReference Include="../Acme.ProductSelling.HttpApi.Client/Acme.ProductSelling.HttpApi.Client.csproj" />
     <ProjectReference Include="../Acme.ProductSelling.Application.Contracts/Acme.ProductSelling.Application.Contracts.csproj" />
     <ProjectReference Include="../Acme.ProductSelling.PaymentGateway/Acme.ProductSelling.PaymentGateway.csproj" />
+    <ProjectReference Include="..\Acme.ProductSelling.PaymentGateway.MoMo\Acme.ProductSelling.PaymentGateway.MoMo.csproj" />
+    <ProjectReference Include="..\Acme.ProductSelling.PaymentGateway.PayPal\Acme.ProductSelling.PaymentGateway.PayPal.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Volo.Abp.Autofac" Version="9.2.0" />

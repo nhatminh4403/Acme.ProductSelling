@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\common.props" />
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Acme.ProductSelling.PaymentGateway.PayPal</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Core" Version="9.2.2" />
+    <ProjectReference Include="../Acme.ProductSelling.Application.Contracts/Acme.ProductSelling.Application.Contracts.csproj" />
+    <ProjectReference Include="../Acme.ProductSelling.EntityFrameworkCore/Acme.ProductSelling.EntityFrameworkCore.csproj" />
+  </ItemGroup>
+</Project>

@@ -9,6 +9,9 @@
     <ProjectReference Include="..\Acme.ProductSelling.Domain\Acme.ProductSelling.Domain.csproj" />
     <ProjectReference Include="..\Acme.ProductSelling.Application.Contracts\Acme.ProductSelling.Application.Contracts.csproj" />
     <ProjectReference Include="../Acme.ProductSelling.PaymentGateway/Acme.ProductSelling.PaymentGateway.csproj" />
+    <ProjectReference Include="../Acme.ProductSelling.EntityFrameworkCore/Acme.ProductSelling.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="../Acme.ProductSelling.PaymentGateway.MoMo/Acme.ProductSelling.PaymentGateway.MoMo.csproj" />
+    <ProjectReference Include="../Acme.ProductSelling.PaymentGateway.PayPal/Acme.ProductSelling.PaymentGateway.PayPal.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />

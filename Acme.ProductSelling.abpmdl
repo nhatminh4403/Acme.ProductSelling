@@ -107,6 +107,14 @@
     "Acme.ProductSelling.PaymentGateway": {
       "path": "src/Acme.ProductSelling.PaymentGateway/Acme.ProductSelling.PaymentGateway.abppkg",
       "folder": "src"
+    },
+    "Acme.ProductSelling.PaymentGateway.PayPal": {
+      "path": "src/Acme.ProductSelling.PaymentGateway.PayPal/Acme.ProductSelling.PaymentGateway.PayPal.abppkg",
+      "folder": "src"
+    },
+    "Acme.ProductSelling.PaymentGateway.MoMo": {
+      "path": "src/Acme.ProductSelling.PaymentGateway.MoMo/Acme.ProductSelling.PaymentGateway.MoMo.abppkg",
+      "folder": "src"
     }
   }
 }
