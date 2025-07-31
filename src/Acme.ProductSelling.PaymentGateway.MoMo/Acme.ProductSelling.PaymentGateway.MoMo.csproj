@@ -7,7 +7,8 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.Core" Version="9.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.7" />
+    <PackageReference Include="Volo.Abp.Core" Version="9.2.3" />
     <ProjectReference Include="../Acme.ProductSelling.Application.Contracts/Acme.ProductSelling.Application.Contracts.csproj" />
     <ProjectReference Include="../Acme.ProductSelling.Domain/Acme.ProductSelling.Domain.csproj" />
     <ProjectReference Include="../Acme.ProductSelling.Domain.Shared/Acme.ProductSelling.Domain.Shared.csproj" />
