@@ -39,7 +39,11 @@
   },
   "folders": {
     "items": {
-      "src": {},
+      "src": {
+        "items": {
+          "payment": {}
+        }
+      },
       "test": {}
     }
   },
@@ -106,15 +110,19 @@
     },
     "Acme.ProductSelling.PaymentGateway": {
       "path": "src/Acme.ProductSelling.PaymentGateway/Acme.ProductSelling.PaymentGateway.abppkg",
-      "folder": "src"
+      "folder": "src/payment"
     },
     "Acme.ProductSelling.PaymentGateway.PayPal": {
       "path": "src/Acme.ProductSelling.PaymentGateway.PayPal/Acme.ProductSelling.PaymentGateway.PayPal.abppkg",
-      "folder": "src"
+      "folder": "src/payment"
     },
     "Acme.ProductSelling.PaymentGateway.MoMo": {
       "path": "src/Acme.ProductSelling.PaymentGateway.MoMo/Acme.ProductSelling.PaymentGateway.MoMo.abppkg",
-      "folder": "src"
+      "folder": "src/payment"
+    },
+    "Acme.ProductSelling.PaymentGateway.VnPay": {
+      "path": "src/Acme.ProductSelling.PaymentGateway.VnPay/Acme.ProductSelling.PaymentGateway.VnPay.abppkg",
+      "folder": "src/payment"
     }
   }
 }

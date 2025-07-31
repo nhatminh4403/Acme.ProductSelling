@@ -5,8 +5,7 @@ using Volo.Abp.Modularity;
 namespace Acme.ProductSelling.PaymentGateway.PayPal;
 
 [DependsOn(
-    typeof(ProductSellingEntityFrameworkCoreModule),
-    typeof(ProductSellingApplicationContractsModule)
+    typeof(ProductSellingEntityFrameworkCoreModule)
 )]
 public class AcmeProductSellingPaymentGatewayPayPalModule : AbpModule
 {

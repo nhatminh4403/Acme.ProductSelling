@@ -7,8 +7,7 @@ namespace Acme.ProductSelling.PaymentGateway.MoMo;
 [DependsOn(
     typeof(ProductSellingEntityFrameworkCoreModule),
     typeof(ProductSellingDomainSharedModule),
-    typeof(ProductSellingDomainModule),
-    typeof(ProductSellingApplicationContractsModule)
+    typeof(ProductSellingDomainModule)
 )]
 public class AcmeProductSellingPaymentGatewayMoMoModule : AbpModule
 {

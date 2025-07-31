@@ -1,3 +1,4 @@
+using Acme.ProductSelling.PaymentGateway.VnPay;
 using Acme.ProductSelling.PaymentGateway;
 using Volo.Abp.Account;
 using Volo.Abp.AspNetCore.SignalR;
@@ -11,6 +12,7 @@ using Volo.Abp.TenantManagement;
 namespace Acme.ProductSelling;
 
 [DependsOn(
+    typeof(AcmeProductSellingPaymentGatewayVnPayModule),
     typeof(AcmeProductSellingPaymentGatewayModule),
     typeof(ProductSellingDomainModule),
     typeof(ProductSellingDomainSharedModule),
@@ -21,7 +23,8 @@ namespace Acme.ProductSelling;
     typeof(AbpTenantManagementApplicationContractsModule),
     typeof(AbpPermissionManagementApplicationContractsModule)
 )]
-[DependsOn(typeof(AcmeProductSellingPaymentGatewayModule),
+[DependsOn(typeof(AcmeProductSellingPaymentGatewayVnPayModule),
+    typeof(AcmeProductSellingPaymentGatewayModule),
     typeof(ProductSellingDomainModule),
     typeof(AbpAspNetCoreSignalRModule))]
 public class ProductSellingApplicationContractsModule : AbpModule

@@ -1,3 +1,4 @@
+using Acme.ProductSelling.PaymentGateway.VnPay;
 using Acme.ProductSelling.PaymentGateway;
 #region using directives
 using Acme.ProductSelling.EntityFrameworkCore;
@@ -49,11 +50,14 @@ using Volo.Abp.VirtualFileSystem;
 using Acme.ProductSelling.Orders.Hubs; // Your Hub namespace
 using Acme.ProductSelling.Products;
 using Volo.Abp.AspNetCore.SignalR;
+using Acme.ProductSelling.PaymentGateway.PayPal;
+using Acme.ProductSelling.PaymentGateway.MoMo;
 #endregion
 
 namespace Acme.ProductSelling.Web;
 
 [DependsOn(
+    typeof(AcmeProductSellingPaymentGatewayVnPayModule),
     typeof(AcmeProductSellingPaymentGatewayModule),
     typeof(ProductSellingHttpApiClientModule),
     typeof(ProductSellingHttpApiModule),
@@ -71,7 +75,9 @@ namespace Acme.ProductSelling.Web;
     typeof(AbpAspNetCoreSignalRModule),
     typeof(AcmeProductSellingPaymentGatewayModule),
     typeof(ProductSellingHttpApiClientModule),
-    typeof(AbpAspNetCoreMvcUiThemeSharedModule)
+    typeof(AbpAspNetCoreMvcUiThemeSharedModule),
+    typeof(AcmeProductSellingPaymentGatewayPayPalModule),
+    typeof(AcmeProductSellingPaymentGatewayMoMoModule)
 )]
 
 public class ProductSellingWebModule : AbpModule

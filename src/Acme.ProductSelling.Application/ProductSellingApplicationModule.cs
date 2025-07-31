@@ -1,3 +1,4 @@
+using Acme.ProductSelling.PaymentGateway.VnPay;
 using Acme.ProductSelling.PaymentGateway.PayPal;
 using Acme.ProductSelling.PaymentGateway.MoMo;
 using Acme.ProductSelling.EntityFrameworkCore;
@@ -12,6 +13,7 @@ using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
 namespace Acme.ProductSelling;
 [DependsOn(
+    typeof(AcmeProductSellingPaymentGatewayVnPayModule),
     typeof(AcmeProductSellingPaymentGatewayPayPalModule),
     typeof(AcmeProductSellingPaymentGatewayMoMoModule),
     typeof(ProductSellingEntityFrameworkCoreModule),
