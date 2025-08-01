@@ -7,38 +7,42 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System;
+using Acme.ProductSelling.PaymentGateway.MoMo.Configurations;
+using Microsoft.Extensions.Options;
 
 namespace Acme.ProductSelling.PaymentGateway.MoMo.Services
 {
     public class MoMoService : IMoMoService
     {
         private readonly HttpClient _httpClient;
-        private readonly string _endpoint;
-        private readonly string _partnerCode;
-        private readonly string _accessKey;
-        private readonly string _secretKey;
-        private readonly string _requestType;
+        /*         private readonly string _endpoint;
+               private readonly string _partnerCode;
+               private readonly string _accessKey;
+               private readonly string _secretKey;
+               private readonly string _requestType;*/
+        private readonly MoMoOption _momoOption;
 
-
-        public MoMoService(HttpClient httpClient, IConfiguration configuration)
+        public MoMoService(IOptions<MoMoOption> options, HttpClient httpClient)
         {
+            //_endpoint = configuration["MOMO:Endpoint"];
+            //_partnerCode = configuration["MOMO:PartnerCode"];
+            //_accessKey = configuration["MOMO:AccessKey"];
+            //_secretKey = configuration["MOMO:SecretKey"];
+            //_requestType = configuration["MOMO:RequestType"];
+            _momoOption = options.Value;
             _httpClient = httpClient;
-            _endpoint = configuration["MOMO:Endpoint"];
-            _partnerCode = configuration["MOMO:PartnerCode"];
-            _accessKey = configuration["MOMO:AccessKey"];
-            _secretKey = configuration["MOMO:SecretKey"];
-            _requestType = configuration["MOMO:RequestType"];
         }
 
         public async Task<MoMoPaymentResponse> CreatePaymentAsync(MoMoPaymentRequest request)
         {
-            request.ExtraData = request.ExtraData ?? string.Empty;
-            request.PartnerCode = _partnerCode;
-            request.RequestId = request.OrderId;
-            string secretKey = _secretKey;
-            request.AccessKey = _accessKey;
-            request.RequestType = _requestType;
+            string _endpoint = _momoOption.Endpoint;
+            string secretKey = _momoOption.SecretKey;
 
+            request.ExtraData = request.ExtraData ?? string.Empty;
+            request.PartnerCode = _momoOption.PartnerCode;
+            request.RequestId = request.OrderId;
+            request.AccessKey = _momoOption.AccessKey;
+            request.RequestType = _momoOption.RequestType;
 
             var rawHash = "accessKey=" + request.AccessKey +
                           "&amount=" + request.Amount.ToString() +
@@ -59,8 +63,6 @@ namespace Acme.ProductSelling.PaymentGateway.MoMo.Services
                 Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             });
 
-
-            // 6. Gửi request
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(_endpoint, content);
@@ -68,9 +70,15 @@ namespace Acme.ProductSelling.PaymentGateway.MoMo.Services
 
             if (response.IsSuccessStatusCode)
             {
-
-                return JsonSerializer.Deserialize<MoMoPaymentResponse>(responseContent,
+                var paymentResponse = JsonSerializer.Deserialize<MoMoPaymentResponse>(responseContent,
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (paymentResponse == null)
+                {
+                    throw new Exception("Failed to deserialize MoMoPaymentResponse.");
+                }
+
+                return paymentResponse;
             }
 
             throw new Exception($"Lỗi khi gọi API MoMo ({response.StatusCode}): {responseContent}");
@@ -82,6 +90,8 @@ namespace Acme.ProductSelling.PaymentGateway.MoMo.Services
             int resultCode, string payType, long amount,
             string extraData, string signatureFromCallback, long responseTime)
         {
+            string _accessKey = _momoOption.AccessKey;
+            string _secretKey = _momoOption.SecretKey;
             try
             {
 
@@ -101,8 +111,7 @@ namespace Acme.ProductSelling.PaymentGateway.MoMo.Services
 
 
 
-                var calculatedSignature = ComputeHmacSha256(rawHash, _secretKey);
-
+                var calculatedSignature =  ComputeHmacSha256(rawHash, _secretKey);
 
                 // So sánh signature nhận được với signature tính toán
                 return signatureFromCallback == calculatedSignature;
@@ -116,6 +125,9 @@ namespace Acme.ProductSelling.PaymentGateway.MoMo.Services
 
         public async Task<bool> ValidateIPNRequest(MomoIPNRequest request)
         {
+            string _accessKey = _momoOption.AccessKey;
+            string _secretKey = _momoOption.SecretKey;
+
             try
             {
                 // Tạo chuỗi raw hash từ thông tin IPN

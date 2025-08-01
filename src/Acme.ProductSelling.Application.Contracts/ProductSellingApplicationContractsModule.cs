@@ -8,12 +8,13 @@ using Volo.Abp.Modularity;
 using Volo.Abp.PermissionManagement;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
+using Acme.ProductSelling.PaymentGateway.MoMo;
+using Acme.ProductSelling.PaymentGateway.PayPal;
 
 namespace Acme.ProductSelling;
 
 [DependsOn(
     typeof(AcmeProductSellingPaymentGatewayVnPayModule),
-    typeof(AcmeProductSellingPaymentGatewayModule),
     typeof(ProductSellingDomainModule),
     typeof(ProductSellingDomainSharedModule),
     typeof(AbpFeatureManagementApplicationContractsModule),
@@ -21,12 +22,12 @@ namespace Acme.ProductSelling;
     typeof(AbpIdentityApplicationContractsModule),
     typeof(AbpAccountApplicationContractsModule),
     typeof(AbpTenantManagementApplicationContractsModule),
-    typeof(AbpPermissionManagementApplicationContractsModule)
+    typeof(AbpPermissionManagementApplicationContractsModule),
+    typeof(AcmeProductSellingPaymentGatewayMoMoModule),
+    typeof(AcmeProductSellingPaymentGatewayPayPalModule),
+    typeof(AbpAspNetCoreSignalRModule)
 )]
-[DependsOn(typeof(AcmeProductSellingPaymentGatewayVnPayModule),
-    typeof(AcmeProductSellingPaymentGatewayModule),
-    typeof(ProductSellingDomainModule),
-    typeof(AbpAspNetCoreSignalRModule))]
+
 public class ProductSellingApplicationContractsModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)

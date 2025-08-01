@@ -58,7 +58,6 @@ namespace Acme.ProductSelling.Web;
 
 [DependsOn(
     typeof(AcmeProductSellingPaymentGatewayVnPayModule),
-    typeof(AcmeProductSellingPaymentGatewayModule),
     typeof(ProductSellingHttpApiClientModule),
     typeof(ProductSellingHttpApiModule),
     typeof(ProductSellingApplicationModule),
@@ -73,7 +72,6 @@ namespace Acme.ProductSelling.Web;
     typeof(AbpSwashbuckleModule),
     typeof(AbpAspNetCoreSerilogModule),
     typeof(AbpAspNetCoreSignalRModule),
-    typeof(AcmeProductSellingPaymentGatewayModule),
     typeof(ProductSellingHttpApiClientModule),
     typeof(AbpAspNetCoreMvcUiThemeSharedModule),
     typeof(AcmeProductSellingPaymentGatewayPayPalModule),

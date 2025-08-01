@@ -17,12 +17,13 @@ namespace Acme.ProductSelling.Payments
         }
         public IPaymentGateway Resolve(string name)
         {
-            var gateway = _gateways.FirstOrDefault(g => g.Name.Equals(name, StringComparison.OrdinalIgnoreCase)); // << QUAN TRỌNG
+            var gateway = _gateways.FirstOrDefault(g => g.Name.Equals(name, StringComparison.OrdinalIgnoreCase)); 
 
             if (gateway == null)
             {
                 var availableGateways = string.Join(", ", _gateways.Select(g => g.Name));
-                Logger.LogWarning("Không thể resolve gateway '{RequestedName}'. Các gateway có sẵn: [{AvailableGateways}]", name, availableGateways);
+                Logger.LogWarning("Không thể resolve gateway" +
+                    " '{RequestedName}'. Các gateway có sẵn: [{AvailableGateways}]", name, availableGateways);
                 throw new UserFriendlyException($"Phương thức thanh toán '{name}' không được hỗ trợ.");
             }
 

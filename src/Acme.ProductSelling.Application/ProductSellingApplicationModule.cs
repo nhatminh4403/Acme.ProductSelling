@@ -17,7 +17,6 @@ namespace Acme.ProductSelling;
     typeof(AcmeProductSellingPaymentGatewayPayPalModule),
     typeof(AcmeProductSellingPaymentGatewayMoMoModule),
     typeof(ProductSellingEntityFrameworkCoreModule),
-    typeof(AcmeProductSellingPaymentGatewayModule),
     typeof(ProductSellingDomainModule),
     typeof(ProductSellingApplicationContractsModule),
     typeof(AbpPermissionManagementApplicationModule),
@@ -25,8 +24,7 @@ namespace Acme.ProductSelling;
     typeof(AbpIdentityApplicationModule),
     typeof(AbpAccountApplicationModule),
     typeof(AbpTenantManagementApplicationModule),
-    typeof(AbpSettingManagementApplicationModule),
-    typeof(AcmeProductSellingPaymentGatewayModule)
+    typeof(AbpSettingManagementApplicationModule)
     )]
 public class ProductSellingApplicationModule : AbpModule
 {

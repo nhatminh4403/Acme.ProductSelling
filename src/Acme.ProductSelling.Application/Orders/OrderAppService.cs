@@ -70,22 +70,47 @@ namespace Acme.ProductSelling.Orders
             //DeletePolicyName = ProductSellingPermissions.Orders.Delete;
         }
         [Authorize]
-        public async Task<OrderDto> GetPendingForCurrentUserAsync()
+        public async Task<OrderDto> ConfirmPayPalOrderAsync(Guid guid)
         {
-            if (!_currentUser.Id.HasValue)
+            var customerId = _currentUser.Id;  
+
+            var order = await _orderRepository.GetAsync(guid);
+
+            if(customerId == null)
             {
-                return null;
+                throw new AbpAuthorizationException("User not authenticated.");
+            }
+            if (order == null || order.CustomerId != customerId)
+            {
+                throw new EntityNotFoundException(typeof(Order), guid);
             }
 
-            var pendingOrder = await (await _orderRepository.WithDetailsAsync(o => o.OrderItems))
-                .FirstOrDefaultAsync(o =>
-                    o.CustomerId == _currentUser.Id &&
-                    o.Status == OrderStatus.PendingPayment &&
-                    o.PaymentMethod != PaymentConst.COD
-                );
+            if (order.Status != OrderStatus.PendingPayment)
+            {
+                Logger.LogWarning("Bỏ qua xác nhận." +
+                    " Đơn hàng {OrderId} không ở trạng thái PendingPayment. " +
+                    "Trạng thái hiện tại: {Status}", order.Id, order.Status);
+                // Nếu đơn hàng đã được xác nhận trước đó, chỉ cần trả về thông tin
+                return ObjectMapper.Map<Order, OrderDto>(order);
+            }
 
-            return ObjectMapper.Map<Order, OrderDto>(pendingOrder);
+            order.MarkAsPaid();
+            await _orderRepository.UpdateAsync(order, autoSave: true);
+            Logger.LogInformation("Đã cập nhật trạng thái đơn hàng {OrderId} thành {Status}", order.Id, order.Status);
+
+            // 6. Gửi các sự kiện và thông báo cần thiết
+            // Ví dụ: Gửi Event để gửi email, thông báo cho kho hàng...
+            // await _distributedEventBus.PublishAsync(new OrderConfirmedEto(order.Id));
+
+            // Gửi thông báo real-time
+            await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
+
+            // 7. Trả về thông tin đơn hàng đã được cập nhật
+            return ObjectMapper.Map<Order, OrderDto>(order);
         }
+
+
+
         public async Task<PagedResultDto<OrderDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
             var query = (await _orderRepository.GetQueryableAsync())

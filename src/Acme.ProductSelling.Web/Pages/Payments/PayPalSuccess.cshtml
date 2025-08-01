@@ -1,0 +1,11 @@
+﻿@page "/thanh-toan/paypal-success{orderId}"
+@model Acme.ProductSelling.Web.Pages.Payments.PayPalSuccessModel
+@{
+}
+<div class="container mt-4">
+    <h1>Thanh toán thành công</h1>
+    <p>Cảm ơn bạn đã thanh toán đơn hàng <strong>@Model.orderId</strong>.</p>
+    <p>Chúng tôi sẽ xử lý đơn hàng của bạn trong thời gian sớm nhất.</p>
+<a class="btn btn-primary" asp-page="/">Quay lại trang chủ</a>
+
+</div>

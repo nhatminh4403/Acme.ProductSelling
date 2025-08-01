@@ -1,5 +1,6 @@
 ﻿using Acme.ProductSelling.Orders;
-using Acme.ProductSelling.VNPay.Services;
+using Acme.ProductSelling.PaymentGateway.VnPay.Services;
+using Acme.ProductSelling.PaymentGateway.VnPay.Dtos;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace Acme.ProductSelling.Payments
 
         public Task<PaymentGatewayResult> ProcessAsync(Order order)
         {
-            var model = new PaymentGateway.VNPay.Dtos.VnPaymentRequestModel
+            var model = new VnPaymentRequestModel
             {
                 OrderId = order.Id.ToString(),
                 Price = (double)order.TotalAmount,

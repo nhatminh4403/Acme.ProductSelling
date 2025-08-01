@@ -1,27 +1,24 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using PayPal.Api;
-using System.Collections.Generic;
-
 using System;
+using System.Collections.Generic;
 namespace Acme.ProductSelling.PaymentGateway.PayPal
 {
-    public class PayPalService : IPayPalService
+    public class PayPalService : IPayPalService 
     {
-        private readonly IConfiguration _configuration;
-        private readonly string _clientId;
-        private readonly string _clientSecret;
-        private readonly string _mode;
 
-        public PayPalService(IConfiguration configuration)
+        private readonly PayPalOption _options;
+        public PayPalService(IOptions<PayPalOption> options)
         {
-            _configuration = configuration;
-            _clientId = _configuration["PayPal:ClientId"];
-            _clientSecret = _configuration["PayPal:ClientSecret"];
-            _mode = _configuration["PayPal:Mode"];
-        }
+            _options = options.Value;
 
+        }
         private APIContext GetAPIContext()
         {
+            string _clientId = _options.ClientId;
+            string _clientSecret = _options.ClientSecret;
+            string _mode = _options.Environment.ToLower();
             var config = new Dictionary<string, string>
             {
                 {"mode", _mode},

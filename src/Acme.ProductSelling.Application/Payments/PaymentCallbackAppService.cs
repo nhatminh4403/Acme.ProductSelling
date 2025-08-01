@@ -1,6 +1,6 @@
 ﻿using Acme.ProductSelling.Orders;
-using Acme.ProductSelling.PaymentGateway.VNPay.Dtos;
-using Acme.ProductSelling.VNPay.Services;
+using Acme.ProductSelling.PaymentGateway.VnPay.Dtos;
+using Acme.ProductSelling.PaymentGateway.VnPay.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

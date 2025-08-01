@@ -17,6 +17,7 @@ namespace Acme.ProductSelling.Orders
         Task<OrderDto> UpdateStatusAsync(Guid id, UpdateOrderStatusDto input);
         Task DeleteAsync(Guid id);
 
-        Task<OrderDto> GetPendingForCurrentUserAsync();
+        Task<OrderDto> ConfirmPayPalOrderAsync(Guid orderId);
+
     }
 }
