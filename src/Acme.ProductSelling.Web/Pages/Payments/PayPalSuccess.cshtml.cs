@@ -11,11 +11,11 @@ namespace Acme.ProductSelling.Web.Pages.Payments
 {
     public class PayPalSuccessModel : AbpPageModel
     {
-        [BindProperty(SupportsGet = true)]
-        public string paymentId { get; set; }
+        [BindProperty(SupportsGet = true), FromQuery]
+        public string PaymentId { get; set; }
         [BindProperty(SupportsGet = true)]
         public string token { get; set; }
-        [BindProperty(SupportsGet = true)]
+        [BindProperty(SupportsGet = true), FromQuery]
         public string PayerID { get; set; }
 
         // OrderId chúng ta đã tự truyền đi
@@ -35,8 +35,8 @@ namespace Acme.ProductSelling.Web.Pages.Payments
         {
             try
             {
-                var executedPayment = _payPalService.ExecutePayment(paymentId, PayerID); 
-                if(executedPayment.state.Equals("approved", StringComparison.OrdinalIgnoreCase))
+                var executedPayment = _payPalService.ExecutePayment(PaymentId, PayerID);
+                if (executedPayment.state.Equals("approved", StringComparison.OrdinalIgnoreCase))
                 {
 
                     await _orderAppService.ConfirmPayPalOrderAsync(orderId);
@@ -45,7 +45,7 @@ namespace Acme.ProductSelling.Web.Pages.Payments
                 }
                 else
                 {
-                    Logger.LogWarning("PayPal payment not approved. State: {state}", executedPayment.state);
+                    Logger.LogWarning($"PayPal payment not approved. State: {executedPayment.state}");
                     Alerts.Warning(L["PaymentNotApproved"]);
                 }
             }

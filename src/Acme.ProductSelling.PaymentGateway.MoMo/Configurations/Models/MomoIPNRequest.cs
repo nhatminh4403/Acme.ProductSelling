@@ -2,20 +2,20 @@
 {
     public class MomoIPNRequest
     {
-        public string PartnerCode { get; set; }
-        public string OrderId { get; set; }
-        public string RequestId { get; set; }
-        public long Amount { get; set; }
-        public string OrderInfo { get; set; }
-        public string OrderType { get; set; }
-        public long TransId { get; set; }
-        public int ResultCode { get; set; }
-        public string Message { get; set; }
-        public string PayType { get; set; }
-        public long ResponseTime { get; set; }
-        public string ExtraData { get; set; }
-        public string Signature { get; set; }
-        public string IpnUrl { get; set; }
+        public string partnerCode { get; set; }
+        public string orderId { get; set; }
+        public string requestId { get; set; }
+        public long amount { get; set; }
+        public string orderInfo { get; set; }
+        public string orderType { get; set; }
+        public long transId { get; set; }
+        public int resultCode { get; set; }
+        public string message { get; set; }
+        public string payType { get; set; }
+        public long responseTime { get; set; }
+        public string extraData { get; set; }
+        public string signature { get; set; }
+        public string ipnUrl { get; set; }
     }
 
 }

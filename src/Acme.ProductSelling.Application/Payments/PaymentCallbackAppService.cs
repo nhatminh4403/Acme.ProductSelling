@@ -1,4 +1,6 @@
 ﻿using Acme.ProductSelling.Orders;
+using Acme.ProductSelling.PaymentGateway.MoMo.Models;
+using Acme.ProductSelling.PaymentGateway.MoMo.Services;
 using Acme.ProductSelling.PaymentGateway.VnPay.Dtos;
 using Acme.ProductSelling.PaymentGateway.VnPay.Services;
 using Microsoft.AspNetCore.Http;
@@ -6,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
+using Volo.Abp;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.EventBus.Distributed;
@@ -15,6 +18,7 @@ namespace Acme.ProductSelling.Payments
     public class PaymentCallbackAppService : IPaymentCallbackAppService, ITransientDependency
     {
         private readonly IVnPayService _vnPayService;
+        private readonly IMoMoService _moMoService;
         private readonly IRepository<Order, Guid> _orderRepository;
         private readonly IOrderNotificationService _orderNotificationService;
         private readonly IDistributedEventBus _distributedEventBus;
@@ -41,7 +45,7 @@ namespace Acme.ProductSelling.Payments
             var response = _vnPayService.PaymentExecute(collections);
 
             // Bước 2: Kiểm tra chữ ký (signature). Đây là bước bảo mật quan trọng nhất.
-            if (!response.Success)  
+            if (!response.Success)
             {
                 _logger.LogWarning("Xác thực chữ ký VNPay IPN thất bại!");
                 return new VnPaymentResponseModel { VnPayResponseCode = "97", OrderDescription = "Invalid Signature" };
@@ -82,6 +86,53 @@ namespace Acme.ProductSelling.Payments
                 order.Id, response.VnPayResponseCode, order.Status);
 
             return new VnPaymentResponseModel { VnPayResponseCode = "02", OrderDescription = "Order already confirmed" };
+        }
+
+        public async Task ProcessMoMoIpnAsync(MomoIPNRequest request)
+        {
+            // MoMo sẽ gửi dữ liệu IPN qua query string
+            bool isValid = await _moMoService.ValidateIPNRequest(request);
+            try
+            {
+                if (!isValid)
+                {
+                    _logger.LogWarning("Xác thực IPN MoMo thất bại. Dữ liệu: {Data}", request);
+                    throw new UserFriendlyException("Dữ liệu IPN từ MoMo không hợp lệ.");
+                }
+
+                _logger.LogInformation("Xác thực IPN MoMo thành công cho OrderId: {OrderId}", request.orderId);
+
+                if (!Guid.TryParse(request.orderId, out var orderId))
+                {
+                    _logger.LogError("Mã tham chiếu (orderId) không phải là một Guid hợp lệ: {OrderId}", request.orderId);
+                    throw new UserFriendlyException("Mã tham chiếu không hợp lệ.");
+                }
+
+                var order = await _orderRepository.FindAsync(orderId);
+                if (order == null)
+                {
+                    _logger.LogWarning("Không tìm thấy đơn hàng với Id: {OrderId}", orderId);
+                    throw new UserFriendlyException("Không tìm thấy đơn hàng.");
+                }
+                // Bước 4: Kiểm tra trạng thái giao dịch và trạng thái đơn hàng để tránh xử lý lặp lại.
+
+                if (request.resultCode == 0 && order.Status == OrderStatus.PendingPayment)
+                {
+                    order.MarkAsPaid();
+                    await _orderRepository.UpdateAsync(order, autoSave: true);
+                    await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
+                    _logger.LogInformation("Cập nhật trạng thái đơn hàng thành công cho OrderId: {OrderId}", order.Id);
+                }
+                else
+                {
+                    _logger.LogWarning("Bỏ qua xử lý MoMo IPN cho OrderId: {OrderId}. ResultCode: {resultCode}, OrderStatus: {status}", order.Id, request.resultCode, order.Status);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi xử lý IPN từ MoMo: {Message}", ex.Message);
+                throw new UserFriendlyException("Đã có lỗi xảy ra khi xử lý IPN từ MoMo.");
+            }
         }
     }
 }

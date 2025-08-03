@@ -11,9 +11,7 @@ namespace Acme.ProductSelling.Payments
     {
         Task<VnPaymentResponseModel> ProcessVnPayIpnAsync(IQueryCollection queryCollections);
 
-        //Task<MoMoPaymentResponse> ProcessMoMoIpnAsync(IQueryCollection queryCollections);
-
-        
+        Task ProcessMoMoIpnAsync(MomoIPNRequest request);
     }
 
 }

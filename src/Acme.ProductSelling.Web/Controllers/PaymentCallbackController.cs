@@ -5,6 +5,7 @@ using Volo.Abp.AspNetCore.Mvc;
 using Acme.ProductSelling.Payments;
 using Acme.ProductSelling.Orders;
 using System;
+using Acme.ProductSelling.PaymentGateway.MoMo.Models;
 
 
 namespace Acme.ProductSelling.Web.Controllers
@@ -14,6 +15,7 @@ namespace Acme.ProductSelling.Web.Controllers
     {
         private readonly IPaymentCallbackAppService _callbackAppService;
         private readonly IOrderAppService _orderAppService;
+        
         public PaymentCallbackController(IPaymentCallbackAppService callbackAppService,
                                             IOrderAppService orderAppService)
         {
@@ -54,6 +56,27 @@ namespace Acme.ProductSelling.Web.Controllers
 
             // Trường hợp lỗi không xác định
             return Content("{\"RspCode\":\"99\",\"Message\":\"Unknown error\"}", "application/json");
+        }
+
+        [HttpGet("momo-ipn")]
+        [AllowAnonymous]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> MoMoIpn([FromBody] MomoIPNRequest request)
+        {
+            try
+            {
+                // MoMo sẽ gửi dữ liệu IPN qua query string
+                var result =  _callbackAppService.ProcessMoMoIpnAsync(request);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Error = "An error occurred while processing the MoMo IPN request.",
+                    Details = ex.Message
+                });
+            }
         }
     }
 }

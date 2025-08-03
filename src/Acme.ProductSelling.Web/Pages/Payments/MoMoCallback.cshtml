@@ -1,0 +1,15 @@
+﻿@page "/thanh-toan/momo-callback"
+@model Acme.ProductSelling.Web.Pages.Payments.MoMoCallbackModel
+@{
+}
+
+@if(Model.IsSuccess)
+{
+    <div class="container mt-4">
+        <h1>Thanh toán thành công</h1>
+        <p>@Model.OutputMessage</p>
+
+        <a class="btn btn-primary" asp-page="/">Quay lại trang chủ</a>
+
+    </div>
+}

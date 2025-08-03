@@ -8,13 +8,13 @@ using Volo.Abp.DependencyInjection;
 
 namespace Acme.ProductSelling.Payments
 {
-    public class VnPayPaymentGateway : IPaymentGateway, ITransientDependency
+    public class VnPayGateway : IPaymentGateway, ITransientDependency
     {
         public string Name => PaymentConst.VnPay;
         private readonly IVnPayService _vnPayService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public VnPayPaymentGateway(IVnPayService vnPayService, IHttpContextAccessor httpContextAccessor)
+        public VnPayGateway(IVnPayService vnPayService, IHttpContextAccessor httpContextAccessor)
         {
             _vnPayService = vnPayService;
             _httpContextAccessor = httpContextAccessor;

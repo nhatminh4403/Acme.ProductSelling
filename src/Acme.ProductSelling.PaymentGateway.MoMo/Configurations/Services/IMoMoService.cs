@@ -1,9 +1,11 @@
 ﻿using Acme.ProductSelling.PaymentGateway.MoMo.Models;
+using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
+using Volo.Abp.DependencyInjection;
 
 namespace Acme.ProductSelling.PaymentGateway.MoMo.Services
 {
-    public interface IMoMoService
+    public interface IMoMoService : ITransientDependency
     {
 
         Task<MoMoPaymentResponse> CreatePaymentAsync(MoMoPaymentRequest request);

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System;
 using Acme.ProductSelling.PaymentGateway.MoMo.Configurations;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Http;
 
 namespace Acme.ProductSelling.PaymentGateway.MoMo.Services
 {
@@ -132,30 +133,32 @@ namespace Acme.ProductSelling.PaymentGateway.MoMo.Services
             {
                 // Tạo chuỗi raw hash từ thông tin IPN
                 var rawHash = "accessKey=" + _accessKey +
-                              "&amount=" + request.Amount +
-                              "&extraData=" + request.ExtraData +
-                              "&message=" + request.Message +
-                              "&orderId=" + request.OrderId +
-                              "&orderInfo=" + request.OrderInfo +
-                              "&orderType=" + request.OrderType +
-                              "&partnerCode=" + request.PartnerCode +
-                              "&payType=" + request.PayType +
-                              "&requestId=" + request.RequestId +
-                              "&responseTime=" + request.ResponseTime +
-                              "&resultCode=" + request.ResultCode +
-                              "&transId=" + request.TransId + "&ipnUrl=" + request.IpnUrl;
+                              "&amount=" + request.amount +
+                              "&extraData=" + request.extraData +
+                              "&message=" + request.message +
+                              "&orderId=" + request.orderId +
+                              "&orderInfo=" + request.orderInfo +
+                              "&orderType=" + request.orderType +
+                              "&partnerCode=" + request.partnerCode +
+                              "&payType=" + request.payType +
+                              "&requestId=" + request.requestId +
+                              "&responseTime=" + request.responseTime +
+                              "&resultCode=" + request.resultCode +
+                              "&transId=" + request.transId + "&ipnUrl=" + request.ipnUrl;
 
                 // Tính toán signature từ raw hash
                 var calculatedSignature = ComputeHmacSha256(rawHash, _secretKey);
 
                 // So sánh signature nhận được với signature tính toán
-                return request.Signature == calculatedSignature;
+                return request.signature == calculatedSignature;
             }
             catch (Exception)
             {
                 return false;
             }
         }
+
+
         public static string ComputeHmacSha256(string message, string secretKey)
         {
             // Chuyển secretKey và message thành mảng byte
