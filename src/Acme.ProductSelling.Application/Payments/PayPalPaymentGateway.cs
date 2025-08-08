@@ -12,20 +12,17 @@ using Volo.Abp;
 using Volo.Abp.DependencyInjection;
 namespace Acme.ProductSelling.Payments
 {
-    public class PaypalGateway : IPaymentGateway, ITransientDependency
+    public class PayPalPaymentGateway : IPaymentGateway, ITransientDependency
     {
         private readonly IPayPalService _payPalService;
-        private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IExchangeCurrencyService _exchangeCurrencyService;
         public string Name => PaymentConst.PayPal;
 
 
-        public PaypalGateway(IPayPalService payPalService, IConfiguration configuration,
-                            IHttpContextAccessor httpContextAccessor, IExchangeCurrencyService exchangeCurrencyService)
+        public PayPalPaymentGateway(IPayPalService payPalService,IHttpContextAccessor httpContextAccessor, IExchangeCurrencyService exchangeCurrencyService)
         {
             _payPalService = payPalService;
-            _configuration = configuration;
             _exchangeCurrencyService = exchangeCurrencyService;
             _httpContextAccessor = httpContextAccessor;
         }
@@ -33,6 +30,11 @@ namespace Acme.ProductSelling.Payments
         public async Task<PaymentGatewayResult> ProcessAsync(Order order)
         {
             var httpContext = _httpContextAccessor.HttpContext;
+
+            if (httpContext == null)
+            {
+                throw new UserFriendlyException("Không thể truy cập HttpContext. Vui lòng kiểm tra cấu hình.");
+            }
             var baseUrl = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}";
             var returnUrl = $"{baseUrl}/thanh-toan/paypal-success?orderId={order.Id}";
             var cancelUrl = $"{baseUrl}/thanh-toan/paypal-cancel?orderId={order.Id}";

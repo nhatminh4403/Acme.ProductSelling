@@ -10,6 +10,7 @@ using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
+using Volo.Abp.Identity;
 
 namespace Acme.ProductSelling
 {
@@ -34,6 +35,9 @@ namespace Acme.ProductSelling
         private readonly IRepository<HeadsetSpecification, Guid> _headsetSpecRepository;
         private readonly IGuidGenerator _guidGenerator;
         private readonly IRepository<Manufacturer, Guid> _manufacturerRepository;
+        private readonly IdentityUserManager _identityUserManager;
+
+
         public ProductSellingDataSeederContributor(
             IRepository<Product, Guid> productRepository,
             IRepository<Category, Guid> categoryRepository, CategoryManager categoryManager,
@@ -50,9 +54,10 @@ namespace Acme.ProductSelling
             IRepository<KeyboardSpecification, Guid> keyboardSpecRepository,
             IRepository<HeadsetSpecification, Guid> headsetSpecRepository,
             IRepository<LaptopSpecification, Guid> laptopSpecRepository,
-            IGuidGenerator guidGenerator,
+            IGuidGenerator guidGenerator, IdentityUserManager identityUserManager,
             IRepository<Manufacturer, Guid> manufacturerRepository)
         {
+            _identityUserManager = identityUserManager;
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
             _categoryManager = categoryManager;

@@ -28,13 +28,14 @@ namespace Acme.ProductSelling.Payments
             IRepository<Order, Guid> orderRepository,
             IOrderNotificationService orderNotificationService,
             ILogger<PaymentCallbackAppService> logger,
-            IDistributedEventBus distributedEventBus)
+            IDistributedEventBus distributedEventBus,IMoMoService moMoService)
         {
             _vnPayService = vnPayService;
             _orderRepository = orderRepository;
             _orderNotificationService = orderNotificationService;
             _distributedEventBus = distributedEventBus;
             _logger = logger;
+            _moMoService = moMoService;
         }
 
         public async Task<VnPaymentResponseModel> ProcessVnPayIpnAsync(IQueryCollection collections)
@@ -76,7 +77,7 @@ namespace Acme.ProductSelling.Payments
                 await _orderRepository.UpdateAsync(order, autoSave: true);
                 await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
 
-                return new VnPaymentResponseModel { VnPayResponseCode = "00", OrderDescription = "Confirm Success" };
+                return new VnPaymentResponseModel {OrderId = orderId.ToString(), VnPayResponseCode = "00", OrderDescription = "Confirm Success" };
             }
 
             // Các trường hợp khác: Đơn hàng đã được xử lý trước đó hoặc giao dịch thất bại.

@@ -40,7 +40,13 @@ namespace Acme.ProductSelling.Web.Controllers
                 {
 
                     // Convert result.OrderId (string) to Guid before passing to GetAsync
-                    var orderIdGuid = Guid.Parse(result.OrderId);
+                    var orderId = Guid.Parse(result.OrderId);
+                    if (!Guid.TryParse(result.OrderId, out var orderIdGuid))
+                    {
+                        return Content("{\"RspCode\":\"01\",\"Message\":\"Invalid Order ID format\"}", "application/json");
+                    }
+
+
                     var order = await _orderAppService.GetAsync(orderIdGuid);
 
                     if (order == null)

@@ -1,11 +1,10 @@
-﻿using Acme.ProductSelling.PaymentGateway.VnPay.Dtos;
+﻿using Acme.ProductSelling.PaymentGateway.VnPay.Configurations;
+using Acme.ProductSelling.PaymentGateway.VnPay.Dtos;
 using Acme.ProductSelling.PaymentGateway.VnPay.Helpers;
-using Acme.ProductSelling.PaymentGateway.VnPay;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
-using Acme.ProductSelling.VnPay;
 
 namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
 {
@@ -13,7 +12,6 @@ namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
     {
         private readonly VnPayOptions _options;
 
-        // Inject IOptions<VnPayOptions> thay vì IConfiguration
         public VnPayService(IOptions<VnPayOptions> options)
         {
             _options = options.Value;
@@ -38,7 +36,6 @@ namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
             vnpay.AddRequestData("vnp_OrderType", "other"); //default value: other
             vnpay.AddRequestData("vnp_ReturnUrl", _options.PaymentBackReturnUrl);
 
-             //vnpay.AddRequestData("vnp_TxnRef", tick); // << THAY ĐỔI DÒNG NÀY...
             vnpay.AddRequestData("vnp_TxnRef", model.OrderId);
             var paymentUrl = vnpay.CreateRequestUrl(_options.BaseUrl, _options.HashSecret);
 
@@ -55,7 +52,7 @@ namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
                     vnpay.AddResponseData(key, value.ToString());
                 }
             }
-            //var vnp_orderId = Convert.ToInt64(vnpay.GetResponseData("vnp_TxnRef")); // << THAY ĐỔI DÒNG NÀY...
+
             var vnp_orderId = vnpay.GetResponseData("vnp_TxnRef");
             var vnp_TransactionId = Convert.ToInt64(vnpay.GetResponseData("vnp_TransactionNo"));
             var vnp_SecureHash = collections.FirstOrDefault(p => p.Key == "vnp_SecureHash").Value;

@@ -22,6 +22,7 @@ namespace Acme.ProductSelling.Payments
             if (gateway == null)
             {
                 var availableGateways = string.Join(", ", _gateways.Select(g => g.Name));
+                Logger.LogInformation("Các gateway có sẵn: [{AvailableGateways}]", availableGateways);
                 Logger.LogWarning("Không thể resolve gateway" +
                     " '{RequestedName}'. Các gateway có sẵn: [{AvailableGateways}]", name, availableGateways);
                 throw new UserFriendlyException($"Phương thức thanh toán '{name}' không được hỗ trợ.");

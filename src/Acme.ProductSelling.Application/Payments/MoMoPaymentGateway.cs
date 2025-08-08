@@ -13,14 +13,14 @@ using Volo.Abp.DependencyInjection;
 
 namespace Acme.ProductSelling.Payments
 {
-    public class MoMoGateway : IPaymentGateway, ITransientDependency
+    public class MoMoPaymentGateway : IPaymentGateway, ITransientDependency
     {
         public string Name => PaymentConst.MoMo;
         private readonly IMoMoService _moMoService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
 
-        public MoMoGateway(IMoMoService moMoService, IHttpContextAccessor httpContextAccessor)
+        public MoMoPaymentGateway(IMoMoService moMoService, IHttpContextAccessor httpContextAccessor)
         {
             _moMoService = moMoService;
             _httpContextAccessor = httpContextAccessor;
@@ -30,6 +30,10 @@ namespace Acme.ProductSelling.Payments
         public async Task<PaymentGatewayResult> ProcessAsync(Order order)
         {
             var httpContext = _httpContextAccessor.HttpContext;
+            if (httpContext == null)
+            {
+                throw new UserFriendlyException("Không thể truy cập HttpContext. Vui lòng kiểm tra cấu hình.");
+            }
             var baseUrl = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}";
             var returnUrl = $"{baseUrl}/thanh-toan/momo-callback";
             var notifyUrl = $"{baseUrl}/api/payment/momo-ipn";

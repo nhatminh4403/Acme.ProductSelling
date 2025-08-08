@@ -1,3 +1,4 @@
+using Acme.ProductSelling.PaymentGateway.VnPay.Configurations;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Modularity;
 

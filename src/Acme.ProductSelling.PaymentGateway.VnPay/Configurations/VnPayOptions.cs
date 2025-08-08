@@ -1,4 +1,4 @@
-﻿namespace Acme.ProductSelling.PaymentGateway.VnPay
+﻿namespace Acme.ProductSelling.PaymentGateway.VnPay.Configurations
 {
     public class VnPayOptions
     {
