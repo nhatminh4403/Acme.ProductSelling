@@ -1,11 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using PayPal.Api;
 using System;
 using System.Collections.Generic;
 namespace Acme.ProductSelling.PaymentGateway.PayPal
 {
-    public class PayPalService : IPayPalService 
+    public class PayPalService : IPayPalService
     {
 
         private readonly PayPalOption _options;

@@ -1,4 +1,3 @@
-using Acme.ProductSelling;
 using Acme.ProductSelling.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Modularity;

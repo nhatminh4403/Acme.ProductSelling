@@ -1,8 +1,7 @@
 using Acme.ProductSelling.EntityFrameworkCore;
-using Acme.ProductSelling;
-using Volo.Abp.Modularity;
 using Acme.ProductSelling.PaymentGateway.MoMo.Configurations;
 using Microsoft.Extensions.DependencyInjection;
+using Volo.Abp.Modularity;
 
 namespace Acme.ProductSelling.PaymentGateway.MoMo;
 

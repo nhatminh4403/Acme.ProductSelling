@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Acme.ProductSelling.Payments;
+using System;
 using System.Collections.Generic;
 using Volo.Abp.Application.Dtos;
 namespace Acme.ProductSelling.Orders
@@ -16,5 +17,6 @@ namespace Acme.ProductSelling.Orders
         public OrderStatus OrderStatus { get; set; }
         public string StatusText { get; set; }
         public string PaymentMethod { get; set; } // Thêm phương thức thanh toán
+        public PaymentStatus PaymentStatus { get; set; } // Trạng thái thanh toán
     }
 }

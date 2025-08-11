@@ -1,12 +1,7 @@
 ﻿using Acme.ProductSelling.Orders;
 using Acme.ProductSelling.PaymentGateway.MoMo.Models;
 using Acme.ProductSelling.PaymentGateway.MoMo.Services;
-using Azure.Core;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.DependencyInjection;
@@ -15,7 +10,7 @@ namespace Acme.ProductSelling.Payments
 {
     public class MoMoPaymentGateway : IPaymentGateway, ITransientDependency
     {
-        public string Name => PaymentConst.MoMo;
+        public string Name => PaymentMethods.MoMo;
         private readonly IMoMoService _moMoService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -51,12 +46,11 @@ namespace Acme.ProductSelling.Payments
 
 
             var paymentUrl = await _moMoService.CreatePaymentAsync(request);
-            if(paymentUrl.ErrorCode == 0)
+            if (paymentUrl.ErrorCode == 0)
             {
                 return new PaymentGatewayResult
                 {
                     RedirectUrl = paymentUrl.PayUrl,
-                    NextOrderStatus = OrderStatus.PendingPayment
                 };
             }
             else

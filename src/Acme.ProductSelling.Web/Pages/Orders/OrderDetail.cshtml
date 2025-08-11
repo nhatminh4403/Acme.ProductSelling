@@ -48,6 +48,15 @@
                                 </td>
                             </tr>
                             <tr>
+                                <th>@L["Order:PaymentStatus"]:</th>
+                                <td>
+                                    <span class="badge bg-@(Model.GetPaymentStatusBadgeClass(Model.Order.PaymentStatus))"
+                                          id="paymentStatusBadge">
+                                        @L[Model.Order.PaymentStatus.ToString()]
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
                                 <th>@L["Order:TotalAmount"]:</th>
                                 <td>
                                     @(Model.Order.TotalAmount.ToString("C0", CultureInfo.GetCultureInfo("vi-VN")))
@@ -66,7 +75,7 @@
                                 <th>@L["Order:CustomerName"]:</th>
                                 <td>@Model.Order.CustomerName</td>
                             </tr>
-                            
+
                             <tr>
                                 <th>@L["Order:PhoneNumber"]:</th>
                                 <td>@Model.Order.CustomerPhone</td>

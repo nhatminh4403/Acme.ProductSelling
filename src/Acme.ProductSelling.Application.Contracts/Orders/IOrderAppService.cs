@@ -18,6 +18,7 @@ namespace Acme.ProductSelling.Orders
         Task DeleteAsync(Guid id);
 
         Task<OrderDto> ConfirmPayPalOrderAsync(Guid orderId);
+        Task MarkAsCodPaidAndCompletedAsync(Guid orderId);
 
     }
 }

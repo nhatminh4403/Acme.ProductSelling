@@ -3,6 +3,7 @@ using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Specifications;
 using Acme.ProductSelling.Utils;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -35,7 +36,6 @@ namespace Acme.ProductSelling
         private readonly IRepository<HeadsetSpecification, Guid> _headsetSpecRepository;
         private readonly IGuidGenerator _guidGenerator;
         private readonly IRepository<Manufacturer, Guid> _manufacturerRepository;
-        private readonly IdentityUserManager _identityUserManager;
 
 
         public ProductSellingDataSeederContributor(
@@ -55,9 +55,11 @@ namespace Acme.ProductSelling
             IRepository<HeadsetSpecification, Guid> headsetSpecRepository,
             IRepository<LaptopSpecification, Guid> laptopSpecRepository,
             IGuidGenerator guidGenerator, IdentityUserManager identityUserManager,
-            IRepository<Manufacturer, Guid> manufacturerRepository)
+            IRepository<Manufacturer, Guid> manufacturerRepository,
+            ILookupNormalizer lookupNormalizer,
+            IIdentityRoleRepository identityRoleRepository,
+            IIdentityUserRepository identityUserRepository)
         {
-            _identityUserManager = identityUserManager;
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
             _categoryManager = categoryManager;
@@ -76,16 +78,19 @@ namespace Acme.ProductSelling
             _laptopSpecRepository = laptopSpecRepository;
             _guidGenerator = guidGenerator;
             _manufacturerRepository = manufacturerRepository;
+
         }
+
         public async Task SeedAsync(DataSeedContext context)
         {
-            // --- Seed Categories ---
-            // Chỉ seed nếu chưa có Category nào trong DB
+
+
+
+            #region Categories
             if (await _categoryRepository.GetCountAsync() > 0)
             {
                 return; // Không cần seed nếu đã có Category
             }
-
             var monitors = await _categoryRepository.InsertAsync(
                                                      await _categoryManager.CreateAsync("Monitor", "Displays", SpecificationType.Monitor));
 
@@ -114,7 +119,7 @@ namespace Acme.ProductSelling
                                                         await _categoryManager.CreateAsync("CPU Cooler", "Cooling Solutions", SpecificationType.CPUCooler));
             var headsets = await _categoryRepository.InsertAsync(
                                                         await _categoryManager.CreateAsync("Headset", "Audio Devices", SpecificationType.Headset));
-
+            #endregion
             #region Manufacturers
             List<Manufacturer> Manufacturers = new List<Manufacturer>();
 
@@ -362,6 +367,13 @@ namespace Acme.ProductSelling
             await _manufacturerRepository.InsertManyAsync(Manufacturers, autoSave: true);
             #endregion
             #region products and specs
+
+            if (await _productRepository.AnyAsync())
+            {
+                return;
+            }
+
+
             var cpuSpec1 = new CpuSpecification
             {
                 Socket = "AM5",
@@ -1445,26 +1457,15 @@ namespace Acme.ProductSelling
 
 
             #endregion Mouse
-            if (await _productRepository.GetCountAsync() > 0)
-            {
-                return;
-            }
 
-            await _productRepository.InsertAsync(productCpu2, autoSave: true);
-            await _productRepository.InsertAsync(productGpu2, autoSave: true);
-            await _productRepository.InsertAsync(productRam2, autoSave: true);
-            await _productRepository.InsertAsync(productStorage2, autoSave: true);
-            await _productRepository.InsertAsync(productMouse2, autoSave: true);
-            await _productRepository.InsertAsync(keyboardProduct2, autoSave: true);
-            await _productRepository.InsertAsync(productMonitor2, autoSave: true);
-            await _productRepository.InsertAsync(productPsu2, autoSave: true);
-            await _productRepository.InsertAsync(productCase2, autoSave: true);
-            await _productRepository.InsertAsync(productCpuCooler2, autoSave: true);
-            await _productRepository.InsertAsync(productHeadset2, autoSave: true);
-            await _productRepository.InsertAsync(productLaptop2, autoSave: true);
 
             #endregion
+
+
+
         }
+
+
     }
 }
 

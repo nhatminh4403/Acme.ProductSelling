@@ -1,7 +1,7 @@
 ﻿
 namespace Acme.ProductSelling.Payments
 {
-    public static class PaymentConst
+    public static class PaymentMethods
     {
         public const string COD = "COD";
         public const string VnPay = "VnPay";

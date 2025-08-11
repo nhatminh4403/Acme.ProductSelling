@@ -1,12 +1,7 @@
 ﻿using Acme.ProductSelling.Orders;
 using Acme.ProductSelling.PaymentGateway.PayPal;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.DependencyInjection;
@@ -17,10 +12,10 @@ namespace Acme.ProductSelling.Payments
         private readonly IPayPalService _payPalService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IExchangeCurrencyService _exchangeCurrencyService;
-        public string Name => PaymentConst.PayPal;
+        public string Name => PaymentMethods.PayPal;
 
 
-        public PayPalPaymentGateway(IPayPalService payPalService,IHttpContextAccessor httpContextAccessor, IExchangeCurrencyService exchangeCurrencyService)
+        public PayPalPaymentGateway(IPayPalService payPalService, IHttpContextAccessor httpContextAccessor, IExchangeCurrencyService exchangeCurrencyService)
         {
             _payPalService = payPalService;
             _exchangeCurrencyService = exchangeCurrencyService;
@@ -58,7 +53,6 @@ namespace Acme.ProductSelling.Payments
                 var result = new PaymentGatewayResult
                 {
                     RedirectUrl = paymentUrl,
-                    NextOrderStatus = OrderStatus.PendingPayment
                 };
                 return result;
             }

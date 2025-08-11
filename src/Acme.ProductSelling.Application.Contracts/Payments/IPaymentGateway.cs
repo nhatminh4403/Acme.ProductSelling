@@ -12,6 +12,5 @@ namespace Acme.ProductSelling.Payments
     public class PaymentGatewayResult
     {
         public string RedirectUrl { get; set; }
-        public OrderStatus NextOrderStatus { get; set; }
     }
 }

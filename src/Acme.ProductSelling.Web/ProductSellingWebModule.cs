@@ -1,5 +1,4 @@
 using Acme.ProductSelling.PaymentGateway.VnPay;
-using Acme.ProductSelling.PaymentGateway;
 #region using directives
 using Acme.ProductSelling.EntityFrameworkCore;
 using Acme.ProductSelling.Localization;

@@ -6,13 +6,12 @@ namespace Acme.ProductSelling.Payments
 {
     public class CodPaymentGateway : IPaymentGateway, ITransientDependency
     {
-        public string Name => PaymentConst.COD;
+        public string Name => PaymentMethods.COD;
         public Task<PaymentGatewayResult> ProcessAsync(Order order)
         {
             return Task.FromResult(new PaymentGatewayResult
             {
                 RedirectUrl = null,
-                NextOrderStatus = OrderStatus.Placed
             });
         }
     }

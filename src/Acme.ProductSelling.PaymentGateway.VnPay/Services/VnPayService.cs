@@ -73,7 +73,7 @@ namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
                 Success = true,
                 PaymentMethod = "VnPay",
                 OrderDescription = vnp_OrderInfo,
-                 OrderId = vnp_orderId.ToString(),
+                OrderId = vnp_orderId.ToString(),
                 TransactionId = vnp_TransactionId.ToString(),
                 Token = vnp_SecureHash,
                 VnPayResponseCode = vnp_ResponseCode

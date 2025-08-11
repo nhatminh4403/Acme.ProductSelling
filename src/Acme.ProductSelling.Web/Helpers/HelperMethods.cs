@@ -1,12 +1,9 @@
 ﻿using Acme.ProductSelling.Localization;
-using Acme.ProductSelling.Utils;
-using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Volo.Abp.Users;
 
 namespace Acme.ProductSelling.Web.Helpers
 {
@@ -14,7 +11,7 @@ namespace Acme.ProductSelling.Web.Helpers
     {
         private static readonly HttpClient _httpClient = new HttpClient()
         {
-            Timeout = TimeSpan.FromSeconds(10) 
+            Timeout = TimeSpan.FromSeconds(10)
         };
         public static string GetCategoryLocalizerName(string categoryName, IStringLocalizer<ProductSellingResource> localizer = null)
         {

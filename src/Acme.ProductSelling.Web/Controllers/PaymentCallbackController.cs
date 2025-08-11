@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using Volo.Abp.AspNetCore.Mvc;
-using Acme.ProductSelling.Payments;
-using Acme.ProductSelling.Orders;
-using System;
+﻿using Acme.ProductSelling.Orders;
 using Acme.ProductSelling.PaymentGateway.MoMo.Models;
+using Acme.ProductSelling.Payments;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 
 namespace Acme.ProductSelling.Web.Controllers
@@ -15,7 +14,7 @@ namespace Acme.ProductSelling.Web.Controllers
     {
         private readonly IPaymentCallbackAppService _callbackAppService;
         private readonly IOrderAppService _orderAppService;
-        
+
         public PaymentCallbackController(IPaymentCallbackAppService callbackAppService,
                                             IOrderAppService orderAppService)
         {
@@ -72,7 +71,7 @@ namespace Acme.ProductSelling.Web.Controllers
             try
             {
                 // MoMo sẽ gửi dữ liệu IPN qua query string
-                var result =  _callbackAppService.ProcessMoMoIpnAsync(request);
+                var result = _callbackAppService.ProcessMoMoIpnAsync(request);
                 return NoContent();
             }
             catch (Exception ex)

@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Orders;
+using Acme.ProductSelling.Payments;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -67,6 +68,19 @@ namespace Acme.ProductSelling.Web.Pages.Orders
                 OrderStatus.Shipped => "primary",
                 OrderStatus.Delivered => "success",
                 OrderStatus.Cancelled => "danger",
+                _ => "secondary"
+            };
+        }
+        public string GetPaymentStatusBadgeClass(PaymentStatus paymentStatus)
+        {
+            return paymentStatus switch
+            {
+                PaymentStatus.Unpaid => "warning",
+                PaymentStatus.Pending => "info",
+                PaymentStatus.Paid => "success",
+                PaymentStatus.Failed => "danger",
+                PaymentStatus.Refunded => "secondary",
+                PaymentStatus.Cancelled => "dark",
                 _ => "secondary"
             };
         }

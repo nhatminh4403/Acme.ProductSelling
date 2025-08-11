@@ -10,14 +10,14 @@ namespace Acme.ProductSelling.Payments
     {
         private readonly IEnumerable<IPaymentGateway> _gateways;
         private readonly ILogger<PaymentGatewayResolver> Logger;
-        public PaymentGatewayResolver(IEnumerable<IPaymentGateway> gateways,ILogger<PaymentGatewayResolver> logger)
+        public PaymentGatewayResolver(IEnumerable<IPaymentGateway> gateways, ILogger<PaymentGatewayResolver> logger)
         {
             Logger = logger;
             _gateways = gateways;
         }
         public IPaymentGateway Resolve(string name)
         {
-            var gateway = _gateways.FirstOrDefault(g => g.Name.Equals(name, StringComparison.OrdinalIgnoreCase)); 
+            var gateway = _gateways.FirstOrDefault(g => g.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
             if (gateway == null)
             {

@@ -1,7 +1,6 @@
 ﻿using Acme.ProductSelling.Orders;
 using Acme.ProductSelling.PaymentGateway.PayPal;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;

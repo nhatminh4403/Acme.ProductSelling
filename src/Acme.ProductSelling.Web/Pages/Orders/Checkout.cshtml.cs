@@ -1,6 +1,5 @@
 ﻿using Acme.ProductSelling.Carts;
 using Acme.ProductSelling.Orders;
-using Acme.ProductSelling.Payments;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -9,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
-using Volo.Abp.Users;
 
 namespace Acme.ProductSelling.Web.Pages.Checkout
 {
@@ -17,7 +15,7 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
     public class CheckoutModel : AbpPageModel
     {
         [BindProperty]
-        public CreateOrderDto OrderInput { get; set; } 
+        public CreateOrderDto OrderInput { get; set; }
         [BindProperty]
         public CartDto CurrentCart { get; private set; }
         private readonly ICartAppService _cartAppService;
@@ -33,7 +31,7 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
 
         public async Task<IActionResult> OnGetAsync()
         {
-            CurrentCart = await _cartAppService.GetAsync(); 
+            CurrentCart = await _cartAppService.GetAsync();
             if (CurrentCart == null || !CurrentCart.CartItems.Any())
             {
                 return RedirectToPage("/" + "Cart".ToLower());
@@ -84,7 +82,7 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
                 Logger.LogInformation("Phương thức thanh toán đã chọn: {PaymentMethod}", OrderInput.PaymentMethod);
 
                 var createdOrder = await _orderAppService.CreateAsync(OrderInput);
-                if(createdOrder == null || createdOrder.Order == null)
+                if (createdOrder == null || createdOrder.Order == null)
                 {
                     Console.WriteLine("Order creation failed, createdOrder or Order is null.");
                 }
@@ -97,7 +95,7 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
                 }
 
                 await _cartAppService.ClearAsync();
-                
+
                 return RedirectToPage("/Orders/OrderConfirmation",
                     new { orderId = createdOrder.Order.Id, orderNumber = createdOrder.Order.OrderNumber });
             }

@@ -47,6 +47,30 @@
                                             dataTable.ajax.reload();
                                         });
                                 }
+                            },
+                            {
+                                text: l('ConfirmCodPayment'),
+                                // Nút chỉ hiện khi:
+                                // 1. User có quyền.
+                                // 2. Đơn hàng là COD.
+                                // 3. Trạng thái thanh toán đang là PendingOnDelivery.
+                                visible: function (data) {
+                                    return abp.auth.isGranted('ProductSelling.Orders.ConfirmCodPayment') &&
+                                        data.record.paymentMethod === 'COD' &&
+                                        data.record.paymentStatus === 'PendingOnDelivery'; // Cần thêm PaymentStatus vào OrderDto
+                                },
+                                // Yêu cầu xác nhận trước khi thực hiện
+                                confirmMessage: function (data) {
+                                    return l('AreYouSureYouWantToConfirmCodPaymentForOrder', data.record.orderNumber);
+                                },
+                                action: function (data) {
+                                    orderService
+                                        .markAsCodPaidAndCompleted(data.record.id)
+                                        .then(function () {
+                                            dataTable.ajax.reload(); // Tải lại bảng sau khi thành công
+                                            abp.notify.success(l('OrderUpdatedSuccessfully'));
+                                        });
+                                }
                             }
                         ]
                     }
@@ -54,7 +78,11 @@
                 ,
                 {
                     title: l('Order:OrderNumber'),
-                    data: "orderNumber"
+                    data: "orderNumber",
+                    render: function (data, type, row) {
+                        // Link đến trang chi tiết
+                        return `<a href="/Orders/OrderDetail/${row.id}">${data}</a>`;
+                    }
                 },
                 {
                     title: l('Order:OrderDate'),
@@ -72,6 +100,10 @@
                 {
                     title: l('Order:TotalAmount'),
                     data: "totalAmount",
+                    render: function (data) {
+                        // Format tiền tệ VNĐ
+                        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data);
+                    }
                 },
                 {
                     title: l('Order:OrderStatus'),
@@ -84,6 +116,15 @@
                         return `<span class="badge ${badgeClass}">${statusText}</span>`;
                     }
                 }
+                {
+                    title: l('Order:PaymentStatus'),
+                    data: "paymentStatus", // Cần thêm thuộc tính này vào OrderDto
+                    render: function (data, type, row) {
+                        var status = data || 'Unpaid';
+                        var badgeClass = getPaymentStatusBadgeClass(status);
+                        return `<span class="badge ${badgeClass}">${l('Enum:PaymentStatus.' + status)}</span>`;
+                    }
+                },
             ]
         })
     );
@@ -99,7 +140,17 @@
             default: return 'bg-secondary';
         }
     }
-
+    function getPaymentStatusBadgeClass(status) {
+        switch (status) {
+            case 'Unpaid': return 'bg-secondary';
+            case 'PendingOnDelivery': return 'bg-info text-dark';
+            case 'Pending': return 'bg-warning text-dark';
+            case 'Paid': return 'bg-success';
+            case 'Failed': return 'bg-danger';
+            case 'Refunded': return 'bg-dark';
+            default: return 'bg-light text-dark';
+        }
+    }
     $('#NewOrderButton').click(function (e) {
         e.preventDefault();
         createModal.open(); // Mở Create Modal

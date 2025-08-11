@@ -20,10 +20,10 @@ namespace Acme.ProductSelling.Payments
         public ExchangeCurrencyService(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            Logger = NullLogger<ExchangeCurrencyService>.Instance; 
+            Logger = NullLogger<ExchangeCurrencyService>.Instance;
         }
 
-        public  async Task<decimal> ConvertCurrencyAsync(decimal amount, string fromCurrency, string toCurrency)
+        public async Task<decimal> ConvertCurrencyAsync(decimal amount, string fromCurrency, string toCurrency)
         {
 
             using (var httpClient = new HttpClient())

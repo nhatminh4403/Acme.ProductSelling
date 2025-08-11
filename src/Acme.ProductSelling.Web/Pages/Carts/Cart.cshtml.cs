@@ -52,8 +52,8 @@ namespace Acme.ProductSelling.Web.Pages.Carts
             catch (UserFriendlyException ex)
             {
 
-                Alerts.Warning(ex.Message); 
-                return RedirectToPage(); 
+                Alerts.Warning(ex.Message);
+                return RedirectToPage();
             }
             catch (Exception ex) // Lỗi không mong muốn
             {
@@ -68,10 +68,10 @@ namespace Acme.ProductSelling.Web.Pages.Carts
             try
             {
                 await _cartAppService.RemoveItemAsync(cartItemId);
-                Alerts.Success("Item removed from cart."); 
+                Alerts.Success("Item removed from cart.");
                 return RedirectToPage();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Logger.LogError(ex, "Error removing cart item.");
                 Alerts.Danger("An error occurred while removing the item.");

@@ -2,7 +2,6 @@
 {
     public enum OrderStatus
     {
-        PendingPayment,
         Pending,
         Placed,
         Confirmed,

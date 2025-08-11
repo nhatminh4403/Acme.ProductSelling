@@ -47,7 +47,7 @@
 
     "Title:OrderDetails": "Chi tiết đơn hàng",
 
-
+    "Permission:Orders.ConfirmCodPayment": "Xác nhận thanh toán COD",
 
     "ProductDeletionConfirmationMessage": "Bạn có chắc chắn muốn xóa sản phẩm này không?",
     "PriceRangeAlias:Under1Million": "duoi-1-trieu",
@@ -400,6 +400,15 @@
     "ErrorOccurred": "Đã xảy ra lỗi!",
     "SorryErrorOccurred": "Xin lỗi, đã có lỗi xảy ra trong quá trình xử lý yêu cầu của bạn.",
     "GoBack": "Quay về trang trước",
-    "OrGoHome": "Hoặc quay về trang chủ"
+    "OrGoHome": "Hoặc quay về trang chủ",
+
+    "Enum:PaymentStatus.Unpaid": "Chưa thanh toán",
+    "Enum:PaymentStatus.PendingOnDelivery": "Pending on Delivery",
+    "Enum:PaymentStatus.Pending": "Pending Payment",
+    "Enum:PaymentStatus.Paid": "Paid",
+    "Enum:PaymentStatus.Failed": "Failed",
+    "Enum:PaymentStatus.Refunded": "Refunded"
+
+
   }
 }

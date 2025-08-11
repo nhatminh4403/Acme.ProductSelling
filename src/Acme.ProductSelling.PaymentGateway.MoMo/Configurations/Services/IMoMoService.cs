@@ -1,5 +1,4 @@
 ﻿using Acme.ProductSelling.PaymentGateway.MoMo.Models;
-using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
 

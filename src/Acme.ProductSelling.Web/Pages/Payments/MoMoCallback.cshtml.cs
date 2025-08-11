@@ -1,6 +1,5 @@
 ﻿using Acme.ProductSelling.PaymentGateway.MoMo.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Payments
@@ -14,21 +13,21 @@ namespace Acme.ProductSelling.Web.Pages.Payments
         public string orderId { get; set; }
         [FromQuery, BindProperty(SupportsGet = true)]
         public string requestId { get; set; }
-        [FromQuery, BindProperty(SupportsGet = true)] 
+        [FromQuery, BindProperty(SupportsGet = true)]
         public long amount { get; set; }
         [FromQuery, BindProperty(SupportsGet = true)]
         public string orderInfo { get; set; }
         [FromQuery, BindProperty(SupportsGet = true)]
         public string orderType { get; set; }
-        [FromQuery, BindProperty(SupportsGet = true)] 
+        [FromQuery, BindProperty(SupportsGet = true)]
         public long transId { get; set; }
         [FromQuery, BindProperty(SupportsGet = true)]
         public int resultCode { get; set; }
         [FromQuery, BindProperty(SupportsGet = true)]
         public string message { get; set; }
-        [FromQuery, BindProperty(SupportsGet = true)] 
+        [FromQuery, BindProperty(SupportsGet = true)]
         public string payType { get; set; }
-        [FromQuery, BindProperty(SupportsGet = true)] 
+        [FromQuery, BindProperty(SupportsGet = true)]
         public string extraData { get; set; }
         [FromQuery, BindProperty(SupportsGet = true)]
         public string signature { get; set; }

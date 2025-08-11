@@ -1,15 +1,13 @@
 ﻿//using Newtonsoft.Json;
+using Acme.ProductSelling.PaymentGateway.MoMo.Configurations;
 using Acme.ProductSelling.PaymentGateway.MoMo.Models;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using System;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System;
-using Acme.ProductSelling.PaymentGateway.MoMo.Configurations;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Http;
 
 namespace Acme.ProductSelling.PaymentGateway.MoMo.Services
 {
@@ -112,7 +110,7 @@ namespace Acme.ProductSelling.PaymentGateway.MoMo.Services
 
 
 
-                var calculatedSignature =  ComputeHmacSha256(rawHash, _secretKey);
+                var calculatedSignature = ComputeHmacSha256(rawHash, _secretKey);
 
                 // So sánh signature nhận được với signature tính toán
                 return signatureFromCallback == calculatedSignature;

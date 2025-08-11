@@ -4,7 +4,6 @@ using Acme.ProductSelling.PaymentGateway.MoMo.Services;
 using Acme.ProductSelling.PaymentGateway.VnPay.Dtos;
 using Acme.ProductSelling.PaymentGateway.VnPay.Services;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
@@ -28,7 +27,7 @@ namespace Acme.ProductSelling.Payments
             IRepository<Order, Guid> orderRepository,
             IOrderNotificationService orderNotificationService,
             ILogger<PaymentCallbackAppService> logger,
-            IDistributedEventBus distributedEventBus,IMoMoService moMoService)
+            IDistributedEventBus distributedEventBus, IMoMoService moMoService)
         {
             _vnPayService = vnPayService;
             _orderRepository = orderRepository;
@@ -69,15 +68,15 @@ namespace Acme.ProductSelling.Payments
             }
 
             // Bước 4: Kiểm tra trạng thái giao dịch và trạng thái đơn hàng để tránh xử lý lặp lại.
-            if (response.VnPayResponseCode == "00" && order.Status == OrderStatus.PendingPayment)
+            if (response.VnPayResponseCode == "00" && order.PaymentStatus == PaymentStatus.Pending)
             {
                 _logger.LogInformation("Giao dịch thành công. Cập nhật trạng thái cho OrderId: {OrderId}", order.Id);
 
-                order.MarkAsPaid();
+                order.MarkAsPaidOnline();
                 await _orderRepository.UpdateAsync(order, autoSave: true);
                 await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
 
-                return new VnPaymentResponseModel {OrderId = orderId.ToString(), VnPayResponseCode = "00", OrderDescription = "Confirm Success" };
+                return new VnPaymentResponseModel { OrderId = orderId.ToString(), VnPayResponseCode = "00", OrderDescription = "Confirm Success" };
             }
 
             // Các trường hợp khác: Đơn hàng đã được xử lý trước đó hoặc giao dịch thất bại.
@@ -117,9 +116,9 @@ namespace Acme.ProductSelling.Payments
                 }
                 // Bước 4: Kiểm tra trạng thái giao dịch và trạng thái đơn hàng để tránh xử lý lặp lại.
 
-                if (request.resultCode == 0 && order.Status == OrderStatus.PendingPayment)
+                if (request.resultCode == 0 && order.PaymentStatus == PaymentStatus.Pending)
                 {
-                    order.MarkAsPaid();
+                    order.MarkAsPaidOnline();
                     await _orderRepository.UpdateAsync(order, autoSave: true);
                     await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
                     _logger.LogInformation("Cập nhật trạng thái đơn hàng thành công cho OrderId: {OrderId}", order.Id);

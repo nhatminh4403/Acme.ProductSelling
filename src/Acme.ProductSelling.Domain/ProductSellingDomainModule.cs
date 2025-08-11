@@ -50,7 +50,6 @@ public class ProductSellingDomainModule : AbpModule
             options.Languages.Add(new LanguageInfo("en-GB", "en-GB", "English (UK)"));
             options.Languages.Add(new LanguageInfo("VN", "vi", "Tiếng Việt"));
         });
-            
 
 #if DEBUG
         context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());

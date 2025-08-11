@@ -1,8 +1,7 @@
-using Acme.ProductSelling.PaymentGateway.VnPay;
-using Acme.ProductSelling.PaymentGateway.PayPal;
-using Acme.ProductSelling.PaymentGateway.MoMo;
 using Acme.ProductSelling.EntityFrameworkCore;
-using Acme.ProductSelling.PaymentGateway;
+using Acme.ProductSelling.PaymentGateway.MoMo;
+using Acme.ProductSelling.PaymentGateway.PayPal;
+using Acme.ProductSelling.PaymentGateway.VnPay;
 using Volo.Abp.Account;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.FeatureManagement;

@@ -40,6 +40,7 @@
                             <th>@L["Order:CustomerName"]</th>
                             <th>@L["Order:TotalAmount"]</th>
                             <th>@L["Order:OrderStatus"]</th>
+                            <th>@L["Order:PaymentStatus"]</th>
                             <th>@L["Actions"]</th>
                         </tr>
                     </thead>
@@ -57,6 +58,11 @@
                                 <td class="order-status-cell">
                                     <span class="badge bg-@Model.GetStatusBadgeClass(order.OrderStatus)">
                                         @L[order.OrderStatus.ToString()]
+                                    </span>
+                                </td>
+                                <td class="order-status-cell">
+                                    <span class="badge bg-@Model.GetPaymentStatusBadgeClass(order.PaymentStatus)">
+                                        @L[order.PaymentStatus.ToString()]
                                     </span>
                                 </td>
                                 <td class="order-actions-cell">

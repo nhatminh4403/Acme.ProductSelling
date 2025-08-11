@@ -1,5 +1,6 @@
+using Acme.ProductSelling.PaymentGateway.MoMo;
+using Acme.ProductSelling.PaymentGateway.PayPal;
 using Acme.ProductSelling.PaymentGateway.VnPay;
-using Acme.ProductSelling.PaymentGateway;
 using Volo.Abp.Account;
 using Volo.Abp.AspNetCore.SignalR;
 using Volo.Abp.FeatureManagement;
@@ -8,8 +9,6 @@ using Volo.Abp.Modularity;
 using Volo.Abp.PermissionManagement;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
-using Acme.ProductSelling.PaymentGateway.MoMo;
-using Acme.ProductSelling.PaymentGateway.PayPal;
 
 namespace Acme.ProductSelling;
 

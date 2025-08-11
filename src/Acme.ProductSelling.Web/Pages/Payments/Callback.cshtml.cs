@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using System;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Payments
@@ -19,7 +17,7 @@ namespace Acme.ProductSelling.Web.Pages.Payments
         public string Message { get; private set; }
         public bool IsSuccess { get; private set; }
 
-        
+
 
         public void OnGet()
         {

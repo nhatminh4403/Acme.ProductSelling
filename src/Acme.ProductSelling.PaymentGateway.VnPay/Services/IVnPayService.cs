@@ -4,7 +4,7 @@ using Volo.Abp.DependencyInjection;
 
 namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
 {
-    public interface IVnPayService : ITransientDependency 
+    public interface IVnPayService : ITransientDependency
     {
         string CreatePaymentUrl(HttpContext context, VnPaymentRequestModel model);
         VnPaymentResponseModel PaymentExecute(IQueryCollection collections);

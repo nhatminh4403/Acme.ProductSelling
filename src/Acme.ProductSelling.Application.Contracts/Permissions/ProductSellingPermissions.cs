@@ -41,5 +41,6 @@ public static class ProductSellingPermissions
         public const string Edit = Default + ".Edit";
         public const string Delete = Default + ".Delete";
         public const string ChangeStatus = Default + ".ChangeStatus";
+        public const string ConfirmCodPayment = Default + ".ConfirmCodPayment";
     }
 }

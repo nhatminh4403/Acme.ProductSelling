@@ -51,7 +51,7 @@ namespace Acme.ProductSelling.Orders.BackgroundJobs
                 if (order.Status == OrderStatus.Placed)
                 {
 
-                    order.SetPendingStatus();
+                    order.SetStatus(OrderStatus.Pending);
 
                     await _orderRepository.UpdateAsync(order, autoSave: true);
 

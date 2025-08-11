@@ -11,7 +11,7 @@ namespace Acme.ProductSelling.Payments
 {
     public class VnPayPaymentGateway : IPaymentGateway, ITransientDependency
     {
-        public string Name => PaymentConst.VnPay;
+        public string Name => PaymentMethods.VnPay;
         private readonly IVnPayService _vnPayService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -40,7 +40,6 @@ namespace Acme.ProductSelling.Payments
             return Task.FromResult(new PaymentGatewayResult
             {
                 RedirectUrl = paymentUrl,
-                NextOrderStatus = OrderStatus.PendingPayment // Assuming the next status is Pending after redirection to payment gateway
             });
         }
     }

@@ -22,7 +22,12 @@
 
     "Title:OrderDetails": "Order Details",
 
-
+    "Enum:PaymentStatus.Unpaid": "Unpaid",
+    "Enum:PaymentStatus.PendingOnDelivery": "Pending on Delivery",
+    "Enum:PaymentStatus.Pending": "Pending Payment",
+    "Enum:PaymentStatus.Paid": "Paid",
+    "Enum:PaymentStatus.Failed": "Failed",
+    "Enum:PaymentStatus.Refunded": "Refunded",
 
 
     "Home:CategoryList": "Product Categories",
@@ -135,6 +140,8 @@
     "Order:PaymentMethod:VNPay": "VNPay",
     "Order:PaymentMethod:MoMo": "MoMo",
     "Order:PaymentMethod:Paypal": "Paypal",
+
+    "Permission:Orders.ConfirmCodPayment": "COD Confirmed",
 
     "Category:CreateCategory": "Create Category",
     "Category:Categories": "Categories",
