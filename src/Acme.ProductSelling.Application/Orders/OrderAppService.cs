@@ -77,7 +77,7 @@ namespace Acme.ProductSelling.Orders
 
             if (customerId == null)
             {
-                throw new AbpAuthorizationException("User not authenticated.");
+                throw new AbpAuthorizationException("User:Unauthenticated");
             }
             if (order == null || order.CustomerId != customerId)
             {
@@ -131,7 +131,7 @@ namespace Acme.ProductSelling.Orders
         public async Task<CreateOrderResultDto> CreateAsync(CreateOrderDto input)
         {
             var customerId = _currentUser.Id.Value;
-            
+
 
             // --- LOGIC MỚI: TÌM VÀ TÁI SỬ DỤNG ĐƠN HÀNG "TREO" ---
 
@@ -154,7 +154,7 @@ namespace Acme.ProductSelling.Orders
                                   .FirstOrDefaultAsync(c => c.UserId == customerId);
             if (cart == null || !cart.Items.Any())
             {
-                throw new UserFriendlyException(L["ShoppingCartIsEmpty"]);
+                throw new UserFriendlyException(L["Cart:ShoppingCartIsEmpty"]);
             }
 
             Order orderToProcess;
@@ -213,9 +213,13 @@ namespace Acme.ProductSelling.Orders
                 {
                     if (product.StockCount < cartItem.Quantity)
                     {
-                        throw new UserFriendlyException($"Không đủ số lượng cho '{product.ProductName}'.");
+                        string ExceptionMessage = L["Product.Stock:NotEnoughStock", product.ProductName, product.StockCount];
+                        throw new UserFriendlyException(ExceptionMessage);
                     }
-                    orderToProcess.AddOrderItem(product.Id, product.ProductName, product.DiscountedPrice ?? product.OriginalPrice, cartItem.Quantity);
+                    orderToProcess.AddOrderItem(product.Id,
+                                                    product.ProductName,
+                                                    product.DiscountedPrice ?? product.OriginalPrice, 
+                                                    cartItem.Quantity);
                     product.StockCount -= cartItem.Quantity; // Giảm stock mới
                     await _productRepository.UpdateAsync(product);
                 }
@@ -254,7 +258,7 @@ namespace Acme.ProductSelling.Orders
             {
                 await _backgroundJobManager.EnqueueAsync<SetOrderPendingJobArgs>(
                     new SetOrderPendingJobArgs { OrderId = orderToProcess.Id },
-                    delay: TimeSpan.FromMinutes(5)
+                    delay: TimeSpan.FromSeconds(30) // Giữ nguyên logic cũ
                 );
             }
 
@@ -289,7 +293,7 @@ namespace Acme.ProductSelling.Orders
             var order = await _orderRepository.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
             if (order == null)
             {
-                throw new UserFriendlyException(L["OrderNotFound"]);
+                throw new UserFriendlyException(L["Order:OrderNotFound"]);
             }
             return ObjectMapper.Map<Order, OrderDto>(order);
         }
@@ -301,7 +305,7 @@ namespace Acme.ProductSelling.Orders
         {
             if (!_currentUser.IsAuthenticated || _currentUser.Id == null)
             {
-                throw new AbpAuthorizationException("User not authenticated.");
+                throw new AbpAuthorizationException(L["Account:UserNotAuthenticated"]);
             }
 
             var currentUserId = _currentUser.Id.Value;
@@ -331,14 +335,11 @@ namespace Acme.ProductSelling.Orders
             var order = await _orderRepository.GetAsync(id);
 
             order.SetStatus(input.NewStatus);
+            order.SetPaymentStatus(input.NewPaymentStatus);
 
             await _orderRepository.UpdateAsync(order, autoSave: true);
 
-            await _orderHubContext.Clients.All.ReceiveOrderStatusUpdate(
-                order.Id,
-                order.Status.ToString(),
-                L[order.Status.ToString()]
-            );
+            await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
 
             return ObjectMapper.Map<Order, OrderDto>(order);
         }
@@ -347,7 +348,7 @@ namespace Acme.ProductSelling.Orders
         public async Task DeleteAsync(Guid id)
         {
             var order = await _orderRepository.GetAsync(id, includeDetails: true); // include OrderItems
-            if (order.CustomerId != CurrentUser.Id) throw new AbpAuthorizationException("Không có quyền.");
+            if (order.CustomerId != CurrentUser.Id) throw new AbpAuthorizationException(L["Account:Unauthorized"]);
 
             order.CancelByUser(_localizer);
 

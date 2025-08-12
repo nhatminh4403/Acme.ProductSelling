@@ -18,7 +18,7 @@
                 </abp-column>
                 <abp-column size-md="_6" class="text-end">
                     <a href="@Url.Page("/Orders/OrderHistory")" class="btn btn-secondary">
-                        <i class="fa fa-arrow-left"></i> @L["BackToOrderHistory"]
+                        <i class="fa fa-arrow-left"></i> @L["Order:BackToOrderHistory"]
                     </a>
                 </abp-column>
             </abp-row>
@@ -89,12 +89,12 @@
                         {
                             <div id="cancelOrderContainer">
                                 <div class="alert alert-info d-flex justify-content-between align-items-center">
-                                    <span>@L["YouCanCancelThisOrderWithinTheGracePeriod"]</span>
+                                    <span>@L["Order:YouCanCancelThisOrderWithinTheGracePeriod"]</span>
                                     <form method="post" asp-page-handler="Cancel"
-                                          onsubmit="return confirm('@L["AreYouSureYouWantToCancelOrder"]')">
+                                          onsubmit="return confirm('@L["Order:AreYouSureYouWantToCancelOrder"]')">
                                         <input type="hidden" name="orderId" value="@Model.Order.Id" />
                                         <button type="submit" class="btn btn-danger">
-                                            <i class="fa fa-times"></i> @L["CancelOrder"]
+                                            <i class="fa fa-times"></i> @L["Order:CancelOrder"]
                                         </button>
                                     </form>
                                 </div>
@@ -104,14 +104,14 @@
                     </div>
                 </div>
 
-                <h4>@L["OrderItems"]</h4>
+                <h4>@L["Order:OrderItems"]</h4>
                 <abp-table striped-rows="true">
                     <thead>
                         <tr>
-                            <th>@L["Product"]</th>
-                            <th>@L["UnitPrice"]</th>
-                            <th>@L["Quantity"]</th>
-                            <th>@L["Subtotal"]</th>
+                            <th>@L["Order:Product"]</th>
+                            <th>@L["Order:UnitPrice"]</th>
+                            <th>@L["Order:Quantity"]</th>
+                            <th>@L["Order:Subtotal"]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -130,7 +130,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="3" class="text-end"><strong>@L["Total"]:</strong></td>
+                            <td colspan="3" class="text-end"><strong>@L["Order:Total"]:</strong></td>
                             <td><strong>@Model.Order.TotalAmount.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</strong></td>
                         </tr>
                     </tfoot>
@@ -140,7 +140,7 @@
             else
             {
                 <div class="alert alert-warning">
-                    @L["OrderNotFound"]
+                    @L["Order:OrderNotFound"]
                 </div>
             }
         </abp-card-body>

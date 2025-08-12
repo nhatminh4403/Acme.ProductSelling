@@ -38,6 +38,7 @@ namespace Acme.ProductSelling.Payments
                     if (exchangeRates == null || !exchangeRates.Rates.ContainsKey(toCurrency))
                     {
                         throw new Exception("Invalid currency code");
+
                     }
 
                     decimal rate = 1 / exchangeRates.Rates[fromCurrency];

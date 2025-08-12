@@ -1,0 +1,13 @@
+﻿@page
+@model Acme.ProductSelling.Web.Pages.Admin.Blogs.IndexModel
+@using Acme.ProductSelling.Localization
+@using Acme.ProductSelling.Web.Pages.Categories
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Authorization
+@using Acme.ProductSelling.Permissions
+
+@inject IStringLocalizer<ProductSellingResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = L["Title:Admin:Blog:AllBLogs"];
+}

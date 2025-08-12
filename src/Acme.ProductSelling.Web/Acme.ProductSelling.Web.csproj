@@ -80,7 +80,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
-    <Folder Include="Pages\Admin\Blogs\" />
     <Folder Include="wwwroot\pages\categories\" />
     <Folder Include="wwwroot\pages\products\" />
   </ItemGroup>

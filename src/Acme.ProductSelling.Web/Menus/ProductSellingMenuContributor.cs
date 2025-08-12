@@ -33,25 +33,25 @@ public class ProductSellingMenuContributor : IMenuContributor
             )
         );
         context.Menu.AddItem(new ApplicationMenuItem(
-            "Categories",
+            ProductSellingMenus.Categories,
             l["Admin:Menu:Categories"],
             icon: "fa-solid fa-list",
             url: "/admin/categories"
         ));
         context.Menu.AddItem(new ApplicationMenuItem(
-            "Products",
+            ProductSellingMenus.Products,
             l["Admin:Menu:Products"],
             icon: "fa-solid fa-list",
             url: "/admin/products"
         ));
         context.Menu.AddItem(new ApplicationMenuItem(
-            "Manufacturers",
+            ProductSellingMenus.Manufacturers,
             l["Admin:Menu:Manufacturers"],
             icon: "fa-solid fa-list",
             url: "/admin/manufacturers"
         ));
         context.Menu.AddItem(new ApplicationMenuItem(
-            "Orders",
+            ProductSellingMenus.Orders,
             l["Admin:Menu:Orders"],
             icon: "fa-solid fa-list",
             url: "/admin/orders"

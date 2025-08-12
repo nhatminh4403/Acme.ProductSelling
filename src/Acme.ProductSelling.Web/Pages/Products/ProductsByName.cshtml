@@ -7,11 +7,11 @@
 @inject IStringLocalizer<ProductSellingResource> L
 @{
     Layout = "/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = L["AllProductsByName"]+" " + Model.Name;
+    ViewData["Title"] = L["Title:AllProductsByName"]+" " + Model.Name;
 }
 
 <div class="container my-4 pb-1 bg-light rounded">
-    <h1 class="mb-4 text-center">@L["ProductsByName"]: @Model.Name</h1>
+    <h1 class="mb-4 text-center">@L["Product:ProductsByName"]: @Model.Name</h1>
     @if (Model.ProductList != null && Model.ProductList.Items.Any())
     {
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
@@ -77,6 +77,6 @@
     }
     else
     {
-        <div class="alert alert-info">@L["NoProductsFoundWithKeyword"] @Model.Name</div> 
+        <div class="alert alert-info">@L["Product:NoProductsFoundWithKeyword"] @Model.Name</div> 
     }
 </div>

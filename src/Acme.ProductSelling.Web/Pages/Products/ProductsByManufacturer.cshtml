@@ -7,7 +7,7 @@
 @using Acme.ProductSelling.Categories
 @inject IStringLocalizer<ProductSellingResource> L
 @{
-    ViewData["Title"] = L["ProductByManufacturer"] + " " + Model.ManufacturerName;
+    ViewData["Title"] = L["Title:ProductByManufacturer"] + " " + Model.ManufacturerName;
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 @functions {
@@ -93,6 +93,6 @@
     }
     else
     {
-        <div class="alert alert-info">@L["NoProductsFoundInCategory"]</div> @* Key localization mới *@
+        <div class="alert alert-info">@L["Product:NoProductsFoundForThisManufacturer"]</div> @* Key localization mới *@
     }
 </div>

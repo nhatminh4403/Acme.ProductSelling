@@ -98,10 +98,13 @@ namespace Acme.ProductSelling.Orders
             TotalAmount = OrderItems.Any() ? OrderItems.Sum(oi => oi.LineTotalAmount) : 0;
         }
 
-        public void SetStatus(OrderStatus newStatus)
+        public void SetStatus(OrderStatus newStatus, IStringLocalizer<ProductSellingResource> localizer = null)
         {
             if (!IsNextStatusValid(newStatus))
             {
+                 //var errorMessage = localizer != null
+                 //   ? localizer["OrderStatusChangeNotAllowed", Status, newStatus]
+                 //   : $"Không thể chuyển trạng thái từ '{Status}' sang '{newStatus}'.";
                 // Thông điệp lỗi chung chung, AppService sẽ xử lý việc dịch
                 throw new UserFriendlyException("OrderStatusChangeNotAllowed",
                     $"Không thể chuyển trạng thái từ '{Status}' sang '{newStatus}'.");
@@ -121,7 +124,7 @@ namespace Acme.ProductSelling.Orders
                 SetStatus(OrderStatus.Confirmed);
             }
         }
-        public void SetPaymentStatus(PaymentStatus newPaymentStatus)
+        public void SetPaymentStatus(PaymentStatus newPaymentStatus, IStringLocalizer<ProductSellingResource> localizer = null)
         {
             // Chỉ cho phép chuyển sang trạng thái thanh toán đã hoàn thành hoặc thất bại
             if (newPaymentStatus != PaymentStatus.Paid && newPaymentStatus != PaymentStatus.Failed)
@@ -135,7 +138,7 @@ namespace Acme.ProductSelling.Orders
         /// <summary>
         /// Dành cho admin xác nhận đã thu tiền đơn COD.
         /// </summary>
-        public void MarkAsCodPaidAndCompleted()
+        public void MarkAsCodPaidAndCompleted(IStringLocalizer<ProductSellingResource> localizer = null)
         {
             if (PaymentMethod != PaymentMethods.COD)
             {
@@ -157,11 +160,11 @@ namespace Acme.ProductSelling.Orders
             // và thanh toán chưa được thực hiện (cho chắc chắn).
             if (Status != OrderStatus.Placed)
             {
-                throw new UserFriendlyException("OrderCanOnlyBeCancelledWhenPlaced");
+                throw new UserFriendlyException(localizer["Order:OrderCanOnlyBeCancelledWhenPlaced"]);
             }
             if (PaymentStatus == PaymentStatus.Paid)
             {
-                throw new UserFriendlyException("CannotCancelPaidOrder");
+                throw new UserFriendlyException(localizer["Order:CannotCancelPaidOrder"]);
             }
 
             SetStatus(OrderStatus.Cancelled);

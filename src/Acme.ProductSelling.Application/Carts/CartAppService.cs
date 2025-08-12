@@ -66,8 +66,8 @@ namespace Acme.ProductSelling.Carts
             catch (Exception ex)
             {
                 Logger.LogError($"Error in GetOrCreateCurrentUserCartAsync: {ex.Message}");
-                throw new UserFriendlyException("Could not access your shopping cart. Please try again later.");
-            }
+                throw new UserFriendlyException(L["User:Cart:CartInccessible.TryAgain"]);
+            }//Could not access your shopping cart. Please try again later.
         }
 
         public async Task<CartDto> GetAsync()
@@ -110,8 +110,8 @@ namespace Acme.ProductSelling.Carts
             catch (Exception ex)
             {
                 Logger.LogError($"Error in GetAsync: {ex.Message}");
-                throw new UserFriendlyException("Failed to retrieve shopping cart. Please try again.");
-            }
+                throw new UserFriendlyException(L["User:Cart:CartFailedToRetrieve.TryAgain"]);
+            }//"Failed to retrieve shopping cart. Please try again."
         }
         [IgnoreAntiforgeryToken]
         public async Task AddItemAsync(AddToCartInput input)
@@ -126,12 +126,16 @@ namespace Acme.ProductSelling.Carts
 
                 if (input.ProductId == Guid.Empty)
                 {
-                    throw new UserFriendlyException("Invalid product ID.");
+                    throw new UserFriendlyException(L["Product.ID:Invalid"]);
+                    //"Invalid product ID."
+                    // "Mã sản phẩm không hợp lệ."
                 }
 
                 if (input.Quantity <= 0)
                 {
-                    throw new UserFriendlyException("Quantity must be greater than zero.");
+                    throw new UserFriendlyException(L["Product.Quantity:GreaterThanZero"]);
+                    // "Số lượng phải lớn hơn 0."
+                    //"Quantity must be greater than zero."
                 }
 
                 // Kiểm tra sản phẩm tồn tại
@@ -144,8 +148,16 @@ namespace Acme.ProductSelling.Carts
 
                 if (product.StockCount < requestedQuantity)
                 {
-                    throw new UserFriendlyException($"Not enough stock for '{product.ProductName}'." +
-                        $" Available: {product.StockCount}, Requested total: {requestedQuantity}");
+                    // Nếu tồn kho không đủ, ném ngoại lệ
+                    var errorMessage = L["Product.Stock:NotEnough", product.ProductName, product.StockCount, requestedQuantity];
+
+                    throw new UserFriendlyException(errorMessage);
+                    /*  en   {
+                        "NotEnoughStock": "Not enough stock for '{0}'. Available: {1}, Requested: {2}"
+                    }
+                   vi  "NotEnoughStock": "Không đủ hàng cho '{0}'. Có sẵn: {1}, Yêu cầu: {2}"*/
+
+
                 }
                 var priceToUse = product.DiscountedPrice ?? product.OriginalPrice;
                 cart.AddOrUpdateItem(
@@ -162,7 +174,9 @@ namespace Acme.ProductSelling.Carts
             }
             catch (EntityNotFoundException)
             {
-                throw new UserFriendlyException("The product you are trying to add does not exist.");
+                throw new UserFriendlyException(L["Product:Nonexistent:Add"]);
+                // "Sản phẩm bạn đang cố gắng thêm không tồn tại."
+                //"The product you are trying to add does not exist."
             }
             catch (UserFriendlyException)
             {
@@ -171,7 +185,10 @@ namespace Acme.ProductSelling.Carts
             catch (Exception ex)
             {
                 Logger.LogError($"Error in AddItemAsync: {ex.Message}");
-                throw new UserFriendlyException("Could not add item to cart. Please try again later.");
+
+                throw new UserFriendlyException(L["Product.CanNotAddToCart.TryAgain"]);
+                // "Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại sau."
+                //"Could not add product to cart. Please try again later."
             }
         }
 
@@ -190,8 +207,13 @@ namespace Acme.ProductSelling.Carts
                 var product = await _productRepository.GetAsync(itemToUpdate.ProductId);
                 if (product.StockCount < input.Quantity)
                 {
-                    throw new UserFriendlyException($"Not enough stock for '{product.ProductName}'." +
-                        $" Available: {product.StockCount}, Requested: {input.Quantity}");
+                    throw new UserFriendlyException(
+                        L["Product.Stock:NotEnoughStock", product.ProductName, product.StockCount, input.Quantity]
+                    );
+                    /*  en   {
+                             "NotEnoughStock": "Not enough stock for '{0}'. Available: {1}, Requested: {2}"
+                         }
+                        vi  "NotEnoughStock": "Không đủ hàng cho '{0}'. Có sẵn: {1}, Yêu cầu: {2}"*/
                 }
 
                 // Cập nhật số lượng qua phương thức của CartItem (hoặc Cart nếu logic phức tạp hơn)
@@ -201,7 +223,9 @@ namespace Acme.ProductSelling.Carts
             }
             catch (EntityNotFoundException)
             {
-                throw new UserFriendlyException("The item you are trying to update no longer exists in your cart.");
+                throw new UserFriendlyException(L["Product:Nonexistent:Update"]);
+                // "Mặt hàng bạn đang cố gắng cập nhật không còn tồn tại trong giỏ hàng của bạn."
+                //"The item you are trying to update no longer exists in your cart."
             }
             catch (UserFriendlyException)
             {
@@ -210,7 +234,10 @@ namespace Acme.ProductSelling.Carts
             catch (Exception ex)
             {
                 Logger.LogError($"Error in UpdateItemAsync: {ex.Message}");
-                throw new UserFriendlyException("Could not update item in cart. Please try again later.");
+                throw new UserFriendlyException(L["Cart.Item:UnableToUpdate.TryAgain"]);
+
+                // "Không thể cập nhật mặt hàng trong giỏ hàng. Vui lòng thử lại sau."
+                //"Could not update item in cart. Please try again later."
             }
         }
 
@@ -227,7 +254,9 @@ namespace Acme.ProductSelling.Carts
             catch (Exception ex)
             {
                 Logger.LogError($"Error in RemoveItemAsync: {ex.Message}");
-                throw new UserFriendlyException("Could not remove item from cart. Please try again later.");
+                throw new UserFriendlyException(L["Cart.Item:UnableToRemove.TryAgain"]);
+                // "Không thể xóa mặt hàng khỏi giỏ hàng. Vui lòng thử lại sau."
+                //"Could not remove item from cart. Please try again later."
             }
         }
 
@@ -258,7 +287,10 @@ namespace Acme.ProductSelling.Carts
             catch (Exception ex)
             {
                 Logger.LogError($"Error in ClearAsync: {ex.Message}");
-                throw new UserFriendlyException("Could not clear your cart. Please try again later.");
+                throw new UserFriendlyException(L["Cart:UnableToClear.TryAgain"]);
+                // "Không thể xóa giỏ hàng của bạn. Vui lòng thử lại sau."
+                // "Could not clear your cart. Please try again later."
+
             }
         }
     }

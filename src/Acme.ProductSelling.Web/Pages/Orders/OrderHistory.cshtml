@@ -8,7 +8,7 @@
 @inject IStringLocalizer<ProductSellingResource> L
 @inject Volo.Abp.Users.ICurrentUser CurrentUser
 @{
-    ViewData["Title"] = L["MyOrderHistory"];
+    ViewData["Title"] = L["Title:MyOrderHistory"];
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 <style>
@@ -22,7 +22,7 @@
         <abp-card-header>
             <abp-row>
                 <abp-column size-md="_6">
-                    <h2>@L["MyOrderHistory"]</h2>
+                    <h2>@L["Order:MyOrderHistory"]</h2>
                 </abp-column>
                 <abp-column size-md="_6" class="text-end">
                     @* Optional: Add any actions like "Refresh" or "Filter" later *@
@@ -67,13 +67,13 @@
                                 </td>
                                 <td class="order-actions-cell">
                                     <a class="btn btn-sm btn-info" href="@Url.Page("/Orders/OrderDetail", new { id = order.Id })">
-                                        @L["ViewDetails"]
+                                        @L["Order:ViewDetails"]
                                     </a>
                                     @if (order.OrderStatus == Acme.ProductSelling.Orders.OrderStatus.Placed)
                                     {
                                         <form method="post" asp-page-handler="CancelOrder"
                                               class="d-inline cancel-order-form"
-                                              onsubmit="return confirm('@L["AreYouSureYouWantToCancelOrder"]')">
+                                              onsubmit="return confirm('@L["Order:AreYouSureYouWantToCancelOrder"]')">
                                             <input type="hidden" name="orderId" value="@order.Id" />
                                             <button type="submit" class="btn btn-sm btn-danger">
                                                 @L["Cancel"]
@@ -95,7 +95,7 @@
             {
 
                 <div class="alert alert-info">
-                    @L["NoOrdersFound"]
+                    @L["Order:NoOrdersFound"]
 
                 </div>
                 <div class="text-center">
