@@ -131,14 +131,23 @@ namespace Acme.ProductSelling.Orders
         public async Task<CreateOrderResultDto> CreateAsync(CreateOrderDto input)
         {
             var customerId = _currentUser.Id.Value;
+            
 
             // --- LOGIC MỚI: TÌM VÀ TÁI SỬ DỤNG ĐƠN HÀNG "TREO" ---
 
             // Tìm đơn hàng của user có trạng thái thanh toán đang chờ xử lý
-            var existingPendingOrder = await _orderRepository.GetAsync(o =>
+            /*var existingPendingOrder = await _orderRepository.GetAsync(o =>
                 o.CustomerId == customerId && o.PaymentStatus == PaymentStatus.Pending,
                 includeDetails: true
-            );
+            );*/
+
+            var existingPendingOrder = await (await _orderRepository.WithDetailsAsync(o => o.OrderItems))
+                .FirstOrDefaultAsync(o =>
+                    o.CustomerId == customerId &&
+                    o.PaymentStatus == PaymentStatus.Pending /*&&
+                    o.Status == OrderStatus.Placed*/
+                );
+
 
             // B1: Lấy giỏ hàng hiện tại của người dùng. Sẽ dùng cho cả hai trường hợp.
             var cart = await (await _cartRepository.WithDetailsAsync(c => c.Items))
@@ -214,14 +223,14 @@ namespace Acme.ProductSelling.Orders
 
             // 2. Tính lại tổng tiền
             orderToProcess.CalculateTotals();
-            orderToProcess.SetInitialStatus(OrderStatus.Placed, // Mọi đơn hàng mới đều là "Placed"
+            /*orderToProcess.SetInitialStatus(OrderStatus.Placed, // Mọi đơn hàng mới đều là "Placed"
                                                                 // Quyết định trạng thái thanh toán ban đầu
                     input.PaymentMethod == PaymentMethods.COD
                         ? PaymentStatus.PendingOnDelivery
                         : PaymentStatus.Pending
-                );
+                );*/
             // 3. Đặt trạng thái thanh toán
-            /*if (input.PaymentMethod == PaymentMethods.COD)
+            if (input.PaymentMethod == PaymentMethods.COD)
             {
                 orderToProcess.SetPaymentStatus(PaymentStatus.Unpaid);
                 orderToProcess.SetStatus(OrderStatus.Placed); // Đơn COD thì trạng thái là Placed
@@ -231,7 +240,7 @@ namespace Acme.ProductSelling.Orders
                 orderToProcess.SetPaymentStatus(PaymentStatus.Pending);
 
                 orderToProcess.SetStatus(OrderStatus.Placed);
-            }*/
+            }
 
             // 4. Xử lý qua gateway
             var gateway = _paymentGatewayResolver.Resolve(input.PaymentMethod);

@@ -23,16 +23,22 @@ namespace Acme.ProductSelling.Orders
 
         public async Task NotifyOrderStatusChangeAsync(Order order)
         {
-            var newStatusString = order.Status.ToString();
-            var statusTextLocalized = _localizer[newStatusString];
+            var newOrderStatusString = order.Status.ToString();
+            var ordersStatusTextLocalized = _localizer[newOrderStatusString];
+
+            var paymentStatusString = order.PaymentStatus.ToString();
+            var paymentStatusText = _localizer[$"Enum:PaymentStatus.{paymentStatusString}"];
+
 
             await _orderHubContext.Clients.Group("Admins")
-                .ReceiveOrderStatusUpdate(order.Id, newStatusString, statusTextLocalized);
+                .ReceiveOrderStatusUpdate(order.Id, newOrderStatusString, ordersStatusTextLocalized, paymentStatusString, paymentStatusText);
+
             if (order.CustomerId.HasValue)
             {
                 var userGroupName = $"User_{order.CustomerId.Value}";
                 await _orderHubContext.Clients.Group(userGroupName)
-                    .ReceiveOrderStatusUpdate(order.Id, newStatusString, statusTextLocalized);
+                 .ReceiveOrderStatusUpdate(order.Id, newOrderStatusString, ordersStatusTextLocalized,
+                                                    paymentStatusString, paymentStatusText);
             }
         }
 

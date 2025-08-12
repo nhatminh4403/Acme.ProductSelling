@@ -14,20 +14,26 @@
         .build();
 
     // 2. LẮNG NGHE SỰ KIỆN
-    connection.on("ReceiveOrderStatusUpdate", function (orderId, newStatus, newStatusText) {
+    connection.on("ReceiveOrderStatusUpdate", function (orderId,
+        newOrderStatus, newOrderStatusText,
+        newPaymentStatus, newPaymentStatusText) {
+
+        console.log(`Received update for Order ${orderId}: OrderStatus=${newOrderStatus}, PaymentStatus=${newPaymentStatus}`);
+
+
+
         // ----- Xử lý cho trang Lịch sử đơn hàng (bảng tĩnh) -----
         var historyRow = $(`#OrderHistoryTable tr[data-order-id='${orderId}']`);
         if (historyRow.length) {
-            updateRowStatus(historyRow, newStatus, newStatusText);
+            updateRowStatus(historyRow, newOrderStatus, newOrderStatusText, newPaymentStatus, newPaymentStatusText);
         }
-
         // ----- Xử lý cho trang Chi tiết đơn hàng -----
         // Giả sử trang chi tiết có một thẻ body hoặc container chứa data-order-id
         var pageOrderId = $('#orderDetailContainer').data('order-id');
-        if (pageOrderId && pageOrderId === orderId) {
-            updateDetailPage(newStatus, newStatusText);
-        }
 
+        if (pageOrderId && pageOrderId === orderId) {
+            updateDetailPage(newOrderStatus, newOrderStatusText, newPaymentStatus, newPaymentStatusText);
+        }
         // ----- Xử lý cho bảng DataTable của Admin (nếu có) -----
         if ($.fn.DataTable.isDataTable('#OrdersTable')) {
             var adminTable = $('#OrdersTable').DataTable();
@@ -43,23 +49,39 @@
 
     // 3. CÁC HÀM HELPER
 
-    function updateRowStatus(rowElement, newStatus, newStatusText) {
+    function updateRowStatus(rowElement, newOrderStatus, newOrderStatusText, newPaymentStatus, newPaymentStatusText) {
         // Cập nhật badge trạng thái
-        var statusCell = rowElement.find('.order-status-cell');
-        var badgeClass = getStatusBadgeClass(newStatus);
-        var newBadgeHtml = `<span class="badge ${badgeClass}">${newStatusText}</span>`;
-        statusCell.html(newBadgeHtml);
+        var orderStatusCell = rowElement.find('.order-status-cell');
+        var orderBadgeClass = getOrderStatusBadgeClass(newOrderStatus);
+        var orderBadgeHtml = `<span class="badge ${orderBadgeClass}">${newOrderStatusText}</span>`;
+        orderStatusCell.html(orderBadgeHtml);
 
+
+        var paymentStatusCell = rowElement.find('.payment-status-cell'); // Thêm class này vào <td>
+        if (paymentStatusCell.length) {
+            var paymentBadgeClass = getPaymentStatusBadgeClass(newPaymentStatus);
+            var paymentBadgeHtml = `<span class="badge ${paymentBadgeClass}">${newPaymentStatusText}</span>`;
+            paymentStatusCell.html(paymentBadgeHtml);
+        }
         // Cập nhật nút hủy
         var cancelButtonForm = rowElement.find('.cancel-order-form');
-        if (newStatus !== 'Placed' && cancelButtonForm.length) {
+        if ((newOrderStatus.toLowerCase() !== 'placed' || newPaymentStatus.toLowerCase() === 'paid') && cancelButtonForm.length) {
             cancelButtonForm.remove(); // Xóa nút nếu không còn ở trạng thái "Placed"
         }
-
+        // --- LOGIC BỔ SUNG: Cập nhật các hành động khác cho Admin ---
+        // Ví dụ, bạn có một nút "Xác nhận thanh toán COD"
+/*        var confirmCodPaymentButton = rowElement.find('.confirm-cod-payment-btn');
+        if (confirmCodPaymentButton.length) {
+            if (newOrderStatus.toLowerCase() === 'shipped' && newPaymentStatus.toLowerCase() === 'pendingondelivery') {
+                confirmCodPaymentButton.show();
+            } else {
+                confirmCodPaymentButton.hide();
+            }
+        }*/
         highlightRow(rowElement);
     }
 
-    function updateDetailPage(newStatus, newStatusText) {
+    function updateDetailPage(newOrderStatus, newOrderStatusText, newPaymentStatus, newPaymentStatusText) {
         // Cập nhật badge trạng thái
         var statusBadge = $('#orderStatusBadge');
         if (statusBadge.length) {
@@ -67,11 +89,16 @@
             statusBadge.removeClass().addClass('badge ' + badgeClass).text(newStatusText);
             highlightRow(statusBadge.parent());
         }
-
+        var paymentStatusBadge = $('#paymentStatusBadge'); // Thêm id này vào badge trên trang chi tiết
+        if (paymentStatusBadge.length) {
+            var paymentBadgeClass = getPaymentStatusBadgeClass(newPaymentStatus);
+            paymentStatusBadge.removeClass().addClass('badge ' + paymentBadgeClass).text(newPaymentStatusText);
+        }
         // Ẩn/hiện container của nút hủy
         var cancelContainer = $('#cancelOrderContainer');
         if (cancelContainer.length) {
-            if (newStatus === 'Placed') {
+            // Chỉ hiện nút hủy khi OrderStatus là 'Placed' VÀ PaymentStatus KHÔNG PHẢI là 'Paid'
+            if (newOrderStatus.toLowerCase() === 'placed' && newPaymentStatus.toLowerCase() !== 'paid') {
                 cancelContainer.show();
             } else {
                 cancelContainer.hide();
@@ -94,7 +121,26 @@
             default: return 'bg-light text-dark';
         }
     }
-
+    function getPaymentStatusBadgeClass(status) {
+        // Dùng toLowerCase() để không phân biệt chữ hoa-thường
+        switch (status.toLowerCase()) {
+            case 'unpaid':
+                return 'bg-secondary';
+            case 'pendingondelivery':
+                return 'bg-info text-dark';
+            case 'pending':
+                return 'bg-warning text-dark';
+            case 'paid':
+                return 'bg-success';
+            case 'failed':
+                return 'bg-danger';
+            case 'partiallyrefunded':
+            case 'refunded':
+                return 'bg-dark';
+            default:
+                return 'bg-light text-dark';
+        }
+    }
     function highlightRow(rowElement) {
         rowElement.addClass('status-updated-highlight');
         setTimeout(() => rowElement.removeClass('status-updated-highlight'), 2500);
