@@ -6,7 +6,7 @@
 @using System.Globalization
 @inject IStringLocalizer<ProductSellingResource> L
 @{
-    ViewData["Title"] = Model.Product?.ProductName ?? L["ProductDetail"];
+    ViewData["Title"] = Model.Product?.ProductName ?? L["Product:ProductDetail"];
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 @section styles {

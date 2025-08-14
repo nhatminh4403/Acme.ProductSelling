@@ -15,7 +15,7 @@
 @{
     ViewData["Title"] =  L["Title:ProductByPrice"];
     Layout = "/Views/Shared/_Layout.cshtml"; // Đặt layout cho trang này
-    var title = L["MinPrice"] + " " + Model.MinPrice+  " " + L["CategoryName"] + " " + HelperMethods.GetCategoryLocalizerName(Model.CategoryName,L) + " " + L["MaxPrice"] + " " + Model.MaxPrice;
+    var title = L["MinPrice"] + " " + Model.MinPrice+  " " + L["Category:CategoryName"] + " " + HelperMethods.GetCategoryLocalizerName(Model.CategoryName,L) + " " + L["MaxPrice"] + " " + Model.MaxPrice;
 }
 
 <div class="container mt-4">

@@ -1,0 +1,277 @@
+# Vietnamese Localization Keys for Acme.ProductSelling
+
+## Cart Related
+User:Cart:CartInccessible.TryAgain=Không thể truy cập giỏ hàng của bạn. Vui lòng thử lại sau.
+User:Cart:CartFailedToRetrieve.TryAgain=Không thể lấy thông tin giỏ hàng. Vui lòng thử lại.
+Cart:ShoppingCartIsEmpty=Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm trước khi tiếp tục.
+Cart:UnableToClear.TryAgain=Không thể xóa giỏ hàng của bạn. Vui lòng thử lại sau.
+Cart:YourCartIsEmpty=Giỏ hàng của bạn đang trống.
+
+## Product Related
+Product.ID:Invalid=Mã sản phẩm không hợp lệ.
+Product.Quantity:GreaterThanZero=Số lượng phải lớn hơn 0.
+Product.Stock:NotEnough=Không đủ hàng cho '{0}'. Có sẵn: {1}, Yêu cầu: {2}
+Product.Stock:NotEnoughStock=Không đủ hàng cho '{0}'. Có sẵn: {1}, Yêu cầu: {2}
+Product:Nonexistent:Add=Sản phẩm bạn đang cố gắng thêm không tồn tại.
+Product:Nonexistent:Update=Mặt hàng bạn đang cố gắng cập nhật không còn tồn tại trong giỏ hàng của bạn.
+Product.CanNotAddToCart.TryAgain=Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại sau.
+Product:Manufacturer=Hãng sản xuất
+ProductNotFound=Không tìm thấy sản phẩm.
+AddToCart=Thêm vào giỏ hàng
+OutOfStock=Hết hàng
+Product:NoProductsFoundInCategory=Không tìm thấy sản phẩm nào trong danh mục này.
+Product:ViewDetails=Xem chi tiết
+Product:ProductsByName=Sản phẩm theo tên
+Product:NoProductsFoundWithKeyword=Không tìm thấy sản phẩm nào với từ khóa
+Product:NoProductsFoundForThisManufacturer=Không tìm thấy sản phẩm nào cho hãng sản xuất này.
+
+## Cart Item Related
+Cart.Item:UnableToUpdate.TryAgain=Không thể cập nhật mặt hàng trong giỏ hàng. Vui lòng thử lại sau.
+Cart.Item:UnableToRemove.TryAgain=Không thể xóa mặt hàng khỏi giỏ hàng. Vui lòng thử lại sau.
+
+## Order Related
+Order:OrderNotFound=Không tìm thấy đơn hàng.
+Order:ShippingInformation=Thông tin giao hàng
+Order:CustomerName=Tên khách hàng
+Order:CustomerPhone=Số điện thoại
+Order:ShippingAddress=Địa chỉ giao hàng
+Order:OrderSummary=Tóm tắt đơn hàng
+Order:Quantity=Số lượng
+Order:Subtotal=Tạm tính
+Order:Total=Tổng cộng
+Order:PlaceOrder=Đặt hàng
+Order:MyOrderHistory=Lịch sử đơn hàng của tôi
+Order:OrderNumber=Mã đơn hàng
+Order:OrderDate=Ngày đặt hàng
+Order:TotalAmount=Tổng tiền
+Order:OrderStatus=Trạng thái đơn hàng
+Order:PaymentStatus=Trạng thái thanh toán
+Order:ViewDetails=Xem chi tiết
+Order:AreYouSureYouWantToCancelOrder=Bạn có chắc chắn muốn hủy đơn hàng này?
+Order:NoOrdersFound=Không tìm thấy đơn hàng nào.
+Order:OrderDetails=Chi tiết đơn hàng
+Order:BackToOrderHistory=Quay lại lịch sử đơn hàng
+Order:OrderInformation=Thông tin đơn hàng
+Order:PaymentMethod=Phương thức thanh toán
+Order:CustomerInformation=Thông tin khách hàng
+Order:PhoneNumber=Số điện thoại
+Order:YouCanCancelThisOrderWithinTheGracePeriod=Bạn có thể hủy đơn hàng này trong thời gian ân hạn.
+Order:CancelOrder=Hủy đơn hàng
+Order:OrderItems=Các mặt hàng
+Order:Product=Sản phẩm
+Order:UnitPrice=Đơn giá
+Order:Confirmed=Đã xác nhận
+Order:Confirmation=Xác nhận đơn hàng
+Order:ThankYou=Cảm ơn bạn đã đặt hàng!
+Order:PlacedSuccessfully=Đơn hàng của bạn đã được đặt thành công.
+Order:Details=Chi tiết đơn hàng
+Order:Number=Mã đơn hàng
+Order:Date=Ngày đặt hàng
+Order:Items=Các mặt hàng
+Order:LineTotal=Thành tiền
+Order:ContinueShopping=Tiếp tục mua sắm
+Order:ViewHistory=Xem lịch sử đơn hàng
+OrderCancelledSuccessfully=Đơn hàng đã được hủy thành công.
+ShoppingCartIsEmptyCannotPlaceOrder=Giỏ hàng đang trống. Không thể đặt hàng.
+
+## Order Status Related
+OrderStatus.Placed=Đã đặt hàng
+OrderStatus.Processing=Đang xử lý
+OrderStatus.Shipped=Đã gửi hàng
+OrderStatus.Delivered=Đã giao hàng
+OrderStatus.Cancelled=Đã hủy
+OrderStatus.Pending=Đang chờ
+
+## Payment Status Related
+PaymentStatus.Pending=Đang chờ thanh toán
+PaymentStatus.Paid=Đã thanh toán
+PaymentStatus.Unpaid=Chưa thanh toán
+PaymentStatus.PendingOnDelivery=Chờ thanh toán khi nhận hàng
+PaymentStatus.Failed=Thanh toán thất bại
+PaymentStatus.Refunded=Đã hoàn tiền
+PaymentStatus.Cancelled=Đã hủy
+
+## Payment Method Related
+Method.CashOnDelivery=Thanh toán khi nhận hàng
+Method.PayWhenYouReceiveTheGoods=Thanh toán khi nhận hàng
+Method:PayViaVnPay=Thanh toán qua VNPay
+Method.Info:UseCreditDebitCardOrVnPayApp=Sử dụng thẻ tín dụng/ghi nợ hoặc ứng dụng VNPay
+Method.PayViaMoMoWallet=Thanh toán qua ví MoMo
+Method.Info:UseMoMoWalletOrApp=Sử dụng ví MoMo hoặc ứng dụng
+Method.PayViaPayPal=Thanh toán qua PayPal
+Method.Info:UsePayPalService=Sử dụng dịch vụ PayPal
+
+## Payment Callback Related
+PaymentCallback=Thông báo thanh toán
+PaymentSuccessful=Thanh toán thành công
+PaymentFailed=Thanh toán thất bại
+YouWillBeRedirectedToOrderHistory=Bạn sẽ được chuyển hướng đến lịch sử đơn hàng.
+ViewOrderHistory=Xem lịch sử đơn hàng
+PaymentSuccessfulThankYou=Thanh toán thành công! Cảm ơn bạn đã thanh toán.
+PaymentFailedPleaseTryAgain=Thanh toán thất bại. Vui lòng thử lại.
+PaymentNotApproved=Thanh toán không được chấp thuận.
+AnErrorOccurredWhileProcessingPayment=Đã có lỗi xảy ra khi xử lý thanh toán của bạn.
+
+## Account Related
+Account:UserNotAuthenticated=Người dùng chưa được xác thực.
+Account:Unauthorized=Bạn không có quyền thực hiện hành động này.
+User:Unauthenticated=Người dùng chưa được xác thực.
+
+## Payment Gateway Related
+PaymentGateway:HttpContextError=Không thể truy cập HttpContext. Vui lòng kiểm tra cấu hình.
+PaymentGateway:MoMoConnectionError=Đã có lỗi xảy ra khi kết nối với MoMo. Vui lòng thử lại sau.
+PaymentGateway:PayPalConnectionError=Đã có lỗi xảy ra khi kết nối với PayPal. Vui lòng thử lại sau.
+PaymentGateway:UnsupportedMethod=Phương thức thanh toán '{0}' không được hỗ trợ.
+
+## MoMo IPN Related
+MoMo:InvalidIPNData=Dữ liệu IPN từ MoMo không hợp lệ.
+MoMo:InvalidReferenceCode=Mã tham chiếu không hợp lệ.
+MoMo:OrderNotFound=Không tìm thấy đơn hàng.
+MoMo:IPNProcessingError=Đã có lỗi xảy ra khi xử lý IPN từ MoMo.
+
+## Admin Related
+Admin:Menu:Home=Trang chủ
+Admin:Earnings(LastMonth)=Thu nhập (Tháng trước)
+Admin:Earnings(ThisMonth)=Thu nhập (Tháng này)
+Admin:Earnings(LastYear)=Thu nhập (Năm trước)
+Admin:Earnings(Annual)=Thu nhập hàng năm
+Admin:YearlyRevenueStatistics=Thống kê doanh thu hàng năm
+Admin:MonthlyRevenue=Doanh thu hàng tháng
+Admin:ChooseTheYearToDisplay=Chọn năm để hiển thị:
+Admin:Loading...=Đang tải...
+Admin:TotalRevenueForYear=Tổng doanh thu năm
+Admin:MonthlyRevenueByYear=Doanh thu hàng tháng theo năm
+Admin:StatisticsForYear=Thống kê cho năm
+
+## Login Related
+Login:Processing=Đang xử lý...
+Login:Initiated=Đăng nhập đã được khởi tạo
+Login:Success=Đăng nhập thành công
+Login:ErrorDefault=Đăng nhập thất bại. Vui lòng thử lại.
+Login:ErrorTitle=Lỗi đăng nhập
+Login:ButtonDefault=Đăng nhập
+
+## Register Related
+Register:PasswordsDoNotMatch=Mật khẩu không khớp.
+Register:Processing=Đang xử lý...
+Register:Initiated=Đăng ký đã được khởi tạo
+Register:SuccessAndLoggingIn=Đăng ký thành công! Đang đăng nhập cho bạn...
+Register:ErrorDefault=Đăng ký thất bại. Vui lòng thử lại.
+Register:ButtonDefault=Đăng ký
+
+## Auto Login Related
+AutoLogin:ErrorDefault=Tự động đăng nhập thất bại. Vui lòng đăng nhập thủ công.
+AutoLogin:WarnTitle=Cảnh báo tự động đăng nhập
+
+## Validation Related
+Validation:ErrorTitle=Lỗi xác thực
+
+## Cart JavaScript Related
+InvalidProductOrQuantity=Sản phẩm hoặc số lượng không hợp lệ.
+AddingToCart=Đang thêm vào giỏ hàng...
+ItemAddedToCart=Đã thêm sản phẩm vào giỏ hàng thành công.
+CouldNotAddItemToCart=Không thể thêm sản phẩm vào giỏ hàng.
+Cart:InvalidProduct=Sản phẩm không hợp lệ.
+Cart:AddingToCart=Đang thêm vào giỏ hàng...
+Cart:CartServiceNotAvailable=Dịch vụ giỏ hàng không khả dụng.
+Cart:ItemAddedToCart=Đã thêm sản phẩm vào giỏ hàng thành công.
+Cart:CouldNotAddItemToCart=Không thể thêm sản phẩm vào giỏ hàng.
+
+## Manufacturer Related
+Manufacturer:Manufacturers=Hãng sản xuất
+Manufacturer:CreateManufacturer=Tạo hãng sản xuất
+Manufacturer:EditManufacturer=Chỉnh sửa hãng sản xuất
+Manufacturer:Name=Tên
+Manufacturer:Description=Mô tả
+Manufacturer:Actions=Hành động
+Manufacturer:Edit=Chỉnh sửa
+Manufacturer:ContactInfo=Thông tin liên hệ
+Manufacturer:Image=Hình ảnh
+
+## UI Related
+Title:MyOrderHistory=Lịch sử đơn hàng của tôi
+Title:OrderDetails=Chi tiết đơn hàng
+Title:Admin:Menu:Categories=Danh mục
+Title:OrderConfirmation=Xác nhận đơn hàng
+Title:AllProductsByCategory=Tất cả sản phẩm theo danh mục
+Title:ProductByPrice=Sản phẩm theo giá
+Title:AllProductsByName=Tất cả sản phẩm theo tên
+Title:ProductByManufacturer=Sản phẩm theo hãng sản xuất
+Title:Admin:Menu:Products=Sản phẩm
+Title:Admin:AllOrders=Tất cả đơn hàng
+Title:Admin:Category:AllCategories=Tất cả danh mục
+Title:Admin:Blog:AllBLogs=Tất cả bài viết
+Checkout=Thanh toán
+Actions=Hành động
+Cancel=Hủy
+ContinueShopping=Tiếp tục mua sắm
+ProductDetail=Chi tiết sản phẩm
+Specification=Thông số kỹ thuật
+NoSpecificSpecifications=Không có thông số kỹ thuật cụ thể.
+Expand=Mở rộng
+Collapse=Thu gọn
+RecentlyViewedProducts=Sản phẩm đã xem gần đây
+ViewDetails=Xem chi tiết
+Or=Hoặc
+Menu:Home=Trang chủ
+Menu:AppName=Bán sản phẩm
+MinPrice=Giá tối thiểu
+MaxPrice=Giá tối đa
+CategoryName=Danh mục
+Previous=Trước
+Next=Tiếp
+SeeAll=Xem tất cả
+Brands=Thương hiệu
+ByPrice=Theo giá
+ProductsFromCategory=Sản phẩm từ danh mục
+NoFeaturedProductsFound=Không tìm thấy sản phẩm nổi bật.
+Home:CategoryList=Danh sách danh mục
+NoCategoriesFound=Không tìm thấy danh mục nào.
+
+## Product JavaScript Related
+Product:Actions=Hành động
+Product:Edit=Chỉnh sửa
+Product:Delete=Xóa
+Product:Name=Tên
+Product:Category=Danh mục
+Product:OriginalPrice=Giá gốc
+Product:DiscountedPrice=Giá khuyến mãi
+Product:DiscountPercent=Phần trăm giảm giá
+Product:Stock=Tồn kho
+Product:Products=Sản phẩm
+Product:CreateProduct=Tạo sản phẩm
+
+## Category JavaScript Related
+Category:Actions=Hành động
+Category:Edit=Chỉnh sửa
+Category:Delete=Xóa
+Category:Name=Tên
+Category:Description=Mô tả
+Category:Categories=Danh mục
+Category:CreateCategory=Tạo danh mục
+
+## Order JavaScript Related
+Order:Actions=Hành động
+Edit=Chỉnh sửa
+Delete=Xóa
+CustomerName=Tên khách hàng
+SuccessfullyDeleted=Đã xóa thành công.
+OrderUpdatedSuccessfully=Đơn hàng đã được cập nhật thành công.
+ConfirmCodPayment=Xác nhận thanh toán COD
+OrderDeletionConfirmationMessage=Bạn có chắc chắn muốn xóa đơn hàng {0}?
+AreYouSureYouWantToConfirmCodPaymentForOrder=Bạn có chắc chắn muốn xác nhận thanh toán COD cho đơn hàng {0}?
+Order:Orders=Đơn hàng
+
+## Price Range Related
+PriceRangeAlias:Under1Million=Dưới 1 triệu
+PriceRangeAlias:From1MillionTo5Million=Từ 1 triệu đến 5 triệu
+PriceRangeAlias:From5MillionTo20Million=Từ 5 triệu đến 20 triệu
+PriceRangeAlias:Over20Million=Trên 20 triệu
+Under1Million=Dưới 1 triệu
+From1MillionTo5Million=Từ 1 triệu đến 5 triệu
+From5MillionTo20Million=Từ 5 triệu đến 20 triệu
+Over20Million=Trên 20 triệu
+
+## General Error Messages
+Error:GeneralTryAgain=Đã có lỗi xảy ra. Vui lòng thử lại sau.
+Error:ConfigurationIssue=Phát hiện vấn đề cấu hình. Vui lòng kiểm tra cài đặt.

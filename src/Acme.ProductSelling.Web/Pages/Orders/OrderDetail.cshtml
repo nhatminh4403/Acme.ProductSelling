@@ -6,7 +6,7 @@
 @using Microsoft.Extensions.Localization
 @inject IStringLocalizer<ProductSellingResource> L
 @{
-    ViewData["Title"] = L["Title:OrderDetails"];
+    ViewData["Title"] = L["UI:Titles:OrderDetails"];
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 <div class="container mt-4">
@@ -64,7 +64,7 @@
                             </tr>
                             <tr>
                                 <th>@L["Order:PaymentMethod"]:</th>
-                                <td>@GetPaymentMethodLocalization(Model.Order.PaymentMethod)</td>
+                                <td>@L[$"PaymentMethod:{Model.Order.PaymentMethod}"]</td>
                             </tr>
                         </table>
                     </div>
@@ -89,12 +89,12 @@
                         {
                             <div id="cancelOrderContainer">
                                 <div class="alert alert-info d-flex justify-content-between align-items-center">
-                                    <span>@L["Order:YouCanCancelThisOrderWithinTheGracePeriod"]</span>
+                                    <span>@L["Order:YouCanCancel"]</span>
                                     <form method="post" asp-page-handler="Cancel"
-                                          onsubmit="return confirm('@L["Order:AreYouSureYouWantToCancelOrder"]')">
+                                          onsubmit="return confirm('@L["Order:AreYouSureYouWantToCancel"]')">
                                         <input type="hidden" name="orderId" value="@Model.Order.Id" />
                                         <button type="submit" class="btn btn-danger">
-                                            <i class="fa fa-times"></i> @L["Order:CancelOrder"]
+                                            <i class="fa fa-times"></i> @L["Order:Cancel"]
                                         </button>
                                     </form>
                                 </div>
@@ -124,9 +124,9 @@
                                 <td>
                                     @((item.Price * item.Quantity)
                                                                 .ToString("C0", CultureInfo.GetCultureInfo("vi-VN")))
-                        </td>
-                    </tr>
-                                        }
+                                </td>
+                            </tr>
+                         }
                     </tbody>
                     <tfoot>
                         <tr>
