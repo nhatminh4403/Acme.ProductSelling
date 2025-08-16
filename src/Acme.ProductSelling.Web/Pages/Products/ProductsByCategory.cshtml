@@ -12,7 +12,7 @@
 }
 @{
     Layout = "/Views/Shared/_Layout.cshtml"; 
-    ViewData["Title"] =  L["Title:AllProductsByCategory"] + " " + Model.CategoryName;
+    ViewData["Title"] = L["UI:Title:AllProductsByCategory", Model.CategoryName];
 }
 <div class="container mt-4">
     <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
@@ -88,6 +88,6 @@
     }
     else
     {
-        <div class="alert alert-info">@L["Product:NoProductsFoundInCategory"]</div> @* Key localization mới *@
+        <div class="alert alert-info">@L["Product:NoProductsFoundInCategory"]</div>
     }
 </div>

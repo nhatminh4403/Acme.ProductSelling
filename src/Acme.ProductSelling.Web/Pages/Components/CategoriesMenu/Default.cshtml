@@ -21,7 +21,7 @@
 
                         <div class="row mb-3">
                             <div class="col-md-3">
-                                <h6>@L["Brands"]</h6>
+                                <h6>@L["UI:Brands"]</h6>
                                 <ul>
                                     @foreach (var manufacturer in category.Manufacturers.Take(3))
                                     {
@@ -51,37 +51,37 @@
                                 </ul>
                             </div>
                             <div class="col-md-3">
-                                <h6>@L["ByPrice"]</h6>
+                                <h6>@L["UI:ByPrice"]</h6>
                                 <ul>
                                     <li>
                                         <a asp-page="/Products/ProductsByPrice"
                                            asp-route-slug="@category.CategoryUrlSlug"
-                                           asp-route-PriceRangeAlias="@L["PriceRangeAlias:Under1Million"].Value">
-                                            @L["Under1Million"]
+                                           asp-route-PriceRangeAlias="@L["UI:PriceRangeAlias:Under1Million"].Value">
+                                            @L["UI:PriceRangeAlias:Under1Million"]
                                         </a>
                                     </li>
                                     <li>
                                         <a asp-page="/Products/ProductsByPrice"
                                            asp-route-slug="@category.CategoryUrlSlug"
-                                           asp-route-PriceRangeAlias="@L["PriceRangeAlias:From1MillionTo5Million"].Value">
-                                            @L["From1MillionTo5Million"]
+                                           asp-route-PriceRangeAlias="@L["UI:PriceRangeAlias:From1MillionTo5Million"].Value">
+                                            @L["UI:PriceRangeAlias:From1MillionTo5Million"]
                                         </a>
                                     </li>
                                     <li>
                                         <a asp-page="/Products/ProductsByPrice"
                                            asp-route-slug="@category.CategoryUrlSlug"
-                                           asp-route-PriceRangeAlias="@L["PriceRangeAlias:From5MillionTo20Million"].Value">
+                                           asp-route-PriceRangeAlias="@L["UI:PriceRangeAlias:From5MillionTo20Million"].Value">
 
-                                            @L["From5MillionTo20Million"]
+                                            @L["UI:PriceRangeAlias:From5MillionTo20Million"]
                                         </a>
                                     </li>
                                     <li>
 
                                         <a asp-page="/Products/ProductsByPrice"
                                            asp-route-slug="@category.CategoryUrlSlug"
-                                           asp-route-PriceRangeAlias="@L["PriceRangeAlias:Over20Million"].Value">
+                                           asp-route-PriceRangeAlias="@L["UI:PriceRangeAlias:Over20Million"].Value">
 
-                                            @L["Over20Million"]
+                                            @L["UI:PriceRangeAlias:Over20Million"]
                                         </a>
                                     </li>
                                 </ul>

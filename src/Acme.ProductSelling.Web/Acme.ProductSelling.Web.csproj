@@ -80,8 +80,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
-    <Folder Include="wwwroot\pages\categories\" />
-    <Folder Include="wwwroot\pages\products\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="wwwroot\js\admin\Index.js" />

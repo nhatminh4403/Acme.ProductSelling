@@ -71,7 +71,7 @@
                         <button class="btn btn-success dropdown-toggle d-flex align-items-center" type="button"
                                 id="navbarDropdownCategories" aria-expanded="false">
                             <i class="bi bi-list me-2"></i>
-                            @L["Categories"]
+                            @L["Category:Categories"]
                         </button>
                         @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Components.CategoriesMenu.CategoriesMenuViewComponent))
                     </li>
@@ -102,11 +102,11 @@
                                 @CurrentUser.UserName
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" asp-page="/Account/Manage/Index">@L["ManageYourProfile"]</a></li>
-                                <li><a class="dropdown-item" asp-page="/Orders/OrderHistory">@L["MyOrders"]</a></li>
+                                <li><a class="dropdown-item" asp-page="/Account/Manage/Index">@L["Account:ManageYourProfile"]</a></li>
+                                <li><a class="dropdown-item" asp-page="/Orders/OrderHistory">@L["Product:MyOrders"]</a></li>
                                 @if (hasAdminPermission || CurrentUser.IsInRole("Admin") || CurrentUser.IsInRole("Admin".ToLower()))
                                 {
-                                    <li><a class="dropdown-item" asp-page="/Admin/Index">@L["AdminPanel"]</a></li>
+                                    <li><a class="dropdown-item" asp-page="/Admin/Index">@L["Admin:Panel"]</a></li>
                                 }
 
                                 <li><hr class="dropdown-divider"></li>

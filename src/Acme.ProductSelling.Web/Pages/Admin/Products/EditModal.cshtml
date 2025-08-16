@@ -12,7 +12,7 @@
     @* Post về đúng Id *@
     <input type="hidden" asp-for="Id" /> @* Đừng quên input ẩn chứa Id *@
     <abp-modal>
-        <abp-modal-header title="@L["EditProduct"].Value"></abp-modal-header> @* Key "EditProduct" *@
+        <abp-modal-header title="@L["Product:EditProduct"].Value"></abp-modal-header> @* Key "EditProduct" *@
         <abp-modal-body>
             <abp-select asp-for="Product.CategoryId" asp-items="Model.Categories" label="@L["Product:Category"]" />
             <abp-input asp-for="Product.ProductName" label="@L["Product:Name"]" />

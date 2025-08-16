@@ -8,7 +8,7 @@
 @inject IStringLocalizer<ProductSellingResource> L
 @inject Volo.Abp.Users.ICurrentUser CurrentUser
 @{
-    ViewData["Title"] = L["Title:MyOrderHistory"];
+    ViewData["Title"] = L["UI:Title:MyOrderHistory"];
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 <style>
@@ -22,7 +22,7 @@
         <abp-card-header>
             <abp-row>
                 <abp-column size-md="_6">
-                    <h2>@L["Order:MyOrderHistory"]</h2>
+                    <h2>@L["Order:MyHistory"]</h2>
                 </abp-column>
                 <abp-column size-md="_6" class="text-end">
                     @* Optional: Add any actions like "Refresh" or "Filter" later *@
@@ -67,7 +67,7 @@
                                 </td>
                                 <td class="order-actions-cell">
                                     <a class="btn btn-sm btn-info" href="@Url.Page("/Orders/OrderDetail", new { id = order.Id })">
-                                        @L["Order:ViewDetails"]
+                                        @L["ViewDetails"]
                                     </a>
                                     @if (order.OrderStatus == Acme.ProductSelling.Orders.OrderStatus.Placed)
                                     {

@@ -7,7 +7,7 @@
 @using Acme.ProductSelling.Categories
 @inject IStringLocalizer<ProductSellingResource> L
 @{
-    ViewData["Title"] = L["Title:ProductByManufacturer"] + " " + Model.ManufacturerName;
+    ViewData["Title"] = L["UI:Title:ProductByManufacturer", Model.ManufacturerName];
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 @functions {

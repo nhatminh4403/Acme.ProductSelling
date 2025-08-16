@@ -20,6 +20,14 @@
     "SeeAll": "Xem tất cả",
     "Menu:Home": "Trang chủ",
     "Menu:AppName": "XComputer",
+    "MinPrice": "Giá tối thiểu",
+    "MaxPrice": "Giá tối đa",
+    "CategoryName": "Danh mục",
+    "Expand": "Mở rộng",
+    "Collapse": "Thu gọn",
+    "Checkout": "Thanh toán",
+    "StartShopping": "Bắt đầu mua sắm",
+
     "Enum:OrderStatus.Placed": "Đã đặt hàng",
     "Enum:OrderStatus.Pending": "Chờ xác nhận",
     "Enum:OrderStatus.Confirmed": "Đã xác nhận",
@@ -28,13 +36,21 @@
     "Enum:OrderStatus.Delivered": "Đã nhận hàng",
     "Enum:OrderStatus.Completed": "Hoàn thành",
     "Enum:OrderStatus.Cancelled": "Đã hủy",
+
     "Enum:PaymentStatus.Unpaid": "Chưa thanh toán",
     "Enum:PaymentStatus.PendingOnDelivery": "Chờ thanh toán khi nhận hàng",
     "Enum:PaymentStatus.Pending": "Đang chờ thanh toán",
     "Enum:PaymentStatus.Paid": "Đã thanh toán",
     "Enum:PaymentStatus.Failed": "Thanh toán thất bại",
     "Enum:PaymentStatus.Refunded": "Đã hoàn tiền",
-    "Checkout": "Thanh toán",
+    "Enum:PaymentStatus.Cancelled": "Đã hủy",
+
+    "Account": {
+      "UserNotAuthenticated": "Người dùng chưa đăng nhập.",
+      "Unauthorized": "Bạn không có quyền thực hiện hành động này.",
+      "ManageYourProfile": "Quản lý hồ sơ của bạn"
+    },
+
     "Login": {
       "Default": "Đăng nhập",
       "Processing": "Yêu cầu đăng nhập đang được xử lý. Vui lòng đợi...",
@@ -50,6 +66,7 @@
       "CreateAccount": "Tạo tài khoản",
       "LoginHere": "Đăng nhập tại đây"
     },
+
     "Register": {
       "Default": "Đăng ký",
       "Processing": "Yêu cầu đăng ký đang được xử lý. Vui lòng đợi...",
@@ -64,10 +81,16 @@
       "ConfirmPassword": "Xác nhận Mật khẩu",
       "HaveAnAccount?": "Đã có tài khoản?"
     },
+
     "AutoLogin": {
       "ErrorDefault": "Tự động đăng nhập thất bại. Vui lòng đăng nhập thủ công.",
       "WarnTitle": "Đăng Ký Thành Công, Tự Động Đăng Nhập Thất Bại"
     },
+
+    "Validation": {
+      "ErrorTitle": "Lỗi xác thực"
+    },
+
     "Cart": {
       "ShoppingCart": "Giỏ hàng",
       "Summary": "Tóm tắt giỏ hàng",
@@ -81,11 +104,23 @@
       "ItemAddedToCart": "Đã thêm vào giỏ hàng thành công.",
       "CouldNotAddItemToCart": "Không thể thêm sản phẩm vào giỏ hàng.",
       "CartServiceNotAvailable": "Dịch vụ giỏ hàng không khả dụng.",
+      "InvalidProduct": "Sản phẩm không hợp lệ.",
+      "CartInccessible.TryAgain": "Không thể truy cập giỏ hàng của bạn. Vui lòng thử lại sau.",
+      "CartFailedToRetrieve.TryAgain": "Không thể tải giỏ hàng. Vui lòng thử lại.",
+      "UnableToClear.TryAgain": "Không thể xóa giỏ hàng. Vui lòng thử lại sau.",
+      "InvalidProductOrQuantity": "Sản phẩm hoặc số lượng không hợp lệ.",
       "Item": {
         "UnableToUpdate.TryAgain": "Không thể cập nhật sản phẩm trong giỏ. Vui lòng thử lại.",
         "UnableToRemove.TryAgain": "Không thể xóa sản phẩm khỏi giỏ. Vui lòng thử lại."
-      }
+      },
+      "Quantity": "Số lượng",
+      "Product": "Sản phẩm",
+      "Price": "Giá",
+      "Total": "Tổng cộng",
+      "Actions": "Hành động",
+      "Subtotal": "Tạm tính"
     },
+
     "Product": {
       "Products": "Sản phẩm",
       "Detail": "Chi tiết sản phẩm",
@@ -95,12 +130,11 @@
       "Specification": "Thông số kỹ thuật",
       "NoSpecificSpecifications": "Không có thông số kỹ thuật.",
       "RecentlyViewedProducts": "Sản phẩm đã xem gần đây",
-      "ViewDetails": "Xem chi tiết",
       "Name": "Tên sản phẩm",
       "Category": "Danh mục",
       "OriginalPrice": "Giá gốc",
       "DiscountedPrice": "Giá khuyến mãi",
-      "DiscountPercent": "Giảm giá",
+      "DiscountPercent": "Phần trăm giảm giá",
       "Stock": "Tồn kho",
       "CreateProduct": "Tạo sản phẩm",
       "EditProduct": "Sửa sản phẩm",
@@ -108,9 +142,23 @@
       "ImageSource": "Nguồn ảnh",
       "ImageUrlSource.Url": "URL Ảnh",
       "ImageUrlSource.Upload": "Tải lên từ máy",
+      "ProductImageFile": "Ảnh sản phẩm",
       "ImagePreview": "Xem trước",
       "Yes": "Có",
+      "ProductDetail": "Chi tiết sản phẩm",
       "No": "Không",
+      "ProductsByName": "Sản phẩm theo tên",
+      "NoProductsFoundInCategory": "Không tìm thấy sản phẩm nào trong danh mục này.",
+      "NoProductsFoundWithKeyword": "Không tìm thấy sản phẩm nào với từ khóa {0}",
+      "NoProductsFoundForThisManufacturer": "Không tìm thấy sản phẩm nào của hãng này.",
+      "NoProductsFoundInThisPriceRange": "Không tìm thấy sản phẩm nào trong khoảng giá {0}",
+      "Nonexistent:Add": "Sản phẩm bạn đang thử thêm không tồn tại.",
+      "Nonexistent:Update": "Sản phẩm bạn đang thử cập nhật không còn tồn tại trong giỏ hàng.",
+      "CanNotAddToCart.TryAgain": "Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại sau.",
+      "ID:Invalid": "ID sản phẩm không hợp lệ.",
+      "Quantity:GreaterThanZero": "Số lượng phải lớn hơn 0.",
+      "Stock:NotEnough": "Không đủ hàng cho '{0}'. Còn lại: {1}, Yêu cầu: {2}",
+      "Stock:NotEnoughStock": "Không đủ hàng cho '{0}'. Còn lại: {1}, Yêu cầu: {2}",
       "Error": {
         "InvalidImageExtension": "Đuôi file ảnh không hợp lệ. Các đuôi được cho phép: {0}.",
         "ImageSizeExceedsLimit": "Kích thước ảnh vượt quá giới hạn cho phép: {0}.",
@@ -120,8 +168,13 @@
         "InvalidImageUrlFormat": "Định dạng URL ảnh không hợp lệ.",
         "ImageRequired": "Cần có ảnh (URL hoặc tải lên) cho sản phẩm.",
         "ImageFileOrUrlRequired": "Cần có file ảnh hoặc URL ảnh cho sản phẩm."
-      }
+      },
+      "Actions": "Hành động",
+      "ProductDeletionConfirmationMessage": "Bạn có chắc chắn muốn xóa sản phẩm {0} không?",
+      "SuccessfullyDeleted": "Sản phẩm đã được xóa thành công.",
+      "ProductNotFound": "Không tìm thấy sản phẩm."
     },
+
     "Order": {
       "Orders": "Đơn hàng",
       "NotFound": "Không tìm thấy đơn hàng.",
@@ -143,8 +196,24 @@
       "ShippingInformation": "Thông tin giao hàng",
       "CustomerName": "Tên khách hàng",
       "CustomerPhone": "Số điện thoại",
+      "CustomerInformation": "Thông tin khách hàng",
+      "PhoneNumber": "Số điện thoại",
       "ShippingAddress": "Địa chỉ giao hàng",
-      "PaymentMethod": "Phương thức thanh toán",
+      "PaymentMethod": {
+        "Default": "Phương thức thanh toán",
+        "COD": "Thanh toán khi nhận hàng",
+        "VnPay": "VNPay",
+        "MoMo": "Ví MoMo",
+        "PayPal": "PayPal",
+        "Stripe": "Stripe",
+        "HelperDescription": {
+          "COD": "Thanh toán khi bạn nhận hàng.",
+          "VnPay": "Sử dụng thẻ tín dụng/ghi nợ hoặc ứng dụng VNPay",
+          "MoMo": "Sử dụng ví MoMo hoặc ứng dụng",
+          "PayPal": "Sử dụng số dư trong tài khoản PayPal của bạn.",
+          "Stripe": "Thẻ quốc tế Visa/Mastercard."
+        }
+      },
       "Quantity": "Số lượng",
       "UnitPrice": "Đơn giá",
       "Subtotal": "Tạm tính",
@@ -155,32 +224,57 @@
       "CancelledSuccessfully": "Hủy đơn hàng thành công.",
       "Cancel": "Hủy đơn hàng",
       "YouCanCancel": "Bạn có thể hủy đơn hàng này trong thời gian cho phép.",
+      "YouCanCancelThisOrderWithinTheGracePeriod": "Bạn có thể hủy đơn hàng này trong thời gian cho phép.",
+      "AreYouSureYouWantToCancelOrder": "Bạn có chắc chắn muốn hủy đơn hàng này không?",
+      "NoOrdersFound": "Không tìm thấy đơn hàng nào.",
+      "BackToOrderHistory": "Quay lại lịch sử đơn hàng",
+      "Product": "Sản phẩm",
       "ConfirmCodPayment": "Xác nhận thanh toán COD",
       "ConfirmCodPaymentMessage": "Bạn có chắc chắn muốn xác nhận thanh toán cho đơn hàng {0} không?",
-      "DeletionConfirmationMessage": "Bạn có chắc chắn muốn xóa đơn hàng {0} không?"
+      "DeletionConfirmationMessage": "Bạn có chắc chắn muốn xóa đơn hàng {0} không?",
+      "MyOrders": "Đơn hàng của tôi",
+      "Actions": "Hành động",
+      "OrderCancellationConfirmationMessage": "Bạn có chắc chắn muốn hủy đơn hàng này không?",
+      "OrderDeletionConfirmationMessage": "Bạn có chắc chắn muốn xóa đơn hàng {0} không?",
+      "SuccessfullyDeleted": "Đơn hàng đã được xóa thành công.",
+      "OrderUpdatedSuccessfully": "Cập nhật đơn hàng thành công.",
+      "AreYouSureYouWantToConfirmCodPaymentForOrder": "Bạn có chắc chắn muốn xác nhận thanh toán COD cho đơn hàng {0} không?"
     },
-    "PaymentMethod": {
-      "COD": "Thanh toán khi nhận hàng (COD)",
-      "CODInfo": "Thanh toán bằng tiền mặt khi nhận hàng.",
-      "VnPay": "Thanh toán qua VNPay",
-      "VnPayInfo": "Sử dụng thẻ ATM, thẻ quốc tế hoặc ứng dụng VNPay.",
-      "MoMo": "Thanh toán qua Ví MoMo",
-      "MoMoInfo": "Sử dụng Ví MoMo của bạn để quét mã QR.",
-      "PayPal": "Thanh toán qua PayPal",
-      "PayPalInfo": "Sử dụng số dư trong tài khoản PayPal của bạn.",
-      "Stripe": "Thanh toán an toàn qua Stripe",
-      "StripeInfo": "Thẻ quốc tế Visa/Mastercard."
-    },
+
     "Payment": {
       "Callback": "Kết quả thanh toán",
+      "PaymentCallback": "Kết quả thanh toán",
       "Successful": "Thanh toán thành công",
+      "PaymentSuccessful": "Thanh toán thành công",
       "Failed": "Thanh toán thất bại",
+      "PaymentFailed": "Thanh toán thất bại",
       "RedirectingToHistory": "Bạn sẽ được chuyển về trang lịch sử đơn hàng.",
+      "YouWillBeRedirectedToOrderHistory": "Bạn sẽ được chuyển hướng đến lịch sử đơn hàng.",
+      "ViewOrderHistory": "Xem lịch sử đơn hàng",
       "ThankYou": "Thanh toán thành công! Xin cảm ơn quý khách.",
+      "PaymentSuccessfulThankYou": "Thanh toán thành công! Cảm ơn bạn đã thanh toán.",
       "PleaseTryAgain": "Thanh toán không thành công. Vui lòng thử lại.",
+      "PaymentFailedPleaseTryAgain": "Thanh toán thất bại. Vui lòng thử lại.",
       "NotApproved": "Giao dịch không được chấp thuận bởi nhà cung cấp.",
-      "ProcessingError": "Có lỗi xảy ra trong quá trình xử lý thanh toán."
+      "PaymentNotApproved": "Thanh toán không được chấp thuận.",
+      "ProcessingError": "Có lỗi xảy ra trong quá trình xử lý thanh toán.",
+      "AnErrorOccurredWhileProcessingPayment": "Đã xảy ra lỗi trong quá trình xử lý thanh toán của bạn."
     },
+
+    "PaymentGateway": {
+      "HttpContextError": "Không thể truy cập HttpContext. Vui lòng kiểm tra cấu hình.",
+      "MoMoConnectionError": "Đã xảy ra lỗi khi kết nối với MoMo. Vui lòng thử lại sau.",
+      "PayPalConnectionError": "Đã xảy ra lỗi khi kết nối với PayPal. Vui lòng thử lại sau.",
+      "UnsupportedMethod": "Phương thức thanh toán '{0}' không được hỗ trợ."
+    },
+
+    "MoMo": {
+      "InvalidIPNData": "Dữ liệu IPN từ MoMo không hợp lệ.",
+      "InvalidReferenceCode": "Mã tham chiếu không hợp lệ.",
+      "OrderNotFound": "Không tìm thấy đơn hàng.",
+      "IPNProcessingError": "Đã xảy ra lỗi khi xử lý IPN từ MoMo."
+    },
+
     "Admin": {
       "Dashboard": "Bảng điều khiển",
       "Menu": {
@@ -195,14 +289,22 @@
         "EarningsLastMonth": "Doanh thu (Tháng trước)",
         "EarningsThisMonth": "Doanh thu (Tháng này)",
         "EarningsLastYear": "Doanh thu (Năm trước)",
+        "Earnings(Annual)": "Doanh thu hàng năm",
+        "YearlyRevenueStatistics": "Thống kê doanh thu theo năm",
         "TotalLastYear": "Tổng năm trước",
         "LastYear": "Thống kê năm trước",
         "ByYear": "Doanh thu theo năm",
         "Monthly": "Doanh thu tháng",
+        "MonthlyRevenue": "Doanh thu theo tháng",
+        "ChooseTheYearToDisplay": "Chọn năm để hiển thị:",
         "Loading": "Đang tải...",
+        "Loading...": "Đang tải...",
         "MonthlyByYear": "Doanh thu các tháng trong năm",
+        "MonthlyRevenueByYear": "Doanh thu theo tháng trong năm",
         "ForYear": "Thống kê cho năm",
+        "StatisticsForYear": "Thống kê cho năm",
         "TotalForYear": "Tổng doanh thu năm",
+        "TotalRevenueForYear": "Tổng doanh thu cho năm",
         "ChooseYear": "Chọn năm để xem"
       },
       "Months": {
@@ -218,63 +320,99 @@
         "Oct": "Thg 10",
         "Nov": "Thg 11",
         "Dec": "Thg 12"
-      }
+      },
+      "Panel": "Bảng điều khiển quản trị"
     },
+
     "Category": {
       "Categories": "Danh mục",
       "Create": "Tạo danh mục",
+      "CreateCategory": "Tạo danh mục",
       "Edit": "Sửa danh mục",
+      "Delete": "Xóa danh mục",
+      "SuccessfullyDeleted": "Danh mục đã được xóa thành công",
+      "CategoryDeletionConfirmationMessage": "Bạn có muốn xóa danh mục này không?",
       "Name": "Tên danh mục",
       "UrlSlug": "URL Slug",
+      "Description": "Mô tả danh mục",
       "Unknown": "Không rõ danh mục",
       "NoCategoriesFound": "Không tìm thấy danh mục nào.",
-      "DeletionConfirmationMessage": "Bạn có chắc chắn muốn xóa danh mục này?"
+      "DeletionConfirmationMessage": "Bạn có chắc chắn muốn xóa danh mục này?",
+      "EditCategory": "Sửa danh mục",
+      "Actions": "Hành động",
+      "NoSpecificSpecificationsForThisCategory": "Không có thông số kỹ thuật cụ thể cho danh mục này."
     },
+
     "Manufacturer": {
       "Manufacturers": "Hãng sản xuất",
       "Create": "Tạo hãng",
+      "CreateManufacturer": "Tạo hãng sản xuất",
       "Edit": "Sửa hãng",
+      "EditManufacturer": "Sửa hãng sản xuất",
       "Name": "Tên hãng",
       "ContactInfo": "Thông tin liên hệ",
-      "Image": "Logo"
+      "Image": "Logo",
+      "Actions": "Hành động"
     },
+
     "UI": {
       "Brands": "Thương hiệu",
       "ByPrice": "Theo giá",
+      "CategoryList": "Danh sách danh mục",
       "PriceRanges": {
         "Under1Million": "Dưới 1 triệu",
         "From1To5Million": "Từ 1 - 5 triệu",
         "From5To20Million": "Từ 5 - 20 triệu",
         "Over20Million": "Trên 20 triệu"
       },
-      "AllProductsByCategory": "Tất cả sản phẩm theo danh mục",
-      "AllProductsByName": "Tất cả sản phẩm theo tên",
-      "ProductsByManufacturer": "Sản phẩm theo hãng",
+      "AllProductsByCategory": "Tất cả sản phẩm theo danh mục {0}",
+      "AllProductsByName": "Tất cả sản phẩm theo {0}",
+      "ProductsByManufacturer": "Sản phẩm theo hãng sản xuất",
+      "ProductByPrice": "Sản phẩm theo giá",
+      "ProductByManufacturer": "Sản phẩm theo {0}",
       "NoFeaturedProductsFound": "Không tìm thấy sản phẩm nổi bật.",
       "ProductsFromCategory": "Sản phẩm từ danh mục",
       "GoBack": "Quay lại",
       "OrGoHome": "Hoặc về trang chủ",
-      "Titles": {
+      "Title": {
         "Admin": {
           "Products": "Quản lý Sản phẩm",
+          "AllProducts": "Tất cả sản phẩm",
           "AllOrders": "Quản lý Đơn hàng",
+          "Orders": "Quản lý Đơn hàng",
+          "AllManufacturers": "Tất cả hãng sản xuất",
           "Manufacturers": "Quản lý Hãng sản xuất",
-          "AllCategories": "Quản lý Danh mục",
-          "AllBlogs": "Quản lý Bài viết"
+          "Categories": "Quản lý Danh mục",
+          "AllCategories": "Tất cả danh mục",
+          "AllBlogs": "Tất cả bài viết",
+          "Blogs": "Quản lý Bài viết"
         },
         "ProductByPrice": "Sản phẩm theo giá",
-        "ProductByManufacturer": "Sản phẩm theo Hãng sản xuất",
+        "ProductByManufacturer": "Sản phẩm theo {0}",
         "PaymentCallback": "Kết quả thanh toán",
         "MyOrderHistory": "Lịch sử mua hàng",
         "OrderDetails": "Chi tiết đơn hàng",
         "OrderConfirmation": "Xác nhận đơn hàng",
-        "Checkout": "Thanh toán"
+        "Checkout": "Thanh toán",
+        "AllProductsByCategory": "Tất cả sản phẩm theo danh mục {0}",
+        "AllProductsByName": "Tất cả sản phẩm theo {0}"
       }
     },
+
+    "PriceRange": {
+      "Under1Million": "Dưới 1 triệu",
+      "From1MillionTo5Million": "Từ 1 triệu đến 5 triệu",
+      "From5MillionTo20Million": "Từ 5 triệu đến 20 triệu",
+      "Over20Million": "Trên 20 triệu"
+    },
+
+    "CustomerName": "Tên khách hàng",
+    "ViewDetails": "Xem chi tiết",
     "Error:GeneralTryAgain": "Có lỗi xảy ra. Vui lòng thử lại sau.",
     "Error:ConfigurationIssue": "Phát hiện lỗi cấu hình. Vui lòng kiểm tra lại.",
     "ErrorOccurred": "Đã có lỗi xảy ra!",
     "SorryErrorOccurred": "Xin lỗi, đã có lỗi xảy ra trong quá trình xử lý yêu cầu của bạn.",
-    "Permission:Orders.ConfirmCodPayment": "Xác nhận thanh toán COD"
+    "Permission:Orders.ConfirmCodPayment": "Xác nhận thanh toán COD",
+    "Home:CategoryList": "Danh sách danh mục"
   }
 }

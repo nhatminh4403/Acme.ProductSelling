@@ -28,13 +28,13 @@
         }
 
         if (!productId || quantity <= 0) {
-            abp.notify.warn(localizationResource('InvalidProductOrQuantity') || 'Invalid product or quantity');
+            abp.notify.warn(localizationResource('Cart:InvalidProductOrQuantity') || 'Invalid product or quantity');
             return;
         }
 
         $button.prop('disabled', true).addClass('disabled');
         var originalButtonHtml = $button.html();
-        $button.html('<i class="fas fa-spinner fa-spin me-1"></i>' + (localizationResource('AddingToCart') || 'Adding...'));
+        $button.html('<i class="fas fa-spinner fa-spin me-1"></i>' + (localizationResource('Cart:AddingToCart') || 'Adding...'));
 
         // Log để debug
 
@@ -53,11 +53,11 @@
                 quantity: quantity
             }, {
                 success: function () {
-                    abp.notify.success(localizationResource('ItemAddedToCart') || 'Item added to cart');
+                    abp.notify.success(localizationResource('Cart:ItemAddedToCart') || 'Item added to cart');
                     updateCartWidgetCount();
                 },
                 error: function (error) {
-                    abp.notify.error(error.message || localizationResource('CouldNotAddItemToCart') || 'Could not add item to cart');
+                    abp.notify.error(error.message || localizationResource('Cart:CouldNotAddItemToCart') || 'Could not add item to cart');
                     console.error("Add to cart error:", error);
                 },
                 complete: function () {

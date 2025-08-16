@@ -13,7 +13,7 @@
 }
 
 @{
-    ViewData["Title"] =  L["Title:ProductByPrice"];
+    ViewData["Title"] =  L["UI:Title:ProductByPrice"];
     Layout = "/Views/Shared/_Layout.cshtml"; // Đặt layout cho trang này
     var title = L["MinPrice"] + " " + Model.MinPrice+  " " + L["Category:CategoryName"] + " " + HelperMethods.GetCategoryLocalizerName(Model.CategoryName,L) + " " + L["MaxPrice"] + " " + Model.MaxPrice;
 }
@@ -68,7 +68,7 @@
                             }
                             <a asp-page="/Products/ProductDetail" asp-route-slug="@product.UrlSlug"
                                class="btn btn-outline-primary btn-sm mt-2">
-                                @L["Product:ViewDetails"]
+                                @L["ViewDetails"]
                             </a>
                         </div>
                     </div>
@@ -84,6 +84,6 @@
     }
     else
     {
-        <div class="alert alert-info">@L["Product:NoProductsFoundInCategory"]</div> @* Key localization mới *@
+        <div class="alert alert-info">@L["Product:NoProductsFoundInThisPriceRange",Model.PriceRangeAlias]</div> @* Key localization mới *@
     }
 </div>

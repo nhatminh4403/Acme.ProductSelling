@@ -338,7 +338,7 @@
                     <section class="container my-3 bg-light rounded py-3 product-carousel">
                         <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3 ps-2">
                             
-                            <h2 class="m-0">@L["ProductsFromCategory"] @HelperMethods.GetCategoryLocalizerName(featuredCategory.Category.Name,L)</h2>
+                            <h2 class="m-0">@L["Product:ProductsFromCategory"] @HelperMethods.GetCategoryLocalizerName(featuredCategory.Category.Name,L)</h2>
                             <a asp-page="/Products/ProductsByCategory"
                                asp-route-slug="@featuredCategory.Category.UrlSlug"
                                class="btn btn-sm btn-outline-primary">@L["SeeAll"] <i class="bi bi-arrow-right-short"></i></a>
@@ -431,7 +431,7 @@
             else
             {
                 <section class="container my-2 bg-light rounded py-3">
-                    <div class="alert alert-info">@L["NoFeaturedProductsFound"]</div> @* New localization key *@
+                    <div class="alert alert-info">@L["Product:NoFeaturedProductsFound"]</div> @* New localization key *@
                 </section>
             }
 
@@ -460,7 +460,7 @@
                     else
                     {
                         <div class="col-12">
-                            <div class="alert alert-info">@L["NoCategoriesFound"]</div>
+                            <div class="alert alert-info">@L["Category:NoCategoriesFound"]</div>
                         </div>
                     }
                 </div>

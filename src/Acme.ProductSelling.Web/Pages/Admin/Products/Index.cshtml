@@ -9,7 +9,7 @@
 @inject IStringLocalizer<ProductSellingResource> L
 @inject IAuthorizationService AuthorizationService
 @{
-    ViewData["Title"] = L["Title:Admin:Menu:Products"];
+    ViewData["Title"] = L["UI:Title:Admin:Products"];
     var categorySpecTypes = Json.Serialize(Model.CategorySpecTypesJson);
 }
 @section scripts {

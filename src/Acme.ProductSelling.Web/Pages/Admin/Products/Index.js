@@ -31,12 +31,12 @@
                                 text: l('Product:Delete'),
                                 visible: abp.auth.isGranted('ProductSelling.Products.Delete'),
                                 confirmMessage: function (data) {
-                                    return l('ProductDeletionConfirmationMessage', data.record.name);
+                                    return l('Product:ProductDeletionConfirmationMessage', data.record.name);
                                 },
                                 action: function (data) {
                                     productService.delete(data.record.id)
                                         .then(function () {
-                                            abp.notify.info(l('SuccessfullyDeleted'));
+                                            abp.notify.info(l('Product:SuccessfullyDeleted'));
                                             dataTable.ajax.reload();
                                         });
                                 }

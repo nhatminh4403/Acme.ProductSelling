@@ -66,7 +66,7 @@
                             </div>
 
                             <div id="imageUploadInputContainer" style="@((Model.Product?.ProductImageFile != null && Model.Product.ProductImageFile.Length > 0) ? "display:block;" : "display:none;")">
-                                <input class="form-control @(ViewData.ModelState.GetFieldValidationState("Product.ProductImageFile") == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Invalid ? "is-invalid" : "")"
+                                <input class="form-control @(ViewData.ModelState.GetFieldValidationState("Product:ProductImageFile") == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Invalid ? "is-invalid" : "")"
                                        type="file" id="productImageFile" name="Product.ProductImageFile" accept="image/*">
                                 <span asp-validation-for="Product.ProductImageFile" class="text-danger d-block"></span> @* d-block để lỗi xuống dòng *@
                             </div>
@@ -81,12 +81,12 @@
                         <div class="col-md-6">
                             <abp-select asp-for="Product.CategoryId"
                                         asp-items="Model.Categories"
-                                        label="@L["Category"]" id="Product_CategoryId_Create" />
+                                        label="@L["Product:Category"]" id="Product_CategoryId_Create" />
                         </div>
                         <div class="col-md-6">
                             <abp-select asp-for="Product.ManufacturerId"
                                         asp-items="Model.Manufacturers"
-                                        label="@L["Manufacturer"]" />
+                                        label="@L["Product:Manufacturer"]" />
                         </div>
                     </div>
                 </div>
@@ -97,7 +97,7 @@
                     <div class="spec-form" id="spec-None" style="display:block;">
                         <div class="text-center text-muted py-4">
                             <i class="fas fa-info-circle fa-2x mb-2"></i>
-                            <p>@L["NoSpecificSpecificationsForThisCategory"]</p>
+                            <p>@L["Category:NoSpecificSpecificationsForThisCategory"]</p>
                             <small>This category does not have specific specifications, or select a category first.</small>
                         </div>
                     </div>

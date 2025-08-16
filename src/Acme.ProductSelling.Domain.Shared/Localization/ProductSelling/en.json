@@ -20,6 +20,14 @@
     "SeeAll": "See All",
     "Menu:Home": "Home",
     "Menu:AppName": "XComputer",
+    "MinPrice": "Min Price",
+    "MaxPrice": "Max Price",
+    "CategoryName": "Category",
+    "Expand": "Expand",
+    "Collapse": "Collapse",
+    "Checkout": "Checkout",
+    "StartShopping": "Start Shopping",
+
     "Enum:OrderStatus.Placed": "Placed",
     "Enum:OrderStatus.Pending": "Pending",
     "Enum:OrderStatus.Confirmed": "Confirmed",
@@ -28,13 +36,21 @@
     "Enum:OrderStatus.Delivered": "Delivered",
     "Enum:OrderStatus.Completed": "Completed",
     "Enum:OrderStatus.Cancelled": "Cancelled",
+
     "Enum:PaymentStatus.Unpaid": "Unpaid",
     "Enum:PaymentStatus.PendingOnDelivery": "Pending on Delivery",
     "Enum:PaymentStatus.Pending": "Pending Payment",
     "Enum:PaymentStatus.Paid": "Paid",
     "Enum:PaymentStatus.Failed": "Failed",
     "Enum:PaymentStatus.Refunded": "Refunded",
-    "Checkout": "Checkout",
+    "Enum:PaymentStatus.Cancelled": "Cancelled",
+
+    "Account": {
+      "UserNotAuthenticated": "User is not authenticated.",
+      "Unauthorized": "You are not authorized to perform this action.",
+      "ManageYourProfile": "Manage Your Profile"
+    },
+
     "Login": {
       "Default": "Login",
       "Processing": "Your login request is being processed. Please wait...",
@@ -50,6 +66,7 @@
       "CreateAccount": "Create Account",
       "LoginHere": "Login Here"
     },
+
     "Register": {
       "Default": "Register",
       "Processing": "Your registration request is being processed. Please wait...",
@@ -64,10 +81,16 @@
       "ConfirmPassword": "Confirm Password",
       "HaveAnAccount?": "Already have an account?"
     },
+
     "AutoLogin": {
       "ErrorDefault": "Auto-login failed. Please log in manually.",
       "WarnTitle": "Registration Succeeded, Auto-Login Failed"
     },
+
+    "Validation": {
+      "ErrorTitle": "Validation Error"
+    },
+
     "Cart": {
       "ShoppingCart": "Shopping Cart",
       "Summary": "Cart Summary",
@@ -81,11 +104,23 @@
       "ItemAddedToCart": "Item added to cart successfully.",
       "CouldNotAddItemToCart": "Could not add item to cart.",
       "CartServiceNotAvailable": "Cart service not available.",
+      "InvalidProduct": "Invalid product.",
+      "CartInccessible.TryAgain": "Could not access your shopping cart. Please try again later.",
+      "CartFailedToRetrieve.TryAgain": "Failed to retrieve shopping cart. Please try again.",
+      "UnableToClear.TryAgain": "Could not clear your cart. Please try again later.",
+      "InvalidProductOrQuantity": "Invalid product or quantity.",
       "Item": {
         "UnableToUpdate.TryAgain": "Could not update item in cart. Please try again later.",
         "UnableToRemove.TryAgain": "Could not remove item from cart. Please try again later."
-      }
+      },
+      "Quantity": "Quantity",
+      "Product": "Product",
+      "Price": "Price",
+      "Total": "Total",
+      "Actions": "Actions",
+      "Subtotal": "Subtotal"
     },
+
     "Product": {
       "Products": "Products",
       "Detail": "Product Detail",
@@ -95,12 +130,11 @@
       "Specification": "Specification",
       "NoSpecificSpecifications": "No specific specifications available.",
       "RecentlyViewedProducts": "Recently Viewed Products",
-      "ViewDetails": "View Details",
       "Name": "Product Name",
       "Category": "Category",
       "OriginalPrice": "Original Price",
       "DiscountedPrice": "Discounted Price",
-      "DiscountPercent": "Discount",
+      "DiscountPercent": "Discount Percent",
       "Stock": "Stock",
       "CreateProduct": "Create Product",
       "EditProduct": "Edit Product",
@@ -108,9 +142,23 @@
       "ImageSource": "Image Source",
       "ImageUrlSource.Url": "Image Source URL",
       "ImageUrlSource.Upload": "Image From File",
+      "ProductImageFile": "Image of Product",
       "ImagePreview": "Image Preview",
       "Yes": "Yes",
+      "ProductDetail": "Product Detail",
       "No": "No",
+      "ProductsByName": "Products by Name",
+      "NoProductsFoundInCategory": "No products found in this category.",
+      "NoProductsFoundWithKeyword": "No products found with keyword {0}",
+      "NoProductsFoundForThisManufacturer": "No products found for this manufacturer.",
+      "NoProductsFoundInThisPriceRange": "No products found in this price range {0}",
+      "Nonexistent:Add": "The product you are trying to add does not exist.",
+      "Nonexistent:Update": "The item you are trying to update no longer exists in your cart.",
+      "CanNotAddToCart.TryAgain": "Could not add product to cart. Please try again later.",
+      "ID:Invalid": "Invalid product ID.",
+      "Quantity:GreaterThanZero": "Quantity must be greater than zero.",
+      "Stock:NotEnough": "Not enough stock for '{0}'. Available: {1}, Requested: {2}",
+      "Stock:NotEnoughStock": "Not enough stock for '{0}'. Available: {1}, Requested: {2}",
       "Error": {
         "InvalidImageExtension": "Invalid image file extension. Allowed extensions are {0}.",
         "ImageSizeExceedsLimit": "Image size exceeds the maximum limit of {0}.",
@@ -120,8 +168,13 @@
         "InvalidImageUrlFormat": "The image URL format is invalid.",
         "ImageRequired": "An image (URL or Upload) is required for the product.",
         "ImageFileOrUrlRequired": "An image file or URL is required for the product."
-      }
+      },
+      "Actions": "Actions",
+      "ProductDeletionConfirmationMessage": "Are you sure you want to delete this product {0}?",
+      "SuccessfullyDeleted": "Product successfully deleted.",
+      "ProductNotFound": "Product not found."
     },
+
     "Order": {
       "Orders": "Orders",
       "NotFound": "Order not found.",
@@ -143,8 +196,24 @@
       "ShippingInformation": "Shipping Information",
       "CustomerName": "Customer Name",
       "CustomerPhone": "Phone Number",
+      "CustomerInformation": "Customer Information",
+      "PhoneNumber": "Phone Number",
       "ShippingAddress": "Shipping Address",
-      "PaymentMethod": "Payment Method",
+      "PaymentMethod": {
+        "Default": "Payment Method",
+        "COD": "Cash on Delivery",
+        "VnPay": "VNPay",
+        "MoMo": "MoMo Wallet",
+        "PayPal": "PayPal",
+        "Stripe": "Stripe",
+        "HelperDescription": {
+          "COD": "Pay when you receive the goods.",
+          "VnPay": "Use credit/debit card or VNPay app",
+          "MoMo": "Use MoMo wallet or app",
+          "PayPal": "Use your PayPal account balance.",
+          "Stripe": "International Card Visa/Mastercard."
+        }
+      },
       "Quantity": "Quantity",
       "UnitPrice": "Unit Price",
       "Subtotal": "Subtotal",
@@ -155,32 +224,58 @@
       "CancelledSuccessfully": "Order cancelled successfully.",
       "Cancel": "Cancel Order",
       "YouCanCancel": "You can cancel this order within the grace period.",
+      "YouCanCancelThisOrderWithinTheGracePeriod": "You can cancel this order within the grace period.",
+      "AreYouSureYouWantToCancelOrder": "Are you sure you want to cancel this order?",
+      "NoOrdersFound": "No orders found.",
+      "BackToOrderHistory": "Back to Order History",
+      "Product": "Product",
       "ConfirmCodPayment": "Confirm COD Payment",
       "ConfirmCodPaymentMessage": "Are you sure you want to confirm COD payment for order {0}?",
-      "DeletionConfirmationMessage": "Are you sure you want to delete order {0}?"
+      "DeletionConfirmationMessage": "Are you sure you want to delete order {0}?",
+      "MyOrders": "My orders",
+      "Actions": "Actions",
+      "OrderCancellationConfirmationMessage": "Are you sure you want to cancel this order?",
+      "OrderDeletionConfirmationMessage": "Are you sure you want to delete order {0}?",
+      "SuccessfullyDeleted": "Order successfully deleted.",
+      "OrderUpdatedSuccessfully": "Order updated successfully.",
+      "AreYouSureYouWantToConfirmCodPaymentForOrder": "Are you sure you want to confirm COD payment for order {0}?"
+
     },
-    "PaymentMethod": {
-      "COD": "Cash on Delivery",
-      "CODInfo": "Pay when you receive the goods.",
-      "VnPay": "Pay via VNPay",
-      "VnPayInfo": "Use credit/debit card or VNPay app.",
-      "MoMo": "Pay via MoMo Wallet",
-      "MoMoInfo": "Use your MoMo wallet to scan QR code.",
-      "PayPal": "Pay via PayPal",
-      "PayPalInfo": "Use your PayPal account balance.",
-      "Stripe": "Pay safely via Stripe",
-      "StripeInfo": "International Card Visa/Mastercard."
-    },
+
     "Payment": {
       "Callback": "Payment Result",
+      "PaymentCallback": "Payment Callback",
       "Successful": "Payment Successful",
+      "PaymentSuccessful": "Payment Successful",
       "Failed": "Payment Failed",
+      "PaymentFailed": "Payment Failed",
       "RedirectingToHistory": "You will be redirected to your order history shortly.",
+      "YouWillBeRedirectedToOrderHistory": "You will be redirected to order history.",
+      "ViewOrderHistory": "View Order History",
       "ThankYou": "Payment successful! Thank you for your payment.",
+      "PaymentSuccessfulThankYou": "Payment successful! Thank you for your payment.",
       "PleaseTryAgain": "Payment failed. Please try again.",
+      "PaymentFailedPleaseTryAgain": "Payment failed. Please try again.",
       "NotApproved": "Payment was not approved by the provider.",
-      "ProcessingError": "An error occurred while processing your payment."
+      "PaymentNotApproved": "Payment was not approved.",
+      "ProcessingError": "An error occurred while processing your payment.",
+      "AnErrorOccurredWhileProcessingPayment": "An error occurred while processing your payment."
     },
+
+    "PaymentGateway": {
+      "HttpContextError": "Could not access HttpContext. Please check configuration.",
+      "MoMoConnectionError": "An error occurred while connecting to MoMo. Please try again later.",
+      "PayPalConnectionError": "An error occurred while connecting to PayPal. Please try again later.",
+      "UnsupportedMethod": "Payment method '{0}' is not supported."
+    },
+
+    "MoMo": {
+      "InvalidIPNData": "IPN data from MoMo is invalid.",
+      "InvalidReferenceCode": "Reference code is invalid.",
+      "OrderNotFound": "Order not found.",
+      "IPNProcessingError": "An error occurred while processing IPN from MoMo."
+    },
+
     "Admin": {
       "Dashboard": "Dashboard",
       "Menu": {
@@ -195,14 +290,22 @@
         "EarningsLastMonth": "Earnings (Last Month)",
         "EarningsThisMonth": "Earnings (This Month)",
         "EarningsLastYear": "Earnings (Last Year)",
+        "Earnings(Annual)": "Annual Earnings",
+        "YearlyRevenueStatistics": "Yearly Revenue Statistics",
         "TotalLastYear": "Total Last Year",
         "LastYear": "Last Year Statistics",
         "ByYear": "Revenue By Year",
         "Monthly": "Monthly Revenue",
+        "MonthlyRevenue": "Monthly Revenue",
+        "ChooseTheYearToDisplay": "Choose the year to display:",
         "Loading": "Loading data...",
+        "Loading...": "Loading...",
         "MonthlyByYear": "Monthly Revenue By Year",
+        "MonthlyRevenueByYear": "Monthly Revenue by Year",
         "ForYear": "Statistics For Year",
+        "StatisticsForYear": "Statistics for Year",
         "TotalForYear": "Total Revenue For The Year",
+        "TotalRevenueForYear": "Total Revenue for Year",
         "ChooseYear": "Choose The Year To Display"
       },
       "Months": {
@@ -218,63 +321,101 @@
         "Oct": "OCT",
         "Nov": "NOV",
         "Dec": "DEC"
-      }
+      },
+      "Panel": "Admin Panel"
     },
+
     "Category": {
       "Categories": "Categories",
       "Create": "Create Category",
+      "CreateCategory": "Create Category",
       "Edit": "Edit Category",
+      "Delete": "Delete Category",
+      "SuccessfullyDeleted": "Category Successfully Deleted",
+      "CategoryDeletionConfirmationMessage": "Do you want to delete this category?",
       "Name": "Category Name",
       "UrlSlug": "URL Slug",
+      "Description": "Category Description",
       "Unknown": "Unknown Category",
       "NoCategoriesFound": "No categories found.",
-      "DeletionConfirmationMessage": "Are you sure you want to delete this category?"
+      "DeletionConfirmationMessage": "Are you sure you want to delete this category?",
+      "EditCategory": "Edit Category",
+      "Actions": "Actions",
+      "NoSpecificSpecificationsForThisCategory": "No specific specifications available for this category."
     },
+
     "Manufacturer": {
       "Manufacturers": "Manufacturers",
       "Create": "Create Manufacturer",
+      "CreateManufacturer": "Create Manufacturer",
       "Edit": "Edit Manufacturer",
+      "EditManufacturer": "Edit Manufacturer",
       "Name": "Manufacturer Name",
       "ContactInfo": "Contact Info",
-      "Image": "Image"
+      "Image": "Image",
+      "Actions": "Actions"
     },
+
     "UI": {
       "Brands": "Brands",
       "ByPrice": "By Price",
+      "CategoryList": "Category List",
       "PriceRanges": {
         "Under1Million": "Under 1 Million",
         "From1To5Million": "From 1 to 5 Million",
         "From5To20Million": "From 5 to 20 Million",
         "Over20Million": "Over 20 Million"
       },
-      "AllProductsByCategory": "All Products by Category",
-      "AllProductsByName": "All Products by Name",
+      "AllProductsByCategory": "All Products by {0} Category",
+      "AllProductsByName": "All Products by {0}",
       "ProductsByManufacturer": "Products by Manufacturer",
+      "ProductByPrice": "Products by Price",
+      "ProductByManufacturer": "Products by {0}",
       "NoFeaturedProductsFound": "No featured products found.",
       "ProductsFromCategory": "Products from category",
       "GoBack": "Go back",
       "OrGoHome": "Or go to home page",
-      "Titles": {
+      "Title": {
         "Admin": {
           "Products": "Products Management",
+          "AllProducts": "All Products",
           "AllOrders": "Orders Management",
+          "Orders": "Orders Management",
+          "AllManufacturers": "All Manufacturers",
           "Manufacturers": "Manufacturers Management",
-          "AllCategories": "Categories Management",
-          "AllBlogs": "Blogs Management"
+          "Categories": "Categories Management",
+          "AllCategories": "All Categories",
+          "AllBlogs": "All Blogs",
+          "Blogs": "Blogs Management"
         },
         "ProductByPrice": "Products by Price",
-        "ProductByManufacturer": "Products by Manufacturer",
+        "ProductByManufacturer": "Products by {0}",
         "PaymentCallback": "Payment Result",
         "MyOrderHistory": "My Order History",
         "OrderDetails": "Order Details",
         "OrderConfirmation": "Order Confirmation",
-        "Checkout": "Checkout"
+        "Checkout": "Checkout",
+        "AllProductsByCategory": "All Products by {0} Category",
+        "AllProductsByName": "All Products by {0}"
       }
     },
+
+    "PriceRange": {
+      "Under1Million": "Under 1 Million",
+      "From1MillionTo5Million": "From 1 Million to 5 Million",
+      "From5MillionTo20Million": "From 5 Million to 20 Million",
+      "Over20Million": "Over 20 Million"
+    },
+
+
+
+    "CustomerName": "Customer Name",
+    "ViewDetails": "View Details",
     "Error:GeneralTryAgain": "An error occurred. Please try again later.",
     "Error:ConfigurationIssue": "Configuration issue detected. Please check settings.",
     "ErrorOccurred": "An error has occurred!",
     "SorryErrorOccurred": "Sorry, an error occurred while processing your request.",
-    "Permission:Orders.ConfirmCodPayment": "Confirm COD Payment"
+    "Permission:Orders.ConfirmCodPayment": "Confirm COD Payment",
+    "Home:CategoryList": "Category List"
   }
 }

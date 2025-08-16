@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
+@using System.Globalization
 @inject IStringLocalizer<ProductSellingResource> L
 @{
     ViewData["Title"] = L["Title:OrderConfirmation"];
@@ -66,16 +67,16 @@
                             {
                                 <tr>
                                     <td>@item.ProductName</td>
-                                    <td class="text-end">@item.Price.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                                    <td class="text-end">@item.Price.ToString("C0",CultureInfo.GetCultureInfo("vi-VN"))</td>
                                     <td class="text-center">@item.Quantity</td>
-                                    <td class="text-end">@item.LineTotalAmount.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                                    <td class="text-end">@item.LineTotalAmount.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</td>
                                 </tr>
                             }
                         </tbody>
                         <tfoot class="table-light">
                             <tr>
                                 <th colspan="3" class="text-end">@L["Order:TotalAmount"]:</th> 
-                                <th class="text-end">@Model.Order.TotalAmount.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</th>
+                                <th class="text-end">@Model.Order.TotalAmount.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</th>
                             </tr>
                         </tfoot>
                     </table>

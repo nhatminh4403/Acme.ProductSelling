@@ -155,7 +155,7 @@
                              data-product-price="@(Model.Product.DiscountedPrice ?? Model.Product.OriginalPrice)"
                              @(Model.Product.StockCount <= 0 ? "disabled" : "")>
                         <i class="fas fa-cart-plus me-2"></i>
-                        @L[Model.Product.StockCount > 0 ? "AddToCart" : "OutOfStock"]
+                        @L[Model.Product.StockCount > 0 ? "Product:AddToCart" : "Product:OutOfStock"]
                     </button>
                 </div>
             </div>
@@ -173,7 +173,7 @@
             <!-- Main content -->
             <div class="col-lg-8">
                 <div class="card h-100" id="leftCard">
-                    <div class="card-header bg-light"><h2>@L["Specification"]</h2></div>
+                    <div class="card-header bg-light"><h2>@L["Product:Specification"]</h2></div>
                     <div class="card-body">
                         <div class="content-container" id="content2">
                             @switch (Model.Product.CategorySpecificationType)
@@ -262,7 +262,7 @@
                                     }
                                     break;
                                 default:
-                                    <p>@L["NoSpecificSpecifications"]</p>
+                                    <p>@L["Product:NoSpecificSpecifications"]</p>
 
                                     <p>@Model.Product.CategorySpecificationType</p>
                                     break;
@@ -293,7 +293,7 @@
         <!-- Recently Viewed Products -->
         <div class="recently-viewed-section  mt-4">
             <div class="container">
-                <h4 class="recently-viewed-title">@L["RecentlyViewedProducts"]</h4>
+                <h4 class="recently-viewed-title">@L["UI:RecentlyViewedProducts"]</h4>
                 <div class="row" id="recentProductsRow">
                     <!-- Placeholder for demo products - will be populated by JavaScript -->
                 </div>
@@ -304,5 +304,5 @@
 }
 else
 {
-    <div class="alert alert-warning">@L["ProductNotFound"]</div>
+    <div class="alert alert-warning">@L["Product:ProductNotFound"]</div>
 }

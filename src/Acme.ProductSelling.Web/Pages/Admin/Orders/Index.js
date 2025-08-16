@@ -38,12 +38,12 @@
                                 text: l('Delete'), // Chữ 'Delete' đơn giản
                                 visible: abp.auth.isGranted('ProductSelling.Orders.Delete'),
                                 confirmMessage: function (data) {
-                                    return l('OrderDeletionConfirmationMessage', data.record.orderNumber); // UPDATED: Dùng orderNumber
+                                    return l('Order:OrderDeletionConfirmationMessage', data.record.orderNumber); // UPDATED: Dùng orderNumber
                                 },
                                 action: function (data) {
                                     orderService.delete(data.record.id)
                                         .then(function () {
-                                            abp.notify.info(l('SuccessfullyDeleted'));
+                                            abp.notify.info(l('Order:SuccessfullyDeleted'));
                                             dataTable.ajax.reload();
                                         });
                                 }
@@ -61,14 +61,14 @@
                                 },
                                 // Yêu cầu xác nhận trước khi thực hiện
                                 confirmMessage: function (data) {
-                                    return l('AreYouSureYouWantToConfirmCodPaymentForOrder', data.record.orderNumber);
+                                    return l('Order:AreYouSureYouWantToConfirmCodPaymentForOrder', data.record.orderNumber);
                                 },
                                 action: function (data) {
                                     orderService
                                         .markAsCodPaidAndCompleted(data.record.id)
                                         .then(function () {
                                             dataTable.ajax.reload(); // Tải lại bảng sau khi thành công
-                                            abp.notify.success(l('OrderUpdatedSuccessfully'));
+                                            abp.notify.success(l('Order:OrderUpdatedSuccessfully'));
                                         });
                                 }
                             }

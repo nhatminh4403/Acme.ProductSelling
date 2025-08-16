@@ -30,12 +30,12 @@
                                 text: l('Category:Delete'),
                                 visible: abp.auth.isGranted('ProductSelling.Categories.Delete'),
                                 confirmMessage: function (data) {
-                                    return l('CategoryDeletionConfirmationMessage', data.record.name); 
+                                    return l('Category:CategoryDeletionConfirmationMessage', data.record.name); 
                                 },
                                 action: function (data) {
                                     categoryService.delete(data.record.id)
                                         .then(function () {
-                                            abp.notify.info(l('SuccessfullyDeleted')); 
+                                            abp.notify.info(l('Category:SuccessfullyDeleted')); 
                                             dataTable.ajax.reload();
                                         });
                                 }

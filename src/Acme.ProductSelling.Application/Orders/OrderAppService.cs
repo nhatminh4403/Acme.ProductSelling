@@ -77,7 +77,7 @@ namespace Acme.ProductSelling.Orders
 
             if (customerId == null)
             {
-                throw new AbpAuthorizationException("User:Unauthenticated");
+                throw new AbpAuthorizationException(L["Account:UserNotAuthenticated"]);
             }
             if (order == null || order.CustomerId != customerId)
             {
@@ -213,7 +213,7 @@ namespace Acme.ProductSelling.Orders
                 {
                     if (product.StockCount < cartItem.Quantity)
                     {
-                        string ExceptionMessage = L["Product.Stock:NotEnoughStock", product.ProductName, product.StockCount];
+                        string ExceptionMessage = L["Product:Stock:NotEnoughStock", product.ProductName, product.StockCount];
                         throw new UserFriendlyException(ExceptionMessage);
                     }
                     orderToProcess.AddOrderItem(product.Id,
