@@ -131,7 +131,7 @@ namespace Acme.ProductSelling
                 Description = "ASUS is a multinational computer hardware and electronics company headquartered in Taipei, Taiwan. It is known for its innovative products, including motherboards, graphics cards, laptops, desktops, and peripherals. ASUS is recognized for its commitment to quality and performance.",
 
             };
-            asus.UrlSlug = UrlHelper.RemoveDiacritics(asus.Name);
+            asus.UrlSlug = UrlHelperMethod.RemoveDiacritics(asus.Name);
             Manufacturers.Add(asus);
 
             var acer = new Manufacturer
@@ -141,7 +141,7 @@ namespace Acme.ProductSelling
                 Description = "Acer is a Taiwanese multinational hardware and electronics corporation specializing in advanced electronics technology. It is known for its laptops, desktops, monitors, and other computer peripherals. Acer focuses on providing innovative solutions for consumers and businesses.",
                 ManufacturerImage = "https://hoanghamobile.com/Uploads/2022/05/30/logo-acer-inkythuatso-2-01-27-15-50-00.jpg",
             };
-            acer.UrlSlug = UrlHelper.RemoveDiacritics(acer.Name);
+            acer.UrlSlug = UrlHelperMethod.RemoveDiacritics(acer.Name);
             Manufacturers.Add(acer);
 
             var amd = new Manufacturer
@@ -151,7 +151,7 @@ namespace Acme.ProductSelling
                 Description = "AMD (Advanced Micro Devices) is an American multinational semiconductor company that develops computer processors and related technologies. It is known for its Ryzen CPUs and Radeon GPUs, which compete with Intel and NVIDIA products. AMD focuses on high-performance computing and graphics solutions.",
                 ManufacturerImage = "https://www.amd.com/content/dam/code/images/header/amd-header-logo.svg"
             };
-            amd.UrlSlug = UrlHelper.RemoveDiacritics(amd.Name);
+            amd.UrlSlug = UrlHelperMethod.RemoveDiacritics(amd.Name);
             Manufacturers.Add(amd);
 
             var intel = new Manufacturer
@@ -161,7 +161,7 @@ namespace Acme.ProductSelling
                 Description = "Intel Corporation is an American multinational corporation and technology company headquartered in Santa Clara, California. It is known for its semiconductor products, including microprocessors, integrated circuits, and memory modules. Intel is a leader in computing innovation and technology.",
                 ManufacturerImage = "https://www.intel.com/content/dam/logos/intel-header-logo.svg"
             };
-            intel.UrlSlug = UrlHelper.RemoveDiacritics(intel.Name);
+            intel.UrlSlug = UrlHelperMethod.RemoveDiacritics(intel.Name);
             Manufacturers.Add(intel);
 
             var logitech = new Manufacturer
@@ -171,7 +171,7 @@ namespace Acme.ProductSelling
                 Description = "Logitech is a Swiss company that designs and manufactures computer peripherals and software. It is known for its mice, keyboards, webcams, and gaming accessories. Logitech focuses on creating innovative products that enhance the user experience.",
                 ManufacturerImage = "https://logos-world.net/wp-content/uploads/2020/11/Logitech-Symbol.png"
             };
-            logitech.UrlSlug = UrlHelper.RemoveDiacritics(logitech.Name);
+            logitech.UrlSlug = UrlHelperMethod.RemoveDiacritics(logitech.Name);
             Manufacturers.Add(logitech);
 
             var corsair = new Manufacturer
@@ -181,7 +181,7 @@ namespace Acme.ProductSelling
                 Description = "Corsair is an American computer peripherals and hardware company known for its high-performance gaming products, including memory modules, power supplies, cooling solutions, and gaming peripherals. Corsair focuses on delivering quality and performance to gamers and PC enthusiasts.",
                 ManufacturerImage = "https://gamebank.vn/kql/file/1908_new-corsair-logo-blog-image.png"
             };
-            corsair.UrlSlug = UrlHelper.RemoveDiacritics(corsair.Name);
+            corsair.UrlSlug = UrlHelperMethod.RemoveDiacritics(corsair.Name);
             Manufacturers.Add(corsair);
 
             var coolerMaster = new Manufacturer
@@ -191,7 +191,7 @@ namespace Acme.ProductSelling
                 Description = "Cooler Master is a Taiwanese computer hardware manufacturer known for its cooling solutions, power supplies, and computer cases. It focuses on providing innovative products for gamers and PC builders, including CPU coolers, cases, and peripherals.",
                 ManufacturerImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgxuDgNFwETbBYqgrfHipVKWsdklKC8DXE0A&s",
             };
-            coolerMaster.UrlSlug = UrlHelper.RemoveDiacritics(coolerMaster.Name);
+            coolerMaster.UrlSlug = UrlHelperMethod.RemoveDiacritics(coolerMaster.Name);
             Manufacturers.Add(coolerMaster);
 
             var msi = new Manufacturer
@@ -201,7 +201,7 @@ namespace Acme.ProductSelling
                 Description = "MSI (Micro-Star International) is a Taiwanese multinational information technology corporation known for its computer hardware products, including motherboards, graphics cards, laptops, and gaming peripherals. MSI focuses on high-performance gaming and computing solutions.",
                 ManufacturerImage = "https://1000logos.net/wp-content/uploads/2018/10/MSI-Logo.png"
             };
-            msi.UrlSlug = UrlHelper.RemoveDiacritics(msi.Name);
+            msi.UrlSlug = UrlHelperMethod.RemoveDiacritics(msi.Name);
             Manufacturers.Add(msi);
 
             var gigabyte = new Manufacturer
@@ -211,7 +211,7 @@ namespace Acme.ProductSelling
                 Description = "Gigabyte Technology is a Taiwanese manufacturer of computer hardware products, including motherboards, graphics cards, laptops, and gaming peripherals. It is known for its high-performance components and innovative technology solutions.",
                 ManufacturerImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8WUdoxygpBfsejP7-9SVKuvYv_2C31-T_9w&s"
             };
-            gigabyte.UrlSlug = UrlHelper.RemoveDiacritics(gigabyte.Name);
+            gigabyte.UrlSlug = UrlHelperMethod.RemoveDiacritics(gigabyte.Name);
             Manufacturers.Add(gigabyte);
 
             var razer = new Manufacturer
@@ -221,7 +221,7 @@ namespace Acme.ProductSelling
                 Description = "Razer Inc. is a global gaming hardware manufacturing company known for its high-performance gaming peripherals, laptops, and software. It focuses on creating innovative products for gamers, including mice, keyboards, headsets, and gaming laptops.",
                 ManufacturerImage = "https://logos-world.net/wp-content/uploads/2020/11/Razer-Symbol.jpg"
             };
-            razer.UrlSlug = UrlHelper.RemoveDiacritics(razer.Name);
+            razer.UrlSlug = UrlHelperMethod.RemoveDiacritics(razer.Name);
             Manufacturers.Add(razer);
 
             var samsung = new Manufacturer
@@ -231,7 +231,7 @@ namespace Acme.ProductSelling
                 Description = "Samsung Electronics is a South Korean multinational electronics company known for its consumer electronics, semiconductors, and telecommunications products. It is one of the largest manufacturers of smartphones, TVs, and memory chips in the world.",
                 ManufacturerImage = "https://1000logos.net/wp-content/uploads/2017/06/Font-Samsung-Logo.jpg"
             };
-            samsung.UrlSlug = UrlHelper.RemoveDiacritics(samsung.Name);
+            samsung.UrlSlug = UrlHelperMethod.RemoveDiacritics(samsung.Name);
             Manufacturers.Add(samsung);
 
             var nvidia = new Manufacturer
@@ -241,7 +241,7 @@ namespace Acme.ProductSelling
                 Description = "NVIDIA Corporation is an American multinational technology company known for its graphics processing units (GPUs) and AI computing technology. It is a leader in the gaming, professional visualization, data center, and automotive markets.",
                 ManufacturerImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjPSt8IAZHIwQXUj8owif7VyiELZvOi0w1pA&s"
             };
-            nvidia.UrlSlug = UrlHelper.RemoveDiacritics(nvidia.Name);
+            nvidia.UrlSlug = UrlHelperMethod.RemoveDiacritics(nvidia.Name);
             Manufacturers.Add(nvidia);
 
             var lg = new Manufacturer
@@ -251,7 +251,7 @@ namespace Acme.ProductSelling
                 Description = "LG Electronics is a South Korean multinational electronics company known for its consumer electronics, home appliances, and mobile communications. It is one of the largest manufacturers of TVs, refrigerators, and washing machines in the world.",
                 ManufacturerImage = "https://www.lg.com/content/dam/lge/common/logo/logo-lg-100-44.svg"
             };
-            lg.UrlSlug = UrlHelper.RemoveDiacritics(lg.Name);
+            lg.UrlSlug = UrlHelperMethod.RemoveDiacritics(lg.Name);
             Manufacturers.Add(lg);
 
             var nzxt = new Manufacturer
@@ -261,7 +261,7 @@ namespace Acme.ProductSelling
                 Description = "NZXT is an American computer hardware company known for its PC cases, cooling solutions, and gaming peripherals. It focuses on providing innovative products for gamers and PC builders, including cases, power supplies, and cooling solutions.",
                 ManufacturerImage = "https://scontent.fsgn5-3.fna.fbcdn.net/v/t39.30808-1/357734767_742351191228829_4168876683057715556_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=104&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=uJiscYHQzqIQ7kNvwGZObEi&_nc_oc=AdlY_C0d8uJAp1ZwLsT2kEHRz2-tkF7aF6TQpTcfTuachJppQ4l1p1JMk2g6N4y0o-E&_nc_zt=24&_nc_ht=scontent.fsgn5-3.fna&_nc_gid=qLAResXVqOojqX9fVYrn5w&oh=00_AfFhE1XCW1wvV30ZLxx9AhDdWmogq8xD1ZFALmo1VNuYkw&oe=68192140"
             };
-            nzxt.UrlSlug = UrlHelper.RemoveDiacritics(nzxt.Name);
+            nzxt.UrlSlug = UrlHelperMethod.RemoveDiacritics(nzxt.Name);
             Manufacturers.Add(nzxt);
 
             var gskill = new Manufacturer
@@ -271,7 +271,7 @@ namespace Acme.ProductSelling
                 Description = "G.Skill is a Taiwanese manufacturer of computer memory modules and storage solutions. It is known for its high-performance RAM and SSD products, catering to gamers and PC enthusiasts. G.Skill focuses on delivering quality and performance in its products.",
                 ManufacturerImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUiA8ArpBa9OvMcC-3HpeaoeM2U57pQ_ytyQ&s"
             };
-            gskill.UrlSlug = UrlHelper.RemoveDiacritics(gskill.Name);
+            gskill.UrlSlug = UrlHelperMethod.RemoveDiacritics(gskill.Name);
             Manufacturers.Add(gskill);
 
             var hyperx = new Manufacturer
@@ -281,7 +281,7 @@ namespace Acme.ProductSelling
                 Description = "HyperX is a gaming division of Kingston Technology Company, Inc. It is known for its high-performance gaming peripherals, memory modules, and storage solutions. HyperX focuses on delivering quality and performance for gamers and PC enthusiasts.",
                 ManufacturerImage = "https://brandlogos.net/wp-content/uploads/2022/08/hyperx-logo_brandlogos.net_w6acg.png"
             };
-            hyperx.UrlSlug = UrlHelper.RemoveDiacritics(hyperx.Name);
+            hyperx.UrlSlug = UrlHelperMethod.RemoveDiacritics(hyperx.Name);
             Manufacturers.Add(hyperx);
 
             var steelseries = new Manufacturer
@@ -291,7 +291,7 @@ namespace Acme.ProductSelling
                 Description = "SteelSeries is a Danish manufacturer of gaming peripherals and accessories. It is known for its high-performance gaming mice, keyboards, headsets, and mousepads. SteelSeries focuses on creating innovative products for gamers.",
                 ManufacturerImage = "https://audio.vn/wp-content/uploads/2017/12/SteelSeries-logo.jpg"
             };
-            steelseries.UrlSlug = UrlHelper.RemoveDiacritics(steelseries.Name);
+            steelseries.UrlSlug = UrlHelperMethod.RemoveDiacritics(steelseries.Name);
             Manufacturers.Add(steelseries);
 
             var dell = new Manufacturer
@@ -301,7 +301,7 @@ namespace Acme.ProductSelling
                 Description = "Dell Technologies is an American multinational technology company known for its computer hardware, software, and services. It is one of the largest manufacturers of PCs, servers, and storage solutions in the world.",
                 ManufacturerImage = "https://1000logos.net/wp-content/uploads/2017/07/Dell-Logo.png"
             };
-            dell.UrlSlug = UrlHelper.RemoveDiacritics(dell.Name);
+            dell.UrlSlug = UrlHelperMethod.RemoveDiacritics(dell.Name);
             Manufacturers.Add(dell);
 
             var hp = new Manufacturer
@@ -311,7 +311,7 @@ namespace Acme.ProductSelling
                 Description = "HP Inc. is an American multinational information technology company known for its printers, PCs, and related products. It is one of the largest manufacturers of printers and computers in the world.",
                 ManufacturerImage = "https://www.logo.wine/a/logo/HP_Inc./HP_Inc.-Logo.wine.svg"
             };
-            hp.UrlSlug = UrlHelper.RemoveDiacritics(hp.Name);
+            hp.UrlSlug = UrlHelperMethod.RemoveDiacritics(hp.Name);
             Manufacturers.Add(hp);
 
             var phanteks = new Manufacturer
@@ -321,7 +321,7 @@ namespace Acme.ProductSelling
                 Description = "Phanteks is a manufacturer of computer hardware products, including cases, cooling solutions, and power supplies. It focuses on providing innovative products for gamers and PC builders.",
                 ManufacturerImage = "https://seeklogo.com/images/P/phanteks-logo-51B95B5D26-seeklogo.com.png"
             };
-            phanteks.UrlSlug = UrlHelper.RemoveDiacritics(phanteks.Name);
+            phanteks.UrlSlug = UrlHelperMethod.RemoveDiacritics(phanteks.Name);
             Manufacturers.Add(phanteks);
 
             var evga = new Manufacturer
@@ -331,7 +331,7 @@ namespace Acme.ProductSelling
                 Description = "EVGA Corporation is an American computer hardware company known for its graphics cards, motherboards, and power supplies. It focuses on providing high-performance products for gamers and PC enthusiasts.",
                 ManufacturerImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToVtUIKfXMaf4MeYXZXLZHVKDk9Nm4QMfvZA&s"
             };
-            evga.UrlSlug = UrlHelper.RemoveDiacritics(evga.Name);
+            evga.UrlSlug = UrlHelperMethod.RemoveDiacritics(evga.Name);
             Manufacturers.Add(evga);
 
             var wd = new Manufacturer
@@ -341,7 +341,7 @@ namespace Acme.ProductSelling
                 Description = "Western Digital Corporation is an American computer data storage company known for its hard drives and solid-state drives. It is one of the largest manufacturers of storage devices in the world.",
                 ManufacturerImage = "https://www.westerndigital.com/content/dam/store/en-us/assets/home-page/brand-logos/header-main-logo.svg"
             };
-            wd.UrlSlug = UrlHelper.RemoveDiacritics(wd.Name);
+            wd.UrlSlug = UrlHelperMethod.RemoveDiacritics(wd.Name);
             Manufacturers.Add(wd);
 
             var noctua = new Manufacturer
@@ -351,7 +351,7 @@ namespace Acme.ProductSelling
                 Description = "Noctua is an Austrian manufacturer of computer cooling solutions, including CPU coolers and fans. It is known for its high-performance and quiet cooling products.",
                 ManufacturerImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_4lSY7-yoIe1SVWV0Fpb6AfwjGeex8Egrkw&s"
             };
-            noctua.UrlSlug = UrlHelper.RemoveDiacritics(noctua.Name);
+            noctua.UrlSlug = UrlHelperMethod.RemoveDiacritics(noctua.Name);
             Manufacturers.Add(noctua);
 
             var asrock = new Manufacturer
@@ -361,7 +361,7 @@ namespace Acme.ProductSelling
                 Description = "ASRock Inc. is a Taiwanese manufacturer of motherboards, graphics cards, and other computer hardware. It is known for its innovative products and focuses on providing quality and performance.",
                 ManufacturerImage = "https://1000logos.net/wp-content/uploads/2021/05/ASRock-logo.png"
             };
-            asrock.UrlSlug = UrlHelper.RemoveDiacritics(asrock.Name);
+            asrock.UrlSlug = UrlHelperMethod.RemoveDiacritics(asrock.Name);
             Manufacturers.Add(asrock);
             Console.WriteLine(Manufacturers);
             await _manufacturerRepository.InsertManyAsync(Manufacturers, autoSave: true);
@@ -403,7 +403,7 @@ namespace Acme.ProductSelling
                 ManufacturerId = amd.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/ryzen_7_-_1_00957bbe7b8542308c897a90d439b1fd_e1c9a16c537d47bb9768828dddb332d0_grande.jpg",
             };
-            product1.UrlSlug = UrlHelper.RemoveDiacritics(product1.ProductName);
+            product1.UrlSlug = UrlHelperMethod.RemoveDiacritics(product1.ProductName);
 
             await _productRepository.InsertAsync(
 
@@ -435,7 +435,7 @@ namespace Acme.ProductSelling
                 GpuSpecificationId = gpuSpec1.Id // Gán FK
 
             };
-            productGpu1.UrlSlug = UrlHelper.RemoveDiacritics(productGpu1.ProductName);
+            productGpu1.UrlSlug = UrlHelperMethod.RemoveDiacritics(productGpu1.ProductName);
 
             await _productRepository.InsertAsync(productGpu1, autoSave: true);
             var ramSpec1 = new RamSpecification
@@ -462,7 +462,7 @@ namespace Acme.ProductSelling
                 // Gán FK cho spec
                 RamSpecificationId = ramSpec1.Id // Gán FK
             };
-            productRam1.UrlSlug = UrlHelper.RemoveDiacritics(productRam1.ProductName);
+            productRam1.UrlSlug = UrlHelperMethod.RemoveDiacritics(productRam1.ProductName);
 
             await _productRepository.InsertAsync(productRam1, autoSave: true);
 
@@ -490,7 +490,7 @@ namespace Acme.ProductSelling
                 // Gán FK cho spec
                 StorageSpecificationId = storageSpec1.Id // Gán FK
             };
-            productStorage1.UrlSlug = UrlHelper.RemoveDiacritics(productStorage1.ProductName);
+            productStorage1.UrlSlug = UrlHelperMethod.RemoveDiacritics(productStorage1.ProductName);
             await _productRepository.InsertAsync(productStorage1, autoSave: true);
             var keyboardSpec1 = new KeyboardSpecification
             {
@@ -514,7 +514,7 @@ namespace Acme.ProductSelling
                 // Gán FK cho spec
                 KeyboardSpecificationId = keyboardSpec1.Id // Gán FK
             };
-            keyboardProduct1.UrlSlug = UrlHelper.RemoveDiacritics(keyboardProduct1.ProductName);
+            keyboardProduct1.UrlSlug = UrlHelperMethod.RemoveDiacritics(keyboardProduct1.ProductName);
             await _productRepository.InsertAsync(keyboardProduct1, autoSave: true);
 
 
@@ -545,7 +545,7 @@ namespace Acme.ProductSelling
                 MonitorSpecificationId = monitorSpec1.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/lg_27gx790a-b_gearvn_18880ec6e5a944c2b29c76d85d44d243_medium.jpg"
             };
-            productMonitor1.UrlSlug = UrlHelper.RemoveDiacritics(productMonitor1.ProductName);
+            productMonitor1.UrlSlug = UrlHelperMethod.RemoveDiacritics(productMonitor1.ProductName);
             var psuSpec1 = new PsuSpecification
             {
                 Wattage = 750,
@@ -568,7 +568,7 @@ namespace Acme.ProductSelling
                 ImageUrl = "https://bizweb.dktcdn.net/thumb/grande/100/329/122/products/nguon-may-tinh-corsair-rm750x-shift-750w-80-plus-gold-cp-9020251-na-04-20838ea6-b253-460f-bb0c-ad9327565373.jpg?v=1743639588677"
 
             };
-            productPsu1.UrlSlug = UrlHelper.RemoveDiacritics(productPsu1.ProductName);
+            productPsu1.UrlSlug = UrlHelperMethod.RemoveDiacritics(productPsu1.ProductName);
             await _productRepository.InsertAsync(productPsu1, autoSave: true);
 
             var caseSpec1 = new CaseSpecification
@@ -601,7 +601,7 @@ namespace Acme.ProductSelling
                 CaseSpecificationId = caseSpec1.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/4108_be554d73268e3ca69f25d192629df397_b7fd1aebb5f74f50ae18c3b23efb8755_b6d80711bb304b568b03fdcf3e94c1ab_grande.jpg"
             };
-            productCase1.UrlSlug = UrlHelper.RemoveDiacritics(productCase1.ProductName);
+            productCase1.UrlSlug = UrlHelperMethod.RemoveDiacritics(productCase1.ProductName);
             await _productRepository.InsertAsync(productCase1, autoSave: true);
             var cpuCoolerSpec1 = new CpuCoolerSpecification
             {
@@ -629,7 +629,7 @@ namespace Acme.ProductSelling
                 CpuCoolerSpecificationId = cpuCoolerSpec1.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/hyper-212-argb-gallery-4-image_dc19349414e94e0e869c23e85c70cb49_d2713cd5bac947da94ee34d1456220fe_grande.png"
             };
-            productCpuCooler1.UrlSlug = UrlHelper.RemoveDiacritics(productCpuCooler1.ProductName);
+            productCpuCooler1.UrlSlug = UrlHelperMethod.RemoveDiacritics(productCpuCooler1.ProductName);
             await _productRepository.InsertAsync(productCpuCooler1, autoSave: true);
 
 
@@ -660,7 +660,7 @@ namespace Acme.ProductSelling
                 ImageUrl = "https://product.hstatic.net/200000722513/product/i9k-t2-special-box-07-1080x1080pixels_6c9ec1001cdf4e4998c13af4ac6c7581_114c47698e4a4984863c3b26e0619b65_grande.png"
 
             };
-            productCpu2.UrlSlug = UrlHelper.RemoveDiacritics(productCpu2.ProductName);
+            productCpu2.UrlSlug = UrlHelperMethod.RemoveDiacritics(productCpu2.ProductName);
             await _productRepository.InsertAsync(productCpu2, autoSave: true);
 
             // 2. GPU: AMD Radeon RX 7900 XT
@@ -687,7 +687,7 @@ namespace Acme.ProductSelling
                 ManufacturerId = asus.Id,
                 ImageUrl = " https://product.hstatic.net/200000722513/product/5681_ea11053c19e375dcaa8138b6f531262d_7d029f536978405393da9fb3c8f1e2fa_4d3cedb8fd4a485db1ece7519c1d41a8_grande.jpg"
             };
-            productGpu2.UrlSlug = UrlHelper.RemoveDiacritics(productGpu2.ProductName);
+            productGpu2.UrlSlug = UrlHelperMethod.RemoveDiacritics(productGpu2.ProductName);
             await _productRepository.InsertAsync(productGpu2, autoSave: true);
             // 3. RAM: G.Skill Trident Z RGB 16GB (2×8)
             var ramSpec2 = new RamSpecification
@@ -713,7 +713,7 @@ namespace Acme.ProductSelling
                 StockCount = 80,
                 ImageUrl = "https://anphat.com.vn/media/product/33685_153665426813.png"
             };
-            productRam2.UrlSlug = UrlHelper.RemoveDiacritics(productRam2.ProductName);
+            productRam2.UrlSlug = UrlHelperMethod.RemoveDiacritics(productRam2.ProductName);
             await _productRepository.InsertAsync(productRam2, autoSave: true);
 
             // 4. Storage: WD Black SN770 1TB
@@ -739,7 +739,7 @@ namespace Acme.ProductSelling
                 ManufacturerId = wd.Id,
                 ImageUrl = "https://bizweb.dktcdn.net/thumb/grande/100/329/122/products/ssd-wd-black-sn770-pcie-gen4-x4-nvme-m-2-500gb-wds500g3x0e-b058273a-af63-4053-ac31-83b41eb593a2.jpg?v=1655710957737"
             };
-            productStorage2.UrlSlug = UrlHelper.RemoveDiacritics(productStorage2.ProductName);
+            productStorage2.UrlSlug = UrlHelperMethod.RemoveDiacritics(productStorage2.ProductName);
             await _productRepository.InsertAsync(productStorage2, autoSave: true);
             // 5. Keyboard: Razer Huntsman Elite
             var keyboardSpec2 = new KeyboardSpecification
@@ -763,7 +763,7 @@ namespace Acme.ProductSelling
                 ManufacturerId = razer.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/r3m1_ac3aa0be001640e2873ff732d34617bc_2295901522e24ce399b8f5f07be51467_3ab2e4aca4434a9a84997283b79b5c3c_grande.png"
             };
-            keyboardProduct2.UrlSlug = UrlHelper.RemoveDiacritics(keyboardProduct2.ProductName);
+            keyboardProduct2.UrlSlug = UrlHelperMethod.RemoveDiacritics(keyboardProduct2.ProductName);
             await _productRepository.InsertAsync(keyboardProduct2, autoSave: true);
 
 
@@ -794,7 +794,7 @@ namespace Acme.ProductSelling
                 ManufacturerId = asus.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/ips-2k-170hz-g-sync-hdr-chuyen-game-1_f9de14d5b20041b2b52b0cde6884a3d9_317538ed8cff45e6a25feb1cbb8650d0_grande.png"
             };
-            productMonitor2.UrlSlug = UrlHelper.RemoveDiacritics(productMonitor2.ProductName);
+            productMonitor2.UrlSlug = UrlHelperMethod.RemoveDiacritics(productMonitor2.ProductName);
             await _productRepository.InsertAsync(productMonitor2, autoSave: true);
 
             // 8. PSU: EVGA SuperNOVA 750 G5
@@ -818,7 +818,7 @@ namespace Acme.ProductSelling
                 StockCount = 35,
                 ImageUrl = "https://tandoanh.vn/wp-content/uploads/2021/10/EVGA-SuperNOVA-750-G1-%E2%80%93-80-GOLD-750W-%E2%80%93-Fully-Modular-h1.jpg"
             };
-            productPsu2.UrlSlug = UrlHelper.RemoveDiacritics(productPsu2.ProductName);
+            productPsu2.UrlSlug = UrlHelperMethod.RemoveDiacritics(productPsu2.ProductName);
             await _productRepository.InsertAsync(productPsu2, autoSave: true);
             // 9. Case: Phanteks Eclipse P400A
             var caseSpec2 = new CaseSpecification
@@ -848,7 +848,7 @@ namespace Acme.ProductSelling
                 ManufacturerId = phanteks.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/k-_1_65d8edfddc2b4785af9a13f971fc258a_6043347819ed417bb6dd327b41b39b6e_60a930dd805e4bc891b6ea69e7c2d21a_grande.jpg"
             };
-            productCase2.UrlSlug = UrlHelper.RemoveDiacritics(productCase2.ProductName);
+            productCase2.UrlSlug = UrlHelperMethod.RemoveDiacritics(productCase2.ProductName);
             await _productRepository.InsertAsync(productCase2, autoSave: true);
             // 10. CPU Cooler: Noctua NH-D15
             var cpuCoolerSpec2 = new CpuCoolerSpecification
@@ -876,7 +876,7 @@ namespace Acme.ProductSelling
                 ManufacturerId = noctua.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/noctua_nh-d15_2_75940b3d5fbb485190327d6b592429af_9ad735dcdbb94a71ba171d7d4ae0a326_grande.jpg"
             };
-            productCpuCooler2.UrlSlug = UrlHelper.RemoveDiacritics(productCpuCooler2.ProductName);
+            productCpuCooler2.UrlSlug = UrlHelperMethod.RemoveDiacritics(productCpuCooler2.ProductName);
             await _productRepository.InsertAsync(productCpuCooler2, autoSave: true);
 
 
@@ -910,7 +910,7 @@ namespace Acme.ProductSelling
                 HeadsetSpecificationId = headsetSpec1.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/gvn_logitech_prox_79c556630c454086baf1bee06c577ab7_3471d9d886fd4dbe8ab5ae6bed9f4d78_grande.png"
             };
-            productHeadset1.UrlSlug = UrlHelper.RemoveDiacritics(productHeadset1.ProductName);
+            productHeadset1.UrlSlug = UrlHelperMethod.RemoveDiacritics(productHeadset1.ProductName);
             await _productRepository.InsertAsync(productHeadset1, autoSave: true);
 
 
@@ -941,7 +941,7 @@ namespace Acme.ProductSelling
                 ManufacturerId = hyperx.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/thumbtainghe_499f42bf16fe47d28ab00bffb7bd5748_47730811ddaf40a0a969f4e4d49c7b27_grande.png"
             };
-            productHeadset2.UrlSlug = UrlHelper.RemoveDiacritics(productHeadset2.ProductName);
+            productHeadset2.UrlSlug = UrlHelperMethod.RemoveDiacritics(productHeadset2.ProductName);
             await _productRepository.InsertAsync(productHeadset2, autoSave: true);
             #endregion
             #region Laptop
@@ -998,7 +998,7 @@ namespace Acme.ProductSelling
                 LaptopSpecificationId = laptopSpec1.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/zephyrus_g16_gu605_grey_03_rgb_1_b58d513a9306445daf2980232fe2544b_grande.png"
             };
-            productLaptop1.UrlSlug = UrlHelper.RemoveDiacritics(productLaptop1.ProductName);
+            productLaptop1.UrlSlug = UrlHelperMethod.RemoveDiacritics(productLaptop1.ProductName);
             await _productRepository.InsertAsync(productLaptop1, autoSave: true);
 
             // 12. Laptop: Dell XPS 13 9310
@@ -1028,7 +1028,7 @@ namespace Acme.ProductSelling
                 ImageUrl = "https://product.hstatic.net/200000722513/product/51529_laptop_dell_xps_9350_xps93_1d46c518185a488a92c40932dd4d5cf6_grande.png"
             };
 
-            productLaptop2.UrlSlug = UrlHelper.RemoveDiacritics(productLaptop2.ProductName);
+            productLaptop2.UrlSlug = UrlHelperMethod.RemoveDiacritics(productLaptop2.ProductName);
             await _productRepository.InsertAsync(productLaptop2, autoSave: true);
             #endregion
             #region Motherboard
@@ -1057,7 +1057,7 @@ namespace Acme.ProductSelling
                 ManufacturerId = gigabyte.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/z790_aorus_xtreme_x_ice-01_5a397436688c4f2e9dc0e358ebf25927_grande.png"
             };
-            motherboardProduct1.UrlSlug = UrlHelper.RemoveDiacritics(motherboardProduct1.ProductName);
+            motherboardProduct1.UrlSlug = UrlHelperMethod.RemoveDiacritics(motherboardProduct1.ProductName);
             await _productRepository.InsertAsync(motherboardProduct1, autoSave: true);
 
             var msiMegZ890 = new MotherboardSpecification
@@ -1086,7 +1086,7 @@ namespace Acme.ProductSelling
                 ImageUrl = "https://product.hstatic.net/200000722513/product/msi-meg_z890_godlike_3d2_rgb_b691f05efbcf45e58c54ab731ea28136_grande.png"
 
             };
-            motherboardProduct2.UrlSlug = UrlHelper.RemoveDiacritics(motherboardProduct2.ProductName);
+            motherboardProduct2.UrlSlug = UrlHelperMethod.RemoveDiacritics(motherboardProduct2.ProductName);
             await _productRepository.InsertAsync(motherboardProduct2, autoSave: true);
             var asusX670EHero = new MotherboardSpecification
             {
@@ -1112,7 +1112,7 @@ namespace Acme.ProductSelling
                 ManufacturerId = asus.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/rog-crosshair-x870e-hero-01_5ab538b8eb38470a83ff1a122393bd26_grande.jpg"
             };
-            motherboardProduct3.UrlSlug = UrlHelper.RemoveDiacritics(motherboardProduct3.ProductName);
+            motherboardProduct3.UrlSlug = UrlHelperMethod.RemoveDiacritics(motherboardProduct3.ProductName);
             await _productRepository.InsertAsync(motherboardProduct3, autoSave: true);
             var asrockX670ETaichi = new MotherboardSpecification
             {
@@ -1139,7 +1139,7 @@ namespace Acme.ProductSelling
                 ManufacturerId = asrock.Id,
                 ImageUrl = "https://www.asrock.com/mb/photo/X670E%20Taichi(M1).png"
             };
-            motherboardProduct4.UrlSlug = UrlHelper.RemoveDiacritics(motherboardProduct4.ProductName);
+            motherboardProduct4.UrlSlug = UrlHelperMethod.RemoveDiacritics(motherboardProduct4.ProductName);
             await _productRepository.InsertAsync(motherboardProduct4, autoSave: true);
             #endregion
             #region Mouse
@@ -1167,7 +1167,7 @@ namespace Acme.ProductSelling
                 MouseSpecificationId = mouseSpec1.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/10001_01736316d2b443d0838e5a0741434420_grande.png"
             };
-            productMouse1.UrlSlug = UrlHelper.RemoveDiacritics(productMouse1.ProductName);
+            productMouse1.UrlSlug = UrlHelperMethod.RemoveDiacritics(productMouse1.ProductName);
             await _productRepository.InsertAsync(productMouse1, autoSave: true);
             var mouseSpec11 = new MouseSpecification
             {
@@ -1194,7 +1194,7 @@ namespace Acme.ProductSelling
                 MouseSpecificationId = mouseSpec11.Id,
                 ImageUrl = "https://assets2.razerzone.com/images/pnx.assets/14f056ebbd06023cdd8b1351d17cbdaf/razer-deathadder-v2-gallery01.jpg"
             };
-            productMouse11.UrlSlug = UrlHelper.RemoveDiacritics(productMouse11.ProductName);
+            productMouse11.UrlSlug = UrlHelperMethod.RemoveDiacritics(productMouse11.ProductName);
             await _productRepository.InsertAsync(productMouse11, autoSave: true);
             // 6.Mouse: SteelSeries Rival 3
             var mouseSpec2 = new MouseSpecification
@@ -1221,7 +1221,7 @@ namespace Acme.ProductSelling
                 ManufacturerId = steelseries.Id,
                 ImageUrl = "https://product.hstatic.net/200000722513/product/thumbchuot_e01eec6957cc40a88aba550b80cffed2_74ec8f2dec0447c382614fa201a4fa93_grande.png"
             };
-            productMouse2.UrlSlug = UrlHelper.RemoveDiacritics(productMouse2.ProductName);
+            productMouse2.UrlSlug = UrlHelperMethod.RemoveDiacritics(productMouse2.ProductName);
             await _productRepository.InsertAsync(productMouse2, autoSave: true);
             // 3. Corsair Dark Core RGB Pro (Corsair)
             var mouseSpec3 = new MouseSpecification
@@ -1249,7 +1249,7 @@ namespace Acme.ProductSelling
                 MouseSpecificationId = mouseSpec3.Id,
                 ImageUrl = "https://www.corsair.com/corsairmedia/sys_master/productcontent/hdc/h28/9061090201886/-Dark-Core-RGB-Pro-Gallery-01.png"
             };
-            productMouse3.UrlSlug = UrlHelper.RemoveDiacritics(productMouse3.ProductName);
+            productMouse3.UrlSlug = UrlHelperMethod.RemoveDiacritics(productMouse3.ProductName);
             await _productRepository.InsertAsync(productMouse3, autoSave: true);
 
             // 4. Logitech G Pro X Superlight (Logitech)
@@ -1278,7 +1278,7 @@ namespace Acme.ProductSelling
                 MouseSpecificationId = mouseSpec4.Id,
                 ImageUrl = "https://resource.logitechg.com/w_600,c_limit,q_auto,f_auto,dpr_1.0/g_pro_x_superlight/gallery-1.png"
             };
-            productMouse4.UrlSlug = UrlHelper.RemoveDiacritics(productMouse4.ProductName);
+            productMouse4.UrlSlug = UrlHelperMethod.RemoveDiacritics(productMouse4.ProductName);
             await _productRepository.InsertAsync(productMouse4, autoSave: true);
 
             // 5. Cooler Master MM710 (Cooler Master)
@@ -1307,7 +1307,7 @@ namespace Acme.ProductSelling
                 MouseSpecificationId = mouseSpec5.Id,
                 ImageUrl = "https://coolermaster.com/media/catalog/product/cache/1/image/1200x1200/9df78eab33525d08d6e5fb8d27136e95/mm710-gallery01.png"
             };
-            productMouse5.UrlSlug = UrlHelper.RemoveDiacritics(productMouse5.ProductName);
+            productMouse5.UrlSlug = UrlHelperMethod.RemoveDiacritics(productMouse5.ProductName);
             await _productRepository.InsertAsync(productMouse5, autoSave: true);
 
             // 6. SteelSeries Rival 3 (SteelSeries)
@@ -1336,7 +1336,7 @@ namespace Acme.ProductSelling
                 MouseSpecificationId = mouseSpec6.Id,
                 ImageUrl = "https://steelseries.com/cdn/shop/products/Rival3_ProductImage_1_grande.png"
             };
-            productMouse6.UrlSlug = UrlHelper.RemoveDiacritics(productMouse6.ProductName);
+            productMouse6.UrlSlug = UrlHelperMethod.RemoveDiacritics(productMouse6.ProductName);
             await _productRepository.InsertAsync(productMouse6, autoSave: true);
 
             // 7. HyperX Pulsefire Haste (HyperX)
@@ -1365,7 +1365,7 @@ namespace Acme.ProductSelling
                 MouseSpecificationId = mouseSpec7.Id,
                 ImageUrl = "https://hyperx.com/media/catalog/product/cache/1/image/1200x/9df78eab33525d08d6e5fb8d27136e95/p/u/pulsefire-haste-gallery01.png"
             };
-            productMouse7.UrlSlug = UrlHelper.RemoveDiacritics(productMouse7.ProductName);
+            productMouse7.UrlSlug = UrlHelperMethod.RemoveDiacritics(productMouse7.ProductName);
             await _productRepository.InsertAsync(productMouse7, autoSave: true);
 
             // 8. ASUS ROG Gladius III (ASUS)
@@ -1394,7 +1394,7 @@ namespace Acme.ProductSelling
                 MouseSpecificationId = mouseSpec8.Id,
                 ImageUrl = "https://dlcdnrog.asus.com/rog/media/1670017436852.png"
             };
-            productMouse8.UrlSlug = UrlHelper.RemoveDiacritics(productMouse8.ProductName);
+            productMouse8.UrlSlug = UrlHelperMethod.RemoveDiacritics(productMouse8.ProductName);
             await _productRepository.InsertAsync(productMouse8, autoSave: true);
 
             // 9. MSI Clutch GM41 Lightweight (MSI)
@@ -1423,7 +1423,7 @@ namespace Acme.ProductSelling
                 MouseSpecificationId = mouseSpec9.Id,
                 ImageUrl = "https://asset.msi.com/resize/image/global/product/product_5_20220224105048_61f9d024d22a7.png"
             };
-            productMouse9.UrlSlug = UrlHelper.RemoveDiacritics(productMouse9.ProductName);
+            productMouse9.UrlSlug = UrlHelperMethod.RemoveDiacritics(productMouse9.ProductName);
             await _productRepository.InsertAsync(productMouse9, autoSave: true);
 
             // 10. GIGABYTE AORUS M4 (Gigabyte)
@@ -1452,7 +1452,7 @@ namespace Acme.ProductSelling
                 MouseSpecificationId = mouseSpec10.Id,
                 ImageUrl = "https://www.gigabyte.com/FileUpload/Image/Global/Products/m4-gallery-01.png"
             };
-            productMouse10.UrlSlug = UrlHelper.RemoveDiacritics(productMouse10.ProductName);
+            productMouse10.UrlSlug = UrlHelperMethod.RemoveDiacritics(productMouse10.ProductName);
             await _productRepository.InsertAsync(productMouse10, autoSave: true);
 
 

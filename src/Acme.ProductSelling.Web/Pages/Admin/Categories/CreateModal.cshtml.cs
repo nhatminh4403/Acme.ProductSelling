@@ -31,7 +31,7 @@ namespace Acme.ProductSelling.Web.Pages.Categories
                 {
                     return Page();
                 }
-                Category.UrlSlug = UrlHelper.RemoveDiacritics(Category.Name);
+                Category.UrlSlug = UrlHelperMethod.RemoveDiacritics(Category.Name);
                 // Check if required fields are present
                 if (string.IsNullOrWhiteSpace(Category.Name))
                 {

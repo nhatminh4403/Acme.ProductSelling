@@ -25,7 +25,7 @@ namespace Acme.ProductSelling.Categories
                 throw new Exception($"Category with name '{name}' already exists.");
             }
             // Tạo Category mới
-            return new Category(GuidGenerator.Create(), name, description, UrlHelper.RemoveDiacritics(name), specificationType);
+            return new Category(GuidGenerator.Create(), name, description, UrlHelperMethod.RemoveDiacritics(name), specificationType);
 
         }
         public async Task<Category> UpdateAsync(Guid id, string name, string description)
@@ -40,7 +40,7 @@ namespace Acme.ProductSelling.Categories
             // Cập nhật Category
             existingCategory.Name = name;
             existingCategory.Description = description;
-            existingCategory.UrlSlug = UrlHelper.RemoveDiacritics(name);
+            existingCategory.UrlSlug = UrlHelperMethod.RemoveDiacritics(name);
             return existingCategory;
         }
     }

@@ -396,7 +396,7 @@ namespace Acme.ProductSelling.Products
         private async Task<Product> CreateProductEntityAsync(CreateUpdateProductDto input)
         {
             var product = ObjectMapper.Map<CreateUpdateProductDto, Product>(input);
-            product.UrlSlug = UrlHelper.RemoveDiacritics(product.ProductName);
+            product.UrlSlug = UrlHelperMethod.RemoveDiacritics(product.ProductName);
 
             var category = await _categoryRepository.GetAsync(input.CategoryId);
             await _specificationService.CreateSpecificationAsync(product, input, category.SpecificationType);

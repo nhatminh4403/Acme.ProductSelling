@@ -5,21 +5,31 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
+using System.Net.Http;
 
 namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
 {
     public class VnPayService : IVnPayService
     {
         private readonly VnPayOptions _options;
-
-        public VnPayService(IOptions<VnPayOptions> options)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public VnPayService(IOptions<VnPayOptions> options, IHttpContextAccessor httpContextAccessor)
         {
             _options = options.Value;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public string CreatePaymentUrl(HttpContext context, VnPaymentRequestModel model)
         {
             var tick = DateTime.Now.Ticks.ToString();
+            var httpContext = _httpContextAccessor.HttpContext;
+            if (httpContext == null)
+            {
+                throw new InvalidOperationException("HttpContext is not available. Ensure IHttpContextAccessor is properly configured.");
+            }
+            var baseUrl = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}";
+            var returnUrl = $"{baseUrl}" + _options.PaymentBackReturnUrl;
+
 
             var vnpay = new VnPayLibrary();
             vnpay.AddRequestData("vnp_Version", _options.Version);
@@ -34,7 +44,7 @@ namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
 
             vnpay.AddRequestData("vnp_OrderInfo", "Thanh toán cho đơn hàng:" + model.OrderId);
             vnpay.AddRequestData("vnp_OrderType", "other"); //default value: other
-            vnpay.AddRequestData("vnp_ReturnUrl", _options.PaymentBackReturnUrl);
+            vnpay.AddRequestData("vnp_ReturnUrl", returnUrl);
 
             vnpay.AddRequestData("vnp_TxnRef", model.OrderId);
             var paymentUrl = vnpay.CreateRequestUrl(_options.BaseUrl, _options.HashSecret);

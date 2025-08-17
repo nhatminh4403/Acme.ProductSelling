@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Acme.ProductSelling.Utils
 {
-    public static class UrlHelper
+    public static class UrlHelperMethod
     {
 
         public static string RemoveDiacritics(this string text)
