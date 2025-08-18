@@ -3,7 +3,7 @@ using Acme.ProductSelling.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
-namespace Acme.ProductSelling.Web.Pages.Orders
+namespace Acme.ProductSelling.Web.Pages.Admin.Orders
 {
     [Authorize(ProductSellingPermissions.Orders.Default)]
 

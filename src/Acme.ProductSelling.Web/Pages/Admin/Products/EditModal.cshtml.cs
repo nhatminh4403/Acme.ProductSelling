@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
-namespace Acme.ProductSelling.Web.Pages.Products
+namespace Acme.ProductSelling.Web.Pages.Admin.Products
 {
     [Authorize(ProductSellingPermissions.Products.Edit)]
 

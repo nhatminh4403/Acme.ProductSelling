@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
-namespace Acme.ProductSelling.Web.Pages.Categories
+namespace Acme.ProductSelling.Web.Pages.Admin.Categories
 {
     [Authorize(ProductSellingPermissions.Categories.Create)]
     public class CreateModalModel : AbpPageModel

@@ -1,13 +1,12 @@
 ﻿@page "/admin/manufacturers"
 @using Acme.ProductSelling.Localization
-@using Acme.ProductSelling.Web.Pages.Categories
 @using Microsoft.Extensions.Localization
 @using Microsoft.AspNetCore.Authorization
 @using Acme.ProductSelling.Permissions
 
 @inject IStringLocalizer<ProductSellingResource> L
 @inject IAuthorizationService AuthorizationService
-@model Acme.ProductSelling.Web.Pages.Manufacturers.IndexModel
+@model Acme.ProductSelling.Web.Pages.Admin.Manufacturers.IndexModel
 @{
     ViewData["Title"] = L["UI:Title:Admin:Manufacturers"];
 }

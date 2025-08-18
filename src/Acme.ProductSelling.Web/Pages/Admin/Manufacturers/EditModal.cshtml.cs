@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
-namespace Acme.ProductSelling.Web.Pages.Manufacturers
+namespace Acme.ProductSelling.Web.Pages.Admin.Manufacturers
 {
     [Authorize(ProductSellingPermissions.Categories.Edit)]
     public class EditModalModel : ProductSellingPageModel

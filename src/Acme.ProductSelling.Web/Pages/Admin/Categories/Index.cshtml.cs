@@ -2,7 +2,7 @@ using Acme.ProductSelling.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
-namespace Acme.ProductSelling.Web.Pages.Categories
+namespace Acme.ProductSelling.Web.Pages.Admin.Categories
 {
     [Authorize(ProductSellingPermissions.Categories.Default)]
     public class IndexModel : AbpPageModel

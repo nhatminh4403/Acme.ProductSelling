@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Acme.ProductSelling.Web.Pages.Manufacturers
+namespace Acme.ProductSelling.Web.Pages.Admin.Manufacturers
 {
     public class IndexModel : PageModel
     {
