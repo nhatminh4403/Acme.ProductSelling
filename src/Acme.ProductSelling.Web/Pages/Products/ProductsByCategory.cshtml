@@ -34,7 +34,7 @@
                         @if (!string.IsNullOrWhiteSpace(product.ImageUrl))
                         {
                             <a asp-page="/Products/ProductDetail" asp-route-slug="@product.UrlSlug">
-                                <img src="@product.ImageUrl" class="card-img-top p-3" loading="lazy"
+                                <img src="@(await HelperMethods.IsImageUrlValidAsync(product.ImageUrl) ? product.ImageUrl : $"https://placehold.co/80x80?text={product.ProductName.Substring(0, 1)}")" class="card-img-top p-3" loading="lazy"
                                      alt="@product.ProductName" style="max-height: 180px; object-fit: contain;">
                             </a>
                         }

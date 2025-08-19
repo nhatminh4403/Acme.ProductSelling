@@ -4,6 +4,8 @@
 @using Microsoft.Extensions.Localization
 @using Acme.ProductSelling.Categories
 @using System.Globalization
+@using Acme.ProductSelling.Web.Helpers
+
 @inject IStringLocalizer<ProductSellingResource> L
 @{
     ViewData["Title"] = Model.Product?.ProductName ?? L["Product:ProductDetail"];
@@ -117,7 +119,8 @@
                 <div class="col-md-7 text-center">
                     @if (!string.IsNullOrWhiteSpace(Model.Product.ImageUrl))
                     {
-                        <img src="@Model.Product.ImageUrl" class="img-fluid rounded border" style="max-width: 250px;" alt="@Model.Product.ProductName">
+                        <img src="@(await HelperMethods.IsImageUrlValidAsync(Model.Product.ImageUrl) ? Model.Product.ImageUrl : $"https://placehold.co/80x80?text={Model.Product.ProductName.Substring(0, 1)}")"
+                             class="img-fluid rounded border" style="max-width: 250px;" alt="@Model.Product.ProductName">
                     }
                     else
                     {
@@ -133,10 +136,10 @@
                     @if (Model.Product.DiscountPercent > 0)
                     {
                         <h3 class="text-muted text-decoration-line-through my-3">
-                            @Model.Product.OriginalPrice.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))
+                            @Model.Product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
                         </h3>
                         <h2 class="text-danger my-3">
-                            @Model.Product.DiscountedPrice.Value.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))
+                            @Model.Product.DiscountedPrice.Value.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
                             <span class="badge rounded-pill bg-danger">
                                 -@Model.Product.DiscountPercent.ToString("0")%
                             </span>
@@ -145,15 +148,15 @@
                     else
                     {
                         <h3 class="text-danger my-3">
-                            @Model.Product.OriginalPrice.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))
+                            @Model.Product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
                         </h3>
                     }
 
                     <button class="btn btn-primary btn-lg add-to-cart-button"
                             data-product-id="@Model.Product.Id"
                             data-product-name="@Model.Product.ProductName"
-                             data-product-price="@(Model.Product.DiscountedPrice ?? Model.Product.OriginalPrice)"
-                             @(Model.Product.StockCount <= 0 ? "disabled" : "")>
+                            data-product-price="@(Model.Product.DiscountedPrice ?? Model.Product.OriginalPrice)"
+                            @(Model.Product.StockCount <= 0 ? "disabled" : "")>
                         <i class="fas fa-cart-plus me-2"></i>
                         @L[Model.Product.StockCount > 0 ? "Product:AddToCart" : "Product:OutOfStock"]
                     </button>
@@ -167,7 +170,7 @@
                 <div class="separator-custom rounded"></div>
             </div>
         </div>
-   
+
 
         <div class="row">
             <!-- Main content -->
