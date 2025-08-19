@@ -1,16 +1,25 @@
-using Acme.ProductSelling.PaymentGateway.VnPay;
-#region using directives
+﻿#region using directives
 using Acme.ProductSelling.EntityFrameworkCore;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.MultiTenancy;
+using Acme.ProductSelling.Orders.Hubs; 
+using Acme.ProductSelling.PaymentGateway.MoMo;
+using Acme.ProductSelling.PaymentGateway.PayPal;
+using Acme.ProductSelling.PaymentGateway.VnPay;
+using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Web.Filters;
 using Acme.ProductSelling.Web.HealthChecks;
 using Acme.ProductSelling.Web.Menus;
+using Acme.ProductSelling.Web.Middleware;
+using Acme.ProductSelling.Web.Routing;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Localization.Routing;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,7 +27,9 @@ using Microsoft.OpenApi.Models;
 using OpenIddict.Server.AspNetCore;
 using OpenIddict.Validation.AspNetCore;
 using System;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using Volo.Abp;
 using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.Mvc;
@@ -32,10 +43,12 @@ using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Toolbars;
 using Volo.Abp.AspNetCore.Serilog;
+using Volo.Abp.AspNetCore.SignalR;
 using Volo.Abp.Autofac;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity.Web;
+using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
 using Volo.Abp.OpenIddict;
 using Volo.Abp.PermissionManagement;
@@ -46,11 +59,6 @@ using Volo.Abp.TenantManagement.Web;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
-using Acme.ProductSelling.Orders.Hubs; // Your Hub namespace
-using Acme.ProductSelling.Products;
-using Volo.Abp.AspNetCore.SignalR;
-using Acme.ProductSelling.PaymentGateway.PayPal;
-using Acme.ProductSelling.PaymentGateway.MoMo;
 #endregion
 
 namespace Acme.ProductSelling.Web;
@@ -129,7 +137,7 @@ public class ProductSellingWebModule : AbpModule
     {
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
-        var service = context.Services;
+        var services = context.Services;
         if (!configuration.GetValue<bool>("App:DisablePII"))
         {
             Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
@@ -174,9 +182,38 @@ public class ProductSellingWebModule : AbpModule
         {
             options.Hubs.AddOrUpdate<OrderHub>();
         });
+
+        ConfigureRequestLocalization(services);
+
+        ConfigureRouting(services);
     }
 
+    private void ConfigureRouting(IServiceCollection services)
+    {
+        services.Configure<RazorPagesOptions>(options =>
+        {
+            var supportedCultures = new[] { "en", "vi" };
 
+            options.Conventions.Add(new GlobalCulturePageRouteModelConvention(supportedCultures ));
+        });
+    }
+    private void ConfigureRequestLocalization(IServiceCollection services)
+    {
+        services.Configure<RequestLocalizationOptions>(options =>
+        {
+            var supportedCultures = new[]
+            {
+                new CultureInfo("en"),
+                new CultureInfo("vi")
+            };
+            options.DefaultRequestCulture = new RequestCulture(culture: "vi", uiCulture: "vi");
+            options.SupportedCultures = supportedCultures;
+            options.SupportedUICultures = supportedCultures;
+            // Thêm RouteDataRequestCultureProvider để hỗ trợ định tuyến theo ngôn ngữ
+            options.RequestCultureProviders.Clear();
+            options.RequestCultureProviders.Add(new RouteDataRequestCultureProvider());
+        });
+    }
     private void ConfigureHealthChecks(ServiceConfigurationContext context)
     {
         context.Services.AddProductSellingHealthChecks();
@@ -318,7 +355,8 @@ public class ProductSellingWebModule : AbpModule
         {
             app.UseMultiTenancy();
         }
-
+        app.UseMiddleware<CultureRedirectMiddleware>();
+        app.UseRequestLocalization();
         app.UseUnitOfWork();
         app.UseDynamicClaims();
         app.UseAuthorization();
@@ -330,6 +368,8 @@ public class ProductSellingWebModule : AbpModule
         app.UseConfiguredEndpoints(endpoints =>
         {
             // Map your SignalR Hub
+            endpoints.MapRazorPages();
+            //endpoints.MapFallbackToPage("/{culture}/{*path}", "/Index");
             endpoints.MapHub<OrderHub>("/signalr-hubs/orders");
         });
         app.UseAuditing();

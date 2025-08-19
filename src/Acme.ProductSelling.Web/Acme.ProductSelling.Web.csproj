@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="Routing\Providers\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="wwwroot\js\admin\Index.js" />
