@@ -45,7 +45,7 @@ public class ProductSellingDomainSharedModule : AbpModule
         Configure<AbpLocalizationOptions>(options =>
         {
             options.Resources
-                .Add<ProductSellingResource>("en")
+                .Add<ProductSellingResource>("vi")
                 .AddBaseTypes(typeof(AbpValidationResource))
                 .AddVirtualJson("/Localization/ProductSelling");
             /*options.Resources

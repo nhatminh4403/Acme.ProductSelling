@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,54 +10,40 @@ namespace Acme.ProductSelling.Web.Middleware
     public class CultureRedirectMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly string _defaultCulture = "vi";
-
-        public CultureRedirectMiddleware(RequestDelegate next)
+        private readonly string[] _supportedCultures;
+        private readonly string _defaultCulture;
+        public CultureRedirectMiddleware(RequestDelegate next, IOptions<RequestLocalizationOptions> options)
         {
             _next = next;
+            _supportedCultures = options.Value.SupportedCultures?.Select(c => c.TwoLetterISOLanguageName).ToArray() ?? new[] { "vi" };
+            _defaultCulture = options.Value.DefaultRequestCulture.Culture.TwoLetterISOLanguageName;
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var path = context.Request.Path.Value;
+            var path = context.Request.Path.Value ?? string.Empty;
 
-            // Nếu URL không có culture và không phải static files
-            if (!string.IsNullOrEmpty(path) &&
-                path != "/" &&
-                !path.StartsWith("/css") &&
-                !path.StartsWith("/js") &&
-                !path.StartsWith("/images") &&
-                !HasCultureInPath(path))
+            // Bỏ qua các static files, API, v.v.
+            if (path.StartsWith("/api") || path.StartsWith("/_framework") || path.StartsWith("/css") || path.StartsWith("/js"))
             {
-                var acceptLanguage = context.Request.Headers["Accept-Language"].ToString();
-                var preferredCulture = GetPreferredCulture(acceptLanguage);
+                await _next(context);
+                return;
+            }
 
-                if (preferredCulture != _defaultCulture)
-                {
-                    var newPath = $"/{preferredCulture}{path}";
-                    context.Response.Redirect(newPath + context.Request.QueryString);
-                    return;
-                }
+            var parts = path.Split('/', System.StringSplitOptions.RemoveEmptyEntries);
+            var firstSegment = parts.FirstOrDefault();
+
+            // Nếu thiếu culture prefix thì redirect sang default culture
+            if (firstSegment == null || !_supportedCultures.Contains(firstSegment))
+            {
+                var culture = _defaultCulture;
+                var newPath = $"/{culture}{path}{context.Request.QueryString}";
+                context.Response.Redirect(newPath, permanent: false);
+                return;
             }
 
             await _next(context);
         }
 
-        private bool HasCultureInPath(string path)
-        {
-            var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
-            if (segments.Length == 0) return false;
-
-            var supportedCultures = new[] { "en", "vi" };
-            return supportedCultures.Contains(segments[0]);
-        }
-
-        private string GetPreferredCulture(string acceptLanguage)
-        {
-            if (string.IsNullOrEmpty(acceptLanguage)) return _defaultCulture;
-
-            if (acceptLanguage.Contains("vi")) return "vi";
-            return _defaultCulture;
-        }
     }
 }

@@ -63,6 +63,7 @@ using Volo.Abp.VirtualFileSystem;
 
 namespace Acme.ProductSelling.Web;
 
+#region Dependencies
 [DependsOn(
     typeof(AcmeProductSellingPaymentGatewayVnPayModule),
     typeof(AcmeProductSellingPaymentGatewayPayPalModule),
@@ -84,11 +85,12 @@ namespace Acme.ProductSelling.Web;
     typeof(AbpAspNetCoreSerilogModule),
     typeof(AbpAspNetCoreSignalRModule),
     typeof(ProductSellingHttpApiClientModule),
-    typeof(AbpAspNetCoreMvcUiThemeSharedModule)
-
+    typeof(AbpAspNetCoreMvcUiThemeSharedModule),
+    typeof(AbpAspNetCoreMvcModule)
 
 )]
 
+#endregion
 public class ProductSellingWebModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)
@@ -182,21 +184,26 @@ public class ProductSellingWebModule : AbpModule
         {
             options.Hubs.AddOrUpdate<OrderHub>();
         });
-
+        Configure<RazorPagesOptions>(options =>
+        {
+            options.Conventions.Add(new CultureRouteModelConvention(
+                new[] { "en", "vi" }, "vi"
+            ));
+        });
         ConfigureRequestLocalization(services);
 
-        ConfigureRouting(services);
+        //ConfigureRouting(services);
     }
 
-    private void ConfigureRouting(IServiceCollection services)
-    {
-        services.Configure<RazorPagesOptions>(options =>
-        {
-            var supportedCultures = new[] { "en", "vi" };
+    //private void ConfigureRouting(IServiceCollection services)
+    //{
+    //    services.AddRazorPages(options =>
+    //    {
 
-            options.Conventions.Add(new GlobalCulturePageRouteModelConvention(supportedCultures ));
-        });
-    }
+    //        options.Conventions.Add(new CultureRouteModelConvention());
+
+    //    });
+    //}
     private void ConfigureRequestLocalization(IServiceCollection services)
     {
         services.Configure<RequestLocalizationOptions>(options =>
@@ -206,12 +213,18 @@ public class ProductSellingWebModule : AbpModule
                 new CultureInfo("en"),
                 new CultureInfo("vi")
             };
-            options.DefaultRequestCulture = new RequestCulture(culture: "vi", uiCulture: "vi");
+            var defaultCulture =  "vi";
+            options.DefaultRequestCulture = new RequestCulture(defaultCulture);
             options.SupportedCultures = supportedCultures;
             options.SupportedUICultures = supportedCultures;
+
             // Thêm RouteDataRequestCultureProvider để hỗ trợ định tuyến theo ngôn ngữ
             options.RequestCultureProviders.Clear();
-            options.RequestCultureProviders.Add(new RouteDataRequestCultureProvider());
+            options.RequestCultureProviders.Insert(0, new RouteDataRequestCultureProvider
+            {
+                RouteDataStringKey = "culture",
+                UIRouteDataStringKey = "culture"
+            });
         });
     }
     private void ConfigureHealthChecks(ServiceConfigurationContext context)
@@ -347,20 +360,21 @@ public class ProductSellingWebModule : AbpModule
         app.MapAbpStaticAssets();
         app.UseAbpStudioLink();
         app.UseRouting();
+        app.UseMiddleware<CultureRedirectMiddleware>();
+
         app.UseAbpSecurityHeaders();
         app.UseAuthentication();
         app.UseAbpOpenIddictValidation();
-
         if (MultiTenancyConsts.IsEnabled)
         {
             app.UseMultiTenancy();
         }
-        app.UseMiddleware<CultureRedirectMiddleware>();
-        app.UseRequestLocalization();
+        //app.UseRequestLocalization();
         app.UseUnitOfWork();
         app.UseDynamicClaims();
         app.UseAuthorization();
         app.UseSwagger();
+
         app.UseAbpSwaggerUI(options =>
         {
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "ProductSelling API");
@@ -368,8 +382,9 @@ public class ProductSellingWebModule : AbpModule
         app.UseConfiguredEndpoints(endpoints =>
         {
             // Map your SignalR Hub
+            //endpoints.MapRazorPages();
             endpoints.MapRazorPages();
-            //endpoints.MapFallbackToPage("/{culture}/{*path}", "/Index");
+
             endpoints.MapHub<OrderHub>("/signalr-hubs/orders");
         });
         app.UseAuditing();
