@@ -4,10 +4,30 @@
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
 @using Microsoft.AspNetCore.Authorization
+@using Volo.Abp.Users
+@using Acme.ProductSelling.Permissions
+
+@inject ICurrentUser CurrentUser
 @inject IStringLocalizer<ProductSellingResource> L
+@inject Microsoft.Extensions.Options.IOptions<Microsoft.AspNetCore.Builder.RequestLocalizationOptions> RequestLocalizationOptions
+@inject IAuthorizationService AuthorizationService
 
 @model ThemeLanguageInfo
 
+@{
+    var adminPaths = new[] { "/identity", "/account", "/tenantmanagement", "/setting-management", "/admin" /* Thêm các path admin khác nếu có */ };
+    var currentPath = Context.Request.Path.Value.ToLowerInvariant();
+    var isAdminPage = adminPaths.Any(p => currentPath.StartsWith(p));
+
+    // --- STEP 2: CHUẨN BỊ THÔNG TIN CHO URL-BASED LOCALIZATION (CHỈ DÙNG CHO PUBLIC SITE) ---
+    var supportedCultures = RequestLocalizationOptions.Value.SupportedUICultures?.Select(c => c.Name).ToList() ?? new List<string>();
+    var pathSegments = Context.Request.Path.Value.Split('/', StringSplitOptions.RemoveEmptyEntries);
+    var currentCultureInUrl = pathSegments.FirstOrDefault(s => supportedCultures.Contains(s, StringComparer.OrdinalIgnoreCase));
+    var originalPath = Context.Request.Path;
+    var originalQuery = Context.Request.QueryString;
+
+    var hasAdminPermission = await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Products.Default);
+}
 
 @if (Model.Languages.Any())
 {
@@ -20,9 +40,45 @@
             @foreach (var language in Model.Languages)
             {
                 <li>
-                    <a class="dropdown-item" href="~/Abp/Languages/Switch?culture=@(language.CultureName)&uiCulture=@(language.UiCultureName)&returnUrl=@(System.Net.WebUtility.UrlEncode(Context.Request.GetEncodedPathAndQuery()))">
-                        @language.DisplayName
-                    </a>
+                    @if (isAdminPage || hasAdminPermission)
+                    {
+                        <a class="dropdown-item" href="~/Abp/Languages/Switch?culture=@(language.CultureName)&uiCulture=@(language.UiCultureName)&returnUrl=@(System.Net.WebUtility.UrlEncode(Context.Request.GetEncodedPathAndQuery()))">
+                            @language.DisplayName
+                        </a>
+                    }
+                    else
+                    {
+                        var targetCulture = language.CultureName;
+                        var newPath = originalPath.Value;
+
+                        if (currentCultureInUrl != null)
+                        {
+                            // URL hiện tại đã có culture, tiến hành thay thế
+                            var oldCulturePrefix = $"/{currentCultureInUrl}";
+                            var newCulturePrefix = $"/{targetCulture}";
+
+                            // Xử lý trường hợp URL là /en hoặc /en/page
+                            if (newPath.Equals(oldCulturePrefix, StringComparison.OrdinalIgnoreCase) ||
+                            newPath.StartsWith(oldCulturePrefix + "/", StringComparison.OrdinalIgnoreCase))
+                            {
+                                newPath = newCulturePrefix + newPath.Substring(oldCulturePrefix.Length);
+                            }
+                        }
+                        else
+                        {
+                            // URL không có culture (trường hợp hiếm gặp do đã có middleware), chỉ cần thêm prefix
+                            newPath = $"/{targetCulture}{newPath}";
+                        }
+
+                        // Đảm bảo link trang chủ đúng (ví dụ: /en thay vì /en/)
+                        if (string.IsNullOrEmpty(newPath)) { newPath = "/"; }
+                        if (newPath == $"/{targetCulture}/") { newPath = $"/{targetCulture}"; }
+
+                        <a class="dropdown-item" href="@(newPath)@(originalQuery)">
+                            @language.DisplayName
+                        </a>
+                    }
+                    
                 </li>
             }
         </ul>

@@ -3,6 +3,7 @@ using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Specifications;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Volo.Abp.Domain.Entities.Auditing;
 namespace Acme.ProductSelling.Products
 {
@@ -20,7 +21,7 @@ namespace Acme.ProductSelling.Products
                 CalculateDiscountedPrice();
             }
         }
-
+        [Column(TypeName = "decimal(18,2)")]
         public decimal? DiscountedPrice { get; set; }
 
         private double _discountPercent;

@@ -2,7 +2,7 @@
 using Acme.ProductSelling.EntityFrameworkCore;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.MultiTenancy;
-using Acme.ProductSelling.Orders.Hubs; 
+using Acme.ProductSelling.Orders.Hubs;
 using Acme.ProductSelling.PaymentGateway.MoMo;
 using Acme.ProductSelling.PaymentGateway.PayPal;
 using Acme.ProductSelling.PaymentGateway.VnPay;
@@ -186,24 +186,17 @@ public class ProductSellingWebModule : AbpModule
         });
         Configure<RazorPagesOptions>(options =>
         {
+            var supportedCultures = new[] { "en", "vi" };
+            var defaultCulture = supportedCultures.Contains("vi") ? "vi" : supportedCultures.First(c => c == "en");
             options.Conventions.Add(new CultureRouteModelConvention(
-                new[] { "en", "vi" }, "vi"
+                supportedCultures, defaultCulture
             ));
         });
         ConfigureRequestLocalization(services);
+        context.Services.AddTransient<CultureAwareAnchorTagHelper>();
 
-        //ConfigureRouting(services);
     }
 
-    //private void ConfigureRouting(IServiceCollection services)
-    //{
-    //    services.AddRazorPages(options =>
-    //    {
-
-    //        options.Conventions.Add(new CultureRouteModelConvention());
-
-    //    });
-    //}
     private void ConfigureRequestLocalization(IServiceCollection services)
     {
         services.Configure<RequestLocalizationOptions>(options =>
@@ -213,19 +206,24 @@ public class ProductSellingWebModule : AbpModule
                 new CultureInfo("en"),
                 new CultureInfo("vi")
             };
-            var defaultCulture =  "vi";
+            var defaultCulture = "en";
             options.DefaultRequestCulture = new RequestCulture(defaultCulture);
             options.SupportedCultures = supportedCultures;
             options.SupportedUICultures = supportedCultures;
 
+
             // Thêm RouteDataRequestCultureProvider để hỗ trợ định tuyến theo ngôn ngữ
             options.RequestCultureProviders.Clear();
-            options.RequestCultureProviders.Insert(0, new RouteDataRequestCultureProvider
+            options.RequestCultureProviders.Add(new RouteValueRequestCultureProvider());
+            options.RequestCultureProviders.Add(new CookieRequestCultureProvider
             {
-                RouteDataStringKey = "culture",
-                UIRouteDataStringKey = "culture"
+                CookieName = "culture"
             });
+            options.RequestCultureProviders.Add(new AcceptLanguageHeaderRequestCultureProvider());
+
         });
+        services.AddHttpContextAccessor();
+
     }
     private void ConfigureHealthChecks(ServiceConfigurationContext context)
     {
@@ -348,7 +346,6 @@ public class ProductSellingWebModule : AbpModule
             app.UseDeveloperExceptionPage();
         }
 
-        app.UseAbpRequestLocalization();
 
         if (!env.IsDevelopment())
         {
@@ -359,8 +356,10 @@ public class ProductSellingWebModule : AbpModule
         app.UseCorrelationId();
         app.MapAbpStaticAssets();
         app.UseAbpStudioLink();
+
         app.UseRouting();
         app.UseMiddleware<CultureRedirectMiddleware>();
+        app.UseAbpRequestLocalization();
 
         app.UseAbpSecurityHeaders();
         app.UseAuthentication();
@@ -381,9 +380,8 @@ public class ProductSellingWebModule : AbpModule
         });
         app.UseConfiguredEndpoints(endpoints =>
         {
-            // Map your SignalR Hub
+
             //endpoints.MapRazorPages();
-            endpoints.MapRazorPages();
 
             endpoints.MapHub<OrderHub>("/signalr-hubs/orders");
         });
