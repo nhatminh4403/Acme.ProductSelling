@@ -15,7 +15,7 @@ namespace Acme.ProductSelling.Web.Middleware
         public CultureRedirectMiddleware(RequestDelegate next, IOptions<RequestLocalizationOptions> options)
         {
             _next = next;
-            _supportedCultures = options.Value.SupportedCultures?.Select(c => c.TwoLetterISOLanguageName).ToArray() ?? new[] { "vi" };
+            _supportedCultures = options.Value.SupportedCultures?.Select(c => c.TwoLetterISOLanguageName).ToArray() ?? new[] { "vi","en" };
             _defaultCulture = options.Value.DefaultRequestCulture.Culture.TwoLetterISOLanguageName;
         }
 

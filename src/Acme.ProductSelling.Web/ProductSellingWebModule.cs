@@ -213,15 +213,21 @@ public class ProductSellingWebModule : AbpModule
             options.SupportedCultures = supportedCultures;
             options.SupportedUICultures = supportedCultures;
 
+            options.RequestCultureProviders.Clear();
+
+            options.RequestCultureProviders.Add(new RouteValueRequestCultureProvider());
+            options.RequestCultureProviders.Add(new QueryStringRequestCultureProvider());
+            options.RequestCultureProviders.Add(new CookieRequestCultureProvider());
+            options.RequestCultureProviders.Add(new AcceptLanguageHeaderRequestCultureProvider());
 
             // Thêm RouteDataRequestCultureProvider để hỗ trợ định tuyến theo ngôn ngữ
-            options.RequestCultureProviders.Clear();
-            options.RequestCultureProviders.Add(new RouteValueRequestCultureProvider());
-            options.RequestCultureProviders.Add(new CookieRequestCultureProvider
-            {
-                CookieName = "culture"
-            });
-            options.RequestCultureProviders.Add(new AcceptLanguageHeaderRequestCultureProvider());
+            /*            options.RequestCultureProviders.Clear();
+                        options.RequestCultureProviders.Add(new RouteValueRequestCultureProvider());
+                        options.RequestCultureProviders.Add(new CookieRequestCultureProvider
+                        {
+                            CookieName = "culture"
+                        });
+                        options.RequestCultureProviders.Add(new AcceptLanguageHeaderRequestCultureProvider());*/
 
         });
         services.AddHttpContextAccessor();

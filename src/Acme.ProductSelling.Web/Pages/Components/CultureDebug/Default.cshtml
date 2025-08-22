@@ -1,9 +1,35 @@
 ﻿@model Acme.ProductSelling.Web.Pages.Components.CultureDebug.CultureDebugModel
 
-<div style="position: fixed; top: 10px; right: 10px; background: #333; color: white; padding: 10px; border-radius: 5px; font-size: 12px; z-index: 9999;">
-    <strong>Culture Debug Info:</strong><br />
-    Current Culture: <strong>@Model.CurrentCulture</strong><br />
-    Current UI Culture: <strong>@Model.CurrentUICulture</strong><br />
-    Request Path: <strong>@Model.RequestPath</strong><br />
-    Culture Cookie: <strong>@Model.CultureFromCookie</strong>
+<div style="position: fixed; top: 10px; right: 10px; background: rgba(0, 0, 0, 0.8); color: white; padding: 15px; border-radius: 8px; font-family: Consolas, monospace; font-size: 13px; z-index: 9999; border: 1px solid #555;">
+    <strong style="color: #00ffdd; display: block; margin-bottom: 8px; border-bottom: 1px solid #444; padding-bottom: 5px;">Culture Debug Info</strong>
+    
+    <div>Path: <strong style="color: #ffc107;">@Model.RequestPath</strong></div>
+    <div style="margin-top: 5px;">Provider: <strong style="color: #ffc107;">@Model.ProviderName</strong></div>
+    <div style="margin-top: 5px;">Supported: <strong style="color: #ffc107;">@Model.SupportedCultures</strong></div>
+    
+    <hr style="border-color: #444; margin: 10px 0;" />
+    
+    <div>Current Culture: <strong style="color: #90ee90;">@Model.CurrentCulture</strong></div>
+    <div style="margin-top: 5px;">Current UI Culture: <strong style="color: #90ee90;">@Model.CurrentUICulture</strong></div>
+    
+    <hr style="border-color: #444; margin: 10px 0;" />
+
+    <strong>Cookies:</strong><br />
+    @if (Model.RelevantCookies != null)
+    {
+        @foreach (var cookie in Model.RelevantCookies)
+        {
+            <div style="margin-left: 10px; margin-top: 3px;">
+                @cookie.Key: 
+                @if (cookie.Value == "Not found")
+                {
+                    <em style="color: #aaa;">@cookie.Value</em>
+                }
+                else
+                {
+                    <strong style="color: #ff9800;">@cookie.Value</strong>
+                }
+            </div>
+        }
+    }
 </div>
