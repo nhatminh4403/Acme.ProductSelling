@@ -45,10 +45,12 @@ public class ProductSellingDomainModule : AbpModule
 
         Configure<AbpLocalizationOptions>(options =>
         {
+            options.Languages.Add(new LanguageInfo("vi", "vi", "Tiếng Việt"));
 
-            options.Languages.Add(new LanguageInfo("EN", "en", "English"));
-            options.Languages.Add(new LanguageInfo("en-GB", "en-GB", "English (UK)"));
-            options.Languages.Add(new LanguageInfo("VN", "vi", "Tiếng Việt"));
+            options.Languages.Add(new LanguageInfo("en", "en", "English"));
+            //options.Languages.Add(new LanguageInfo("en-GB", "en-GB", "English (UK)"));
+
+           
         });
 
 #if DEBUG

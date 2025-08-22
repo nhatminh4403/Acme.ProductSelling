@@ -114,7 +114,6 @@
     "Product:OutOfStock": "Hết hàng",
     "Product:Specification": "Thông số kỹ thuật",
     "Product:NoSpecificSpecifications": "Không có thông số kỹ thuật.",
-    "Product:RecentlyViewedProducts": "Sản phẩm đã xem gần đây",
     "Product:Name": "Tên sản phẩm",
     "Product:Category": "Danh mục",
     "Product:OriginalPrice": "Giá gốc",
@@ -343,6 +342,8 @@
     "UI:ProductsFromCategory": "Sản phẩm từ danh mục",
     "UI:GoBack": "Quay lại",
     "UI:OrGoHome": "Hoặc về trang chủ",
+    "UI:RecentlyViewedProducts": "Sản phẩm đã xem gần đây",
+
     "UI:Title:Admin:Products": "Quản lý Sản phẩm",
     "UI:Title:Admin:AllProducts": "Tất cả sản phẩm",
     "UI:Title:Admin:AllOrders": "Quản lý Đơn hàng",

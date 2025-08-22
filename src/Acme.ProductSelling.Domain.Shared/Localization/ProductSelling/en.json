@@ -114,7 +114,6 @@
     "Product:OutOfStock": "Out of Stock",
     "Product:Specification": "Specification",
     "Product:NoSpecificSpecifications": "No specific specifications available.",
-    "Product:RecentlyViewedProducts": "Recently Viewed Products",
     "Product:Name": "Product Name",
     "Product:Category": "Category",
     "Product:OriginalPrice": "Original Price",
@@ -338,6 +337,8 @@
     "UI:AllProductsByName": "All Products by {0}",
     "UI:ProductsByManufacturer": "Products by Manufacturer",
     "UI:ProductByPrice": "Products by Price",
+    "UI:RecentlyViewedProducts": "Recently Viewed Products",
+
     "UI:ProductByManufacturer": "Products by {0}",
     "UI:NoFeaturedProductsFound": "No featured products found.",
     "UI:ProductsFromCategory": "Products from category: ",
