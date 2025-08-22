@@ -792,8 +792,7 @@ $(function () {
         });
     }
 });
-
-
+/*
 class CultureHelper {
     static getCurrentCulture() {
         // Lấy culture từ URL path
@@ -801,7 +800,7 @@ class CultureHelper {
         const parts = path.split('/');
 
         if (parts.length >= 2) {
-            const potentialCulture = parts[1];
+            const potentialCulture = parts[1].toLowerCase(); // Đảm bảo lowercase
             if (['en', 'vi'].includes(potentialCulture)) {
                 return potentialCulture;
             }
@@ -809,8 +808,8 @@ class CultureHelper {
 
         // Fallback: lấy từ cookie
         const cookieCulture = CultureHelper.getCookie('culture');
-        if (cookieCulture && ['en', 'vi'].includes(cookieCulture)) {
-            return cookieCulture;
+        if (cookieCulture && ['en', 'vi'].includes(cookieCulture.toLowerCase())) {
+            return cookieCulture.toLowerCase();
         }
 
         // Default fallback
@@ -820,7 +819,7 @@ class CultureHelper {
     static setCultureCookie(culture) {
         const expires = new Date();
         expires.setDate(expires.getDate() + 30); // 30 days
-        document.cookie = `culture=${culture}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+        document.cookie = `culture=${culture.toLowerCase()}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
     }
 
     static getCookie(name) {
@@ -847,11 +846,23 @@ class CultureHelper {
                 !href.startsWith('/css/') &&
                 !href.startsWith('/js/') &&
                 !href.startsWith('/lib/') &&
+                !href.startsWith('/admin/') &&
+                !href.startsWith('/identity/') &&
+                !href.startsWith('/account/') &&
                 !href.includes('.')) {
 
-                // Thêm culture prefix nếu chưa có
-                const newHref = `/${currentCulture}${href}`;
-                link.setAttribute('href', newHref);
+                // Kiểm tra nếu href đã có culture khác
+                const pathParts = href.split('/');
+                if (pathParts.length >= 2 && ['en', 'vi'].includes(pathParts[1].toLowerCase())) {
+                    // Thay thế culture cũ bằng culture mới
+                    pathParts[1] = currentCulture;
+                    const newHref = pathParts.join('/');
+                    link.setAttribute('href', newHref);
+                } else {
+                    // Thêm culture prefix nếu chưa có
+                    const newHref = `/${currentCulture}${href}`;
+                    link.setAttribute('href', newHref);
+                }
             }
         });
     }
@@ -896,7 +907,7 @@ class CultureHelper {
 // Khởi tạo khi trang load
 CultureHelper.initializeCultureHandling();
 
-// Thêm vào cuối file global-scripts.js để debug
+// Debug information
 console.log('=== CULTURE DEBUG ===');
 console.log('Current URL:', window.location.href);
 console.log('Current pathname:', window.location.pathname);
@@ -906,8 +917,8 @@ const pathSegments = window.location.pathname.split('/').filter(s => s);
 console.log('Path segments:', pathSegments);
 
 if (pathSegments.length > 0) {
-    const firstSegment = pathSegments[0];
-    const secondSegment = pathSegments[1];
+    const firstSegment = pathSegments[0].toLowerCase();
+    const secondSegment = pathSegments[1] ? pathSegments[1].toLowerCase() : null;
 
     console.log('First segment:', firstSegment);
     console.log('Second segment:', secondSegment);
@@ -915,7 +926,7 @@ if (pathSegments.length > 0) {
     if (['en', 'vi'].includes(firstSegment)) {
         console.log('✅ Valid culture found:', firstSegment);
 
-        if (['en', 'vi'].includes(secondSegment)) {
+        if (secondSegment && ['en', 'vi'].includes(secondSegment)) {
             console.log('❌ DUPLICATE CULTURE DETECTED!', firstSegment, secondSegment);
             // Redirect để fix duplicate
             const correctPath = '/' + firstSegment + '/' + pathSegments.slice(2).join('/');
@@ -943,10 +954,10 @@ internalLinks.forEach((link, index) => {
     const href = link.getAttribute('href');
     const linkSegments = href.split('/').filter(s => s);
 
-    if (linkSegments.length > 0 && !['api', '_framework', 'css', 'js', 'lib'].includes(linkSegments[0])) {
-        const hasValidCulture = ['en', 'vi'].includes(linkSegments[0]);
+    if (linkSegments.length > 0 && !['api', '_framework', 'css', 'js', 'lib', 'admin', 'identity', 'account'].includes(linkSegments[0])) {
+        const hasValidCulture = ['en', 'vi'].includes(linkSegments[0].toLowerCase());
         console.log(`Link ${index + 1}: ${href} - Culture: ${hasValidCulture ? '✅' : '❌'}`);
     }
 });
 
-console.log('=== END DEBUG ===');
+console.log('=== END DEBUG ===');*/

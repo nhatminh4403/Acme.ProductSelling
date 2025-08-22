@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Localization.Routing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -191,7 +192,8 @@ public class ProductSellingWebModule : AbpModule
             options.Conventions.Add(new CultureRouteModelConvention(
                 supportedCultures, defaultCulture
             ));
-        });
+        }); 
+
         ConfigureRequestLocalization(services);
         context.Services.AddTransient<CultureAwareAnchorTagHelper>();
 
@@ -251,6 +253,7 @@ public class ProductSellingWebModule : AbpModule
                     bundle.AddContributors(typeof(DatatablesNetScriptContributor));
                     bundle.AddFiles("/js/cart.js");
                     bundle.AddFiles("/global-scripts.js");
+                    bundle.AddFiles("/js/culture.js");
                     //bundle.AddFiles("/js/orderSignalR.js");
                 }
                 );
@@ -381,7 +384,7 @@ public class ProductSellingWebModule : AbpModule
         app.UseConfiguredEndpoints(endpoints =>
         {
 
-            //endpoints.MapRazorPages();
+            endpoints.MapRazorPages();
 
             endpoints.MapHub<OrderHub>("/signalr-hubs/orders");
         });

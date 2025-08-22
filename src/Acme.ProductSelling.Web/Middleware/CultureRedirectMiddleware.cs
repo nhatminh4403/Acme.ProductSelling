@@ -23,9 +23,12 @@ namespace Acme.ProductSelling.Web.Middleware
         {
             var path = context.Request.Path.Value ?? string.Empty;
 
+            Console.WriteLine($"[CultureRedirectMiddleware] Processing path: {path}");
+
             // Bỏ qua các static files, API, v.v.
             if (IsStaticResource(path))
             {
+                Console.WriteLine($"[CultureRedirectMiddleware] Static resource detected, skipping culture redirect path {path}.");
                 await _next(context);
                 return;
             }
@@ -37,11 +40,13 @@ namespace Acme.ProductSelling.Web.Middleware
                 _supportedCultures.Contains(segments[0]) &&
                 _supportedCultures.Contains(segments[1]))
             {
+                Console.WriteLine($"[CultureRedirectMiddleware] Duplicate culture detected: {segments[0]}, {segments[1]}");
                 // Có duplicate culture, chỉ giữ lại culture đầu tiên
                 var culture = segments[0];
                 var remainingPath = "/" + string.Join("/", segments.Skip(2));
                 var newPath = $"/{culture}{remainingPath}{context.Request.QueryString}";
 
+                Console.WriteLine($"[CultureRedirectMiddleware] Redirecting to: {newPath}");
                 context.Response.Redirect(newPath, permanent: false);
                 return;
             }
@@ -50,6 +55,7 @@ namespace Acme.ProductSelling.Web.Middleware
 
             if (firstSegment != null && _supportedCultures.Contains(firstSegment))
             {
+                Console.WriteLine($"[CultureRedirectMiddleware] Culture prefix found: {firstSegment}");
                 await _next(context);
                 return;
             }
@@ -62,9 +68,10 @@ namespace Acme.ProductSelling.Web.Middleware
         }
         private string GetCultureFromRequest(HttpContext context)
         {
-            if (context.Request.Cookies.TryGetValue("culture", out var cookieCulture) &&
+            if (context.Request.Cookies.TryGetValue("Abp.Localization.CultureName", out var cookieCulture) &&
                 _supportedCultures.Contains(cookieCulture))
             {
+                Console.WriteLine($"[CultureRedirectMiddleware] Culture from cookie: {cookieCulture}");
                 return cookieCulture;
             }
 
@@ -81,6 +88,7 @@ namespace Acme.ProductSelling.Web.Middleware
                 {
                     if (_supportedCultures.Contains(preferredCulture))
                     {
+                        Console.WriteLine($"[CultureRedirectMiddleware] Culture from Accept-Language: {preferredCulture}");
                         return preferredCulture;
                     }
                 }
@@ -100,7 +108,8 @@ namespace Acme.ProductSelling.Web.Middleware
                 "/api", "/_framework", "/css", "/js", "/lib", "/images",
                 "/swagger", "/signalr", "/favicon.ico", "/_vs/","/health-status",
                 "/signalr-hubs","/admin", "/identity", "/account", "/tenantmanagement",
-                "/setting-management"
+                "/setting-management","/abp","/abp-web-resources", "/swagger-ui", "/swagger/v1/swagger.json",
+                "/Abp","/libs","/.well-known", "/connect",
             };
             foreach (var prefix in prefixList)
             {
@@ -115,10 +124,9 @@ namespace Acme.ProductSelling.Web.Middleware
                     ".svg", ".woff", ".woff2", ".ttf", ".map", ".json"
                 };
 
-                foreach (var ext in staticExtensions)
+                if (staticExtensions.Any(e => path.EndsWith(e, StringComparison.OrdinalIgnoreCase)))
                 {
-                    if (path.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
-                        return true;
+                    return true;
                 }
             }
             return false;

@@ -12,6 +12,7 @@
 @using Volo.Abp.Users
 @using Volo.Abp.AspNetCore.Mvc.UI.RazorPages
 @using Volo.Abp.AspNetCore.Mvc.UI.Bundling
+@using Acme.ProductSelling.Web.Pages.Components.CultureDebug
 
 @inject ICurrentUser CurrentUser
 @inject IStringLocalizer<ProductSellingResource> L
@@ -244,6 +245,7 @@
                     <div>
                         <h6 class="fw-bold">NGÔN NGỮ</h6>
                         <div class="mt-3">
+                            @await Component.InvokeAsync("CultureDebug")
                             @await Component.InvokeAsync(typeof(LanguageSwitchViewComponent))
                         </div>
                     </div>

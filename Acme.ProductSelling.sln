@@ -10,6 +10,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.ProductSelling.EntityFrameworkCore", "src\Acme.ProductSelling.EntityFrameworkCore\Acme.ProductSelling.EntityFrameworkCore.csproj", "{C956DD76-69C8-4A9C-83EA-D17DF83340FD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.ProductSelling.Web", "src\Acme.ProductSelling.Web\Acme.ProductSelling.Web.csproj", "{068855E8-9240-4F1A-910B-CF825794513B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{42F719ED-8413-4895-B5B4-5AB56079BC66} = {42F719ED-8413-4895-B5B4-5AB56079BC66}
+		{554AD327-6DBA-4F8F-96F8-81CE7A0C863F} = {554AD327-6DBA-4F8F-96F8-81CE7A0C863F}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CA9AC87F-097E-4F15-8393-4BC07735A5B0}"
 EndProject
