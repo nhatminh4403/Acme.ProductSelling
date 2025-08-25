@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
-using System.Net.Http;
 
 namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
 {

@@ -218,7 +218,7 @@ namespace Acme.ProductSelling.Orders
                     }
                     orderToProcess.AddOrderItem(product.Id,
                                                     product.ProductName,
-                                                    product.DiscountedPrice ?? product.OriginalPrice, 
+                                                    product.DiscountedPrice ?? product.OriginalPrice,
                                                     cartItem.Quantity);
                     product.StockCount -= cartItem.Quantity; // Giảm stock mới
                     await _productRepository.UpdateAsync(product);

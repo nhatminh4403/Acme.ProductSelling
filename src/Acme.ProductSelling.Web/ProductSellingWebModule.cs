@@ -17,10 +17,8 @@ using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Localization.Routing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -49,7 +47,6 @@ using Volo.Abp.Autofac;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity.Web;
-using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
 using Volo.Abp.OpenIddict;
 using Volo.Abp.PermissionManagement;
@@ -192,7 +189,7 @@ public class ProductSellingWebModule : AbpModule
             options.Conventions.Add(new CultureRouteModelConvention(
                 supportedCultures, defaultCulture
             ));
-        }); 
+        });
 
         ConfigureRequestLocalization(services);
         context.Services.AddTransient<CultureAwareAnchorTagHelper>();
@@ -208,16 +205,24 @@ public class ProductSellingWebModule : AbpModule
                 new CultureInfo("en"),
                 new CultureInfo("vi")
             };
-            var defaultCulture = "en";
+            var defaultCulture = "vi"; // Đặt vi làm default để match với URL
             options.DefaultRequestCulture = new RequestCulture(defaultCulture);
             options.SupportedCultures = supportedCultures;
             options.SupportedUICultures = supportedCultures;
 
             options.RequestCultureProviders.Clear();
-
+            options.RequestCultureProviders.Add(new AspNetCoreCookieRequestCultureProvider());
             options.RequestCultureProviders.Add(new RouteValueRequestCultureProvider());
+            options.RequestCultureProviders.Add(new CookieRequestCultureProvider
+            {
+                CookieName = "culture"
+            });
+            options.RequestCultureProviders.Add(new CookieRequestCultureProvider
+            {
+                CookieName = "Abp.Localization.CultureName"
+            });
             options.RequestCultureProviders.Add(new QueryStringRequestCultureProvider());
-            options.RequestCultureProviders.Add(new CookieRequestCultureProvider());
+
             options.RequestCultureProviders.Add(new AcceptLanguageHeaderRequestCultureProvider());
 
             // Thêm RouteDataRequestCultureProvider để hỗ trợ định tuyến theo ngôn ngữ
@@ -368,6 +373,7 @@ public class ProductSellingWebModule : AbpModule
 
         app.UseRouting();
         app.UseMiddleware<CultureRedirectMiddleware>();
+        app.UseMiddleware<CultureSyncMiddleware>();
         app.UseAbpRequestLocalization();
 
         app.UseAbpSecurityHeaders();

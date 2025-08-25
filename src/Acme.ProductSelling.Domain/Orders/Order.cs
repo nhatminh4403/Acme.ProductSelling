@@ -102,9 +102,9 @@ namespace Acme.ProductSelling.Orders
         {
             if (!IsNextStatusValid(newStatus))
             {
-                 //var errorMessage = localizer != null
-                 //   ? localizer["OrderStatusChangeNotAllowed", Status, newStatus]
-                 //   : $"Không thể chuyển trạng thái từ '{Status}' sang '{newStatus}'.";
+                //var errorMessage = localizer != null
+                //   ? localizer["OrderStatusChangeNotAllowed", Status, newStatus]
+                //   : $"Không thể chuyển trạng thái từ '{Status}' sang '{newStatus}'.";
                 // Thông điệp lỗi chung chung, AppService sẽ xử lý việc dịch
                 throw new UserFriendlyException("OrderStatusChangeNotAllowed",
                     $"Không thể chuyển trạng thái từ '{Status}' sang '{newStatus}'.");

@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
+using System;
 using System.Threading.Tasks;
 
 namespace Acme.ProductSelling.Web.Routing
 {
     public class RouteValueRequestCultureProvider : RequestCultureProvider
     {
-        private readonly string[] _supportedCultures = { "en", "vi" }; public override Task<ProviderCultureResult?> DetermineProviderCultureResult(HttpContext httpContext)
+        private readonly string[] _supportedCultures = { "en", "vi" };
+
+        public override Task<ProviderCultureResult?> DetermineProviderCultureResult(HttpContext httpContext)
         {
             var path = httpContext.Request.Path.Value;
             if (string.IsNullOrEmpty(path) || path == "/")
@@ -27,16 +30,24 @@ namespace Acme.ProductSelling.Web.Routing
             {
                 // Có duplicate, chỉ lấy culture đầu tiên
                 var culture = firstSegment;
-                SetCultureCookie(httpContext, culture);
+                SetAllCultureCookies(httpContext, culture);
+
+                // Store culture in HttpContext for later use
+                httpContext.Items["CurrentUrlCulture"] = culture;
+
                 return Task.FromResult(new ProviderCultureResult(culture, culture))!;
             }
 
             // Normal case: chỉ có 1 culture
-            SetCultureCookie(httpContext, firstSegment);
+            SetAllCultureCookies(httpContext, firstSegment);
+
+            // Store culture in HttpContext for later use
+            httpContext.Items["CurrentUrlCulture"] = firstSegment;
+
             return Task.FromResult(new ProviderCultureResult(firstSegment, firstSegment))!;
         }
 
-        private void SetCultureCookie(HttpContext httpContext, string culture)
+        private void SetAllCultureCookies(HttpContext httpContext, string culture)
         {
             var cookieOptions = new CookieOptions
             {
@@ -46,7 +57,15 @@ namespace Acme.ProductSelling.Web.Routing
                 SameSite = SameSiteMode.Lax
             };
 
+            // Set custom culture cookies
             httpContext.Response.Cookies.Append("culture", culture, cookieOptions);
+            httpContext.Response.Cookies.Append("Abp.Localization.CultureName", culture, cookieOptions);
+
+            // Set AspNetCore culture cookie với format chuẩn
+            var aspNetCoreCultureValue = $"c={culture}|uic={culture}";
+            httpContext.Response.Cookies.Append(".AspNetCore.Culture", aspNetCoreCultureValue, cookieOptions);
+
+            Console.WriteLine($"[RouteValueRequestCultureProvider] Set all culture cookies to: {culture}");
         }
 
         private bool IsSupportedCulture(string culture)
@@ -60,4 +79,3 @@ namespace Acme.ProductSelling.Web.Routing
         }
     }
 }
-

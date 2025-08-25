@@ -38,7 +38,7 @@ namespace Acme.ProductSelling.Carts
         private Guid GetCurrentUserId()
         {
 
-            return _currentUser.Id ?? 
+            return _currentUser.Id ??
                 throw new AbpAuthorizationException(L["Account:UserNotAuthenticated"]);
             //"User is not authenticated."
         }

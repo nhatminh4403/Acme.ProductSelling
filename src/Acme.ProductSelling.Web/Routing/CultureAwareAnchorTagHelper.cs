@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using System.Collections.Generic;
-using System.Globalization;
 
 namespace Acme.ProductSelling.Web.Routing
 {

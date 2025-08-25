@@ -50,7 +50,7 @@ public class ProductSellingDomainModule : AbpModule
             options.Languages.Add(new LanguageInfo("en", "en", "English"));
             //options.Languages.Add(new LanguageInfo("en-GB", "en-GB", "English (UK)"));
 
-           
+
         });
 
 #if DEBUG

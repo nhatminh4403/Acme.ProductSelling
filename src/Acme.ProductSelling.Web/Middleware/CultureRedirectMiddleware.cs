@@ -15,7 +15,7 @@ namespace Acme.ProductSelling.Web.Middleware
         public CultureRedirectMiddleware(RequestDelegate next, IOptions<RequestLocalizationOptions> options)
         {
             _next = next;
-            _supportedCultures = options.Value.SupportedCultures?.Select(c => c.TwoLetterISOLanguageName).ToArray() ?? new[] { "vi","en" };
+            _supportedCultures = options.Value.SupportedCultures?.Select(c => c.TwoLetterISOLanguageName).ToArray() ?? new[] { "vi", "en" };
             _defaultCulture = options.Value.DefaultRequestCulture.Culture.TwoLetterISOLanguageName;
         }
 
@@ -56,6 +56,13 @@ namespace Acme.ProductSelling.Web.Middleware
             if (firstSegment != null && _supportedCultures.Contains(firstSegment))
             {
                 Console.WriteLine($"[CultureRedirectMiddleware] Culture prefix found: {firstSegment}");
+
+                // Đảm bảo culture trong URL được lưu vào HttpContext
+                context.Items["RequestedCulture"] = firstSegment;
+
+                // Đồng bộ cookie với URL culture
+                SyncCultureCookie(context, firstSegment);
+
                 await _next(context);
                 return;
             }
@@ -64,15 +71,52 @@ namespace Acme.ProductSelling.Web.Middleware
             var targetCulture = GetCultureFromRequest(context) ?? _defaultCulture;
             var redirectPath = $"/{targetCulture}{path}{context.Request.QueryString}";
 
+            Console.WriteLine($"[CultureRedirectMiddleware] Redirecting to add culture prefix: {redirectPath}");
             context.Response.Redirect(redirectPath, permanent: false);
+        }
+
+        private void SyncCultureCookie(HttpContext context, string culture)
+        {
+            // Chỉ set cookie nếu khác với cookie hiện tại
+            var currentCookie = context.Request.Cookies["culture"];
+            if (currentCookie != culture)
+            {
+                var cookieOptions = new CookieOptions
+                {
+                    Expires = DateTimeOffset.UtcNow.AddDays(30),
+                    Path = "/",
+                    HttpOnly = false,
+                    SameSite = SameSiteMode.Lax
+                };
+
+                context.Response.Cookies.Append("culture", culture, cookieOptions);
+                context.Response.Cookies.Append("Abp.Localization.CultureName", culture, cookieOptions);
+                Console.WriteLine($"[CultureRedirectMiddleware] Synced culture cookie to: {culture}");
+            }
         }
         private string GetCultureFromRequest(HttpContext context)
         {
-            if (context.Request.Cookies.TryGetValue("Abp.Localization.CultureName", out var cookieCulture) &&
+            // Ưu tiên culture từ URL nếu có
+            if (context.Items.TryGetValue("RequestedCulture", out var requestedCulture) &&
+                requestedCulture is string culture &&
+                _supportedCultures.Contains(culture))
+            {
+                Console.WriteLine($"[CultureRedirectMiddleware] Culture from URL: {culture}");
+                return culture;
+            }
+
+            if (context.Request.Cookies.TryGetValue("culture", out var cookieCulture) &&
                 _supportedCultures.Contains(cookieCulture))
             {
                 Console.WriteLine($"[CultureRedirectMiddleware] Culture from cookie: {cookieCulture}");
                 return cookieCulture;
+            }
+
+            if (context.Request.Cookies.TryGetValue("Abp.Localization.CultureName", out var abpCookieCulture) &&
+                _supportedCultures.Contains(abpCookieCulture))
+            {
+                Console.WriteLine($"[CultureRedirectMiddleware] Culture from ABP cookie: {abpCookieCulture}");
+                return abpCookieCulture;
             }
 
             var acceptLanguage = context.Request.Headers["Accept-Language"].FirstOrDefault();
@@ -96,8 +140,6 @@ namespace Acme.ProductSelling.Web.Middleware
 
             return null;
         }
-
-
         private bool IsStaticResource(string path)
         {
             if (string.IsNullOrEmpty(path))

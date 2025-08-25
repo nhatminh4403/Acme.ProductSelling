@@ -12,7 +12,7 @@ namespace Acme.ProductSelling.Carts
         public int Quantity { get; set; }
         public string ProductName { get; set; } // Lấy từ thông tin Product liên kết
         [Column(TypeName = "decimal(18,2)")]
-        public decimal ProductPrice { get; set; } 
+        public decimal ProductPrice { get; set; }
         protected CartItem() { }
         public CartItem(Guid id, Guid cartId, Guid productId, int quantity, string productName, decimal productPrice) : base(id)
         {

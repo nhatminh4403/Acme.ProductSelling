@@ -129,7 +129,7 @@ public class ProductSellingDbContext :
             b.ToTable("Products");
             b.Property(p => p.ProductName).IsRequired().HasMaxLength(100);
             b.Property(p => p.OriginalPrice).HasColumnType("decimal(18,2)");
-            b.Property(p => p.DiscountedPrice).HasColumnType("decimal(18,2)").IsRequired(false);    
+            b.Property(p => p.DiscountedPrice).HasColumnType("decimal(18,2)").IsRequired(false);
             b.Property(p => p.DiscountPercent).IsRequired(true);
             b.HasOne(p => p.Category).WithMany(c => c.Products).HasForeignKey(p => p.CategoryId);
             b.HasOne(p => p.Manufacturer).WithMany(m => m.Products).HasForeignKey(p => p.ManufacturerId);

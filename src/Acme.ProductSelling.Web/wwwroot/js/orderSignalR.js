@@ -6,7 +6,7 @@
         .withUrl("/signalr-hubs/orders", {
             accessTokenFactory: () => {
                 const token = abp.auth.getToken();
-                console.log("Token gửi lên SignalR:", token); // Check token ở đây
+                console.log("Token gửi lên SignalR:", token); 
                 return token;
             }
         })
@@ -20,24 +20,18 @@
 
         console.log(`Received update for Order ${orderId}: OrderStatus=${newOrderStatus}, PaymentStatus=${newPaymentStatus}`);
 
-
-
-        // ----- Xử lý cho trang Lịch sử đơn hàng (bảng tĩnh) -----
         var historyRow = $(`#OrderHistoryTable tr[data-order-id='${orderId}']`);
         if (historyRow.length) {
             updateRowStatus(historyRow, newOrderStatus, newOrderStatusText, newPaymentStatus, newPaymentStatusText);
         }
-        // ----- Xử lý cho trang Chi tiết đơn hàng -----
-        // Giả sử trang chi tiết có một thẻ body hoặc container chứa data-order-id
+
         var pageOrderId = $('#orderDetailContainer').data('order-id');
 
         if (pageOrderId && pageOrderId === orderId) {
             updateDetailPage(newOrderStatus, newOrderStatusText, newPaymentStatus, newPaymentStatusText);
         }
-        // ----- Xử lý cho bảng DataTable của Admin (nếu có) -----
         if ($.fn.DataTable.isDataTable('#OrdersTable')) {
             var adminTable = $('#OrdersTable').DataTable();
-            // Cần một cách để tìm dòng, ví dụ bằng ID hoặc class
             var adminRow = adminTable.row(`#order-row-${orderId}`);
             if (adminRow.length) {
                 // Logic cập nhật DataTable...
@@ -48,16 +42,14 @@
     });
 
     // 3. CÁC HÀM HELPER
-
     function updateRowStatus(rowElement, newOrderStatus, newOrderStatusText, newPaymentStatus, newPaymentStatusText) {
-        // Cập nhật badge trạng thái
         var orderStatusCell = rowElement.find('.order-status-cell');
         var orderBadgeClass = getOrderStatusBadgeClass(newOrderStatus);
         var orderBadgeHtml = `<span class="badge ${orderBadgeClass}">${newOrderStatusText}</span>`;
         orderStatusCell.html(orderBadgeHtml);
 
 
-        var paymentStatusCell = rowElement.find('.payment-status-cell'); // Thêm class này vào <td>
+        var paymentStatusCell = rowElement.find('.payment-status-cell');
         if (paymentStatusCell.length) {
             var paymentBadgeClass = getPaymentStatusBadgeClass(newPaymentStatus);
             var paymentBadgeHtml = `<span class="badge ${paymentBadgeClass}">${newPaymentStatusText}</span>`;
@@ -82,22 +74,19 @@
     }
 
     function updateDetailPage(newOrderStatus, newOrderStatusText, newPaymentStatus, newPaymentStatusText) {
-        // Cập nhật badge trạng thái
         var statusBadge = $('#orderStatusBadge');
         if (statusBadge.length) {
             var badgeClass = getStatusBadgeClass(newStatus);
             statusBadge.removeClass().addClass('badge ' + badgeClass).text(newStatusText);
             highlightRow(statusBadge.parent());
         }
-        var paymentStatusBadge = $('#paymentStatusBadge'); // Thêm id này vào badge trên trang chi tiết
+        var paymentStatusBadge = $('#paymentStatusBadge'); 
         if (paymentStatusBadge.length) {
             var paymentBadgeClass = getPaymentStatusBadgeClass(newPaymentStatus);
             paymentStatusBadge.removeClass().addClass('badge ' + paymentBadgeClass).text(newPaymentStatusText);
         }
-        // Ẩn/hiện container của nút hủy
         var cancelContainer = $('#cancelOrderContainer');
         if (cancelContainer.length) {
-            // Chỉ hiện nút hủy khi OrderStatus là 'Placed' VÀ PaymentStatus KHÔNG PHẢI là 'Paid'
             if (newOrderStatus.toLowerCase() === 'placed' && newPaymentStatus.toLowerCase() !== 'paid') {
                 cancelContainer.show();
             } else {
@@ -107,7 +96,6 @@
     }
 
     function getStatusBadgeClass(statusString) {
-        // Case-insensitive comparison
         switch (statusString.toLowerCase()) {
             case 'placed': return 'bg-info';
             case 'pendingpayment': return 'bg-warning text-dark';
@@ -122,7 +110,6 @@
         }
     }
     function getPaymentStatusBadgeClass(status) {
-        // Dùng toLowerCase() để không phân biệt chữ hoa-thường
         switch (status.toLowerCase()) {
             case 'unpaid':
                 return 'bg-secondary';

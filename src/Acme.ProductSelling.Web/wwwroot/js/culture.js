@@ -1,12 +1,13 @@
 ﻿class CultureHelper {
     static getCurrentCulture() {
-        // Lấy culture từ URL path
+        // Lấy culture từ URL path (ưu tiên cao nhất)
         const path = window.location.pathname;
         const parts = path.split('/');
 
         if (parts.length >= 2) {
-            const potentialCulture = parts[1].toLowerCase(); // Đảm bảo lowercase
+            const potentialCulture = parts[1].toLowerCase();
             if (['en', 'vi'].includes(potentialCulture)) {
+                console.log('✅ Culture from URL:', potentialCulture);
                 return potentialCulture;
             }
         }
@@ -14,17 +15,24 @@
         // Fallback: lấy từ cookie
         const cookieCulture = CultureHelper.getCookie('culture');
         if (cookieCulture && ['en', 'vi'].includes(cookieCulture.toLowerCase())) {
+            console.log('✅ Culture from cookie:', cookieCulture.toLowerCase());
             return cookieCulture.toLowerCase();
         }
 
         // Default fallback
+        console.log('✅ Using default culture: vi');
         return 'vi';
     }
 
     static setCultureCookie(culture) {
         const expires = new Date();
         expires.setDate(expires.getDate() + 30); // 30 days
+
+        // Set cả 2 cookies để đảm bảo tương thích
         document.cookie = `culture=${culture.toLowerCase()}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+        document.cookie = `Abp.Localization.CultureName=${culture.toLowerCase()}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+
+        console.log('✅ Set culture cookie:', culture.toLowerCase());
     }
 
     static getCookie(name) {
@@ -43,6 +51,8 @@
         const currentCulture = CultureHelper.getCurrentCulture();
         const links = document.querySelectorAll('a[href^="/"]');
 
+        let updatedCount = 0;
+
         links.forEach(link => {
             const href = link.getAttribute('href');
             if (href && !href.startsWith(`/${currentCulture}/`) &&
@@ -51,7 +61,8 @@
                 !href.startsWith('/css/') &&
                 !href.startsWith('/js/') &&
                 !href.startsWith('/lib/') &&
-                !href.startsWith('/admin/') && !href.startsWith('/Abp/') &&
+                !href.startsWith('/admin/') &&
+                !href.startsWith('/Abp/') &&
                 !href.startsWith('/identity/') &&
                 !href.startsWith('/account/') &&
                 !href.includes('.')) {
@@ -63,25 +74,67 @@
                     pathParts[1] = currentCulture;
                     const newHref = pathParts.join('/');
                     link.setAttribute('href', newHref);
+                    updatedCount++;
                 } else {
                     // Thêm culture prefix nếu chưa có
                     const newHref = `/${currentCulture}${href}`;
                     link.setAttribute('href', newHref);
+                    updatedCount++;
                 }
             }
         });
+
+        if (updatedCount > 0) {
+            console.log(`✅ Updated ${updatedCount} links with culture prefix: ${currentCulture}`);
+        }
+    }
+
+    static syncCultureWithUrl() {
+        // Đồng bộ culture cookie với URL
+        const urlCulture = CultureHelper.getCultureFromUrl();
+        const cookieCulture = CultureHelper.getCookie('culture');
+
+        if (urlCulture && urlCulture !== cookieCulture) {
+            console.log(`🔄 Syncing culture: URL=${urlCulture}, Cookie=${cookieCulture}`);
+            CultureHelper.setCultureCookie(urlCulture);
+
+            // Dispatch custom event để notify components khác
+            window.dispatchEvent(new CustomEvent('cultureChanged', {
+                detail: { culture: urlCulture }
+            }));
+        }
+    }
+
+    static getCultureFromUrl() {
+        const path = window.location.pathname;
+        const parts = path.split('/');
+
+        if (parts.length >= 2) {
+            const potentialCulture = parts[1].toLowerCase();
+            if (['en', 'vi'].includes(potentialCulture)) {
+                return potentialCulture;
+            }
+        }
+        return null;
     }
 
     static initializeCultureHandling() {
+        // Đồng bộ culture ngay khi trang load
+        CultureHelper.syncCultureWithUrl();
+
         // Set culture cookie khi trang load
         const currentCulture = CultureHelper.getCurrentCulture();
         CultureHelper.setCultureCookie(currentCulture);
 
         // Cập nhật links khi DOM ready
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', CultureHelper.updateAllLinks);
+            document.addEventListener('DOMContentLoaded', () => {
+                CultureHelper.updateAllLinks();
+                CultureHelper.syncCultureWithUrl();
+            });
         } else {
             CultureHelper.updateAllLinks();
+            CultureHelper.syncCultureWithUrl();
         }
 
         // Theo dõi các thay đổi DOM và cập nhật links mới
@@ -98,7 +151,10 @@
             });
 
             if (hasNewLinks) {
-                setTimeout(CultureHelper.updateAllLinks, 100);
+                setTimeout(() => {
+                    CultureHelper.updateAllLinks();
+                    CultureHelper.syncCultureWithUrl();
+                }, 100);
             }
         });
 
@@ -106,14 +162,22 @@
             childList: true,
             subtree: true
         });
+
+        // Listen for popstate events (back/forward navigation)
+        window.addEventListener('popstate', () => {
+            setTimeout(() => {
+                CultureHelper.syncCultureWithUrl();
+                CultureHelper.updateAllLinks();
+            }, 100);
+        });
     }
 }
 
 // Khởi tạo khi trang load
 CultureHelper.initializeCultureHandling();
 
-// Debug information
-console.log('=== CULTURE DEBUG ===');
+// Debug information - improved
+console.log('=== CULTURE DEBUG (Enhanced) ===');
 console.log('Current URL:', window.location.href);
 console.log('Current pathname:', window.location.pathname);
 
@@ -121,48 +185,180 @@ console.log('Current pathname:', window.location.pathname);
 const pathSegments = window.location.pathname.split('/').filter(s => s);
 console.log('Path segments:', pathSegments);
 
-if (pathSegments.length > 0) {
-    const firstSegment = pathSegments[0].toLowerCase();
-    const secondSegment = pathSegments[1] ? pathSegments[1].toLowerCase() : null;
+const urlCulture = CultureHelper.getCultureFromUrl();
+const cookieCulture = CultureHelper.getCookie('culture');
+const abpCookieCulture = CultureHelper.getCookie('Abp.Localization.CultureName');
 
-    console.log('First segment:', firstSegment);
-    console.log('Second segment:', secondSegment);
+console.log('URL Culture:', urlCulture || 'Not found');
+console.log('Cookie Culture:', cookieCulture || 'Not found');
+console.log('ABP Cookie Culture:', abpCookieCulture || 'Not found');
 
-    if (['en', 'vi'].includes(firstSegment)) {
-        console.log('✅ Valid culture found:', firstSegment);
+// Check for sync issues
+if (urlCulture && cookieCulture && urlCulture !== cookieCulture) {
+    console.log('⚠️ CULTURE SYNC ISSUE DETECTED!');
+    console.log(`URL has: ${urlCulture}, Cookie has: ${cookieCulture}`);
+}
 
-        if (secondSegment && ['en', 'vi'].includes(secondSegment)) {
-            console.log('❌ DUPLICATE CULTURE DETECTED!', firstSegment, secondSegment);
-            // Redirect để fix duplicate
-            const correctPath = '/' + firstSegment + '/' + pathSegments.slice(2).join('/');
-            console.log('Should redirect to:', correctPath);
-            // window.location.replace(correctPath); // Uncomment để auto-fix
+// Check for duplicates
+if (pathSegments.length >= 2 &&
+    ['en', 'vi'].includes(pathSegments[0].toLowerCase()) &&
+    ['en', 'vi'].includes(pathSegments[1].toLowerCase())) {
+    console.log('❌ DUPLICATE CULTURE DETECTED!', pathSegments[0], pathSegments[1]);
+}
+
+
+class AspNetCoreCultureHelper {
+
+    static setAspNetCoreCulture(culture) {
+        // Set AspNetCore culture cookie với format chuẩn
+        const expires = new Date();
+        expires.setDate(expires.getDate() + 30); // 30 days
+
+        const aspNetCoreCultureValue = `c=${culture}|uic=${culture}`;
+        document.cookie = `.AspNetCore.Culture=${aspNetCoreCultureValue}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+
+        console.log('✅ Set AspNetCore culture cookie:', culture);
+
+        // Trigger page reload để middleware xử lý redirect
+        setTimeout(() => {
+            window.location.reload();
+        }, 100);
+    }
+
+    static getAspNetCoreCulture() {
+        const cookieValue = AspNetCoreCultureHelper.getCookie('.AspNetCore.Culture');
+        if (cookieValue) {
+            try {
+                const decodedValue = decodeURIComponent(cookieValue);
+                const parts = decodedValue.split('|');
+
+                for (const part of parts) {
+                    if (part.startsWith('c=')) {
+                        const culture = part.substring(2).toLowerCase();
+                        if (['en', 'vi'].includes(culture)) {
+                            return culture;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error parsing AspNetCore culture cookie:', error);
+            }
         }
-    } else {
-        console.log('❌ No culture prefix found');
+        return null;
+    }
+
+    static getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+
+    static createCultureSwitcher() {
+        // Tạo culture switcher buttons
+        const currentCulture = CultureHelper.getCurrentCulture();
+        const switcher = document.createElement('div');
+        switcher.className = 'culture-switcher';
+        switcher.innerHTML = `
+            <button onclick="AspNetCoreCultureHelper.switchCulture('en')" class="${currentCulture === 'en' ? 'active' : ''}">
+                English
+            </button>
+            <button onclick="AspNetCoreCultureHelper.switchCulture('vi')" class="${currentCulture === 'vi' ? 'active' : ''}">
+                Tiếng Việt
+            </button>
+        `;
+
+        // Style cho switcher
+        const style = document.createElement('style');
+        style.textContent = `
+            .culture-switcher {
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                z-index: 1000;
+                background: white;
+                padding: 10px;
+                border-radius: 5px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+            .culture-switcher button {
+                margin: 0 5px;
+                padding: 5px 10px;
+                border: 1px solid #ccc;
+                background: #f8f9fa;
+                cursor: pointer;
+                border-radius: 3px;
+            }
+            .culture-switcher button.active {
+                background: #007bff;
+                color: white;
+            }
+            .culture-switcher button:hover {
+                background: #e9ecef;
+            }
+            .culture-switcher button.active:hover {
+                background: #0056b3;
+            }
+        `;
+
+        document.head.appendChild(style);
+        document.body.appendChild(switcher);
+    }
+
+    static switchCulture(newCulture) {
+        if (['en', 'vi'].includes(newCulture)) {
+            console.log(`🔄 Switching to culture: ${newCulture}`);
+
+            // Set AspNetCore cookie - này sẽ trigger middleware redirect
+            AspNetCoreCultureHelper.setAspNetCoreCulture(newCulture);
+        }
+    }
+
+    static monitorCookieChanges() {
+        // Monitor cookie changes và sync URL
+        let lastAspNetCoreCulture = AspNetCoreCultureHelper.getAspNetCoreCulture();
+
+        setInterval(() => {
+            const currentAspNetCoreCulture = AspNetCoreCultureHelper.getAspNetCoreCulture();
+            const urlCulture = CultureHelper.getCultureFromUrl();
+
+            if (currentAspNetCoreCulture &&
+                currentAspNetCoreCulture !== lastAspNetCoreCulture &&
+                currentAspNetCoreCulture !== urlCulture) {
+
+                console.log(`🔄 AspNetCore cookie changed: ${lastAspNetCoreCulture} -> ${currentAspNetCoreCulture}`);
+                console.log('🔄 URL needs update, reloading page...');
+
+                // Reload page để middleware xử lý redirect
+                window.location.reload();
+            }
+
+            lastAspNetCoreCulture = currentAspNetCoreCulture;
+        }, 1000); // Check mỗi giây
     }
 }
 
-// Check cookies
-const cultureCookie = document.cookie
-    .split('; ')
-    .find(row => row.startsWith('culture='))
-    ?.split('=')[1];
+// Initialize khi DOM ready
+document.addEventListener('DOMContentLoaded', function () {
+    // Tạo culture switcher để test
+    AspNetCoreCultureHelper.createCultureSwitcher();
 
-console.log('Culture cookie:', cultureCookie);
+    // Monitor cookie changes
+    AspNetCoreCultureHelper.monitorCookieChanges();
 
-// Check all links
-const internalLinks = document.querySelectorAll('a[href^="/"]');
-console.log('Internal links found:', internalLinks.length);
-
-internalLinks.forEach((link, index) => {
-    const href = link.getAttribute('href');
-    const linkSegments = href.split('/').filter(s => s);
-
-    if (linkSegments.length > 0 && !['api', '_framework', 'css', 'js', 'lib', 'admin', 'identity', 'account'].includes(linkSegments[0])) {
-        const hasValidCulture = ['en', 'vi'].includes(linkSegments[0].toLowerCase());
-        console.log(`Link ${index + 1}: ${href} - Culture: ${hasValidCulture ? '✅' : '❌'}`);
-    }
+    // Debug info
+    console.log('=== ASPNETCORE CULTURE DEBUG ===');
+    console.log('AspNetCore Cookie Culture:', AspNetCoreCultureHelper.getAspNetCoreCulture());
+    console.log('URL Culture:', CultureHelper.getCultureFromUrl());
+    console.log('Custom Cookie Culture:', CultureHelper.getCookie('culture'));
+    console.log('================================');
 });
+
+// Global function để có thể call từ browser console
+window.switchCulture = AspNetCoreCultureHelper.switchCulture;
 
 console.log('=== END DEBUG ===');

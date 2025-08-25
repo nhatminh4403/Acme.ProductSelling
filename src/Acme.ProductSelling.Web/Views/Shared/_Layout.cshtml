@@ -27,7 +27,7 @@
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@CultureInfo.CurrentUICulture.Name">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -50,7 +50,6 @@
             box-shadow: none;
             border-color: transparent;
         }
-        
     </style>
 </head>
 <body class="abp-application-layout bg-light d-flex flex-column min-vh-100">
@@ -90,7 +89,7 @@
                     </div>
                 </form>
                 <div class="me-2">
-                    <a href="#" class="btn fw-bold text-success text-start shadow-none" style="font-size:small"> <span>Hotline <br /> 0123456789</span></a>
+                    <a href="#" class="btn fw-bold text-success text-start shadow-none" style="font-size:small"> <span>@L["UI:Hotline"] <br /> 0123456789</span></a>
                 </div>
                 @if (CurrentUser.IsAuthenticated)
                 {
@@ -122,7 +121,7 @@
                            aria-label="Cart">
                             <i class="bi bi-cart3 fs-5"></i>
                             <span class="cart-item-count position-absolute top-0 start-100
-                                            translate-middle badge rounded-pill bg-danger d-none">0</span>
+                                                translate-middle badge rounded-pill bg-danger d-none">0</span>
                         </a>
                     </div>
                 }
@@ -130,7 +129,8 @@
                 {
                     <div class="d-flex align-items-center ms-lg-auto">
                         <div class="login-dropdown">
-                            <button type="button" class="btn btn-success d-flex align-items-center flex-shrink-0 me-2 login-btn-main">
+                            <button type="button"
+                                    class="btn btn-success d-flex align-items-center flex-shrink-0 me-2 login-btn-main">
                                 <i class="bi bi-person-fill me-1"></i>
                                 @L["Login"]
                                 <i class="bi bi-chevron-down ms-1" style="font-size: 0.8em;"></i>
@@ -145,10 +145,10 @@
                                 <!-- Container cho các nút -->
                                 <div class="dropdown-buttons">
                                     <button class="dropdown-btn-login" data-bs-toggle="modal" data-bs-target="#loginModal">
-                                        @L["Login"]
+                                        @L["Login:Default"]
                                     </button>
                                     <button class="dropdown-btn-register" data-bs-toggle="modal" data-bs-target="#registerModal">
-                                        @L["Register"]
+                                        @L["Register:Default"]
                                     </button>
                                 </div>
 
@@ -178,49 +178,52 @@
             <div class="row justify-content-evenly" style="margin-top:10px">
                 <!-- Cột 1 -->
                 <div class="col-6 col-md-2 mb-4">
-                    <h6 class="fw-bold">VỀ CHÚNG TÔI</h6>
+                    <h6 class="fw-bold">@L["Footer:AboutUs"]</h6>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-decoration-none text-dark">Giới thiệu</a></li>
-                        <li><a href="#" class="text-decoration-none text-dark">Tuyển dụng</a></li>
-                        <li><a href="#" class="text-decoration-none text-dark">Liên hệ</a></li>
+                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:Introduction"]</a></li>
+                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:Careers"]</a></li>
+                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:Contact"]</a></li>
                     </ul>
                 </div>
+
                 <!-- Cột 2 -->
                 <div class="col-6 col-md-2 mb-4">
-                    <h6 class="fw-bold">CHÍNH SÁCH</h6>
+                    <h6 class="fw-bold">@L["Footer:Policies"]</h6>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-decoration-none text-dark">Chính sách bảo hành</a></li>
-                        <li><a href="#" class="text-decoration-none text-dark">Chính sách giao hàng</a></li>
-                        <li><a href="#" class="text-decoration-none text-dark">Chính sách bảo mật</a></li>
+                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:WarrantyPolicy"]</a></li>
+                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:ShippingPolicy"]</a></li>
+                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:PrivacyPolicy"]</a></li>
                     </ul>
                 </div>
                 <!-- Cột 3 -->
                 <div class="col-6 col-md-2 mb-4">
-                    <h6 class="fw-bold">THÔNG TIN</h6>
+                    <h6 class="fw-bold">@L["Footer:Information"]</h6>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-decoration-none text-dark">Hệ thống cửa hàng</a></li>
-                        <li><a href="#" class="text-decoration-none text-dark">Hướng dẫn mua hàng</a></li>
-                        <li><a href="#" class="text-decoration-none text-dark">Hướng dẫn thanh toán</a></li>
-                        <li><a href="#" class="text-decoration-none text-dark">Hướng dẫn trả góp</a></li>
-                        <li><a href="#" class="text-decoration-none text-dark">Tra cứu địa chỉ bảo hành</a></li>
-                        <li><a href="#" class="text-decoration-none text-dark">Build PC</a></li>
+                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:StoreSystem"]</a></li>
+                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:ShoppingGuide"]</a></li>
+                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:PaymentGuide"]</a></li>
+                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:InstallmentGuide"]</a></li>
+                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:WarrantyLookup"]</a></li>
+                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:BuildPC"]</a></li>
                     </ul>
                 </div>
+
                 <!-- Cột 4 -->
                 <div class="col-6 col-md-2 mb-4">
-                    <h6 class="fw-bold">TỔNG ĐÀI HỖ TRỢ <small class="text-muted">(8:00 - 21:00)</small></h6>
+                    <h6 class="fw-bold">@L["Footer:SupportHotline"] <small class="text-muted">(8:00 - 21:00)</small></h6>
                     <ul class="list-unstyled">
-                        <li>Mua hàng: <a href="tel:19005301" class="text-primary">1900.5301</a></li>
-                        <li>Bảo hành: <a href="tel:19005325" class="text-primary">1900.5325</a></li>
-                        <li>Khiếu nại: <a href="tel:18006173" class="text-primary">1800.6173</a></li>
+                        <li>@L["Footer:Sales"]: <a href="tel:19005301" class="text-primary">1900.5301</a></li>
+                        <li>@L["Footer:Warranty"]: <a href="tel:19005325" class="text-primary">1900.5325</a></li>
+                        <li>@L["Footer:Complaints"]: <a href="tel:18006173" class="text-primary">1800.6173</a></li>
                         <li>Email: <a href="mailto:nhatminh4403@gmail.com" class="text-primary">nhatminh4403@gmail.com</a></li>
                     </ul>
                 </div>
+
                 <!-- Cột 5: Cách thức thanh toán và Ngôn ngữ -->
                 <div class="col-12 col-md-2 mb-4">
                     <!-- Phần thanh toán -->
                     <div class="mb-4">
-                        <h6 class="fw-bold">CÁCH THỨC THANH TOÁN</h6>
+                        <h6 class="fw-bold">@L["Footer:PaymentMethods"]</h6>
                         <div class="d-flex flex-wrap align-items-center gap-2">
                             <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_1.png?v=8602" loading="lazy"
                                  alt="Internet Banking" width="50">
@@ -243,9 +246,10 @@
 
                     <!-- Phần ngôn ngữ -->
                     <div>
-                        <h6 class="fw-bold">NGÔN NGỮ</h6>
+                        <h6 class="fw-bold">@L["Footer:Language"]</h6>
                         <div class="mt-3">
-                            @await Component.InvokeAsync("CultureDebug")
+                            @* For debugging *@
+                            @* @await Component.InvokeAsync("CultureDebug") *@
                             @await Component.InvokeAsync(typeof(LanguageSwitchViewComponent))
                         </div>
                     </div>
@@ -257,7 +261,7 @@
 
             <div class="row align-items-center">
                 <div class="col-md-6 mb-3 mb-md-0 text-decoration-none">
-                    <span class="fw-bold me-3">KẾT NỐI VỚI CHÚNG TÔI</span>
+                    <span class="fw-bold me-3">@L["Footer:ConnectWithUs"]</span>
                     <a href="#" class="me-2 text-decoration-none">
                         <img src="https://file.hstatic.net/200000636033/file/facebook_1_0e31d70174824ea184c759534430deec.png" loading="lazy"
                              alt="FB" width="30">
@@ -284,7 +288,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="loginModalLabel">@L["Login"]</h5><button type="button" class="btn-close"
-                                                                                   data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                                         data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="loginForm">
@@ -304,7 +308,7 @@
                         <p class="text-center small">
                             <a href="#">@L["Login:ForgotPassword"]</a> |
                             <a data-bs-toggle="modal" data-bs-target="#registerModal" class="text-decoration-underline"
-                            data-bs-dismiss="modal">@L["Login:CreateAccount"]</a>
+                               data-bs-dismiss="modal">@L["Login:CreateAccount"]</a>
                         </p>
                     </form>
                 </div>
@@ -347,13 +351,14 @@
                             <label for="registerConfirmPassword" class="form-label">
                                 @L["Register:ConfirmPassword"]
                             </label>
-                                
-                            
+
+
                             <input type="password" class="form-control" id="registerConfirmPassword" required>
                         </div>
-                        <p class="text-center small">@L["Register:HaveAnAccount?"]
+                        <p class="text-center small">
+                            @L["Register:HaveAnAccount?"]
                             <a data-bs-toggle="modal" class="text-decoration-underline text-primary"
-                            data-bs-target="#loginModal" data-bs-dismiss="modal">@L["Login:LoginHere"]</a>
+                               data-bs-target="#loginModal" data-bs-dismiss="modal">@L["Login:LoginHere"]</a>
                         </p>
                     </form>
                 </div>

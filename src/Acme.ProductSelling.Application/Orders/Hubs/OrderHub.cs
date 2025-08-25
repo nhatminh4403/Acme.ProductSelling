@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Volo.Abp.AspNetCore.SignalR;
 using Volo.Abp.Users;
 namespace Acme.ProductSelling.Orders.Hubs
