@@ -182,6 +182,9 @@ public class ProductSellingWebModule : AbpModule
         {
             options.Hubs.AddOrUpdate<OrderHub>();
         });
+
+        Configure<AbpAspNetCoreMvcUiRazorPagesOptions>
+
         Configure<RazorPagesOptions>(options =>
         {
             var supportedCultures = new[] { "en", "vi" };

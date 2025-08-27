@@ -1,0 +1,104 @@
+﻿@page "/blogs/{Slug}"
+@model Acme.ProductSelling.Web.Pages.Blogs.DetailsModel
+
+@using Acme.ProductSelling.Localization
+@using Microsoft.Extensions.Localization
+@using Acme.ProductSelling.Web.Helpers
+@using Acme.ProductSelling.Blogs
+@using System.Globalization
+
+@inject IStringLocalizer<ProductSellingResource> L
+@{
+    ViewData["Title"] = Model.Blog.Title;
+}
+
+<div>
+    @Html.Raw(Model.Blog.Content))
+</div>
+
+@await Component.InvokeAsync("Comments", new { entityType = typeof(Blog).ToString(), entityId = Model.Blog.Id })
+
+@section styles {
+
+}
+
+@section scripts {
+    <script>
+        $(function () {
+             var commentForm = $('#new-comment-form');
+             var commentsList = $('#comments-list');
+
+             commentForm.on('submit', function (e) {
+                 e.preventDefault();
+
+                 if (!commentForm.valid()) {
+                     return;
+                 }
+
+                 // Sử dụng ABP-injected app service proxy
+                 var commentService = myBlogApp.comments.comment;
+
+                 var commentData = {
+                     entityType: commentForm.find('input[name="EntityType"]').val(),
+                     entityId: commentForm.find('input[name="EntityId"]').val(),
+                     text: commentForm.find('textarea[name="Text"]').val()
+                 };
+                      $(document).on('click', '.like-button', function (e) {
+            e.preventDefault();
+
+            var button = $(this);
+            var commentId = button.data('comment-id');
+
+            // Gọi service proxy
+            var commentService = myBlogApp.comments.comment;
+            commentService.toggleLike(commentId).then(function () {
+                // Cập nhật UI ngay lập tức
+                var likeCountSpan = button.find('.like-count');
+                var currentLikes = parseInt(likeCountSpan.text());
+
+                if (button.hasClass('btn-primary')) {
+                    // Đang like -> chuyển thành unlike
+                    button.removeClass('btn-primary').addClass('btn-outline-primary');
+                    likeCountSpan.text(currentLikes - 1);
+                } else {
+                    // Đang unlike -> chuyển thành like
+                    button.removeClass('btn-outline-primary').addClass('btn-primary');
+                    likeCountSpan.text(currentLikes + 1);
+                }
+                abp.notify.success('Updated!');
+            }).catch(function (error) {
+                // Xử lý lỗi, ví dụ: user chưa đăng nhập
+                abp.notify.error(error.message);
+            });
+        });
+
+                 commentService.create(commentData).then(function (result) {
+                     // Xóa nội dung form
+                     commentForm.find('textarea[name="Text"]').val('');
+
+                     // Tạo HTML cho comment mới và thêm vào danh sách
+                     var newCommentHtml = `
+            <div class="card mb-2" id="comment-${result.id}">
+                <div class="card-body">
+                    <p class="card-text">${result.text}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <footer class="blockquote-footer mb-0">
+                            ${result.authorName} on ${new Date(result.creationTime).toLocaleDateString()}
+                        </footer>
+                        <div>
+                            <button class="btn btn-sm like-button btn-outline-primary" data-comment-id="${result.id}">
+                                <i class="fa fa-thumbs-up"></i>
+                                <span class="like-count">0</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        commentsList.append(newCommentHtml);
+
+        abp.notify.success('Comment posted successfully!');
+                 });
+             });
+         });
+    </script>
+}

@@ -1,0 +1,54 @@
+﻿@using Acme.ProductSelling.Comments
+@using Acme.ProductSelling.Web.Pages.Components.CommentSection
+@using Acme.ProductSelling.Localization
+@using Microsoft.Extensions.Localization
+
+@inject IStringLocalizer<ProductSellingResource> L
+@model CommentSectionViewModel
+
+
+<div id="comments-section">
+    <h4>Comments</h4>
+    <hr />
+
+    <!-- Form để đăng comment mới -->
+    <form id="new-comment-form" method="post">
+        <input type="hidden" name="EntityType" value="@Model.EntityType" />
+        <input type="hidden" name="EntityId" value="@Model.EntityId" />
+        <div class="mb-3">
+            <textarea name="Text" class="form-control" rows="3" placeholder="@L["UI:CommentSection:WriteAComment"]" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">@L["UI:CommentSection:Submit"]</button>
+    </form>
+
+    <hr />
+
+    <!-- Danh sách các comment đã có -->
+    <div id="comments-list">
+        @foreach (var comment in Model.Comments)
+        {
+            <div class="card mb-2">
+                <div class="card-body">
+                    <p class="card-text">@comment.Content</p>
+                    <footer class="blockquote-footer">
+                        @comment.Commenter on @comment.CreationTime.ToShortDateString()
+                    </footer>
+                    <div>
+                        <button class="btn btn-sm like-button @(comment.IsLikedByCurrentUser ? "btn-primary" : "btn-outline-primary")"
+                                data-comment-id="@comment.Id">
+                            <i class="fa fa-thumbs-up"></i>
+                            <span class="like-count">@comment.LikeCount</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+@section styles {
+    <style>
+        .like-button.btn-primary .fa-thumbs-up {
+            color: white;
+        }
+    </style>
+}

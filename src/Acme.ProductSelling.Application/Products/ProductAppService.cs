@@ -23,39 +23,14 @@ namespace Acme.ProductSelling.Products
     CreateUpdateProductDto>, IProductAppService
     {
         private readonly IRepository<Category, Guid> _categoryRepository;
-        //private readonly IRepository<MonitorSpecification, Guid> _monitorSpecRepository;
         private readonly IRepository<Product, Guid> _productRepository;
         private readonly ISpecificationService _specificationService;
 
-        /*        private readonly IRepository<MouseSpecification, Guid> _mouseSpecRepository;
-                private readonly IRepository<LaptopSpecification, Guid> _laptopSpecRepository;
-                private readonly IRepository<CpuSpecification, Guid> _cpuSpecRepository;
-                private readonly IRepository<GpuSpecification, Guid> _gpuSpecRepository;
-                private readonly IRepository<RamSpecification, Guid> _ramSpecRepository;
-                private readonly IRepository<MotherboardSpecification, Guid> _motherboardSpecRepository;
-                private readonly IRepository<StorageSpecification, Guid> _storageSpecRepository;
-                private readonly IRepository<PsuSpecification, Guid> _psuSpecRepository;
-                private readonly IRepository<CaseSpecification, Guid> _caseSpecRepository;
-                private readonly IRepository<CpuCoolerSpecification, Guid> _cpuCoolerSpecRepository;
-                private readonly IRepository<KeyboardSpecification, Guid> _keyboardSpecRepository;
-                private readonly IRepository<HeadsetSpecification, Guid> _headsetSpecRepository;*/
 
         public ProductAppService(
             IRepository<Product, Guid> productRepository,
             IRepository<Category, Guid> categoryRepository,
-            /*            IRepository<MonitorSpecification, Guid> monitorSpecRepository,
-                        IRepository<MouseSpecification, Guid> mouseSpecRepository,
-                        IRepository<LaptopSpecification, Guid> laptopSpecRepository,
-                        IRepository<CpuSpecification, Guid> cpuSpecRepository,
-                        IRepository<GpuSpecification, Guid> gpuSpecRepository,
-                        IRepository<RamSpecification, Guid> ramSpecRepository,
-                        IRepository<MotherboardSpecification, Guid> motherboardSpecRepository,
-                        IRepository<StorageSpecification, Guid> storageSpecRepository,
-                        IRepository<PsuSpecification, Guid> psuSpecRepository,
-                        IRepository<CaseSpecification, Guid> caseSpecRepository,
-                        IRepository<CpuCoolerSpecification, Guid> cpuCoolerSpecRepository,
-                        IRepository<KeyboardSpecification, Guid> keyboardSpecRepository,
-                        IRepository<HeadsetSpecification, Guid> headsetSpecRepository,*/
+
             ISpecificationService specificationService)
             : base(productRepository)
         {

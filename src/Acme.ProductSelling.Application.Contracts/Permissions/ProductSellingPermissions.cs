@@ -43,4 +43,19 @@ public static class ProductSellingPermissions
         public const string ChangeStatus = Default + ".ChangeStatus";
         public const string ConfirmCodPayment = Default + ".ConfirmCodPayment";
     }
+    public static class Blogs
+    {
+        public const string Default = GroupName + ".Blogs";
+        public const string Create = Default + ".Create";
+        public const string Edit = Default + ".Edit";
+        public const string Delete = Default + ".Delete";
+    }
+    public static class Comments
+    {
+        public const string Default = GroupName + ".Comments";
+        public const string Create = Default + ".Create";
+        public const string Edit = Default + ".Edit";
+        public const string Delete = Default + ".Delete";
+        public const string Approve = Default + ".Approve";
+    }
 }

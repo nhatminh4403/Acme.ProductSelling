@@ -1,0 +1,80 @@
+﻿@page "/blogs"
+@model Acme.ProductSelling.Web.Pages.Blogs.IndexModel
+
+@using Acme.ProductSelling.Localization
+@using Microsoft.Extensions.Localization
+@using Acme.ProductSelling.Web.Helpers
+@using System.Globalization
+
+@inject IStringLocalizer<ProductSellingResource> L
+
+@{
+    ViewData["Title"] = L["BlogTitle"];
+}
+
+<div class="blog-header text-center py-5 bg-primary text-white">
+    <h1>@L["BlogTitle"]</h1>
+    <p>@L["BlogSubtitle"]</p>
+</div>
+
+<div class="container my-5">
+    <div class="row g-4">
+        @if (Model.BlogList.Items.Any())
+        {
+            foreach (var blog in Model.BlogList.Items)
+            {
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100 blog-card">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">@blog.Title</h5>
+                    <p class="card-text text-truncate" style="max-height: 3rem;">
+                        @Html.Raw(blog.Content.Length > 100
+                                                ? blog.Content.Substring(0, 100) + "..."
+                                                : blog.Content)
+                    </p>
+                    <div class="mt-auto">
+                        <p class="text-muted small mb-1">
+                            <i class="bi bi-person"></i> @blog.AuthorName
+                            • @blog.PublishedDate.ToString("dd/MM/yyyy")
+                        </p>
+                        <a asp-page="./Detail" asp-route-id="@blog.Id"
+                           class="btn btn-primary btn-sm">@L["ReadMore"]</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+                }
+        }
+        else
+        {
+            <div class="col-12 text-center">
+                <p>@L["NoBlogPosts"]</p>
+            </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            @{
+                var totalPages = (int)Math.Ceiling((double)Model.BlogList.TotalCount / Model.PageSize);
+                for (int i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(Model.CurrentPage == i ? "active" : "")">
+                        <a class="page-link" asp-page="./Index" asp-route-CurrentPage="@i" asp-route-PageSize="@Model.PageSize">@i</a>
+                    </li>
+                }
+            }
+        </ul>
+    </nav>
+</div>
+
+<style>
+    .blog-card {
+        transition: transform 0.2s;
+    }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+        }
+</style>

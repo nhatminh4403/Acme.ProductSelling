@@ -1,5 +1,7 @@
-﻿using Acme.ProductSelling.Carts;
+﻿using Acme.ProductSelling.Blogs;
+using Acme.ProductSelling.Carts;
 using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Comments;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Orders;
 using Acme.ProductSelling.Products;
@@ -114,6 +116,7 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
             .ForMember(dest => dest.CartItems, opt => opt.MapFrom(src => src.Items)); // Map collection Items
         CreateMap<CartItem, CartItemDto>();
 
-
+        CreateMap<Blog, BlogDto>();
+        CreateMap<Comment, CommentDto>();
     }
 }

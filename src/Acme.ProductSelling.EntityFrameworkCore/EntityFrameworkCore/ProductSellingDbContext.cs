@@ -4,6 +4,8 @@ using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Orders;
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Specifications;
+using Acme.ProductSelling.Comments;
+using Acme.ProductSelling.Blogs;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -84,6 +86,10 @@ public class ProductSellingDbContext :
 
     public DbSet<Cart> Carts { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
+
+    public DbSet<Comment> Comments { get; set; }
+    public DbSet<Blog> Blogs { get; set; }
+    public DbSet<Likes> Likes { get; set; }
     #endregion
 
     public ProductSellingDbContext(DbContextOptions<ProductSellingDbContext> options)
@@ -225,6 +231,28 @@ public class ProductSellingDbContext :
                 .HasColumnType("decimal(18,2)")
                 .IsRequired();
             b.HasIndex(ci => ci.ProductId);
+        });
+
+
+        builder.Entity<Comment>(b =>
+        {
+            b.ToTable("AppComments");
+            b.ConfigureFullAuditedAggregateRoot();
+            b.HasIndex(c => new { c.EntityType, c.EntityId });
+        });
+        builder.Entity<Likes>(b =>
+        {
+            b.ToTable("AppLikes");
+            b.HasKey(l => new { l.CommentId, l.UserId }); // Thiết lập khóa chính gồm CommentId và UserId
+            b.HasIndex(x => new { x.CommentId, x.UserId }); // Tạo chỉ mục trên UserId để tối ưu hóa truy vấn
+        });
+        builder.Entity<Blog>(b =>
+        {
+            b.ToTable("AppBlogs");
+            b.ConfigureFullAuditedAggregateRoot();
+            b.Property(b => b.Title).IsRequired();
+            b.Property(b => b.Content).IsRequired();
+            b.Property(b => b.UrlSlug).IsRequired();
         });
     }
 }
