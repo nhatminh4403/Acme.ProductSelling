@@ -12,7 +12,7 @@ using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 namespace Acme.ProductSelling.Web.Pages.Checkout
 {
     [Authorize]
-    public class CheckoutModel : AbpPageModel
+    public class CheckoutModel : ProductSellingPageModel
     {
         [BindProperty]
         public CreateOrderDto OrderInput { get; set; }

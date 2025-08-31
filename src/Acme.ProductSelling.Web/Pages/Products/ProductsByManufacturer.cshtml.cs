@@ -10,7 +10,7 @@ using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Products
 {
-    public class ProductsByManufacturerModel : AbpPageModel
+    public class ProductsByManufacturerModel : ProductSellingPageModel
     {
         private readonly IProductAppService _productAppService;
         private readonly ICategoryRepository _categoryRepository;

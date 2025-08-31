@@ -1,5 +1,6 @@
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.MultiTenancy;
+using Acme.ProductSelling.Permissions;
 using System.Threading.Tasks;
 using Volo.Abp.Identity.Web.Navigation;
 using Volo.Abp.SettingManagement.Web.Navigation;
@@ -56,6 +57,15 @@ public class ProductSellingMenuContributor : IMenuContributor
             icon: "fa-solid fa-list",
             url: "/admin/orders"
         ));
+        context.Menu.AddItem(new ApplicationMenuItem(
+            ProductSellingMenus.Blogs,
+            l["Admin:Menu:Blogs"],
+            icon: "fa-solid fa-list",
+            url: "/admin/blogs",
+            order: 5,
+            requiredPermissionName: ProductSellingPermissions.Blogs.Default
+            
+            ));
         var administration = context.Menu.GetAdministration();
         administration.Order = 6;
 

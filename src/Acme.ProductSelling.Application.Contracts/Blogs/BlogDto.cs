@@ -9,5 +9,9 @@ namespace Acme.ProductSelling.Blogs
         public string Content { get; set; }
         public DateTime PublishedDate { get; set; }
         public string AuthorName { get; set; }
+
+        public string UrlSlug { get; set; }
+        public string? MainImageUrl { get; set; }
+        public Guid? MainImageId { get; set; } // Thêm thuộc tính MainImageId
     }
 }

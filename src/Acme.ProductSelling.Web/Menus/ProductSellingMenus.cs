@@ -10,5 +10,5 @@ public class ProductSellingMenus
     public const string Manufacturers = Prefix + ".Manufacturers";
     public const string Carts = Prefix + ".Carts";
     public const string Orders = Prefix + ".Orders";
-
+    public const string Blogs = Prefix + ".Blogs";
 }

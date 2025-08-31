@@ -11,16 +11,22 @@ namespace Acme.ProductSelling.Blogs
         public string Author { get; set; }
         public string UrlSlug { get; set; }
         // Constructor
+        public string? MainImageUrl { get; set; }
+        public Guid? MainImageId { get; set; } // Thêm thuộc tính MainImageId
+
 
         protected Blog() { }
 
-        public Blog(Guid id, string title, string content, DateTime publishedDate, string author,string slug) : base(id)
+        public Blog(Guid id, string title, string content, DateTime publishedDate,
+            string author, string slug, string? mainImageUrl, Guid? mainImageId) : base(id)
         {
             Title = title;
             Content = content;
             PublishedDate = publishedDate;
             Author = author;
             UrlSlug = slug;
+            MainImageUrl = mainImageUrl;
+            MainImageId = mainImageId;
         }
     }
 }

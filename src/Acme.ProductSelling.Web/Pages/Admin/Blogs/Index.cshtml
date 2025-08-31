@@ -27,8 +27,8 @@
                 @* Nút tạo mới - Chỉ hiển thị nếu user có quyền Create *@
                 @if (await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Blogs.Create))
                 {
-                    <abp-button id="NewCategoryButton"
-                                text="@L["Blog:Blogs"].Value"
+                    <abp-button id="NewBlogPostButton"
+                                text="@L["Blog:CreateBlog"].Value"
                                 icon="plus"
                                 button-type="Primary"  href="/admin/blogs/create"/>
                 }

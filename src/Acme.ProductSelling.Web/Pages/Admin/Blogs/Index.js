@@ -27,7 +27,7 @@
                                 text: l('Blog:Delete'),
                                 visible: abp.auth.isGranted('ProductSelling.Blogs.Delete'),
                                 confirmMessage: function (data) {
-                                    return l('Category:CategoryDeletionConfirmationMessage', data.record.name);
+                                    return l('Blog:BlogDeletionConfirmationMessage', data.record.name);
                                 },
                                 action: function (data) {
                                     categoryService.delete(data.record.id)
@@ -41,6 +41,15 @@
                     }
                 },
                 {
+                    title: l('Blog:MainImage'),
+                    data: "mainImageUrl",
+                    render: function (data) {
+                        return data ? '<img src="' + data + '" alt="Main Image" style="max-height: 100px; max-width: 100px;" />' : '';
+                    }
+
+
+                },
+                {
                     title: l('Blog:Title'),
                     data: "title"
                 },
@@ -52,6 +61,7 @@
                     title: l('Blog:Author'),
                     data: "author"
                 },
+                
                 {
                     title: l('Blog:PublishedDate'),
                     data: "publishedDate",
@@ -59,6 +69,7 @@
                         return data ? moment(data).format('YYYY-MM-DD') : '';
                     }
                 }
+
             ]
         })
     );

@@ -57,7 +57,9 @@ namespace Acme.ProductSelling.Blogs
                 input.Content,
                 input.PostedOn,
                 blogger,
-                input.Slug
+                input.Slug,
+                input.ImageUrl,
+                _guidGenerator.Create()
             );
 
             var newBlog = await _repository.InsertAsync(blog, autoSave: true);

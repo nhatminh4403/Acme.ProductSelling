@@ -9,7 +9,7 @@ using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 namespace Acme.ProductSelling.Web.Pages.Products
 {
     [AllowAnonymous]
-    public class ProductsByNameModel : AbpPageModel
+    public class ProductsByNameModel : ProductSellingPageModel
     {
         [BindProperty(SupportsGet = true)]
         [FromQuery(Name = "name")]

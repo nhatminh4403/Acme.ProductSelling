@@ -14,7 +14,7 @@ using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 namespace Acme.ProductSelling.Web.Pages.Products
 {
 
-    public class ProductByPriceModel : AbpPageModel
+    public class ProductByPriceModel : ProductSellingPageModel
     {
         private readonly IProductAppService _productAppService;
         private readonly ICategoryRepository _categoryRepository;

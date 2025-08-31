@@ -10,7 +10,7 @@ using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 namespace Acme.ProductSelling.Web.Pages.Products
 {
     [AllowAnonymous]
-    public class ProductsByCategoryModel : AbpPageModel
+    public class ProductsByCategoryModel : ProductSellingPageModel
     {
         private readonly IProductAppService _productAppService;
         private readonly ICategoryAppService _categoryAppService;

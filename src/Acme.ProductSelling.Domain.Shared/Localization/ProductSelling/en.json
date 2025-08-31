@@ -217,6 +217,8 @@
     "Order:SuccessfullyDeleted": "Order successfully deleted.",
     "Order:OrderUpdatedSuccessfully": "Order updated successfully.",
     "Order:AreYouSureYouWantToConfirmCodPaymentForOrder": "Are you sure you want to confirm COD payment for order {0}?",
+    "Order:OrderCancelledSuccessfully": "Order Successfully Cancelled",
+
 
     "Payment:Callback": "Payment Result",
     "Payment:PaymentCallback": "Payment Callback",

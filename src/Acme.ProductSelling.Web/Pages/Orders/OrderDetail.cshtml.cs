@@ -10,7 +10,7 @@ using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 namespace Acme.ProductSelling.Web.Pages.Orders
 {
     [Authorize]
-    public class OrderDetailModel : AbpPageModel
+    public class OrderDetailModel : ProductSellingPageModel
     {
         private readonly IOrderAppService _orderAppService;
 
@@ -46,7 +46,7 @@ namespace Acme.ProductSelling.Web.Pages.Orders
             try
             {
                 await _orderAppService.DeleteAsync(orderId);
-                Alerts.Success(L["OrderCancelledSuccessfully"]);
+                Alerts.Success(L["Order:OrderCancelledSuccessfully"]);
 
                 // Tải lại dữ liệu trang sau khi hủy
                 return RedirectToPage(new { id = orderId });

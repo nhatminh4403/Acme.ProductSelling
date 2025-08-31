@@ -6,7 +6,7 @@ using Volo.Abp.Domain.Entities;
 
 namespace Acme.ProductSelling.Web.Pages.Products
 {
-    public class ProductDetailModel : AbpPageModel
+    public class ProductDetailModel : ProductSellingPageModel
     {
         //[BindProperty(SupportsGet = true)]
         //public Guid Id { get; set; }

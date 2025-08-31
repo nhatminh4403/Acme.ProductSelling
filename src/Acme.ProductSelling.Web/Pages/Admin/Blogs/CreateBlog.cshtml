@@ -1,7 +1,82 @@
 ﻿@page "/admin/blogs/create"
 @model Acme.ProductSelling.Web.Pages.Admin.Blogs.CreateBlogModel
+@using Acme.ProductSelling.Localization;
+@using Microsoft.Extensions.Localization
+
+@inject IStringLocalizer<ProductSellingResource> L
+
 @{
+    ViewData["Title"] = L["UI:Title:CreateNewBlog"];
 }
+@section styles {
+    <abp-style src="/lib/summernote/summernote-bs5.min.css"></abp-style>
+    <link href="~" rel="stylesheet" />
+}
+
+@section scripts {
+    <abp-script src="/lib/summernote/summernote-bs5.min.js"></abp-script>
+    <abp-script>
+        <script>
+            $(function () {
+                // ID bây giờ sẽ là BlogPost_Content vì [BindProperty] có tên là "BlogPost"
+                $('#BlogPost_Content').summernote({
+                    height: 300,
+                    toolbar: [
+                       ['style', ['style']],
+                       ['font', ['bold', 'underline', 'clear']],
+                       ['para', ['ul', 'ol', 'paragraph']],
+                       ['insert', ['link', 'picture']],
+                       ['view', ['fullscreen', 'codeview']]
+                    ]
+                });
+            });
+        </script>
+    </abp-script>
+    <abp-script src="/Pages/Admin/Blogs/CreateBlog.js"/>
+       
+}
+
+<abp-card>
+
+    <abp-card-header>
+        <abp-card-title>
+            @L["UI:Title:CreateNewBlog"]
+        </abp-card-title>
+    </abp-card-header>
+
+    <abp-card-body>
+        <form method="post">
+            <div class="mb-3">
+                <label asp-for="BlogPost.Title" class="form-label"></label>
+                <abp-input asp-for="BlogPost.Title" class="form-control" />
+                <span asp-validation-for="BlogPost.Title" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="BlogPost.Content" class="form-label"></label>
+                <textarea asp-for="BlogPost.Content" class="form-control"></textarea>
+                <span asp-validation-for="BlogPost.Content" class="text-danger"></span>
+            </div>
+
+            <abp-input asp-for="BlogPost.Slug" class="form-control" hidden/>
+            <span asp-validation-for="BlogPost.Slug" class="text-danger"></span>
+            <abp-input asp-for="BlogPost.PostedOn" hidden></abp-input>
+            <abp-input asp-for="BlogPost.Author" hidden></abp-input>
+            <span asp-validation-for="BlogPost.Author" class="text-danger"></span>
+            <div class="mb-3">
+                <abp-input asp-for="CoverImageFile" type="file">
+                </abp-input>
+
+                <span asp-validation-for="CoverImageFile" class="text-danger"></span>
+            </div>
+            
+
+
+            <button type="submit" class="btn btn-primary">@L["UI:Button:Create"]</button>
+            <a asp-page="/Admin/Blogs/Index" class="btn btn-secondary">@L["UI:Button:Cancel"]</a>
+        </form>
+
+    </abp-card-body>
+</abp-card>
 
 <form>
     <input type="text" name="name" value="" />

@@ -13,5 +13,8 @@ namespace Acme.ProductSelling.Blogs
         public string Slug { get; set; }
         public string? ImageUrl { get; set; }
         public DateTime PostedOn { get; set; }
+        public string Author { get; set; }
+
+        public Guid? ImageId { get; set; } // Thêm thuộc tính ImageId
     }
 }

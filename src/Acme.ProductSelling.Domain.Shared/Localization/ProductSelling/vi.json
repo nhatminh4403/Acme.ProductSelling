@@ -217,7 +217,7 @@
     "Order:SuccessfullyDeleted": "Đơn hàng đã được xóa thành công.",
     "Order:OrderUpdatedSuccessfully": "Cập nhật đơn hàng thành công.",
     "Order:AreYouSureYouWantToConfirmCodPaymentForOrder": "Bạn có chắc chắn muốn xác nhận thanh toán COD cho đơn hàng {0} không?",
-
+    "Order:OrderCancelledSuccessfully": "Hủy đơn hàng thành công",
     "Payment:Callback": "Kết quả thanh toán",
     "Payment:PaymentCallback": "Kết quả thanh toán",
     "Payment:Successful": "Thanh toán thành công",
