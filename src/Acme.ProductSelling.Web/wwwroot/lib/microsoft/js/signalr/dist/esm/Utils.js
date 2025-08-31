@@ -2,9 +2,10 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 import { LogLevel } from "./ILogger";
 import { NullLogger } from "./Loggers";
+import { VERSION } from "./pkg-version";
 // Version token that will be replaced by the prepack command
 /** The version of the SignalR client. */
-export const VERSION = "8.0.7";
+export { VERSION };
 /** @private */
 export class Arg {
     static isRequired(val, name) {

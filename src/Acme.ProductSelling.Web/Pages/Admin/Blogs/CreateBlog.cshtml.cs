@@ -21,7 +21,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
         public async Task<IActionResult> OnPostAsync(CreateAndUpdateBlogDto input)
         {
             await _blogAppService.CreateAsync(input);
-            return RedirectToPage("./Index");
+            return RedirectToPage("/Admin/Blogs/Index");
         }
     }
 }

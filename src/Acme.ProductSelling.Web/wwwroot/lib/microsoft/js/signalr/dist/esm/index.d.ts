@@ -15,5 +15,3 @@ export { JsonHubProtocol } from "./JsonHubProtocol";
 export { Subject } from "./Subject";
 export { IRetryPolicy, RetryContext } from "./IRetryPolicy";
 export { VERSION } from "./Utils";
-
-export as namespace signalR;

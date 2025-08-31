@@ -3,8 +3,9 @@ import { ILogger, LogLevel } from "./ILogger";
 import { IStreamSubscriber, ISubscription } from "./Stream";
 import { Subject } from "./Subject";
 import { IHttpConnectionOptions } from "./IHttpConnectionOptions";
+import { VERSION } from "./pkg-version";
 /** The version of the SignalR client. */
-export declare const VERSION: string;
+export { VERSION };
 /** @private */
 export declare class Arg {
     static isRequired(val: any, name: string): void;

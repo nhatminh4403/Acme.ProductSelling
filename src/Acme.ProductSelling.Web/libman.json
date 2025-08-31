@@ -5,6 +5,11 @@
     {
       "library": "@microsoft/signalr@latest",
       "destination": "wwwroot/lib/microsoft/js/signalr/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "summernote@0.9.1",
+      "destination": "wwwroot/lib/summernote/"
     }
   ]
 }

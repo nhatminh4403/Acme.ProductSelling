@@ -796,16 +796,16 @@ class HubConnection {
         if (nonblocking) {
             if (streamIds.length !== 0) {
                 return {
+                    target: methodName,
                     arguments: args,
                     streamIds,
-                    target: methodName,
                     type: IHubProtocol_1.MessageType.Invocation,
                 };
             }
             else {
                 return {
-                    arguments: args,
                     target: methodName,
+                    arguments: args,
                     type: IHubProtocol_1.MessageType.Invocation,
                 };
             }
@@ -815,18 +815,18 @@ class HubConnection {
             this._invocationId++;
             if (streamIds.length !== 0) {
                 return {
+                    target: methodName,
                     arguments: args,
                     invocationId: invocationId.toString(),
                     streamIds,
-                    target: methodName,
                     type: IHubProtocol_1.MessageType.Invocation,
                 };
             }
             else {
                 return {
+                    target: methodName,
                     arguments: args,
                     invocationId: invocationId.toString(),
-                    target: methodName,
                     type: IHubProtocol_1.MessageType.Invocation,
                 };
             }
@@ -892,18 +892,18 @@ class HubConnection {
         this._invocationId++;
         if (streamIds.length !== 0) {
             return {
+                target: methodName,
                 arguments: args,
                 invocationId: invocationId.toString(),
                 streamIds,
-                target: methodName,
                 type: IHubProtocol_1.MessageType.StreamInvocation,
             };
         }
         else {
             return {
+                target: methodName,
                 arguments: args,
                 invocationId: invocationId.toString(),
-                target: methodName,
                 type: IHubProtocol_1.MessageType.StreamInvocation,
             };
         }

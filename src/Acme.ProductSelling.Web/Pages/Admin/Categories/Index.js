@@ -1,5 +1,5 @@
 ﻿$(function () { 
-     var categoryService = acme.productSelling.categories.category; 
+    var categoryService = acme.productSelling.categories.category; 
     var l = abp.localization.getResource('ProductSelling'); 
 
     var createModal = new abp.ModalManager(abp.appPath + 'Admin/Categories/CreateModal'); 

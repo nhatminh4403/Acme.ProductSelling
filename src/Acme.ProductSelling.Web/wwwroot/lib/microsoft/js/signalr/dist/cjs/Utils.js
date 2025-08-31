@@ -5,9 +5,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getGlobalThis = exports.getErrorString = exports.constructUserAgent = exports.getUserAgentHeader = exports.ConsoleLogger = exports.SubjectSubscription = exports.createLogger = exports.sendMessage = exports.isArrayBuffer = exports.formatArrayBuffer = exports.getDataDetail = exports.Platform = exports.Arg = exports.VERSION = void 0;
 const ILogger_1 = require("./ILogger");
 const Loggers_1 = require("./Loggers");
-// Version token that will be replaced by the prepack command
-/** The version of the SignalR client. */
-exports.VERSION = "8.0.7";
+const pkg_version_1 = require("./pkg-version");
+Object.defineProperty(exports, "VERSION", { enumerable: true, get: function () { return pkg_version_1.VERSION; } });
 /** @private */
 class Arg {
     static isRequired(val, name) {
@@ -172,7 +171,7 @@ function getUserAgentHeader() {
     if (Platform.isNode) {
         userAgentHeaderName = "User-Agent";
     }
-    return [userAgentHeaderName, constructUserAgent(exports.VERSION, getOsName(), getRuntime(), getRuntimeVersion())];
+    return [userAgentHeaderName, constructUserAgent(pkg_version_1.VERSION, getOsName(), getRuntime(), getRuntimeVersion())];
 }
 exports.getUserAgentHeader = getUserAgentHeader;
 /** @private */
