@@ -1,5 +1,5 @@
 ﻿$(function () {
-    var categoryService = acme.productSelling.categories.category;
+    var categoryService = acme.productSelling.blogs.blog;
     var l = abp.localization.getResource('ProductSelling');
 
     var dataTable = $('#BlogsTable').DataTable(

@@ -89,7 +89,7 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                @L["Admin:EarningsLastMonth"]
+                                @L["Admin:Statistics:EarningsLastMonth"]
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalMoneyLastMonth VND</div>
                         </div>
@@ -107,7 +107,7 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                @L["Admin:EarningsThisMonth"]
+                                @L["Admin:Statistics:EarningsThisMonth"]
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalMoneyThisMonth VND</div>
                         </div>
@@ -125,7 +125,7 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                @L["Admin:EarningsLastYear"]
+                                @L["Admin:Statistics:EarningsLastYear"]
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalMoneyLastYear VND</div>
                         </div>
@@ -142,7 +142,7 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                @L["Admin:EarningsAnnual"]
+                                @L["Admin:Statistics:EarningsAnnual"]
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotatOrderPrice VND</div>
                         </div>
@@ -161,16 +161,16 @@
                     <div class="mb-2 mb-md-0">
                         <h6 id="chartTitle" class="m-0 text-white font-weight-bold">
                             <i class="fas fa-chart-line mr-2"></i>
-                            @L["Admin:YearlyRevenueStatistics"]: @Model.SelectedYear
+                            @L["Admin:Statistics:YearlyRevenueStatistics"]: @Model.SelectedYear
                         </h6>
                         <small class="text-white-50">
                             <i class="fas fa-chart-area mr-1"></i>
-                            @L["Admin:MonthlyRevenue"]
+                            @L["Admin:Statistics:MonthlyRevenue"]
                         </small>
                     </div>
                     <div class="mt-3 mt-md-0">
                         <div class="d-inline-flex align-items-center">
-                            <label class="text-white mr-2 mb-0 font-weight-bold">@L["Admin:ChooseTheYearToDisplay"]:</label>
+                            <label class="text-white mr-2 mb-0 font-weight-bold">@L["Admin:Statistics:ChooseYear"]:</label>
                             <select id="yearSelect" class="form-control" onchange="changeYear()" style="width: auto;">
                                 @foreach (var year in Model.AvailableYears)
                                 {
@@ -184,14 +184,14 @@
                 <div class="card-body">
                     <div class="chart-loading">
                         <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
-                        <p class="mt-2">@L["Admin:Loading..."]</p>
+                        <p class="mt-2">@L["Admin:Statistics:Loading..."]</p>
                     </div>
                     <div class="chart-area" style="transition: opacity 0.3s ease;">
                         <canvas id="myAreaChart"></canvas>
                     </div>
                     <hr>
                     <div id="yearTotal" class="text-center text-muted">
-                        @L["Admin:TotalRevenueForYear"] @Model.SelectedYear: @Model.GetTotalForYear(Model.SelectedYear).ToString("N0") VND
+                        @L["Admin:Statistics:TotalRevenueForYear"] @Model.SelectedYear: @Model.GetTotalForYear(Model.SelectedYear).ToString("N0") VND
                     </div>
                 </div>
             </div>

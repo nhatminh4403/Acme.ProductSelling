@@ -48,7 +48,7 @@
                                         });
                                 }
                             },
-                            {
+                            /*{
                                 text: l('ConfirmCodPayment'),
                                 // Nút chỉ hiện khi:
                                 // 1. User có quyền.
@@ -56,7 +56,7 @@
                                 // 3. Trạng thái thanh toán đang là PendingOnDelivery.
                                 visible: function (data) {
                                     return abp.auth.isGranted('ProductSelling.Orders.ConfirmCodPayment') &&
-                                        data.record.paymentMethod === 'COD' &&
+                                        data.record.paymentMethod === &&
                                         data.record.paymentStatus === 'PendingOnDelivery'; // Cần thêm PaymentStatus vào OrderDto
                                 },
                                 // Yêu cầu xác nhận trước khi thực hiện
@@ -71,7 +71,7 @@
                                             abp.notify.success(l('Order:OrderUpdatedSuccessfully'));
                                         });
                                 }
-                            }
+                            }*/
                         ]
                     }
                 }
@@ -115,7 +115,11 @@
                         var badgeClass = getStatusBadgeClass(data);
                         return `<span class="badge ${badgeClass}">${statusText}</span>`;
                     }
-                }
+                },
+                {
+                    title: l('Order:PaymentMethod'),
+                    data: "paymentMethod"
+                },
                 {
                     title: l('Order:PaymentStatus'),
                     data: "paymentStatus", // Cần thêm thuộc tính này vào OrderDto

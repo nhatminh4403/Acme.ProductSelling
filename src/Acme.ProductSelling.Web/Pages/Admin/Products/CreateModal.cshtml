@@ -47,13 +47,23 @@
                         <label class="col-md-2 col-form-label">@L["Product:ImageSource"]</label>
                         <div class="col-md-3">
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="imageSourceType" id="imageSourceUrl" value="url" checked="@(Model.Product?.ProductImageFile == null || Model.Product.ProductImageFile.Length == 0)">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       name="imageSourceType"
+                                       id="imageSourceUrl"
+                                       value="url"
+                                       checked="@(Model.Product?.ProductImageFile == null || Model.Product.ProductImageFile.Length == 0)">
                                 <label class="form-check-label" for="imageSourceUrl">
                                     @L["Product:ImageUrlSource.Url"]
                                 </label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="imageSourceType" id="imageSourceUpload" value="upload" checked="@(Model.Product?.ProductImageFile != null && Model.Product.ProductImageFile.Length > 0)">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       name="imageSourceType"
+                                       id="imageSourceUpload"
+                                       value="upload"
+                                       checked="@(Model.Product?.ProductImageFile != null && Model.Product.ProductImageFile.Length > 0)">
                                 <label class="form-check-label" for="imageSourceUpload">
                                     @L["Product:ImageUrlSource.Upload"]
                                 </label>
@@ -76,7 +86,7 @@
                     <div class="mb-3" id="imagePreviewContainer" style="display: none; text-align: center;">
                         <img id="imagePreview" src="#" alt="Image preview" style="max-height: 150px; max-width: 100%; border: 1px solid #ddd; padding: 5px; margin-top: 5px;" loading="lazy" />
                     </div>
-                   <abp-input asp-for="Product.UrlSlug" readonly="true"></abp-input>
+                    <abp-input asp-for="Product.UrlSlug" readonly="true"></abp-input>
                     <div class="row">
                         <div class="col-md-6">
                             <abp-select asp-for="Product.CategoryId"

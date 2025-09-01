@@ -61,10 +61,8 @@ public class ProductSellingMenuContributor : IMenuContributor
             ProductSellingMenus.Blogs,
             l["Admin:Menu:Blogs"],
             icon: "fa-solid fa-list",
-            url: "/admin/blogs",
-            order: 5,
-            requiredPermissionName: ProductSellingPermissions.Blogs.Default
-            
+            url: "/admin/blogs"
+           
             ));
         var administration = context.Menu.GetAdministration();
         administration.Order = 6;

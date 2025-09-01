@@ -258,57 +258,6 @@ class AspNetCoreCultureHelper {
         return null;
     }
 
-    static createCultureSwitcher() {
-        // Tạo culture switcher buttons
-        const currentCulture = CultureHelper.getCurrentCulture();
-        const switcher = document.createElement('div');
-        switcher.className = 'culture-switcher';
-        switcher.innerHTML = `
-            <button onclick="AspNetCoreCultureHelper.switchCulture('en')" class="${currentCulture === 'en' ? 'active' : ''}">
-                English
-            </button>
-            <button onclick="AspNetCoreCultureHelper.switchCulture('vi')" class="${currentCulture === 'vi' ? 'active' : ''}">
-                Tiếng Việt
-            </button>
-        `;
-
-        // Style cho switcher
-        const style = document.createElement('style');
-        style.textContent = `
-            .culture-switcher {
-                position: fixed;
-                top: 10px;
-                right: 10px;
-                z-index: 1000;
-                background: white;
-                padding: 10px;
-                border-radius: 5px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            }
-            .culture-switcher button {
-                margin: 0 5px;
-                padding: 5px 10px;
-                border: 1px solid #ccc;
-                background: #f8f9fa;
-                cursor: pointer;
-                border-radius: 3px;
-            }
-            .culture-switcher button.active {
-                background: #007bff;
-                color: white;
-            }
-            .culture-switcher button:hover {
-                background: #e9ecef;
-            }
-            .culture-switcher button.active:hover {
-                background: #0056b3;
-            }
-        `;
-
-        document.head.appendChild(style);
-        document.body.appendChild(switcher);
-    }
-
     static switchCulture(newCulture) {
         if (['en', 'vi'].includes(newCulture)) {
             console.log(`🔄 Switching to culture: ${newCulture}`);
@@ -345,7 +294,6 @@ class AspNetCoreCultureHelper {
 // Initialize khi DOM ready
 document.addEventListener('DOMContentLoaded', function () {
     // Tạo culture switcher để test
-    AspNetCoreCultureHelper.createCultureSwitcher();
 
     // Monitor cookie changes
     AspNetCoreCultureHelper.monitorCookieChanges();

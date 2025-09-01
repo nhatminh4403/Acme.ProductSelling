@@ -62,7 +62,7 @@
     "Login:ForgotPassword": "Forgot password?",
     "Login:CreateAccount": "Create Account",
     "Login:LoginHere": "Login Here",
-
+    
     "Register:Default": "Register",
     "Register:Processing": "Your registration request is being processed. Please wait...",
     "Register:Initiated": "Registration Initiated",
@@ -254,6 +254,7 @@
     "Admin:Menu:Orders": "Orders",
     "Admin:Menu:Categories": "Categories",
     "Admin:Menu:Manufacturers": "Manufacturers",
+    "Admin:Menu:Blogs": "Blogs",
     "Admin:Statistics:EarningsAnnual": "Earnings (Annual)",
     "Admin:Statistics:EarningsLastMonth": "Earnings (Last Month)",
     "Admin:Statistics:EarningsThisMonth": "Earnings (This Month)",
@@ -266,27 +267,25 @@
     "Admin:Statistics:Monthly": "Monthly Revenue",
     "Admin:Statistics:MonthlyRevenue": "Monthly Revenue",
     "Admin:Statistics:ChooseTheYearToDisplay": "Choose the year to display:",
-    "Admin:Statistics:Loading": "Loading data...",
     "Admin:Statistics:Loading...": "Loading...",
-    "Admin:Statistics:MonthlyByYear": "Monthly Revenue By Year",
     "Admin:Statistics:MonthlyRevenueByYear": "Monthly Revenue by Year",
     "Admin:Statistics:ForYear": "Statistics For Year",
     "Admin:Statistics:StatisticsForYear": "Statistics for Year",
     "Admin:Statistics:TotalForYear": "Total Revenue For The Year",
     "Admin:Statistics:TotalRevenueForYear": "Total Revenue for Year",
     "Admin:Statistics:ChooseYear": "Choose The Year To Display",
-    "Admin:Months:Jan": "JAN",
-    "Admin:Months:Feb": "FEB",
-    "Admin:Months:Mar": "MAR",
-    "Admin:Months:Apr": "APR",
-    "Admin:Months:May": "MAY",
-    "Admin:Months:Jun": "JUN",
-    "Admin:Months:Jul": "JUL",
-    "Admin:Months:Aug": "AUG",
-    "Admin:Months:Sep": "SEP",
-    "Admin:Months:Oct": "OCT",
-    "Admin:Months:Nov": "NOV",
-    "Admin:Months:Dec": "DEC",
+    "Admin:Months:1": "JAN",
+    "Admin:Months:2": "FEB",
+    "Admin:Months:3": "MAR",
+    "Admin:Months:4": "APR",
+    "Admin:Months:5": "MAY",
+    "Admin:Months:6": "JUN",
+    "Admin:Months:7": "JUL",
+    "Admin:Months:8": "AUG",
+    "Admin:Months:9": "SEP",
+    "Admin:Months:10": "OCT",
+    "Admin:Months:11": "NOV",
+    "Admin:Months:12": "DEC",
     "Admin:Panel": "Admin Panel",
 
     "Category:Categories": "Categories",
@@ -409,6 +408,39 @@
     "ErrorOccurred": "An error has occurred!",
     "SorryErrorOccurred": "Sorry, an error occurred while processing your request.",
     "Permission:Orders.ConfirmCodPayment": "Confirm COD Payment",
-    "Home:CategoryList": "Category List"
+    "Home:CategoryList": "Category List",
+
+
+    "Permission:Products.Create": "Create Products",
+    "Permission:Products.Edit": "Edit Products",
+    "Permission:Products.Delete": "Delete Products",
+    "Permission:Product": "Product",
+
+    "Permission:Orders": "Orders",
+    "Permission:Orders.Create": "Create Orders",
+    "Permission:Orders.Edit": "Edit Orders",
+    "Permission:Orders.Delete": "Delete Orders",
+
+    "Permission:Categories": "Categories",
+    "Permission:Categories.Create": "Create Categories",
+    "Permission:Categories.Edit": "Edit Categories",
+    "Permission:Categories.Delete": "Delete Categories",
+
+    "Permission:Manufacturers": "Manufacturers",
+    "Permission:Manufacturers.Create": "Create Manufacturers",
+    "Permission:Manufacturers.Edit": "Edit Manufacturers",
+    "Permission:Manufacturers.Delete": "Delete Manufacturers",
+
+    "Permission:Blogs": "Blogs",
+    "Permission:Blogs.Create": "Create Blogs",
+    "Permission:Blogs.Edit": "Edit Blogs",
+    "Permission:Blogs.Delete": "Delete Blogs",
+
+    "Permission:Comments": "Comments",
+    "Permission:Comments.Create": "Create Comments",
+    "Permission:Comments.Edit": "Edit Comments",
+    "Permission:Comments.Approve": "Approve Comments",
+    "Permission:Comments.Delete": "Delete Comments"
+
   }
 }

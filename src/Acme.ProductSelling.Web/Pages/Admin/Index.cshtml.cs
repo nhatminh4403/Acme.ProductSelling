@@ -87,7 +87,7 @@ namespace Acme.ProductSelling.Web.Admin.Pages
 
                 for (int month = 1; month <= 12; month++)
                 {
-                    var monthLocalizer = _localizer["Admin:Month" + month];
+                    var monthLocalizer = _localizer["Admin:Months:" + month];
 
                     monthlyData.Add(new MoneyStatistics
                     {

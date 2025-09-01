@@ -45,9 +45,9 @@ namespace Acme.ProductSelling.Blogs
             }
             return ObjectMapper.Map<Blog, BlogDto>(blog);
         }
-
+/*
         [Authorize(Roles = IdentityRoleConsts.Blogger, Policy = ProductSellingPermissions.Blogs.Create)]
-        [Authorize(Roles = IdentityRoleConsts.Admin, Policy = ProductSellingPermissions.Blogs.Create)]
+        [Authorize(Roles = IdentityRoleConsts.Admin, Policy = ProductSellingPermissions.Blogs.Create)]*/
         public override async Task<BlogDto> CreateAsync(CreateAndUpdateBlogDto input)
         {
             var blogger = CurrentUser.UserName ?? "Anonymous";

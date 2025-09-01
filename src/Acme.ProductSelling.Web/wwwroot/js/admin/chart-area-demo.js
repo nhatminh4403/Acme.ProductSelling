@@ -32,7 +32,7 @@ function initializeChart() {
         data: {
             labels: allYearlyData[selectedYear].map(item => item.month),
             datasets: [{
-                label:  l('Admin:MonthlyRevenueByYear') + ' ' + selectedYear,
+                label: l('Admin:Statistics:MonthlyRevenueByYear') + ' ' + selectedYear,
                 lineTension: 0.3,
                 backgroundColor: "rgba(78, 115, 223, 0.05)",
                 borderColor: "rgba(78, 115, 223, 1)",
@@ -138,10 +138,10 @@ function changeYear() {
 
     var yearData = allYearlyData[newYear] || [];
 
-    document.getElementById('chartTitle').textContent = l('Admin:StatisticsForYear') +': ' + newYear;
+    document.getElementById('chartTitle').textContent = l('Admin:Statistics:StatisticsForYear') +': ' + newYear;
 
     var yearTotal = yearData.reduce((sum, month) => sum + month.moneyTotal, 0);
-    document.getElementById('yearTotal').textContent = l('Admin:TotalRevenueForYear')+' ' + newYear + ': ' + number_format(yearTotal) + ' VND';
+    document.getElementById('yearTotal').textContent = l('Admin:Statistics:TotalRevenueForYear')+' ' + newYear + ': ' + number_format(yearTotal) + ' VND';
 
     setTimeout(() => {
         initializeChart(yearData);

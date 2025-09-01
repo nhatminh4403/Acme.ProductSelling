@@ -33,6 +33,16 @@ public class ProductSellingPermissionDefinitionProvider : PermissionDefinitionPr
         manufacturersPermission.AddChild(ProductSellingPermissions.Manufacturers.Edit, L("Permission:Manufacturers.Edit"));
         manufacturersPermission.AddChild(ProductSellingPermissions.Manufacturers.Delete, L("Permission:Manufacturers.Delete"));
 
+        var blogsPermission = myGroup.AddPermission(ProductSellingPermissions.Blogs.Default, L("Permission:Blogs"));
+        blogsPermission.AddChild(ProductSellingPermissions.Blogs.Create, L("Permission:Blogs.Create"));
+        blogsPermission.AddChild(ProductSellingPermissions.Blogs.Edit, L("Permission:Blogs.Edit"));
+        blogsPermission.AddChild(ProductSellingPermissions.Blogs.Delete, L("Permission:Blogs.Delete"));
+        //blogsPermission.AddChild(ProductSellingPermissions.Blogs.Publish, L("Permission:Blogs.Publish"));
+        var commentsPermission = myGroup.AddPermission(ProductSellingPermissions.Comments.Default, L("Permission:Comments"));
+        commentsPermission.AddChild(ProductSellingPermissions.Comments.Create, L("Permission:Comments.Create"));
+        commentsPermission.AddChild(ProductSellingPermissions.Comments.Edit, L("Permission:Comments.Edit"));
+        commentsPermission.AddChild(ProductSellingPermissions.Comments.Delete, L("Permission:Comments.Delete"));
+        commentsPermission.AddChild(ProductSellingPermissions.Comments.Approve, L("Permission:Comments.Approve"));
     }
 
     private static LocalizableString L(string name)

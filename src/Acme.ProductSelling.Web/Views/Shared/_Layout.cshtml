@@ -103,7 +103,7 @@
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                 <li><a class="dropdown-item" asp-page="/Account/Manage/Index">@L["Account:ManageYourProfile"]</a></li>
-                                <li><a class="dropdown-item" asp-page="/Orders/OrderHistory">@L["Product:MyOrders"]</a></li>
+                                <li><a class="dropdown-item" asp-page="/Orders/OrderHistory">@L["Order:MyOrders"]</a></li>
                                 @if (hasAdminPermission || CurrentUser.IsInRole("Admin") || CurrentUser.IsInRole("Admin".ToLower()))
                                 {
                                     <li><a class="dropdown-item" asp-page="/Admin/Index">@L["Admin:Panel"]</a></li>
@@ -318,7 +318,7 @@
                         @L["CloseButton"]
                     </button><button type="submit" class="btn btn-primary"
                                      form="loginForm">
-                        @L["Login:LoginButton"]
+                        @L["Login:Default"]
                     </button>
                 </div>
             </div>

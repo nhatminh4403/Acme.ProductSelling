@@ -1,13 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <Import Project="..\..\common.props" />
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.7" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.2" />
@@ -16,21 +13,20 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.7" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Volo.Abp.Autofac" Version="9.2.3" />
     <ProjectReference Include="..\Acme.ProductSelling.EntityFrameworkCore\Acme.ProductSelling.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\Acme.ProductSelling.Application.Contracts\Acme.ProductSelling.Application.Contracts.csproj" />
+    <ProjectReference Include="../Acme.ProductSelling.Application/Acme.ProductSelling.Application.csproj" />
+    <ProjectReference Include="../Acme.ProductSelling.Domain/Acme.ProductSelling.Domain.csproj" />
+    <ProjectReference Include="../Acme.ProductSelling.Domain.Shared/Acme.ProductSelling.Domain.Shared.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Remove="Logs\**" />
     <Content Remove="Logs\**" />
-
     <EmbeddedResource Remove="Logs\**" />
     <None Remove="Logs\**" />
   </ItemGroup>
-
   <ItemGroup>
     <None Remove="appsettings.json" />
     <Content Include="appsettings.json">
@@ -43,5 +39,4 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
 </Project>
