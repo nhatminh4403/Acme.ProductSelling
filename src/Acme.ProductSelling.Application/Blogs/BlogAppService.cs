@@ -14,7 +14,7 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
-
+using Ganss.Xss;
 namespace Acme.ProductSelling.Blogs
 {
     public class BlogAppService : CrudAppService<Blog, BlogDto, Guid, PagedAndSortedResultRequestDto, CreateAndUpdateBlogDto>,
@@ -23,12 +23,14 @@ namespace Acme.ProductSelling.Blogs
         private readonly IRepository<Blog, Guid> _repository;
         private readonly IGuidGenerator _guidGenerator;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public BlogAppService(IRepository<Blog, Guid> repository, IGuidGenerator guidGenerator, IWebHostEnvironment webHostEnvironment) : base(repository)
+        private readonly IHtmlSanitizer _HtmlSanitizer;
+        public BlogAppService(IRepository<Blog, Guid> repository, IGuidGenerator guidGenerator, IWebHostEnvironment webHostEnvironment, IHtmlSanitizer htmlSanitizer) : base(repository)
         {
             _repository = repository;
             _guidGenerator = guidGenerator;
             ConfigurePolicies();
             _webHostEnvironment = webHostEnvironment;
+            _HtmlSanitizer = htmlSanitizer;
         }
 
         private void ConfigurePolicies()
@@ -54,13 +56,13 @@ namespace Acme.ProductSelling.Blogs
         [Authorize(Roles = IdentityRoleConsts.Admin, Policy = ProductSellingPermissions.Blogs.Create)]*/
         public override async Task<BlogDto> CreateAsync(CreateAndUpdateBlogDto input)
         {
-            var blogger = CurrentUser.UserName ?? "Anonymous";
+            input.Content = _HtmlSanitizer.Sanitize(input.Content);
             var blog = new Blog(
                 _guidGenerator.Create(),
                 input.Title,
                 input.Content,
                 input.PostedOn,
-                blogger,
+                input.Author,
                 input.Slug,
                 input.ImageUrl,
                 _guidGenerator.Create()
@@ -98,7 +100,7 @@ namespace Acme.ProductSelling.Blogs
         {
             var blog = await _repository.GetAsync(id);
             blog.Title = input.Title;
-            blog.Content = input.Content;
+            blog.Content = _HtmlSanitizer.Sanitize(input.Content);
             blog.PublishedDate = input.PostedOn;
             blog.UrlSlug = input.Slug;
             //input.ImageUrl = input.ImageUrl;

@@ -1,0 +1,44 @@
+﻿@page "/admin/blogs/details/{Id:Guid}"
+@model Acme.ProductSelling.Web.Pages.Admin.Blogs.DetailsModel
+
+
+@using Acme.ProductSelling.Localization
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<ProductSellingResource> L
+
+@{
+    ViewData["Title"] = L["UI:Title:Admin:BlogDetails"];
+}
+
+
+<abp-card>
+    <abp-card-header>
+        <abp-card-title>@Model.Blog.Title</abp-card-title>
+        <div class="text-muted small">
+            <span>@L["Author"]: @Model.Blog.Author</span> |
+            <span>@L["PostedOn"]: @Model.Blog.PublishedDate.ToShortDateString()</span>
+        </div>
+    </abp-card-header>
+
+    <abp-card-body>
+        <!-- Hiển thị ảnh đại diện nếu có -->
+        @if (!string.IsNullOrEmpty(Model.Blog.MainImageUrl))
+        {
+            <div class="mb-4 text-center">
+                <img src="@Model.Blog.MainImageUrl" class="img-fluid rounded" alt="@Model.Blog.Title" style="max-height: 400px;" />
+            </div>
+        }
+
+        <!-- Hiển thị nội dung HTML -->
+        <div class="blog-content">
+            @* DÙNG @Html.Raw() ĐỂ RENDER HTML CHO ĐÚNG *@
+            @Html.Raw(Model.Blog.Content)
+        </div>
+
+    </abp-card-body>
+
+    <abp-card-footer>
+        <a asp-page="./Index" class="btn btn-secondary">@L["BackToList"]</a>
+        <a asp-page="./Edit" asp-route-id="@Model.Blog.Id" class="btn btn-primary">@L["Edit"]</a>
+    </abp-card-footer>
+</abp-card>

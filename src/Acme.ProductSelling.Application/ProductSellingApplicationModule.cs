@@ -2,6 +2,8 @@ using Acme.ProductSelling.EntityFrameworkCore;
 using Acme.ProductSelling.PaymentGateway.MoMo;
 using Acme.ProductSelling.PaymentGateway.PayPal;
 using Acme.ProductSelling.PaymentGateway.VnPay;
+using Ganss.Xss;
+using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Account;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.FeatureManagement;
@@ -33,6 +35,6 @@ public class ProductSellingApplicationModule : AbpModule
         {
             options.AddMaps<ProductSellingApplicationModule>();
         });
-
+        context.Services.AddSingleton<IHtmlSanitizer>(new HtmlSanitizer());
     }
 }

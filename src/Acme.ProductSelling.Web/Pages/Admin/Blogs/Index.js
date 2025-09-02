@@ -50,7 +50,12 @@
                 },
                 {
                     title: l('Blog:Title'),
-                    data: "title"
+                    data: "title",
+                    render: function (data, type, row) {
+                        // Biến tiêu đề thành một link trỏ đến trang chi tiết
+                        var detailUrl = '/admin/blogs/details/' + row.id;
+                        return '<a href="' + detailUrl + '">' + data + '</a>';
+                    }
                 },
                 {
                     title: l('Blog:Author'),

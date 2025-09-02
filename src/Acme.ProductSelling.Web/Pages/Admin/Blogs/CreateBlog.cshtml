@@ -50,18 +50,12 @@
                 <abp-input asp-for="BlogPost.Title" class="form-control" />
                 <span asp-validation-for="BlogPost.Title" class="text-danger"></span>
             </div>
-            <div class="mb-3">
-                <label asp-for="BlogPost.Content" class="form-label"></label>
-                <textarea asp-for="BlogPost.Content" class="form-control"></textarea>
-                <span asp-validation-for="BlogPost.Content" class="text-danger"></span>
-            </div>
+
             <div class="mb-3">
                 <abp-input asp-for="BlogPost.Slug" class="form-control" readonly="true" />
                 <span asp-validation-for="BlogPost.Slug" class="text-danger"></span>
-
             </div>
             <div class="mb-3">
-                @* <label asp-for="BlogPost.Author" class="form-label"></label> *@
                 <abp-input asp-for="BlogPost.Author" value="@CurrentUser.Name" readonly="true"/>
             </div>
             <div class="mb-3">
@@ -70,7 +64,11 @@
 
                 <span asp-validation-for="CoverImageFile" class="text-danger"></span>
             </div>
-
+            <div class="mb-3">
+                <label asp-for="BlogPost.Content" class="form-label"></label>
+                <textarea asp-for="BlogPost.Content" class="form-control"></textarea>
+                <span asp-validation-for="BlogPost.Content" class="text-danger"></span>
+            </div>
 
 
             <button type="submit" class="btn btn-primary">@L["UI:Button:Create"]</button>
