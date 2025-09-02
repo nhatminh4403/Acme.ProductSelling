@@ -7,7 +7,6 @@
         if (parts.length >= 2) {
             const potentialCulture = parts[1].toLowerCase();
             if (['en', 'vi'].includes(potentialCulture)) {
-                console.log('✅ Culture from URL:', potentialCulture);
                 return potentialCulture;
             }
         }
@@ -15,12 +14,10 @@
         // Fallback: lấy từ cookie
         const cookieCulture = CultureHelper.getCookie('culture');
         if (cookieCulture && ['en', 'vi'].includes(cookieCulture.toLowerCase())) {
-            console.log('✅ Culture from cookie:', cookieCulture.toLowerCase());
             return cookieCulture.toLowerCase();
         }
 
         // Default fallback
-        console.log('✅ Using default culture: vi');
         return 'vi';
     }
 
@@ -32,7 +29,6 @@
         document.cookie = `culture=${culture.toLowerCase()}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
         document.cookie = `Abp.Localization.CultureName=${culture.toLowerCase()}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
 
-        console.log('✅ Set culture cookie:', culture.toLowerCase());
     }
 
     static getCookie(name) {
@@ -83,10 +79,10 @@
                 }
             }
         });
-
+/*
         if (updatedCount > 0) {
             console.log(`✅ Updated ${updatedCount} links with culture prefix: ${currentCulture}`);
-        }
+        }*/
     }
 
     static syncCultureWithUrl() {
@@ -95,7 +91,6 @@
         const cookieCulture = CultureHelper.getCookie('culture');
 
         if (urlCulture && urlCulture !== cookieCulture) {
-            console.log(`🔄 Syncing culture: URL=${urlCulture}, Cookie=${cookieCulture}`);
             CultureHelper.setCultureCookie(urlCulture);
 
             // Dispatch custom event để notify components khác
@@ -176,10 +171,7 @@
 // Khởi tạo khi trang load
 CultureHelper.initializeCultureHandling();
 
-// Debug information - improved
-console.log('=== CULTURE DEBUG (Enhanced) ===');
-console.log('Current URL:', window.location.href);
-console.log('Current pathname:', window.location.pathname);
+
 
 // Parse current culture from URL
 const pathSegments = window.location.pathname.split('/').filter(s => s);
@@ -189,21 +181,21 @@ const urlCulture = CultureHelper.getCultureFromUrl();
 const cookieCulture = CultureHelper.getCookie('culture');
 const abpCookieCulture = CultureHelper.getCookie('Abp.Localization.CultureName');
 
-console.log('URL Culture:', urlCulture || 'Not found');
-console.log('Cookie Culture:', cookieCulture || 'Not found');
-console.log('ABP Cookie Culture:', abpCookieCulture || 'Not found');
+//console.log('URL Culture:', urlCulture || 'Not found');
+//console.log('Cookie Culture:', cookieCulture || 'Not found');
+//console.log('ABP Cookie Culture:', abpCookieCulture || 'Not found');
 
 // Check for sync issues
 if (urlCulture && cookieCulture && urlCulture !== cookieCulture) {
-    console.log('⚠️ CULTURE SYNC ISSUE DETECTED!');
-    console.log(`URL has: ${urlCulture}, Cookie has: ${cookieCulture}`);
+    //console.log('⚠️ CULTURE SYNC ISSUE DETECTED!');
+    //console.log(`URL has: ${urlCulture}, Cookie has: ${cookieCulture}`);
 }
 
 // Check for duplicates
 if (pathSegments.length >= 2 &&
     ['en', 'vi'].includes(pathSegments[0].toLowerCase()) &&
     ['en', 'vi'].includes(pathSegments[1].toLowerCase())) {
-    console.log('❌ DUPLICATE CULTURE DETECTED!', pathSegments[0], pathSegments[1]);
+    //console.log('❌ DUPLICATE CULTURE DETECTED!', pathSegments[0], pathSegments[1]);
 }
 
 
@@ -217,7 +209,7 @@ class AspNetCoreCultureHelper {
         const aspNetCoreCultureValue = `c=${culture}|uic=${culture}`;
         document.cookie = `.AspNetCore.Culture=${aspNetCoreCultureValue}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
 
-        console.log('✅ Set AspNetCore culture cookie:', culture);
+        //console.log('✅ Set AspNetCore culture cookie:', culture);
 
         // Trigger page reload để middleware xử lý redirect
         setTimeout(() => {
@@ -260,7 +252,7 @@ class AspNetCoreCultureHelper {
 
     static switchCulture(newCulture) {
         if (['en', 'vi'].includes(newCulture)) {
-            console.log(`🔄 Switching to culture: ${newCulture}`);
+            //console.log(`🔄 Switching to culture: ${newCulture}`);
 
             // Set AspNetCore cookie - này sẽ trigger middleware redirect
             AspNetCoreCultureHelper.setAspNetCoreCulture(newCulture);
@@ -279,8 +271,8 @@ class AspNetCoreCultureHelper {
                 currentAspNetCoreCulture !== lastAspNetCoreCulture &&
                 currentAspNetCoreCulture !== urlCulture) {
 
-                console.log(`🔄 AspNetCore cookie changed: ${lastAspNetCoreCulture} -> ${currentAspNetCoreCulture}`);
-                console.log('🔄 URL needs update, reloading page...');
+                //console.log(`🔄 AspNetCore cookie changed: ${lastAspNetCoreCulture} -> ${currentAspNetCoreCulture}`);
+                //console.log('🔄 URL needs update, reloading page...');
 
                 // Reload page để middleware xử lý redirect
                 window.location.reload();
@@ -298,15 +290,15 @@ document.addEventListener('DOMContentLoaded', function () {
     // Monitor cookie changes
     AspNetCoreCultureHelper.monitorCookieChanges();
 
-    // Debug info
-    console.log('=== ASPNETCORE CULTURE DEBUG ===');
-    console.log('AspNetCore Cookie Culture:', AspNetCoreCultureHelper.getAspNetCoreCulture());
-    console.log('URL Culture:', CultureHelper.getCultureFromUrl());
-    console.log('Custom Cookie Culture:', CultureHelper.getCookie('culture'));
-    console.log('================================');
+    //// Debug info
+    //console.log('=== ASPNETCORE CULTURE DEBUG ===');
+    //console.log('AspNetCore Cookie Culture:', AspNetCoreCultureHelper.getAspNetCoreCulture());
+    //console.log('URL Culture:', CultureHelper.getCultureFromUrl());
+    //console.log('Custom Cookie Culture:', CultureHelper.getCookie('culture'));
+    //console.log('================================');
 });
 
 // Global function để có thể call từ browser console
 window.switchCulture = AspNetCoreCultureHelper.switchCulture;
 
-console.log('=== END DEBUG ===');
+//console.log('=== END DEBUG ===');

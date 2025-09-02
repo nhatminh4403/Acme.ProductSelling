@@ -38,7 +38,7 @@
                                 text: l('Delete'), // Chữ 'Delete' đơn giản
                                 visible: abp.auth.isGranted('ProductSelling.Orders.Delete'),
                                 confirmMessage: function (data) {
-                                    return l('Order:OrderDeletionConfirmationMessage', data.record.orderNumber); // UPDATED: Dùng orderNumber
+                                    return l('Order:OrderDeletionConfirmationMessage', data.record.orderNumber);
                                 },
                                 action: function (data) {
                                     orderService.delete(data.record.id)
@@ -48,7 +48,17 @@
                                         });
                                 }
                             },
-                            /*{
+
+                            //{
+                            //    text: l('ConfirmCodPayment'),
+                            //    visible: function (data) {
+
+                            //    },
+                            //    confirmMessage: function (data) {
+                            //        console.log(data.record.orderNumber);
+                            //    }
+                            //}
+                            {
                                 text: l('ConfirmCodPayment'),
                                 // Nút chỉ hiện khi:
                                 // 1. User có quyền.
@@ -56,41 +66,42 @@
                                 // 3. Trạng thái thanh toán đang là PendingOnDelivery.
                                 visible: function (data) {
                                     return abp.auth.isGranted('ProductSelling.Orders.ConfirmCodPayment') &&
-                                        data.record.paymentMethod === &&
-                                        data.record.paymentStatus === 'PendingOnDelivery'; // Cần thêm PaymentStatus vào OrderDto
+                                        data.paymentMethod === 'COD' &&
+                                        data.paymentStatus === 'PendingOnDelivery'; // Cần thêm PaymentStatus vào OrderDto
                                 },
                                 // Yêu cầu xác nhận trước khi thực hiện
                                 confirmMessage: function (data) {
-                                    return l('Order:AreYouSureYouWantToConfirmCodPaymentForOrder', data.record.orderNumber);
+                                    return l('Order:AreYouSureYouWantToConfirmCodPaymentForOrder', data.orderNumber);
                                 },
                                 action: function (data) {
                                     orderService
-                                        .markAsCodPaidAndCompleted(data.record.id)
+                                        .markAsCodPaidAndCompleted(data.id)
                                         .then(function () {
                                             dataTable.ajax.reload(); // Tải lại bảng sau khi thành công
                                             abp.notify.success(l('Order:OrderUpdatedSuccessfully'));
                                         });
                                 }
-                            }*/
+                            }
                         ]
                     }
-                }
-                ,
+                },
                 {
                     title: l('Order:OrderNumber'),
                     data: "orderNumber",
                     render: function (data, type, row) {
                         // Link đến trang chi tiết
-                        return `<a href="/Orders/OrderDetail/${row.id}">${data}</a>`;
+                        return `<a href="/Admin/Orders/OrderDetail/${row.id}">${data}</a>`;
                     }
                 },
                 {
                     title: l('Order:OrderDate'),
+                    data: "orderDate",
                     render: function (data) {
-                        return luxon
-                            .DateTime
+                        if (!data) return "";
+
+                        return luxon.DateTime
                             .fromISO(data, { locale: abp.localization.currentCulture.name })
-                            .toLocaleString(luxon.DateTime.DATETIME_SHORT);
+                            .toFormat("dd/MM/yyyy HH:mm:ss"); // đổi format tại đây
                     }
                 },
                 {
@@ -111,6 +122,7 @@
                     // UPDATED: Sử dụng render function để hiển thị badge
                     render: function (data, type, row) {
                         // `row.statusText` là chuỗi đã được dịch từ server
+                        console.log(data);
                         var statusText = row.statusText || l(data);
                         var badgeClass = getStatusBadgeClass(data);
                         return `<span class="badge ${badgeClass}">${statusText}</span>`;
@@ -126,7 +138,8 @@
                     render: function (data, type, row) {
                         var status = data || 'Unpaid';
                         var badgeClass = getPaymentStatusBadgeClass(status);
-                        return `<span class="badge ${badgeClass}">${l('Enum:PaymentStatus.' + status)}</span>`;
+                        //return `<span class="badge ${badgeClass}">/*${l('Enum:PaymentStatus.' + status)}*/</span>`;
+                        return `<span class="badge ${badgeClass}">${status}</span>`;
                     }
                 },
             ]
@@ -152,7 +165,7 @@
             case 'Paid': return 'bg-success';
             case 'Failed': return 'bg-danger';
             case 'Refunded': return 'bg-dark';
-            default: return 'bg-light text-dark';
+            default: return 'bg-dark text-light';
         }
     }
     $('#NewOrderButton').click(function (e) {

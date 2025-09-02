@@ -2,7 +2,9 @@
 @model Acme.ProductSelling.Web.Pages.Admin.Blogs.CreateBlogModel
 @using Acme.ProductSelling.Localization;
 @using Microsoft.Extensions.Localization
+@using Volo.Abp.Users
 
+@inject ICurrentUser CurrentUser
 @inject IStringLocalizer<ProductSellingResource> L
 
 @{
@@ -14,26 +16,24 @@
 }
 
 @section scripts {
-    <abp-script src="/lib/summernote/summernote-bs5.min.js"></abp-script>
-    <abp-script>
-        <script>
-            $(function () {
-                // ID bây giờ sẽ là BlogPost_Content vì [BindProperty] có tên là "BlogPost"
-                $('#BlogPost_Content').summernote({
-                    height: 300,
-                    toolbar: [
-                       ['style', ['style']],
-                       ['font', ['bold', 'underline', 'clear']],
-                       ['para', ['ul', 'ol', 'paragraph']],
-                       ['insert', ['link', 'picture']],
-                       ['view', ['fullscreen', 'codeview']]
-                    ]
-                });
+    <abp-script src="/lib/summernote/summernote-bs5.min.js" />
+    <script>
+        $(function () {
+            // ID bây giờ sẽ là BlogPost_Content vì [BindProperty] có tên là "BlogPost"
+            $('#BlogPost_Content').summernote({
+                height: 300,
+                toolbar: [
+                   ['style', ['style']],
+                   ['font', ['bold', 'underline', 'italic','clear']],
+                   ['para', ['ul', 'ol', 'paragraph']],
+                   ['insert', ['link', 'picture']],
+                   ['view', ['fullscreen', 'codeview']]
+                ]
             });
-        </script>
-    </abp-script>
-    <abp-script src="/Pages/Admin/Blogs/CreateBlog.js"/>
-       
+        });
+    </script>
+    <abp-script src="/Pages/Admin/Blogs/CreateBlog.js" />
+
 }
 
 <abp-card>
@@ -45,9 +45,8 @@
     </abp-card-header>
 
     <abp-card-body>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <div class="mb-3">
-                <label asp-for="BlogPost.Title" class="form-label"></label>
                 <abp-input asp-for="BlogPost.Title" class="form-control" />
                 <span asp-validation-for="BlogPost.Title" class="text-danger"></span>
             </div>
@@ -56,19 +55,22 @@
                 <textarea asp-for="BlogPost.Content" class="form-control"></textarea>
                 <span asp-validation-for="BlogPost.Content" class="text-danger"></span>
             </div>
-
-            <abp-input asp-for="BlogPost.Slug" class="form-control" hidden/>
-            <span asp-validation-for="BlogPost.Slug" class="text-danger"></span>
-            <abp-input asp-for="BlogPost.PostedOn" hidden></abp-input>
-            <abp-input asp-for="BlogPost.Author" hidden></abp-input>
-            <span asp-validation-for="BlogPost.Author" class="text-danger"></span>
             <div class="mb-3">
-                <abp-input asp-for="CoverImageFile" type="file">
+                <abp-input asp-for="BlogPost.Slug" class="form-control" readonly="true" />
+                <span asp-validation-for="BlogPost.Slug" class="text-danger"></span>
+
+            </div>
+            <div class="mb-3">
+                @* <label asp-for="BlogPost.Author" class="form-label"></label> *@
+                <abp-input asp-for="BlogPost.Author" value="@CurrentUser.Name" readonly="true"/>
+            </div>
+            <div class="mb-3">
+                <abp-input asp-for="CoverImageFile" type="file" accept="image/*">
                 </abp-input>
 
                 <span asp-validation-for="CoverImageFile" class="text-danger"></span>
             </div>
-            
+
 
 
             <button type="submit" class="btn btn-primary">@L["UI:Button:Create"]</button>
@@ -77,7 +79,3 @@
 
     </abp-card-body>
 </abp-card>
-
-<form>
-    <input type="text" name="name" value="" />
-</form>

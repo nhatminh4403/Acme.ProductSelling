@@ -132,15 +132,6 @@ namespace Acme.ProductSelling.Orders
         {
             var customerId = _currentUser.Id.Value;
 
-
-            // --- LOGIC MỚI: TÌM VÀ TÁI SỬ DỤNG ĐƠN HÀNG "TREO" ---
-
-            // Tìm đơn hàng của user có trạng thái thanh toán đang chờ xử lý
-            /*var existingPendingOrder = await _orderRepository.GetAsync(o =>
-                o.CustomerId == customerId && o.PaymentStatus == PaymentStatus.Pending,
-                includeDetails: true
-            );*/
-
             var existingPendingOrder = await (await _orderRepository.WithDetailsAsync(o => o.OrderItems))
                 .FirstOrDefaultAsync(o =>
                     o.CustomerId == customerId &&
@@ -227,12 +218,7 @@ namespace Acme.ProductSelling.Orders
 
             // 2. Tính lại tổng tiền
             orderToProcess.CalculateTotals();
-            /*orderToProcess.SetInitialStatus(OrderStatus.Placed, // Mọi đơn hàng mới đều là "Placed"
-                                                                // Quyết định trạng thái thanh toán ban đầu
-                    input.PaymentMethod == PaymentMethods.COD
-                        ? PaymentStatus.PendingOnDelivery
-                        : PaymentStatus.Pending
-                );*/
+
             // 3. Đặt trạng thái thanh toán
             if (input.PaymentMethod == PaymentMethods.COD)
             {

@@ -116,7 +116,9 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
             .ForMember(dest => dest.CartItems, opt => opt.MapFrom(src => src.Items)); // Map collection Items
         CreateMap<CartItem, CartItemDto>();
 
-        CreateMap<Blog, BlogDto>();
+        CreateMap<Blog, BlogDto>().ForMember(dest => dest.Author , opt => opt.MapFrom(src => src.Author));
+        CreateMap<CreateAndUpdateBlogDto, Blog>().ForMember(dest => dest.Author, opt => opt.Ignore());
+        
         CreateMap<Comment, CommentDto>();
     }
 }

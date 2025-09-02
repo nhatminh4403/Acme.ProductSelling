@@ -15,8 +15,9 @@ namespace Acme.ProductSelling.Orders
         public decimal TotalAmount { get; set; }
         public List<OrderItemDto> OrderItems { get; set; } = new List<OrderItemDto>();
         public OrderStatus OrderStatus { get; set; }
-        public string StatusText { get; set; }
+        public string OrderStatusText { get; set; }
         public string PaymentMethod { get; set; } // Thêm phương thức thanh toán
         public PaymentStatus PaymentStatus { get; set; } // Trạng thái thanh toán
+        public string PaymentStatusText { get; set; } // Mô tả trạng thái thanh toán
     }
 }

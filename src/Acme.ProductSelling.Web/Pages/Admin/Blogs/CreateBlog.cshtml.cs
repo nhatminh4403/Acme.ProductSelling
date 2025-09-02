@@ -12,21 +12,25 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
+using Volo.Abp.Users;
+using YamlDotNet.Core.Tokens;
 namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
 {
     public class CreateBlogModel : ProductSellingPageModel
     {
         private readonly IBlogAppService _blogAppService;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ICurrentUser _currentUser;
         private const string UploadsFolder = "blog-cover-images";
         [BindProperty]
         public CreateAndUpdateBlogDto BlogPost { get; set; }
         [BindProperty]
-        public IFormFile CoverImageFile { get; set; }
-        public CreateBlogModel(IBlogAppService blogAppService, IWebHostEnvironment webHostEnvironment)
+        public IFormFile? CoverImageFile { get; set; }
+        public CreateBlogModel(IBlogAppService blogAppService, IWebHostEnvironment webHostEnvironment,CurrentUser currentUser)
         {
             _webHostEnvironment = webHostEnvironment;
             _blogAppService = blogAppService;
+            _currentUser = currentUser;
         }
         public void OnGet()
         {
@@ -64,14 +68,16 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
                     Directory.CreateDirectory(uploadsRootFolder);
                 }
 
-                var uniqueFileName = Guid.NewGuid().ToString() + $"{Path.GetExtension(CoverImageFile.FileName)}";
-                var filePath = Path.Combine(uploadsRootFolder, CoverImageFile.FileName);
+                var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(CoverImageFile.FileName);
+                var filePath = Path.Combine(uploadsRootFolder, uniqueFileName);
                 
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await CoverImageFile.CopyToAsync(stream);
                 }
-                BlogPost.ImageUrl = $"/{UploadsFolder}/{uniqueFileName}";
+                BlogPost.ImageUrl = $"/{UploadsFolder}/" + uniqueFileName;
+                Console.WriteLine($"Image uploaded to: {BlogPost.ImageUrl}");
+                BlogPost.ImageId = Guid.NewGuid(); // Assign a new GUID for the image
 
             }
             catch (Exception ex)
@@ -83,13 +89,15 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
 
             try
             {
+                BlogPost.Author =  _currentUser.Name;
+                Console.WriteLine($"Current User: {_currentUser.Name}, Author set to: {BlogPost.Author}");
+                BlogPost.PostedOn = DateTime.Now;
                 await _blogAppService.CreateAsync(BlogPost);
                 return RedirectToPage("/Admin/Blogs/Index");
             }
             catch (UserFriendlyException ex)
             {
-                Logger.LogWarning(ex, "User-friendly error creating product.");
-                // Add error to a specific field if possible, or general model error
+                Logger.LogWarning(ex, "User-friendly error creating blog.");
                 ModelState.AddModelError(string.Empty, ex.Message);
                 return Page();
             }

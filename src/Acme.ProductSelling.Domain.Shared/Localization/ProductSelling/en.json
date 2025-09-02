@@ -62,7 +62,8 @@
     "Login:ForgotPassword": "Forgot password?",
     "Login:CreateAccount": "Create Account",
     "Login:LoginHere": "Login Here",
-    
+    "Login:Welcome": "Welcome, please log in",
+
     "Register:Default": "Register",
     "Register:Processing": "Your registration request is being processed. Please wait...",
     "Register:Initiated": "Registration Initiated",
@@ -164,9 +165,14 @@
     "Order:Information": "Order Information",
     "Order:Items": "Order Items",
     "Order:Number": "Order Number",
+    "Order:OrderNumber": "Order Number",
+
     "Order:Date": "Order Date",
+    "Order:OrderDate": "Order Date",
     "Order:TotalAmount": "Total Amount",
     "Order:Status": "Order Status",
+    "Order:OrderStatus": "Order Status",
+    "Order:PaymentMethod": "Payment Method",
     "Order:PaymentStatus": "Payment Status",
     "Order:Confirmation": "Order Confirmation",
     "Order:ThankYou": "Thank You For Your Order!",
@@ -218,6 +224,7 @@
     "Order:OrderUpdatedSuccessfully": "Order updated successfully.",
     "Order:AreYouSureYouWantToConfirmCodPaymentForOrder": "Are you sure you want to confirm COD payment for order {0}?",
     "Order:OrderCancelledSuccessfully": "Order Successfully Cancelled",
+
 
 
     "Payment:Callback": "Payment Result",

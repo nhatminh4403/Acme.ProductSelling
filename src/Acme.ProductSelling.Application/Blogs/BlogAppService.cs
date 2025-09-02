@@ -3,8 +3,10 @@ using Acme.ProductSelling.Identity;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Utils;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,11 +22,13 @@ namespace Acme.ProductSelling.Blogs
     {
         private readonly IRepository<Blog, Guid> _repository;
         private readonly IGuidGenerator _guidGenerator;
-        public BlogAppService(IRepository<Blog, Guid> repository, IGuidGenerator guidGenerator) : base(repository)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public BlogAppService(IRepository<Blog, Guid> repository, IGuidGenerator guidGenerator, IWebHostEnvironment webHostEnvironment) : base(repository)
         {
             _repository = repository;
             _guidGenerator = guidGenerator;
             ConfigurePolicies();
+            _webHostEnvironment = webHostEnvironment;
         }
 
         private void ConfigurePolicies()
@@ -67,14 +71,27 @@ namespace Acme.ProductSelling.Blogs
             return result;
         }
 
-        public override Task DeleteAsync(Guid id)
+        public override async Task DeleteAsync(Guid id)
         {
-            var blogNeededToBeDeleted = _repository.GetAsync(id);
+            var blogNeededToBeDeleted = await _repository.GetAsync(id);
             if (blogNeededToBeDeleted == null)
             {
                 throw new Exception("Blog not found");
             }
-            return Repository.DeleteAsync(id, autoSave: true);
+            if (!string.IsNullOrEmpty(blogNeededToBeDeleted.MainImageUrl))
+            {
+                // BƯỚC 3: Tạo đường dẫn vật lý đầy đủ đến file ảnh.
+                // ImageUrl có dạng "/blog-cover-images/file.jpg", cần loại bỏ dấu "/" ở đầu.
+                var relativePath = blogNeededToBeDeleted.MainImageUrl.TrimStart('/');
+                var filePath = Path.Combine(_webHostEnvironment.WebRootPath, relativePath);
+
+                // BƯỚC 4: Kiểm tra xem file có tồn tại không và xóa nó.
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+            }
+            await Repository.DeleteAsync(id, autoSave: true);
         }
 
         public override async Task<BlogDto> UpdateAsync(Guid id, CreateAndUpdateBlogDto input)

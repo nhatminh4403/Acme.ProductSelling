@@ -1,5 +1,5 @@
 ﻿$(function () {
-    var categoryService = acme.productSelling.blogs.blog;
+    var blogService = acme.productSelling.blogs.blog;
     var l = abp.localization.getResource('ProductSelling');
 
     var dataTable = $('#BlogsTable').DataTable(
@@ -9,7 +9,7 @@
             order: [[1, "asc"]],
             searching: false,
             scrollX: true,
-            ajax: abp.libs.datatables.createAjax(categoryService.getList),
+            ajax: abp.libs.datatables.createAjax(blogService.getList),
             columnDefs: [
                 {
                     title: l('Blogs:Actions'),
@@ -30,7 +30,8 @@
                                     return l('Blog:BlogDeletionConfirmationMessage', data.record.name);
                                 },
                                 action: function (data) {
-                                    categoryService.delete(data.record.id)
+                                    console.log('Deleting blog with ID:', data.record.id); // Debugging line
+                                    blogService.delete(data.record.id)
                                         .then(function () {
                                             abp.notify.info(l('Blog:SuccessfullyDeleted'));
                                             dataTable.ajax.reload();
@@ -46,20 +47,17 @@
                     render: function (data) {
                         return data ? '<img src="' + data + '" alt="Main Image" style="max-height: 100px; max-width: 100px;" />' : '';
                     }
-
-
                 },
                 {
                     title: l('Blog:Title'),
                     data: "title"
                 },
                 {
-                    title: l('Blog:Content'),
-                    data: "content"
-                },
-                {
                     title: l('Blog:Author'),
-                    data: "author"
+                    data: "author",
+                    function: function (data) {
+                        console.log('Author data:', data); // Debugging line
+                    }
                 },
                 
                 {
@@ -73,5 +71,7 @@
             ]
         })
     );
-
+    $('#NewBlogPostButton').on('click', function () {
+        window.location.href = '/admin/blogs/create';
+    });
 });

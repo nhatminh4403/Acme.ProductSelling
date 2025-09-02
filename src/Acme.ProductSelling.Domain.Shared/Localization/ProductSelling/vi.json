@@ -62,6 +62,8 @@
     "Login:ForgotPassword": "Quên mật khẩu?",
     "Login:CreateAccount": "Tạo tài khoản",
     "Login:LoginHere": "Đăng nhập tại đây",
+    "Login:Welcome": "Xin chào, vui lòng đăng nhập",
+
 
     "Register:Default": "Đăng ký",
     "Register:Processing": "Yêu cầu đăng ký đang được xử lý. Vui lòng đợi...",

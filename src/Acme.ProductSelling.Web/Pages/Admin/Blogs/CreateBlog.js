@@ -1,8 +1,8 @@
 ﻿$(function () {
 
-    var nameInput = $('#Blog_Title');
+    var nameInput = $('#BlogPost_Title');
 
-    var slugInput = $('#Blog_Slug');
+    var slugInput = $('#BlogPost_Slug');
 
     if (nameInput.length && slugInput.length) {
         nameInput.on('input keyup', function () {
