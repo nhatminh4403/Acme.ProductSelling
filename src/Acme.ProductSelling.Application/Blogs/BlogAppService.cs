@@ -52,12 +52,12 @@ namespace Acme.ProductSelling.Blogs
             }
             return ObjectMapper.Map<Blog, BlogDto>(blog);
         }
-/*
-        [Authorize(Roles = IdentityRoleConsts.Blogger, Policy = ProductSellingPermissions.Blogs.Create)]
-        [Authorize(Roles = IdentityRoleConsts.Admin, Policy = ProductSellingPermissions.Blogs.Create)]*/
+        /*
+                [Authorize(Roles = IdentityRoleConsts.Blogger, Policy = ProductSellingPermissions.Blogs.Create)]
+                [Authorize(Roles = IdentityRoleConsts.Admin, Policy = ProductSellingPermissions.Blogs.Create)]*/
         public override async Task<BlogDto> CreateAsync(CreateAndUpdateBlogDto input)
         {
-            input.Content = _HtmlSanitizer.Sanitize(input.Content);
+            var sanitizedContent = _HtmlSanitizer.Sanitize(input.Content);
             var authorId = CurrentUser.Id ?? throw new UserFriendlyException("User must be logged in");
             var authorName = !string.IsNullOrWhiteSpace(input.Author)
                 ? input.Author
@@ -65,14 +65,14 @@ namespace Acme.ProductSelling.Blogs
             var blog = new Blog(
                 _guidGenerator.Create(),
                 input.Title,
-                input.Content,
+                sanitizedContent,
                 input.PublishedDate,
-                authorName, authorId,
+                input.Author, authorId,
 
                 input.UrlSlug,
                 input.MainImageUrl,
-                _guidGenerator.Create()
-            );
+                input.MainImageId
+                );
 
             var newBlog = await _repository.InsertAsync(blog, autoSave: true);
             var result = ObjectMapper.Map<Blog, BlogDto>(newBlog);

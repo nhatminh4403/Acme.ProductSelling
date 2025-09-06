@@ -21,11 +21,6 @@ namespace Acme.ProductSelling.Controllers
             _fileAppService = fileAppService;
         }
 
-        [HttpGet("hello")]
-        public async Task<IActionResult> Hello() {
-            return Ok("Worked");
-        }
-
         [HttpPost("upload-image")]
         public async Task<IActionResult> UploadImage(IFormFile upload)
         {

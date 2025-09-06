@@ -21,12 +21,12 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
         private readonly IBlogAppService _blogAppService;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ICurrentUser _currentUser;
-        private const string UploadsFolder = "blog-cover-images";
+        private const string UploadsFolder = "images/blog-cover-images";
         [BindProperty]
         public CreateAndUpdateBlogDto Blog { get; set; }
         [BindProperty]
         public IFormFile? CoverImageFile { get; set; }
-        public CreateBlogModel(IBlogAppService blogAppService, IWebHostEnvironment webHostEnvironment, CurrentUser currentUser)
+        public CreateBlogModel(IBlogAppService blogAppService, IWebHostEnvironment webHostEnvironment, ICurrentUser currentUser)
         {
             _webHostEnvironment = webHostEnvironment;
             _blogAppService = blogAppService;
@@ -34,17 +34,17 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
         }
         public void OnGet()
         {
-            Blog = new CreateAndUpdateBlogDto();
+            Blog = new CreateAndUpdateBlogDto
+            {
+                PublishedDate = DateTime.Now,
+               
+            };
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
 
-            if (CoverImageFile == null || string.IsNullOrEmpty(CoverImageFile.FileName.ToString()))
-            {
-                ModelState.AddModelError("CoverImageFile", "Cover image is required.");
-                return Page();
-            }
+           
 
 
             if (!ModelState.IsValid)
@@ -58,40 +58,41 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
                 }
                 return Page();
             }
+            if (CoverImageFile != null && CoverImageFile.Length > 0)
+            {
+                try
+                {
+                    var uploadsRootFolder = Path.Combine(_webHostEnvironment.WebRootPath, UploadsFolder);
+
+                    if (!Directory.Exists(uploadsRootFolder))
+                    {
+                        Directory.CreateDirectory(uploadsRootFolder);
+                    }
+
+                    var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(CoverImageFile.FileName);
+                    var filePath = Path.Combine(uploadsRootFolder, uniqueFileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await CoverImageFile.CopyToAsync(stream);
+                    }
+                    Blog.MainImageUrl = $"/{UploadsFolder}/" + uniqueFileName;
+                    Console.WriteLine($"Image uploaded to: {Blog.MainImageUrl}");
+                    Blog.MainImageId = Guid.NewGuid(); // Assign a new GUID for the image
+
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError(ex, "An error occurred while processing the form.");
+                    ModelState.AddModelError(string.Empty, "An unexpected error occurred. Please try again later.");
+                    return Page();
+                }
+            }
+
 
             try
             {
-                var uploadsRootFolder = Path.Combine(_webHostEnvironment.WebRootPath, UploadsFolder);
 
-                if (!Directory.Exists(uploadsRootFolder))
-                {
-                    Directory.CreateDirectory(uploadsRootFolder);
-                }
-
-                var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(CoverImageFile.FileName);
-                var filePath = Path.Combine(uploadsRootFolder, uniqueFileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await CoverImageFile.CopyToAsync(stream);
-                }
-                Blog.MainImageUrl = $"/{UploadsFolder}/" + uniqueFileName;
-                Console.WriteLine($"Image uploaded to: {Blog.MainImageUrl}");
-                Blog.MainImageId = Guid.NewGuid(); // Assign a new GUID for the image
-
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, "An error occurred while processing the form.");
-                ModelState.AddModelError(string.Empty, "An unexpected error occurred. Please try again later.");
-                return Page();
-            }
-
-            try
-            {
-                Blog.Author = _currentUser.Name;
-                Console.WriteLine($"Current User: {_currentUser.Name}, Author set to: {Blog.Author}");
-                Blog.PublishedDate = DateTime.Now;
                 await _blogAppService.CreateAsync(Blog);
                 return RedirectToPage("/Admin/Blogs/Index");
             }
@@ -110,5 +111,17 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
             }
 
         }
+
+    }
+    public class CreateBlogVM
+    {
+        public string Title { get; set; }
+        public string Content { get; set; }
+        public string UrlSlug { get; set; }
+        public string? MainImageUrl { get; set; }
+        public DateTime PublishedDate { get; set; } = DateTime.Now;
+        public string Author { get; set; }
+
+        public Guid? MainImageId { get; set; }
     }
 }
