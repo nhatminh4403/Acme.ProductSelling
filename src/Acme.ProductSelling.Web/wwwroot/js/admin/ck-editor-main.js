@@ -1,0 +1,551 @@
+﻿// CKEditor 5 Configuration and Initialization
+const {
+    ClassicEditor,
+    Alignment,
+    Autoformat,
+    AutoImage,
+    AutoLink,
+    Autosave,
+    BlockQuote,
+    Bold,
+    Bookmark,
+    CloudServices,
+    Code,
+    CodeBlock,
+    Emoji,
+    Essentials,
+    FindAndReplace,
+    FontBackgroundColor,
+    FontColor,
+    FontFamily,
+    FontSize,
+    FullPage,
+    Fullscreen,
+    GeneralHtmlSupport,
+    Heading,
+    Highlight,
+    HorizontalLine,
+    HtmlComment,
+    HtmlEmbed,
+    ImageBlock,
+    ImageCaption,
+    ImageInline,
+    ImageInsert,
+    ImageInsertViaUrl,
+    ImageResize,
+    ImageStyle,
+    ImageTextAlternative,
+    ImageToolbar,
+    ImageUpload,
+    Indent,
+    IndentBlock,
+    Italic,
+    Link,
+    LinkImage,
+    List,
+    ListProperties,
+    Markdown,
+    MediaEmbed,
+    Mention,
+    PageBreak,
+    Paragraph,
+    PasteFromOffice,
+    PlainTableOutput,
+    RemoveFormat,
+    ShowBlocks,
+    SimpleUploadAdapter,
+    SourceEditing,
+    SpecialCharacters,
+    SpecialCharactersArrows,
+    SpecialCharactersCurrency,
+    SpecialCharactersEssentials,
+    SpecialCharactersLatin,
+    SpecialCharactersMathematical,
+    SpecialCharactersText,
+    Strikethrough,
+    Style,
+    Subscript,
+    Superscript,
+    Table,
+    TableCaption,
+    TableCellProperties,
+    TableColumnResize,
+    TableLayout,
+    TableProperties,
+    TableToolbar,
+    TextPartLanguage,
+    TextTransformation,
+    Title,
+    TodoList,
+    Underline,
+    WordCount
+} = window.CKEDITOR;
+
+const LICENSE_KEY = 'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NTc4MDc5OTksImp0aSI6IjVhY2FjNmViLTcyZjctNGIzMC1hOTlmLWQwYmZjNGZkMTM5OSIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiLCJzaCJdLCJ3aGl0ZUxhYmVsIjp0cnVlLCJsaWNlbnNlVHlwZSI6InRyaWFsIiwiZmVhdHVyZXMiOlsiKiJdLCJ2YyI6ImY2NzIyZTNlIn0.fNGID-WwTd1wZ9jvWBucm45ysky4grBjUG3BZY_uPxL6Ub3waACMI1CPsyjb82Fp0i5h6B8Bw9lsz63APU9aMA';
+
+const editorConfig = {
+    toolbar: {
+        items: [
+            'undo',
+            'redo',
+            '|',
+            'sourceEditing',
+            'showBlocks',
+            'findAndReplace',
+            'textPartLanguage',
+            'fullscreen',
+            '|',
+            'heading',
+            'style',
+            '|',
+            'fontSize',
+            'fontFamily',
+            'fontColor',
+            'fontBackgroundColor',
+            '|',
+            'bold',
+            'italic',
+            'underline',
+            'strikethrough',
+            'subscript',
+            'superscript',
+            'code',
+            'removeFormat',
+            '|',
+            'emoji',
+            'specialCharacters',
+            'horizontalLine',
+            'pageBreak',
+            'link',
+            'bookmark',
+            'insertImage',
+            'insertImageViaUrl',
+            'mediaEmbed',
+            'insertTable',
+            'insertTableLayout',
+            'highlight',
+            'blockQuote',
+            'codeBlock',
+            'htmlEmbed',
+            '|',
+            'alignment',
+            '|',
+            'bulletedList',
+            'numberedList',
+            'todoList',
+            'outdent',
+            'indent'
+        ],
+        shouldNotGroupWhenFull: true
+    },
+    plugins: [
+        Alignment,
+        Autoformat,
+        AutoImage,
+        AutoLink,
+        Autosave,
+        BlockQuote,
+        Bold,
+        Bookmark,
+        CloudServices,
+        Code,
+        CodeBlock,
+        Emoji,
+        Essentials,
+        FindAndReplace,
+        FontBackgroundColor,
+        FontColor,
+        FontFamily,
+        FontSize,
+        FullPage,
+        Fullscreen,
+        GeneralHtmlSupport,
+        Heading,
+        Highlight,
+        HorizontalLine,
+        HtmlComment,
+        HtmlEmbed,
+        ImageBlock,
+        ImageCaption,
+        ImageInline,
+        ImageInsert,
+        ImageInsertViaUrl,
+        ImageResize,
+        ImageStyle,
+        ImageTextAlternative,
+        ImageToolbar,
+        ImageUpload,
+        Indent,
+        IndentBlock,
+        Italic,
+        Link,
+        LinkImage,
+        List,
+        ListProperties,
+        Markdown,
+        MediaEmbed,
+        Mention,
+        PageBreak,
+        Paragraph,
+        PasteFromOffice,
+        PlainTableOutput,
+        RemoveFormat,
+        ShowBlocks,
+        SimpleUploadAdapter,
+        SourceEditing,
+        SpecialCharacters,
+        SpecialCharactersArrows,
+        SpecialCharactersCurrency,
+        SpecialCharactersEssentials,
+        SpecialCharactersLatin,
+        SpecialCharactersMathematical,
+        SpecialCharactersText,
+        Strikethrough,
+        Style,
+        Subscript,
+        Superscript,
+        Table,
+        TableCaption,
+        TableCellProperties,
+        TableColumnResize,
+        TableLayout,
+        TableProperties,
+        TableToolbar,
+        TextPartLanguage,
+        TextTransformation,
+        Title,
+        TodoList,
+        Underline,
+        WordCount
+    ],
+    fontFamily: {
+        supportAllValues: true
+    },
+    fontSize: {
+        options: [10, 12, 14, 'default', 18, 20, 22],
+        supportAllValues: true
+    },
+    fullscreen: {
+        onEnterCallback: container =>
+            container.classList.add(
+                'editor-container',
+                'editor-container_classic-editor',
+                'editor-container_include-style',
+                'editor-container_include-word-count',
+                'editor-container_include-fullscreen',
+                'main-container'
+            )
+    },
+    heading: {
+        options: [
+            {
+                model: 'paragraph',
+                title: 'Paragraph',
+                class: 'ck-heading_paragraph'
+            },
+            {
+                model: 'heading1',
+                view: 'h1',
+                title: 'Heading 1',
+                class: 'ck-heading_heading1'
+            },
+            {
+                model: 'heading2',
+                view: 'h2',
+                title: 'Heading 2',
+                class: 'ck-heading_heading2'
+            },
+            {
+                model: 'heading3',
+                view: 'h3',
+                title: 'Heading 3',
+                class: 'ck-heading_heading3'
+            },
+            {
+                model: 'heading4',
+                view: 'h4',
+                title: 'Heading 4',
+                class: 'ck-heading_heading4'
+            },
+            {
+                model: 'heading5',
+                view: 'h5',
+                title: 'Heading 5',
+                class: 'ck-heading_heading5'
+            },
+            {
+                model: 'heading6',
+                view: 'h6',
+                title: 'Heading 6',
+                class: 'ck-heading_heading6'
+            }
+        ]
+    },
+    htmlSupport: {
+        allow: [
+            {
+                name: /^.*$/,
+                styles: true,
+                attributes: true,
+                classes: true
+            }
+        ]
+    },
+    image: {
+        toolbar: [
+            'toggleImageCaption',
+            'imageTextAlternative',
+            '|',
+            'imageStyle:inline',
+            'imageStyle:wrapText',
+            'imageStyle:breakText',
+            '|',
+            'resizeImage'
+        ]
+    },
+    // Remove the initialData since we're using it with a form field
+    licenseKey: LICENSE_KEY,
+    link: {
+        addTargetToExternalLinks: true,
+        defaultProtocol: 'https://',
+        decorators: {
+            toggleDownloadable: {
+                mode: 'manual',
+                label: 'Downloadable',
+                attributes: {
+                    download: 'file'
+                }
+            }
+        }
+    },
+    list: {
+        properties: {
+            styles: true,
+            startIndex: true,
+            reversed: true
+        }
+    },
+    mention: {
+        feeds: [
+            {
+                marker: '@',
+                feed: [
+                    /* See: https://ckeditor.com/docs/ckeditor5/latest/features/mentions.html */
+                ]
+            }
+        ]
+    },
+    menuBar: {
+        isVisible: true
+    },
+    placeholder: 'Type or paste your blog content here!',
+    style: {
+        definitions: [
+            {
+                name: 'Article category',
+                element: 'h3',
+                classes: ['category']
+            },
+            {
+                name: 'Title',
+                element: 'h2',
+                classes: ['document-title']
+            },
+            {
+                name: 'Subtitle',
+                element: 'h3',
+                classes: ['document-subtitle']
+            },
+            {
+                name: 'Info box',
+                element: 'p',
+                classes: ['info-box']
+            },
+            {
+                name: 'CTA Link Primary',
+                element: 'a',
+                classes: ['button', 'button--green']
+            },
+            {
+                name: 'CTA Link Secondary',
+                element: 'a',
+                classes: ['button', 'button--black']
+            },
+            {
+                name: 'Marker',
+                element: 'span',
+                classes: ['marker']
+            },
+            {
+                name: 'Spoiler',
+                element: 'span',
+                classes: ['spoiler']
+            }
+        ]
+    },
+    table: {
+        contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
+    },
+    // Image upload configuration (you might need to customize this based on your backend)
+    simpleUpload: {
+        uploadUrl: '/api/upload-image', // Replace with your actual upload endpoint
+        withCredentials: true,
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+        }
+    }
+};
+
+// Global editor variable
+let ckEditor = null;
+
+// Initialize CKEditor when DOM is ready
+document.addEventListener('DOMContentLoaded', function () {
+    // Initialize CKEditor
+    ClassicEditor
+        .create(document.querySelector('#editor'), editorConfig)
+        .then(editor => {
+            ckEditor = editor;
+
+            // Set up word count display
+            const wordCount = editor.plugins.get('WordCount');
+            const wordCountContainer = document.querySelector('#wordCount');
+            const readingTimeContainer = document.querySelector('#readingTime');
+
+            if (wordCountContainer && readingTimeContainer) {
+                // Update word count and reading time
+                wordCount.on('update', (evt, stats) => {
+                    wordCountContainer.textContent = stats.words;
+
+                    // Calculate reading time (average 200 words per minute)
+                    const readingTime = Math.ceil(stats.words / 200);
+                    readingTimeContainer.textContent = readingTime + ' min';
+                });
+            }
+
+            // Sync editor content with the hidden textarea for form submission
+            editor.model.document.on('change:data', () => {
+                const editorData = editor.getData();
+                document.querySelector('#Blog_Content').value = editorData;
+            });
+
+            // Set initial content if exists
+            const initialContent = document.querySelector('#Blog_Content').value;
+            if (initialContent) {
+                editor.setData(initialContent);
+            }
+
+            console.log('CKEditor 5 initialized successfully');
+        })
+        .catch(error => {
+            console.error('Error initializing CKEditor:', error);
+        });
+
+    // URL Slug generation
+    const titleInput = document.querySelector('#Blog_Title');
+    const slugInput = document.querySelector('#Blog_UrlSlug');
+    const generateSlugBtn = document.querySelector('#generateSlugBtn');
+
+    if (titleInput && slugInput && generateSlugBtn) {
+        // Auto-generate slug when title changes
+        titleInput.addEventListener('input', function () {
+            if (!slugInput.value || slugInput.dataset.autoGenerated === 'true') {
+                generateSlug();
+            }
+        });
+
+        // Manual slug generation
+        generateSlugBtn.addEventListener('click', function () {
+            generateSlug();
+        });
+
+        // Mark slug as manually edited
+        slugInput.addEventListener('input', function () {
+            if (this.value !== generateSlugFromTitle(titleInput.value)) {
+                this.dataset.autoGenerated = 'false';
+            }
+        });
+    }
+
+    // Main image upload functionality
+    const uploadMainImageBtn = document.querySelector('#uploadMainImageBtn');
+    const mainImageUpload = document.querySelector('#mainImageUpload');
+    const mainImagePreview = document.querySelector('#mainImagePreview');
+    const mainImageImg = document.querySelector('#mainImageImg');
+    const removeMainImageBtn = document.querySelector('#removeMainImageBtn');
+    const mainImageUrlInput = document.querySelector('#Blog_MainImageUrl');
+    const mainImageIdInput = document.querySelector('#Blog_MainImageId');
+
+    if (uploadMainImageBtn && mainImageUpload) {
+        uploadMainImageBtn.addEventListener('click', () => {
+            mainImageUpload.click();
+        });
+
+        mainImageUpload.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Preview the image
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    mainImageImg.src = e.target.result;
+                    mainImagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+
+                // Upload the image (you'll need to implement this based on your backend)
+                uploadMainImage(file);
+            }
+        });
+
+        if (removeMainImageBtn) {
+            removeMainImageBtn.addEventListener('click', function () {
+                mainImagePreview.style.display = 'none';
+                mainImageUrlInput.value = '';
+                mainImageIdInput.value = '';
+                mainImageUpload.value = '';
+            });
+        }
+    }
+
+    // Form submission handling
+    const blogForm = document.querySelector('#blogForm');
+    const saveBtn = document.querySelector('#saveBtn');
+    const saveBtnText = document.querySelector('#saveBtnText');
+
+    if (blogForm) {
+        blogForm.addEventListener('submit', function (e) {
+            // Ensure editor content is synced before submission
+            if (ckEditor) {
+                document.querySelector('#Blog_Content').value = ckEditor.getData();
+            }
+
+            // Show saving state
+            if (saveBtn && saveBtnText) {
+                saveBtn.disabled = true;
+                saveBtnText.textContent = 'Saving...';
+            }
+        });
+    }
+});
+
+// Helper functions
+function generateSlug() {
+    const titleInput = document.querySelector('#Blog_Title');
+    const slugInput = document.querySelector('#Blog_UrlSlug');
+
+    if (titleInput && slugInput) {
+        const slug = generateSlugFromTitle(titleInput.value);
+        slugInput.value = slug;
+        slugInput.dataset.autoGenerated = 'true';
+    }
+}
+
+function generateSlugFromTitle(title) {
+    return title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+        .replace(/\s+/g, '-') // Replace spaces with hyphens
+        .replace(/-+/g, '-') // Replace multiple hyphens with single
+        .trim('-'); // Remove leading/trailing hyphens
+}

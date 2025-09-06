@@ -23,10 +23,10 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
         private readonly ICurrentUser _currentUser;
         private const string UploadsFolder = "blog-cover-images";
         [BindProperty]
-        public CreateAndUpdateBlogDto BlogPost { get; set; }
+        public CreateAndUpdateBlogDto Blog { get; set; }
         [BindProperty]
         public IFormFile? CoverImageFile { get; set; }
-        public CreateBlogModel(IBlogAppService blogAppService, IWebHostEnvironment webHostEnvironment,CurrentUser currentUser)
+        public CreateBlogModel(IBlogAppService blogAppService, IWebHostEnvironment webHostEnvironment, CurrentUser currentUser)
         {
             _webHostEnvironment = webHostEnvironment;
             _blogAppService = blogAppService;
@@ -34,7 +34,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
         }
         public void OnGet()
         {
-            BlogPost = new CreateAndUpdateBlogDto();
+            Blog = new CreateAndUpdateBlogDto();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -63,21 +63,21 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
             {
                 var uploadsRootFolder = Path.Combine(_webHostEnvironment.WebRootPath, UploadsFolder);
 
-                if(!Directory.Exists(uploadsRootFolder))
+                if (!Directory.Exists(uploadsRootFolder))
                 {
                     Directory.CreateDirectory(uploadsRootFolder);
                 }
 
                 var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(CoverImageFile.FileName);
                 var filePath = Path.Combine(uploadsRootFolder, uniqueFileName);
-                
+
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await CoverImageFile.CopyToAsync(stream);
                 }
-                BlogPost.ImageUrl = $"/{UploadsFolder}/" + uniqueFileName;
-                Console.WriteLine($"Image uploaded to: {BlogPost.ImageUrl}");
-                BlogPost.ImageId = Guid.NewGuid(); // Assign a new GUID for the image
+                Blog.MainImageUrl = $"/{UploadsFolder}/" + uniqueFileName;
+                Console.WriteLine($"Image uploaded to: {Blog.MainImageUrl}");
+                Blog.MainImageId = Guid.NewGuid(); // Assign a new GUID for the image
 
             }
             catch (Exception ex)
@@ -89,10 +89,10 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
 
             try
             {
-                BlogPost.Author =  _currentUser.Name;
-                Console.WriteLine($"Current User: {_currentUser.Name}, Author set to: {BlogPost.Author}");
-                BlogPost.PostedOn = DateTime.Now;
-                await _blogAppService.CreateAsync(BlogPost);
+                Blog.Author = _currentUser.Name;
+                Console.WriteLine($"Current User: {_currentUser.Name}, Author set to: {Blog.Author}");
+                Blog.PublishedDate = DateTime.Now;
+                await _blogAppService.CreateAsync(Blog);
                 return RedirectToPage("/Admin/Blogs/Index");
             }
             catch (UserFriendlyException ex)
@@ -101,6 +101,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
                 ModelState.AddModelError(string.Empty, ex.Message);
                 return Page();
             }
+
             catch (Exception ex)
             {
                 Logger.LogError(ex, "An error occurred while creating the blog post.");

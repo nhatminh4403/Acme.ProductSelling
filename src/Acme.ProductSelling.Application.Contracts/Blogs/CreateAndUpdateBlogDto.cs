@@ -10,11 +10,12 @@ namespace Acme.ProductSelling.Blogs
     {
         public string Title { get; set; }
         public string Content { get; set; }
-        public string Slug { get; set; }
-        public string? ImageUrl { get; set; }
-        public DateTime PostedOn { get; set; }
+        public string UrlSlug { get; set; }
+        public string? MainImageUrl { get; set; }
+        public DateTime PublishedDate { get; set; } = DateTime.Now;
         public string Author { get; set; }
+        public Guid AuthorId { get; set; }
 
-        public Guid? ImageId { get; set; } // Thêm thuộc tính ImageId
+        public Guid? MainImageId { get; set; }
     }
 }

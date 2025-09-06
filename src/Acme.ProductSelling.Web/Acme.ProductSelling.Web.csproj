@@ -80,7 +80,7 @@
     <PackageReference Include="Volo.Abp.Studio.Client.AspNetCore" Version="1.2.2" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <Folder Include="wwwroot\blog-cover-images\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="wwwroot\js\admin\Index.js" />

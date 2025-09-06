@@ -2,6 +2,7 @@
 using Acme.ProductSelling.Identity;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Utils;
+using Ganss.Xss;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using System;
@@ -10,11 +11,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
-using Ganss.Xss;
 namespace Acme.ProductSelling.Blogs
 {
     public class BlogAppService : CrudAppService<Blog, BlogDto, Guid, PagedAndSortedResultRequestDto, CreateAndUpdateBlogDto>,
@@ -57,14 +58,19 @@ namespace Acme.ProductSelling.Blogs
         public override async Task<BlogDto> CreateAsync(CreateAndUpdateBlogDto input)
         {
             input.Content = _HtmlSanitizer.Sanitize(input.Content);
+            var authorId = CurrentUser.Id ?? throw new UserFriendlyException("User must be logged in");
+            var authorName = !string.IsNullOrWhiteSpace(input.Author)
+                ? input.Author
+                : CurrentUser.Name ?? CurrentUser.UserName ?? "Unknown";
             var blog = new Blog(
                 _guidGenerator.Create(),
                 input.Title,
                 input.Content,
-                input.PostedOn,
-                input.Author,
-                input.Slug,
-                input.ImageUrl,
+                input.PublishedDate,
+                authorName, authorId,
+
+                input.UrlSlug,
+                input.MainImageUrl,
                 _guidGenerator.Create()
             );
 
@@ -101,8 +107,8 @@ namespace Acme.ProductSelling.Blogs
             var blog = await _repository.GetAsync(id);
             blog.Title = input.Title;
             blog.Content = _HtmlSanitizer.Sanitize(input.Content);
-            blog.PublishedDate = input.PostedOn;
-            blog.UrlSlug = input.Slug;
+            blog.PublishedDate = input.PublishedDate;
+            blog.UrlSlug = input.UrlSlug;
             //input.ImageUrl = input.ImageUrl;
 
             var updatedBlog = await Repository.UpdateAsync(blog, autoSave: true);

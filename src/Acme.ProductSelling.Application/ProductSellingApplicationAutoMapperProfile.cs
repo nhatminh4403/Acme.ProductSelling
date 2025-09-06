@@ -7,6 +7,7 @@ using Acme.ProductSelling.Orders;
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Specifications;
 using AutoMapper;
+using System;
 namespace Acme.ProductSelling;
 public class ProductSellingApplicationAutoMapperProfile : Profile
 {
@@ -117,8 +118,23 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
         CreateMap<CartItem, CartItemDto>();
 
         CreateMap<Blog, BlogDto>().ForMember(dest => dest.Author , opt => opt.MapFrom(src => src.Author));
-        CreateMap<CreateAndUpdateBlogDto, Blog>().ForMember(dest => dest.Author, opt => opt.Ignore());
-        
+        CreateMap<CreateAndUpdateBlogDto, Blog>()
+            .ConvertUsing((src, dest, context) =>
+            {
+                var blog = new Blog(
+                    context.Mapper.Map<Guid>(Guid.NewGuid()),
+                    src.Title,
+                    src.Content,
+                    src.PublishedDate,
+                    src.Author,
+                    src.AuthorId,
+                    src.UrlSlug,
+                    src.MainImageUrl,
+                    src.MainImageId
+                );
+                return blog;
+            });
+
         CreateMap<Comment, CommentDto>();
     }
 }
