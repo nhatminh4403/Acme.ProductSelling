@@ -1,4 +1,5 @@
 using Acme.ProductSelling.Blogs;
+using Acme.ProductSelling.Folder;
 using Acme.ProductSelling.Products;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -21,7 +22,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
         private readonly IBlogAppService _blogAppService;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ICurrentUser _currentUser;
-        private const string UploadsFolder = "images/blog-cover-images";
+        private const string UploadsFolder = FolderConsts.ImageFolder + "blog-cover-images";
         [BindProperty]
         public CreateAndUpdateBlogDto Blog { get; set; }
         [BindProperty]
@@ -37,14 +38,14 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
             Blog = new CreateAndUpdateBlogDto
             {
                 PublishedDate = DateTime.Now,
-               
+
             };
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
 
-           
+
 
 
             if (!ModelState.IsValid)
@@ -112,16 +113,5 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
 
         }
 
-    }
-    public class CreateBlogVM
-    {
-        public string Title { get; set; }
-        public string Content { get; set; }
-        public string UrlSlug { get; set; }
-        public string? MainImageUrl { get; set; }
-        public DateTime PublishedDate { get; set; } = DateTime.Now;
-        public string Author { get; set; }
-
-        public Guid? MainImageId { get; set; }
     }
 }

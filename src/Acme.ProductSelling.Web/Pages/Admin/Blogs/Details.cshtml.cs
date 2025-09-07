@@ -9,7 +9,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
     public class DetailsModel : ProductSellingPageModel
     {
 
-        [BindProperty]
+        [BindProperty(SupportsGet = true)]
         public Guid Id { get; set; }
 
         private readonly IBlogAppService _blogAppService;
@@ -19,16 +19,16 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
             _blogAppService = blogAppService;
         }
 
-        public async Task<IActionResult> OnGetAsync()
+        public async Task OnGetAsync()
         {
-            Blog = await _blogAppService.GetAsync(Id);
+            var blog = await _blogAppService.GetAsync(Id);
 
-            if (Blog == null)
+            if (blog == null)
             {
                 throw new Exception("Blog not found");
 
             }
-            return Page();
+            Blog = blog;
         }
     }
 }

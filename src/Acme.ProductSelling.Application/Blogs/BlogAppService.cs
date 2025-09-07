@@ -1,10 +1,12 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Identity;
 using Acme.ProductSelling.Permissions;
+using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Utils;
 using Ganss.Xss;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,6 +16,7 @@ using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
 namespace Acme.ProductSelling.Blogs
@@ -25,7 +28,8 @@ namespace Acme.ProductSelling.Blogs
         private readonly IGuidGenerator _guidGenerator;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IHtmlSanitizer _HtmlSanitizer;
-        public BlogAppService(IRepository<Blog, Guid> repository, IGuidGenerator guidGenerator, IWebHostEnvironment webHostEnvironment, IHtmlSanitizer htmlSanitizer) : base(repository)
+        public BlogAppService(IRepository<Blog, Guid> repository, IGuidGenerator guidGenerator, 
+            IWebHostEnvironment webHostEnvironment, IHtmlSanitizer htmlSanitizer) : base(repository)
         {
             _repository = repository;
             _guidGenerator = guidGenerator;
@@ -57,7 +61,43 @@ namespace Acme.ProductSelling.Blogs
                 [Authorize(Roles = IdentityRoleConsts.Admin, Policy = ProductSellingPermissions.Blogs.Create)]*/
         public override async Task<BlogDto> CreateAsync(CreateAndUpdateBlogDto input)
         {
-            var sanitizedContent = _HtmlSanitizer.Sanitize(input.Content);
+            var sanitizer = new HtmlSanitizer();
+            sanitizer.AllowedTags.Add("img");
+            sanitizer.AllowedTags.Add("figure");
+            sanitizer.AllowedTags.Add("figcaption");
+            sanitizer.AllowedTags.Add("p");
+            sanitizer.AllowedTags.Add("h1");
+            sanitizer.AllowedTags.Add("h2");
+            sanitizer.AllowedTags.Add("h3");
+            sanitizer.AllowedTags.Add("h4");
+            sanitizer.AllowedTags.Add("h5");
+            sanitizer.AllowedTags.Add("h6");
+            sanitizer.AllowedTags.Add("strong");
+            sanitizer.AllowedTags.Add("em");
+            sanitizer.AllowedTags.Add("u");
+            sanitizer.AllowedTags.Add("ul");
+            sanitizer.AllowedTags.Add("ol");
+            sanitizer.AllowedTags.Add("li");
+            sanitizer.AllowedTags.Add("blockquote");
+            sanitizer.AllowedTags.Add("a");
+            sanitizer.AllowedTags.Add("br");
+            sanitizer.AllowedTags.Add("div");
+            sanitizer.AllowedTags.Add("span");
+
+            // Allow necessary attributes
+            sanitizer.AllowedAttributes.Add("src");
+            sanitizer.AllowedAttributes.Add("alt");
+            sanitizer.AllowedAttributes.Add("title");
+            sanitizer.AllowedAttributes.Add("width");
+            sanitizer.AllowedAttributes.Add("height");
+            sanitizer.AllowedAttributes.Add("style");
+            sanitizer.AllowedAttributes.Add("class");
+            sanitizer.AllowedAttributes.Add("href");
+            sanitizer.AllowedAttributes.Add("target");
+
+
+
+            var sanitizedContent = sanitizer.Sanitize(input.Content);
             var authorId = CurrentUser.Id ?? throw new UserFriendlyException("User must be logged in");
             var authorName = !string.IsNullOrWhiteSpace(input.Author)
                 ? input.Author
@@ -116,6 +156,13 @@ namespace Acme.ProductSelling.Blogs
             var result = ObjectMapper.Map<Blog, BlogDto>(updatedBlog);
             return result;
         }
+        public override async Task<BlogDto> GetAsync(Guid id)
+        {
+            var query = await Repository.GetQueryableAsync();
+            var blog = await query.FirstOrDefaultAsync(x => x.Id == id);
 
+
+            return blog == null ? throw new EntityNotFoundException(typeof(Blog), id) : ObjectMapper.Map<Blog, BlogDto>(blog);
+        }
     }
 }

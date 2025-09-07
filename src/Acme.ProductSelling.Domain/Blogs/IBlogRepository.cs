@@ -9,5 +9,6 @@ namespace Acme.ProductSelling.Blogs
 {
     public interface IBlogRepository : IRepository<Blog, Guid>
     {
+        Task<IEnumerable<Blog>> GetListAsync();
     }
 }

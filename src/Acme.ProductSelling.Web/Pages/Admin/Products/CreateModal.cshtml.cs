@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Folder;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Permissions;
@@ -33,7 +34,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
         private readonly IManufacturerAppService _manufacturerAppService;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<ProductSellingResource> _localizer;
-
+        private const string ProductImageUpload = FolderConsts.ImageFolder + "product-images";
         public CreateModalModel(
            IProductAppService productAppService,
            ICategoryAppService categoryAppService,
@@ -134,7 +135,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
             {
                 try
                 {
-                    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "product-images");
+                    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, ProductImageUpload);
                     if (!Directory.Exists(uploadsFolder))
                     {
                         Directory.CreateDirectory(uploadsFolder);

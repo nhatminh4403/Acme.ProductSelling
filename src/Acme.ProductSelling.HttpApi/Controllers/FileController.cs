@@ -26,7 +26,7 @@ namespace Acme.ProductSelling.Controllers
         {
             try
             {
-                var result = await _fileAppService.UploadImageAsync(upload);
+                var result = await _fileAppService.UploadImageAsync(upload,true);
                 return Ok(new { url = result.Url });
             }
             catch (UserFriendlyException ex)
