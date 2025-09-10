@@ -14,6 +14,8 @@ namespace Acme.ProductSelling.Blogs
                                                             CreateAndUpdateBlogDto>
     {
         Task<BlogDto> GetBlogBySlug(string slug);
+        string ExtractTitleFromHtml(string htmlContent);
+        string GenerateUrlSlug(string title);
 
     }
 }

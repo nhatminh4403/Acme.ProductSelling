@@ -4,9 +4,12 @@ using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Utils;
 using Ganss.Xss;
+using HtmlAgilityPack;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,7 +31,7 @@ namespace Acme.ProductSelling.Blogs
         private readonly IGuidGenerator _guidGenerator;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IHtmlSanitizer _HtmlSanitizer;
-        public BlogAppService(IRepository<Blog, Guid> repository, IGuidGenerator guidGenerator, 
+        public BlogAppService(IRepository<Blog, Guid> repository, IGuidGenerator guidGenerator,
             IWebHostEnvironment webHostEnvironment, IHtmlSanitizer htmlSanitizer) : base(repository)
         {
             _repository = repository;
@@ -36,7 +39,9 @@ namespace Acme.ProductSelling.Blogs
             ConfigurePolicies();
             _webHostEnvironment = webHostEnvironment;
             _HtmlSanitizer = htmlSanitizer;
-        }
+
+            ConfigureHtmlSanitizer();
+     }
 
         private void ConfigurePolicies()
         {
@@ -61,43 +66,20 @@ namespace Acme.ProductSelling.Blogs
                 [Authorize(Roles = IdentityRoleConsts.Admin, Policy = ProductSellingPermissions.Blogs.Create)]*/
         public override async Task<BlogDto> CreateAsync(CreateAndUpdateBlogDto input)
         {
-            var sanitizer = new HtmlSanitizer();
-            sanitizer.AllowedTags.Add("img");
-            sanitizer.AllowedTags.Add("figure");
-            sanitizer.AllowedTags.Add("figcaption");
-            sanitizer.AllowedTags.Add("p");
-            sanitizer.AllowedTags.Add("h1");
-            sanitizer.AllowedTags.Add("h2");
-            sanitizer.AllowedTags.Add("h3");
-            sanitizer.AllowedTags.Add("h4");
-            sanitizer.AllowedTags.Add("h5");
-            sanitizer.AllowedTags.Add("h6");
-            sanitizer.AllowedTags.Add("strong");
-            sanitizer.AllowedTags.Add("em");
-            sanitizer.AllowedTags.Add("u");
-            sanitizer.AllowedTags.Add("ul");
-            sanitizer.AllowedTags.Add("ol");
-            sanitizer.AllowedTags.Add("li");
-            sanitizer.AllowedTags.Add("blockquote");
-            sanitizer.AllowedTags.Add("a");
-            sanitizer.AllowedTags.Add("br");
-            sanitizer.AllowedTags.Add("div");
-            sanitizer.AllowedTags.Add("span");
 
-            // Allow necessary attributes
-            sanitizer.AllowedAttributes.Add("src");
-            sanitizer.AllowedAttributes.Add("alt");
-            sanitizer.AllowedAttributes.Add("title");
-            sanitizer.AllowedAttributes.Add("width");
-            sanitizer.AllowedAttributes.Add("height");
-            sanitizer.AllowedAttributes.Add("style");
-            sanitizer.AllowedAttributes.Add("class");
-            sanitizer.AllowedAttributes.Add("href");
-            sanitizer.AllowedAttributes.Add("target");
+            var sanitizedContent = _HtmlSanitizer.Sanitize(input.Content);
+            if (string.IsNullOrWhiteSpace(input.Title))
+            {
+                input.Title = ExtractTitleFromHtml(sanitizedContent);
+                Logger.LogInformation($"Auto-extracted title: {input.Title}");
+            }
 
+            // Validate that we have a title (either provided or extracted)
+            if (string.IsNullOrWhiteSpace(input.Title))
+            {
+                throw new UserFriendlyException("Blog title is required. Please provide a title or add a heading to your content.");
+            }
 
-
-            var sanitizedContent = sanitizer.Sanitize(input.Content);
             var authorId = CurrentUser.Id ?? throw new UserFriendlyException("User must be logged in");
             var authorName = !string.IsNullOrWhiteSpace(input.Author)
                 ? input.Author
@@ -106,6 +88,7 @@ namespace Acme.ProductSelling.Blogs
                 _guidGenerator.Create(),
                 input.Title,
                 sanitizedContent,
+              //input.Content,
                 input.PublishedDate,
                 input.Author, authorId,
 
@@ -128,12 +111,10 @@ namespace Acme.ProductSelling.Blogs
             }
             if (!string.IsNullOrEmpty(blogNeededToBeDeleted.MainImageUrl))
             {
-                // BƯỚC 3: Tạo đường dẫn vật lý đầy đủ đến file ảnh.
-                // ImageUrl có dạng "/blog-cover-images/file.jpg", cần loại bỏ dấu "/" ở đầu.
+
                 var relativePath = blogNeededToBeDeleted.MainImageUrl.TrimStart('/');
                 var filePath = Path.Combine(_webHostEnvironment.WebRootPath, relativePath);
 
-                // BƯỚC 4: Kiểm tra xem file có tồn tại không và xóa nó.
                 if (File.Exists(filePath))
                 {
                     File.Delete(filePath);
@@ -150,6 +131,7 @@ namespace Acme.ProductSelling.Blogs
             blog.PublishedDate = input.PublishedDate;
             blog.UrlSlug = input.UrlSlug;
             //input.ImageUrl = input.ImageUrl;
+            blog.Content = _HtmlSanitizer.Sanitize(input.Content);
 
             var updatedBlog = await Repository.UpdateAsync(blog, autoSave: true);
 
@@ -164,5 +146,109 @@ namespace Acme.ProductSelling.Blogs
 
             return blog == null ? throw new EntityNotFoundException(typeof(Blog), id) : ObjectMapper.Map<Blog, BlogDto>(blog);
         }
+
+
+
+        private void ConfigureHtmlSanitizer()
+        {
+            // Clear existing configuration
+            _HtmlSanitizer.AllowedTags.Clear();
+            _HtmlSanitizer.AllowedAttributes.Clear();
+
+            // Add allowed tags
+            var allowedTags = new[]
+            {
+            "img", "figure", "figcaption", "p", "h1", "h2", "h3", "h4", "h5", "h6",
+            "strong", "em", "u", "ul", "ol", "li", "blockquote", "a", "br", "div",
+            "span", "table", "tbody", "tr", "td", "th", "thead"
+        };
+
+            foreach (var tag in allowedTags)
+            {
+                _HtmlSanitizer.AllowedTags.Add(tag);
+            }
+
+            // Add allowed attributes
+            var allowedAttributes = new[]
+            {
+            "src", "alt", "title", "width", "height", "style", "class", "href",
+            "target", "data-*", "id"
+        };
+
+            foreach (var attr in allowedAttributes)
+            {
+                _HtmlSanitizer.AllowedAttributes.Add(attr);
+            }
+
+            // Allow data attributes pattern
+            _HtmlSanitizer.AllowDataAttributes = true;
+        }
+        public string ExtractTitleFromHtml(string htmlContent)
+        {
+            if (string.IsNullOrWhiteSpace(htmlContent))
+                return string.Empty;
+
+            try
+            {
+                var doc = new HtmlDocument();
+                doc.LoadHtml(htmlContent);
+
+                // Priority order for heading extraction
+                var headingTags = new[] { "h1", "h2", "h3", "h4", "h5", "h6" };
+
+                foreach (var tag in headingTags)
+                {
+                    var heading = doc.DocumentNode.SelectSingleNode($"//{tag}");
+                    if (heading != null && !string.IsNullOrWhiteSpace(heading.InnerText))
+                    {
+                        return CleanText(heading.InnerText);
+                    }
+                }
+
+                // Fallback: first paragraph
+                var firstParagraph = doc.DocumentNode.SelectSingleNode("//p");
+                if (firstParagraph != null && !string.IsNullOrWhiteSpace(firstParagraph.InnerText))
+                {
+                    var text = CleanText(firstParagraph.InnerText);
+                    return text.Length > 60 ? text.Substring(0, 60) + "..." : text;
+                }
+
+                return string.Empty;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        public string GenerateUrlSlug(string title)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+                return string.Empty;
+
+            return title
+                .ToLowerInvariant()
+                .Replace(" ", "-")
+                .Replace("--", "-")
+                .Trim('-')
+                .Substring(0, Math.Min(50, title.Length)); // Limit length
+        }
+
+        private string CleanText(string text)
+        {
+            return System.Net.WebUtility.HtmlDecode(text?.Trim() ?? string.Empty);
+        }
+
+    }
+    public class ExtractTitleRequestDto
+    {
+        public string Content { get; set; }
+    }
+
+    public class TitleExtractionResultDto
+    {
+        public string Title { get; set; }
+        public string UrlSlug { get; set; }
+        public bool Success { get; set; }
     }
 }

@@ -18,10 +18,11 @@
 } *@
 
 @section scripts {
-
-    <abp-script src="/Pages/Admin/Blogs/CreateBlog.js" />
     <script src="https://cdn.ckeditor.com/ckeditor5/46.0.3/ckeditor5.umd.js" crossorigin=""></script>
+
     <script src="~/js/admin/ck-editor-main.js"></script>
+
+    <script src="/js/admin/CreateBlog.js" > </script>
 }
 @section styles {
     <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/46.0.3/ckeditor5.css" crossorigin>
@@ -80,8 +81,12 @@
                     <!-- Main Content Column -->
                     <div class="col-lg-8">
                         <!-- Title -->
-                        <abp-input asp-for="Blog.Title" label="@L["Title"]" required="true" />
-
+                        <div class="form-group">
+                            
+                            <abp-input asp-for="Blog.Title" class="form-control" readonly="true" />
+                            <span asp-validation-for="Blog.Title" class="text-danger"></span>
+                            <small class="form-text text-muted">Leave blank to auto-extract from first heading in content</small>
+                        </div>
                         <!-- URL Slug -->
                         <div class="form-group">
                             <abp-label asp-for="Blog.UrlSlug" />
@@ -195,49 +200,4 @@
         </form>
     </abp-card-body>
 </abp-card>
-@* summernote *@
-@* <abp-script src="/lib/summernote/summernote-bs5.min.js" />
-    <script>
-        $(function () {
-            // ID bây giờ sẽ là BlogPost_Content vì [BindProperty] có tên là "BlogPost"
-            $('#BlogPost_Content').summernote({
-                height: 300,
-                toolbar: [
-                   ['style', ['style']],
-                   ['font', ['bold', 'underline', 'italic','clear']],
-                   ['para', ['ul', 'ol', 'paragraph']],
-                   ['insert', ['link', 'picture']],
-                   ['view', ['fullscreen', 'codeview']]
-                ]
-            });
-        });
-    </script> *@
-@* <form method="post" enctype="multipart/form-data">
-            <div class="mb-3">
-                <abp-input asp-for="BlogPost.Title" class="form-control" />
-                <span asp-validation-for="BlogPost.Title" class="text-danger"></span>
-            </div>
 
-            <div class="mb-3">
-                <abp-input asp-for="BlogPost.UrlSlug" class="form-control" readonly="true" />
-                <span asp-validation-for="BlogPost.UrlSlug" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <abp-input asp-for="BlogPost.Author" value="@CurrentUser.Name" readonly="true"/>
-            </div>
-            <div class="mb-3">
-                <abp-input asp-for="CoverImageFile" type="file" accept="image/*">
-                </abp-input>
-
-                <span asp-validation-for="CoverImageFile" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="BlogPost.Content" class="form-label"></label>
-                <textarea asp-for="BlogPost.Content" class="form-control"></textarea>
-                <span asp-validation-for="BlogPost.Content" class="text-danger"></span>
-            </div>
-
-
-            <button type="submit" class="btn btn-primary">@L["UI:Button:Create"]</button>
-            <a asp-page="/Admin/Blogs/Index" class="btn btn-secondary">@L["UI:Button:Cancel"]</a>
-</form> *@

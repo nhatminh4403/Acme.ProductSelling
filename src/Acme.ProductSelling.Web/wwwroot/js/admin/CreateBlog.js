@@ -5,7 +5,7 @@
     var slugInput = $('#Blog_UrlSlug');
 
     if (nameInput.length && slugInput.length) {
-        nameInput.on('input keyup', function () {
+        nameInput.on('input', function () {
             var nameValue = $(this).val();
             var slugValue = generateSlug(nameValue);
             slugInput.val(slugValue);

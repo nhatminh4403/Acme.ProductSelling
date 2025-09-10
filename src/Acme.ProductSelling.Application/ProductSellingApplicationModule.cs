@@ -1,3 +1,4 @@
+using Acme.ProductSelling.Blogs;
 using Acme.ProductSelling.EntityFrameworkCore;
 using Acme.ProductSelling.PaymentGateway.MoMo;
 using Acme.ProductSelling.PaymentGateway.PayPal;
@@ -35,6 +36,43 @@ public class ProductSellingApplicationModule : AbpModule
         {
             options.AddMaps<ProductSellingApplicationModule>();
         });
-        context.Services.AddSingleton<IHtmlSanitizer>(new HtmlSanitizer());
+        context.Services.AddSingleton<IHtmlSanitizer>(provider =>
+            {
+
+                var sanitizer = new HtmlSanitizer();
+
+                // Configure allowed tags and attributes
+                var allowedTags = new[]
+                {
+                    "h1", "h2", "h3", "h4", "h5", "h6", "p", "br", "strong", "em", "u",
+                    "ul", "ol", "li", "blockquote", "a", "img", "code", "pre",
+                    "table", "thead", "tbody", "tr", "th", "td", "div", "span",
+                    "figure", "figcaption"
+                };
+
+                sanitizer.AllowedTags.Clear();
+                foreach (var tag in allowedTags)
+                {
+                    sanitizer.AllowedTags.Add(tag);
+                }
+
+                var allowedAttributes = new[]
+                {
+                    "href", "src", "alt", "title", "class", "id", "target", "style",
+                    "width", "height", "data-*"
+                };
+
+                sanitizer.AllowedAttributes.Clear();
+                foreach (var attr in allowedAttributes)
+                {
+                    sanitizer.AllowedAttributes.Add(attr);
+                }
+
+                // Allow data attributes
+                sanitizer.AllowDataAttributes = true;
+
+                return sanitizer;
+            }
+        );
     }
 }

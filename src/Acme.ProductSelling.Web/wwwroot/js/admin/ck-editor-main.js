@@ -184,7 +184,7 @@ const editorConfig = {
         LinkImage,
         List,
         ListProperties,
-        Markdown,
+        //Markdown,
         MediaEmbed,
         Mention,
         PageBreak,
@@ -402,47 +402,88 @@ const editorConfig = {
 // Global editor variable
 let ckEditor = null;
 
-// Initialize CKEditor when DOM is ready
 document.addEventListener('DOMContentLoaded', function () {
-    // Initialize CKEditor
     ClassicEditor
         .create(document.querySelector('#editor'), editorConfig)
         .then(editor => {
             ckEditor = editor;
 
-            // Set up word count display
+
             const wordCount = editor.plugins.get('WordCount');
             const wordCountContainer = document.querySelector('#wordCount');
             const readingTimeContainer = document.querySelector('#readingTime');
 
             if (wordCountContainer && readingTimeContainer) {
-                // Update word count and reading time
                 wordCount.on('update', (evt, stats) => {
                     wordCountContainer.textContent = stats.words;
 
-                    // Calculate reading time (average 200 words per minute)
                     const readingTime = Math.ceil(stats.words / 200);
                     readingTimeContainer.textContent = readingTime + ' min';
                 });
             }
 
-            // Sync editor content with the hidden textarea for form submission
+
+            // Get form inputs
+            const titleInput = document.querySelector('#Blog_Title');
+
+
+            let userHasManuallyEditedTitle = false;
+            let debounceTimeout;
+            const DEBOUNCE_DELAY = 150;
+            
+            const extractFirstHeading = (htmlContent) => {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = htmlContent;
+                const firstHeading = tempDiv.querySelector('h1, h2, h3, h4, h5, h6');
+                return firstHeading ? firstHeading.textContent.trim() : null;
+            };
+
+            if (titleInput) {
+                titleInput.addEventListener('input', () => {
+                    const titleValue = this.value.trim();
+                    userHasManuallyEditedTitle = titleValue !== '';
+                   
+                });
+               
+            }
+            // Listen for changes in the editor content with debouncing
             editor.model.document.on('change:data', () => {
-                const editorData = editor.getData();
-                document.querySelector('#Blog_Content').value = editorData;
+                // Always sync main content immediately
+                document.querySelector('#Blog_Content').value = editor.getData();
+
+                // Clear the previous timeout
+                clearTimeout(debounceTimeout);
+
+                // Set a new timeout to run the logic after a pause in typing
+                debounceTimeout = setTimeout(() => {
+                    if (titleInput && !userHasManuallyEditedTitle) {
+                        const editorData = editor.getData();
+                        const extractedTitle = extractFirstHeading(editorData);
+
+                        if (titleInput.value !== (extractedTitle || '')) {
+                            titleInput.value = extractedTitle || '';
+                            titleInput.dispatchEvent(new Event('input', { bubbles: true }));
+                            titleInput.dispatchEvent(new Event('keyup', { bubbles: true }));
+                        }   
+                    }
+                }, DEBOUNCE_DELAY);
             });
 
-            // Set initial content if exists
-            const initialContent = document.querySelector('#Blog_Content').value;
-            if (initialContent) {
-                editor.setData(initialContent);
-            }
-
-            console.log('CKEditor 5 initialized successfully');
         })
         .catch(error => {
             console.error('Error initializing CKEditor:', error);
         });
+
+
+
+
+
+
+
+
+
+
+
     // Main image upload functionality
     const uploadMainImageBtn = document.querySelector('#uploadMainImageBtn');
     const mainImageUpload = document.querySelector('#mainImageUpload');

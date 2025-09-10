@@ -37,6 +37,10 @@ namespace Acme.ProductSelling.Files
                 throw new UserFriendlyException("File size cannot exceed 5MB");
 
             var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, ContentImageUpload);
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
 
             // Use original filename (sanitized)
             var originalFileName = Path.GetFileNameWithoutExtension(file.FileName);
