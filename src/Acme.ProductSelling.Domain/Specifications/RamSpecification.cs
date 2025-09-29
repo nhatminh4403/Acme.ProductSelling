@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Acme.ProductSelling.Products.Lookups;
+using System;
 using Volo.Abp.Domain.Entities;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class RamSpecification : Entity<Guid>
+    public class RamSpecification : SpecificationBase
     {
-        public string RamType { get; set; } // e.g., "DDR5", "DDR4"
+        public Guid RamTypeId { get; set; }
+        public virtual RamType RamType { get; set; }
         public int Capacity { get; set; } // Total GB (e.g., 16, 32)
         public int Speed { get; set; } // MHz or MT/s
         public int ModuleCount { get; set; } // e.g., 2 (cho kit 2x8GB)

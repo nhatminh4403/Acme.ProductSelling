@@ -1,12 +1,16 @@
-﻿using System;
+﻿using Acme.ProductSelling.Products.Lookups;
+using Acme.ProductSelling.Specifications.Junctions;
+using System;
+using System.Collections.Generic;
 using Volo.Abp.Domain.Entities;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class CaseSpecification : Entity<Guid>
+    public class CaseSpecification : SpecificationBase
     {
-        public string SupportedMbFormFactor { get; set; } // "ATX, Micro-ATX, ITX" (có thể list)
-        public string Material { get; set; } // "Steel, Tempered Glass"
+        public Guid FormFactorId { get; set; }
+        public virtual FormFactor FormFactor { get; set; }
+        public virtual ICollection<CaseMaterial> Materials { get; set; } = new HashSet<CaseMaterial>();
         public string Color { get; set; }
         public float MaxGpuLength { get; set; } // mm
         public float MaxCpuCoolerHeight { get; set; } // mm

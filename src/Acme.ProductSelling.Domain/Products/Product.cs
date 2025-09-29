@@ -49,32 +49,18 @@ namespace Acme.ProductSelling.Products
         public Category Category { get; set; }
         public Guid ManufacturerId { get; set; }
         public virtual Manufacturer Manufacturer { get; set; }
-        public Guid? MonitorSpecificationId { get; set; }
         public virtual MonitorSpecification MonitorSpecification { get; set; }
-        public Guid? MouseSpecificationId { get; set; }
         public virtual MouseSpecification MouseSpecification { get; set; }
-        public Guid? LaptopSpecificationId { get; set; } // Giả sử có LaptopSpec
         public virtual LaptopSpecification LaptopSpecification { get; set; }
-        // --- Thêm mới Spec FKs & Navigations ---
-        public Guid? CpuSpecificationId { get; set; }
         public virtual CpuSpecification CpuSpecification { get; set; }
-        public Guid? GpuSpecificationId { get; set; }
         public virtual GpuSpecification GpuSpecification { get; set; }
-        public Guid? RamSpecificationId { get; set; }
         public virtual RamSpecification RamSpecification { get; set; }
-        public Guid? MotherboardSpecificationId { get; set; }
         public virtual MotherboardSpecification MotherboardSpecification { get; set; }
-        public Guid? StorageSpecificationId { get; set; }
         public virtual StorageSpecification StorageSpecification { get; set; }
-        public Guid? PsuSpecificationId { get; set; }
         public virtual PsuSpecification PsuSpecification { get; set; }
-        public Guid? CaseSpecificationId { get; set; }
         public virtual CaseSpecification CaseSpecification { get; set; }
-        public Guid? CpuCoolerSpecificationId { get; set; }
         public virtual CpuCoolerSpecification CpuCoolerSpecification { get; set; }
-        public Guid? KeyboardSpecificationId { get; set; }
         public virtual KeyboardSpecification KeyboardSpecification { get; set; }
-        public Guid? HeadsetSpecificationId { get; set; }
         public virtual HeadsetSpecification HeadsetSpecification { get; set; }
 
         private void CalculateDiscountedPrice()

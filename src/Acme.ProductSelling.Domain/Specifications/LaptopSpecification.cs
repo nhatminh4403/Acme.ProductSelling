@@ -3,7 +3,7 @@ using Volo.Abp.Domain.Entities;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class LaptopSpecification : Entity<Guid>
+    public class LaptopSpecification : SpecificationBase
     {
         public string CPU { get; set; }
         public string RAM { get; set; }

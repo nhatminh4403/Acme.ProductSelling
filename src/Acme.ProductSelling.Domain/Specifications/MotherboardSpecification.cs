@@ -1,16 +1,24 @@
-﻿using System;
-using Volo.Abp.Domain.Entities;
+﻿using Acme.ProductSelling.Products.Lookups;
+using System;
+
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class MotherboardSpecification : Entity<Guid>
+    public class MotherboardSpecification : SpecificationBase
     {
-        public string Socket { get; set; } // e.g., "LGA1700", "AM5"
-        public string Chipset { get; set; } // e.g., "Z790", "B650"
-        public string FormFactor { get; set; } // e.g., "ATX", "Micro-ATX", "ITX"
+        public Guid SocketId { get; set; }
+        public virtual CpuSocket Socket { get; set; }
+
+        public Guid ChipsetId { get; set; }
+        public virtual Chipset Chipset { get; set; }
+
+        public Guid FormFactorId { get; set; }
+        public virtual FormFactor FormFactor { get; set; }
+
         public int RamSlots { get; set; }
         public int MaxRam { get; set; } // GB
-        public string SupportedRamType { get; set; } // e.g., "DDR5"
+        public Guid RamTypeId { get; set; }
+        public virtual RamType SupportedRamTypes { get; set; }
         public int M2Slots { get; set; }
         public int SataPorts { get; set; }
         public bool HasWifi { get; set; }

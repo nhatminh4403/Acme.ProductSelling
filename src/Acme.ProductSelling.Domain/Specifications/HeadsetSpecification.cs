@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Acme.ProductSelling.Products.Lookups;
+using System;
 using Volo.Abp.Domain.Entities;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class HeadsetSpecification : Entity<Guid>
+    public class HeadsetSpecification : SpecificationBase
     {
-        public string Connectivity { get; set; } // "Wired 3.5mm", "Wired USB", "Wireless 2.4GHz", "Bluetooth"
+        public Guid ConnectivityId { get; set; }
+        public virtual Connectivity Connectivity { get; set; }
         public bool HasMicrophone { get; set; }
         public bool IsSurroundSound { get; set; }
         public bool IsNoiseCancelling { get; set; } // Có thể tách biệt cho mic và tai nghe

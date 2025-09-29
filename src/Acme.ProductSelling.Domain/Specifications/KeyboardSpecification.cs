@@ -1,13 +1,17 @@
-﻿using System;
+﻿using Acme.ProductSelling.Products.Lookups;
+using Acme.ProductSelling.Products.Specs;
+using System;
 using Volo.Abp.Domain.Entities;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class KeyboardSpecification : Entity<Guid>
+    public class KeyboardSpecification : SpecificationBase
     {
         public string KeyboardType { get; set; } // "Mechanical", "Membrane"
-        public string SwitchType { get; set; } // Nullable "Cherry MX Blue", "Gateron Brown"
-        public string Layout { get; set; } // "Full-size", "TKL", "60%"
+
+        public Guid SwitchTypeId { get; set; }
+        public virtual SwitchType SwitchType { get; set; }
+        public KeyboardLayout Layout { get; set; } // Dùng Enum
         public string Connectivity { get; set; } // "Wired", "Wireless", "Wired/Wireless"
         public string Backlight { get; set; } // "None", "Single Color", "RGB"
     }

@@ -1,13 +1,17 @@
-﻿using System;
+﻿using Acme.ProductSelling.Products.Lookups;
+using Acme.ProductSelling.Products.Specs;
+using System;
 using Volo.Abp.Domain.Entities;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class PsuSpecification : Entity<Guid>
+    public class PsuSpecification : SpecificationBase
     {
         public int Wattage { get; set; } // Watts
         public string EfficiencyRating { get; set; } // "80+ Bronze", "80+ Gold", etc.
-        public string Modularity { get; set; } // "Full", "Semi", "Non-Modular"
-        public string FormFactor { get; set; } // "ATX", "SFX"
+        public PsuModularity Modularity { get; set; } // Dùng Enum
+
+        public Guid FormFactorId { get; set; }
+        public virtual FormFactor FormFactor { get; set; }
     }
 }

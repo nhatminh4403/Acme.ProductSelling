@@ -3,7 +3,7 @@ using Volo.Abp.Domain.Entities;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class GpuSpecification : Entity<Guid>
+    public class GpuSpecification : SpecificationBase
     {
         public string Chipset { get; set; } // e.g., "GeForce RTX 4080", "Radeon RX 7900 XTX"
         public int MemorySize { get; set; } // GB
