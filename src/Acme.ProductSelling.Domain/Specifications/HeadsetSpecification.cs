@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Products.Lookups;
+using Acme.ProductSelling.Products.Specs;
 using System;
 using Volo.Abp.Domain.Entities;
 
@@ -6,8 +7,7 @@ namespace Acme.ProductSelling.Specifications
 {
     public class HeadsetSpecification : SpecificationBase
     {
-        public Guid ConnectivityId { get; set; }
-        public virtual Connectivity Connectivity { get; set; }
+        public ConnectivityType Connectivity { get; set; }
         public bool HasMicrophone { get; set; }
         public bool IsSurroundSound { get; set; }
         public bool IsNoiseCancelling { get; set; } // Có thể tách biệt cho mic và tai nghe

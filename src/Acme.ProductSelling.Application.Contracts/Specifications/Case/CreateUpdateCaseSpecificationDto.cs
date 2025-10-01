@@ -1,9 +1,16 @@
-﻿namespace Acme.ProductSelling.Specifications
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace Acme.ProductSelling.Specifications
 {
     public class CreateUpdateCaseSpecificationDto
     {
-        public string? SupportedMbFormFactor { get; set; } // "ATX, Micro-ATX, ITX" (có thể list)
-        public string? Material { get; set; } // "Steel, Tempered Glass"
+        [Required]
+        public Guid FormFactorId { get; set; } // Was: string SupportedMbFormFactor
+
+        // Client sẽ gửi một mảng các GUIDs, ví dụ: ["guid-of-steel", "guid-of-glass"]
+        public List<Guid> MaterialIds { get; set; } = new();  // "Steel, Tempered Glass"
         public string? Color { get; set; }
         public float? MaxGpuLength { get; set; } // mm
         public float? MaxCpuCoolerHeight { get; set; } // mm

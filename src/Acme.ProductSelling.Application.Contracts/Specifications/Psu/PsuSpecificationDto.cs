@@ -1,13 +1,17 @@
-﻿using System;
+﻿using Acme.ProductSelling.Products.Specs;
+using System;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications
 {
     public class PsuSpecificationDto : EntityDto<Guid>
     {
-        public int Wattage { get; set; } // Watts
-        public string EfficiencyRating { get; set; } // "80+ Bronze", "80+ Gold", etc.
-        public string Modularity { get; set; } // "Full", "Semi", "Non-Modular"
-        public string FormFactor { get; set; } // "ATX", "SFX"
+        public string FormFactorName { get; set; }
+
+        public int Wattage { get; set; }
+        public string EfficiencyRating { get; set; }
+
+        // Trả về enum
+        public PsuModularity Modularity { get; set; }
     }
 }

@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Volo.Abp.Domain.Entities.Auditing;
+using Volo.Abp.Application.Dtos;
 
-namespace Acme.ProductSelling.Products.Lookups
+namespace Acme.ProductSelling.Products
 {
-    public class Connectivity : AuditedEntity<Guid>
+    public class ProductLookupDto<TKey> : EntityDto<TKey>
     {
         public string Name { get; set; }
-
     }
 }

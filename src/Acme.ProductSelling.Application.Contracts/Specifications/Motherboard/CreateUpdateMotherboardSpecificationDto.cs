@@ -1,14 +1,28 @@
-﻿namespace Acme.ProductSelling.Specifications
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace Acme.ProductSelling.Specifications
 {
     public class CreateUpdateMotherboardSpecificationDto
     {
 
-        public string? Socket { get; set; } // e.g., "LGA1700", "AM5"
-        public string? Chipset { get; set; } // e.g., "Z790", "B650"
-        public string? FormFactor { get; set; } // e.g., "ATX", "Micro-ATX", "ITX"
-        public int? RamSlots { get; set; }
-        public int? MaxRam { get; set; } // GB
-        public string? SupportedRamType { get; set; } // e.g., "DDR5"
+        [Required]
+        public Guid SocketId { get; set; } // Was: string Socket
+
+        [Required]
+        public Guid ChipsetId { get; set; } // Was: string Chipset
+
+        [Required]
+        public Guid FormFactorId { get; set; } // Was: string FormFactor
+
+        [Required]
+        public Guid RamTypeId { get; set; } // Was: string SupportedRamType
+
+        [Range(1, 8)]
+        public int RamSlots { get; set; }
+
+        [Range(1, 512)]
+        public int MaxRam { get; set; } // GB
         public int? M2Slots { get; set; }
         public int? SataPorts { get; set; }
         public bool HasWifi { get; set; } = false;

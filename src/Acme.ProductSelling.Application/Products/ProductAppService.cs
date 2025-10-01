@@ -1,5 +1,7 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Permissions;
+using Acme.ProductSelling.Specifications;
+using Acme.ProductSelling.Specifications.Junctions;
 using Acme.ProductSelling.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +27,9 @@ namespace Acme.ProductSelling.Products
         private readonly IRepository<Category, Guid> _categoryRepository;
         private readonly IRepository<Product, Guid> _productRepository;
         private readonly ISpecificationService _specificationService;
-
+        private readonly IRepository<CaseMaterial> _caseMaterialRepository;
+        private readonly IRepository<CaseSpecification, Guid> _caseSpecificationRepository;
+        private readonly IRepository<CpuCoolerSpecification, Guid> _cpuCoolerSpecificationRepository;
 
         public ProductAppService(
             IRepository<Product, Guid> productRepository,
@@ -79,9 +83,15 @@ namespace Acme.ProductSelling.Products
             try
             {
                 await CheckCreatePolicyAsync();
+                var category = await _categoryRepository.GetAsync(input.CategoryId);
 
-                var product = await CreateProductEntityAsync(input);
+                //var product = await CreateProductEntityAsync(input);
+                //await Repository.InsertAsync(product, autoSave: true);
+                var product = ObjectMapper.Map<CreateUpdateProductDto, Product>(input);
+                product.UrlSlug = UrlHelperMethod.RemoveDiacritics(product.ProductName);
                 await Repository.InsertAsync(product, autoSave: true);
+                await _specificationService.CreateSpecificationAsync(product.Id, input, category.SpecificationType);
+                await HandleManyToManys(product.Id, input);
 
                 return await GetAsync(product.Id);
             }
@@ -91,250 +101,32 @@ namespace Acme.ProductSelling.Products
                 throw;
             }
         }
-        /*       private async Task CreateAndLinkSpecificationsAsync(Product product, CreateUpdateProductDto dto, SpecificationType specType)
-               {
-                   // This method handles creating the specific spec entity, saving it, and linking its ID to the product.
-                   switch (specType)
-                   {
-                       case SpecificationType.Monitor:
-                           if (dto.MonitorSpecification != null)
-                           {
-                               var spec = ObjectMapper.Map<CreateUpdateMonitorSpecificationDto, MonitorSpecification>(dto.MonitorSpecification);
-                               spec = await _monitorSpecRepository.InsertAsync(spec, autoSave: true);
-                               product.MonitorSpecificationId = spec.Id;
-                           }
-                           break;
-                       case SpecificationType.Mouse:
-                           if (dto.MouseSpecification != null)
-                           {
-                               var spec = ObjectMapper.Map<CreateUpdateMouseSpecificationDto, MouseSpecification>(dto.MouseSpecification);
-                               spec = await _mouseSpecRepository.InsertAsync(spec, autoSave: true);
-                               product.MouseSpecificationId = spec.Id;
-                           }
-                           break;
-                       case SpecificationType.Laptop:
-                           if (dto.LaptopSpecification != null)
-                           {
-                               var spec = ObjectMapper.Map<CreateUpdateLaptopSpecificationDto, LaptopSpecification>(dto.LaptopSpecification);
-                               spec = await _laptopSpecRepository.InsertAsync(spec, autoSave: true);
-                               product.LaptopSpecificationId = spec.Id;
-                           }
-                           break;
-                       case SpecificationType.CPU:
-                           if (dto.CpuSpecification != null)
-                           {
-                               var spec = ObjectMapper.Map<CreateUpdateCpuSpecificationDto, CpuSpecification>(dto.CpuSpecification);
-                               spec = await _cpuSpecRepository.InsertAsync(spec, autoSave: true);
-                               product.CpuSpecificationId = spec.Id;
-                           }
-                           break;
-                       case SpecificationType.GPU:
-                           if (dto.GpuSpecification != null)
-                           {
-                               var spec = ObjectMapper.Map<CreateUpdateGpuSpecificationDto, GpuSpecification>(dto.GpuSpecification);
-                               spec = await _gpuSpecRepository.InsertAsync(spec, autoSave: true);
-                               product.GpuSpecificationId = spec.Id;
-                           }
-                           break;
-                       case SpecificationType.RAM:
-                           if (dto.RamSpecification != null)
-                           {
-                               var spec = ObjectMapper.Map<CreateUpdateRamSpecificationDto, RamSpecification>(dto.RamSpecification);
-                               spec = await _ramSpecRepository.InsertAsync(spec, autoSave: true);
-                               product.RamSpecificationId = spec.Id;
-                           }
-                           break;
-                       case SpecificationType.Motherboard:
-                           if (dto.MotherboardSpecification != null)
-                           {
-                               var spec = ObjectMapper.Map<CreateUpdateMotherboardSpecificationDto, MotherboardSpecification>(dto.MotherboardSpecification);
-                               spec = await _motherboardSpecRepository.InsertAsync(spec, autoSave: true);
-                               product.MotherboardSpecificationId = spec.Id;
-                           }
-                           break;
-                       case SpecificationType.Storage:
-                           if (dto.StorageSpecification != null)
-                           {
-                               var spec = ObjectMapper.Map<CreateUpdateStorageSpecificationDto, StorageSpecification>(dto.StorageSpecification);
-                               spec = await _storageSpecRepository.InsertAsync(spec, autoSave: true);
-                               product.StorageSpecificationId = spec.Id;
-                           }
-                           break;
-                       case SpecificationType.PSU:
-                           if (dto.PsuSpecification != null)
-                           {
-                               var spec = ObjectMapper.Map<CreateUpdatePsuSpecificationDto, PsuSpecification>(dto.PsuSpecification);
-                               spec = await _psuSpecRepository.InsertAsync(spec, autoSave: true);
-                               product.PsuSpecificationId = spec.Id;
-                           }
-                           break;
-                       case SpecificationType.Case:
-                           if (dto.CaseSpecification != null)
-                           {
-                               var spec = ObjectMapper.Map<CreateUpdateCaseSpecificationDto, CaseSpecification>(dto.CaseSpecification);
-                               spec = await _caseSpecRepository.InsertAsync(spec, autoSave: true);
-                               product.CaseSpecificationId = spec.Id;
-                           }
-                           break;
-                       case SpecificationType.CPUCooler:
-                           if (dto.CpuCoolerSpecification != null)
-                           {
-                               var spec = ObjectMapper.Map<CreateUpdateCpuCoolerSpecificationDto, CpuCoolerSpecification>(dto.CpuCoolerSpecification);
-                               spec = await _cpuCoolerSpecRepository.InsertAsync(spec, autoSave: true);
-                               product.CpuCoolerSpecificationId = spec.Id;
-                           }
-                           break;
-                       case SpecificationType.Keyboard:
-                           if (dto.KeyboardSpecification != null)
-                           {
-                               var spec = ObjectMapper.Map<CreateUpdateKeyboardSpecificationDto, KeyboardSpecification>(dto.KeyboardSpecification);
-                               spec = await _keyboardSpecRepository.InsertAsync(spec, autoSave: true);
-                               product.KeyboardSpecificationId = spec.Id;
-                           }
-                           break;
-                       case SpecificationType.Headset:
-                           if (dto.HeadsetSpecification != null)
-                           {
-                               var spec = ObjectMapper.Map<CreateUpdateHeadsetSpecificationDto, HeadsetSpecification>(dto.HeadsetSpecification);
-                               spec = await _headsetSpecRepository.InsertAsync(spec, autoSave: true);
-                               product.HeadsetSpecificationId = spec.Id;
-                           }
-                           break;
-                       case SpecificationType.None:
-                       default:
-                           // No specific specification to create or link
-                           break;
-                   }
-               }*/
-
         [Authorize(ProductSellingPermissions.Products.Edit)]
         public override async Task<ProductDto> UpdateAsync(Guid id, CreateUpdateProductDto input)
         {
             await CheckUpdatePolicyAsync();
 
-            var product = await Repository.GetAsync(id);
-            var category = await _categoryRepository.GetAsync(input.CategoryId);
+            var product = await (await Repository.GetQueryableAsync())
+                .Include(p => p.Category)
+                .FirstAsync(p => p.Id == id);
 
-            await UpdateProductAsync(product, input, category);
+            var oldSpecType = product.Category.SpecificationType;
+            ObjectMapper.Map(input, product);
+
+            var newCategory = await _categoryRepository.GetAsync(input.CategoryId);
+
+            if (product.CategoryId != input.CategoryId)
+            {
+                await _specificationService.HandleCategoryChangeAsync(product.Id, oldSpecType, newCategory.SpecificationType);
+                product.CategoryId = newCategory.Id;
+            }
+            await _specificationService.UpdateSpecificationAsync(product.Id, input, newCategory.SpecificationType);
+
+            await HandleManyToManys(product.Id, input);
+
             await Repository.UpdateAsync(product, autoSave: true);
 
             return await GetAsync(product.Id);
-        }
-
-        private async Task HandleSpecificationUpdateAsync<TSpecEntity, TSpecDto>(
-            Guid? currentSpecId,
-            TSpecDto inputDto,
-            IRepository<TSpecEntity, Guid> specRepository,
-            Action<Guid?> setProductSpecIdAction)
-            where TSpecEntity : class, Volo.Abp.Domain.Entities.IEntity<Guid>
-            where TSpecDto : class
-        {
-            if (inputDto != null)
-            {
-                if (currentSpecId.HasValue)
-                {
-                    var existingSpec = await specRepository.GetAsync(currentSpecId.Value);
-                    ObjectMapper.Map(inputDto, existingSpec);
-                    await specRepository.UpdateAsync(existingSpec, autoSave: true);
-                }
-                else
-                {
-                    var newSpec = ObjectMapper.Map<TSpecDto, TSpecEntity>(inputDto);
-                    await specRepository.InsertAsync(newSpec, autoSave: true);
-                    setProductSpecIdAction(newSpec.Id);
-                }
-            }
-            else if (currentSpecId.HasValue)
-            {
-                await specRepository.DeleteAsync(currentSpecId.Value, autoSave: true);
-                setProductSpecIdAction(null);
-            }
-        }
-        /*     private async Task DeleteOldSpecificationAsync(Product product, SpecificationType? newSpecType)
-             {
-                 if (product.MonitorSpecificationId.HasValue && newSpecType != SpecificationType.Monitor)
-                 {
-                     await _monitorSpecRepository.DeleteAsync(product.MonitorSpecificationId.Value, autoSave: true);
-                     product.MonitorSpecificationId = null;
-                 }
-                 if (product.MouseSpecificationId.HasValue && newSpecType != SpecificationType.Mouse)
-                 {
-                     await _mouseSpecRepository.DeleteAsync(product.MouseSpecificationId.Value, autoSave: true);
-                     product.MouseSpecificationId = null;
-                 }
-                 if (product.LaptopSpecificationId.HasValue && newSpecType != SpecificationType.Laptop)
-                 {
-                     await _laptopSpecRepository.DeleteAsync(product.LaptopSpecificationId.Value, autoSave: true);
-                     product.LaptopSpecificationId = null;
-                 }
-                 if (product.CpuSpecificationId.HasValue && newSpecType != SpecificationType.CPU)
-                 {
-                     await _cpuSpecRepository.DeleteAsync(product.CpuSpecificationId.Value, autoSave: true);
-                     product.CpuSpecificationId = null;
-                 }
-                 if (product.GpuSpecificationId.HasValue && newSpecType != SpecificationType.GPU)
-                 {
-                     await _gpuSpecRepository.DeleteAsync(product.GpuSpecificationId.Value, autoSave: true);
-                     product.GpuSpecificationId = null;
-                 }
-                 if (product.RamSpecificationId.HasValue && newSpecType != SpecificationType.RAM)
-                 {
-                     await _ramSpecRepository.DeleteAsync(product.RamSpecificationId.Value, autoSave: true);
-                     product.RamSpecificationId = null;
-                 }
-                 if (product.MotherboardSpecificationId.HasValue && newSpecType != SpecificationType.Motherboard)
-                 {
-                     await _motherboardSpecRepository.DeleteAsync(product.MotherboardSpecificationId.Value, autoSave: true);
-                     product.MotherboardSpecificationId = null;
-                 }
-                 if (product.StorageSpecificationId.HasValue && newSpecType != SpecificationType.Storage)
-                 {
-                     await _storageSpecRepository.DeleteAsync(product.StorageSpecificationId.Value, autoSave: true);
-                     product.StorageSpecificationId = null;
-                 }
-                 if (product.PsuSpecificationId.HasValue && newSpecType != SpecificationType.PSU)
-                 {
-                     await _psuSpecRepository.DeleteAsync(product.PsuSpecificationId.Value, autoSave: true);
-                     product.PsuSpecificationId = null;
-                 }
-                 if (product.CaseSpecificationId.HasValue && newSpecType != SpecificationType.Case)
-                 {
-                     await _caseSpecRepository.DeleteAsync(product.CaseSpecificationId.Value, autoSave: true);
-                     product.CaseSpecificationId = null;
-                 }
-                 if (product.CpuCoolerSpecificationId.HasValue && newSpecType != SpecificationType.CPUCooler)
-                 {
-                     await _cpuCoolerSpecRepository.DeleteAsync(product.CpuCoolerSpecificationId.Value, autoSave: true);
-                     product.CpuCoolerSpecificationId = null;
-                 }
-                 if (product.KeyboardSpecificationId.HasValue && newSpecType != SpecificationType.Keyboard)
-                 {
-                     await _keyboardSpecRepository.DeleteAsync(product.KeyboardSpecificationId.Value, autoSave: true);
-                     product.KeyboardSpecificationId = null;
-                 }
-                 if (product.HeadsetSpecificationId.HasValue && newSpecType != SpecificationType.Headset)
-                 {
-                     await _headsetSpecRepository.DeleteAsync(product.HeadsetSpecificationId.Value, autoSave: true);
-                     product.HeadsetSpecificationId = null;
-                 }
-             }*/
-        public override async Task DeleteAsync(Guid id)
-        {
-            await CheckDeletePolicyAsync();
-
-            var product = await Repository.FindAsync(id);
-            if (product == null) return;
-
-            await _specificationService.DeleteAllSpecificationsAsync(product);
-            await Repository.DeleteAsync(id, autoSave: true);
-        }
-
-        protected override async Task<ProductDto> MapToGetOutputDtoAsync(Product entity)
-        {
-            var dto = ObjectMapper.Map<Product, ProductDto>(entity);
-            var category = await _categoryRepository.GetAsync(entity.CategoryId);
-            dto.CategoryName = category.Name;
-            return dto;
         }
 
         public virtual async Task<PagedResultDto<ProductDto>> GetListByCategoryAsync(GetProductsByCategoryInput input)
@@ -359,39 +151,6 @@ namespace Acme.ProductSelling.Products
         {
             var queryable = await BuildManufacturerQueryAsync(input);
             return await ExecutePagedQueryAsync(queryable, input);
-        }
-        private async Task<Product> GetProductWithRelationsAsync(Guid id)
-        {
-            var query = await Repository.GetQueryableAsync();
-            return await query
-                .IncludeAllRelations()
-                .FirstOrDefaultAsync(p => p.Id == id);
-        }
-
-        private async Task<Product> CreateProductEntityAsync(CreateUpdateProductDto input)
-        {
-            var product = ObjectMapper.Map<CreateUpdateProductDto, Product>(input);
-            product.UrlSlug = UrlHelperMethod.RemoveDiacritics(product.ProductName);
-
-            var category = await _categoryRepository.GetAsync(input.CategoryId);
-            await _specificationService.CreateSpecificationAsync(product, input, category.SpecificationType);
-
-            return product;
-        }
-
-        private async Task UpdateProductAsync(Product product, CreateUpdateProductDto input, Category newCategory)
-        {
-            var oldCategoryId = product.CategoryId;
-
-            if (oldCategoryId != newCategory.Id)
-            {
-                await _specificationService.HandleCategoryChangeAsync(product, newCategory.SpecificationType);
-            }
-
-            ObjectMapper.Map(input, product);
-            product.CategoryId = newCategory.Id;
-
-            await _specificationService.UpdateSpecificationAsync(product, input, newCategory.SpecificationType);
         }
 
         private async Task<IQueryable<Product>> BuildCategoryQueryAsync(Guid categoryId)
@@ -448,6 +207,30 @@ namespace Acme.ProductSelling.Products
             var productDtos = ObjectMapper.Map<List<Product>, List<ProductDto>>(products);
 
             return new PagedResultDto<ProductDto>(totalCount, productDtos);
+        }
+        private async Task HandleManyToManys(Guid productId, CreateUpdateProductDto input)
+        {
+            if (input.CaseSpecification != null)
+            {
+                var spec = await _caseSpecificationRepository.GetAsync(s => s.ProductId == productId, includeDetails: true);
+                spec.Materials.Clear();
+                foreach (var materialId in input.CaseSpecification.MaterialIds)
+                {
+                    spec.Materials.Add(new CaseMaterial { CaseSpecificationId = spec.Id, MaterialId = materialId });
+                }
+                await _caseSpecificationRepository.UpdateAsync(spec, autoSave: true);
+            }
+
+            if (input.CpuCoolerSpecification != null)
+            {
+                var spec = await _cpuCoolerSpecificationRepository.GetAsync(s => s.ProductId == productId, includeDetails: true);
+                spec.SupportedSockets.Clear();
+                foreach (var socketId in input.CpuCoolerSpecification.SupportedSocketIds)
+                {
+                    spec.SupportedSockets.Add(new CpuCoolerSocketSupport { CpuCoolerSpecificationId = spec.Id, SocketId = socketId });
+                }
+                await _cpuCoolerSpecificationRepository.UpdateAsync(spec, autoSave: true);
+            }
         }
     }
 

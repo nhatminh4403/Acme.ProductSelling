@@ -50,7 +50,6 @@ namespace Acme.ProductSelling
         private readonly IRepository<CaseMaterial> _caseMaterialRepository;
         private readonly IRepository<RamType, Guid> _ramTypeRepository;
         private readonly IRepository<SwitchType, Guid> _switchTypeRepository;
-        private readonly IRepository<Connectivity, Guid> _connectivityRepository;
         public ProductSellingDataSeederContributor(
             IRepository<Product, Guid> productRepository,
             IRepository<Category, Guid> categoryRepository, CategoryManager categoryManager,
@@ -73,7 +72,11 @@ namespace Acme.ProductSelling
             IRepository<Chipset, Guid> chipsetRepository,
             IRepository<FormFactor, Guid> formFactorRepository,
             IRepository<Material, Guid> materialRepository,
-            IRepository<PanelType, Guid> panelTypeRepository, IRepository<CpuCoolerSocketSupport> cpuCoolerSocketSupportRepository, IRepository<CaseMaterial> caseMaterialRepository, IRepository<RamType, Guid> ramTypeRepository, IRepository<SwitchType, Guid> switchTypeRepository, IRepository<Connectivity, Guid> connectivityRepository)
+            IRepository<PanelType, Guid> panelTypeRepository,
+            IRepository<CpuCoolerSocketSupport> cpuCoolerSocketSupportRepository,
+            IRepository<CaseMaterial> caseMaterialRepository,
+            IRepository<RamType, Guid> ramTypeRepository,
+            IRepository<SwitchType, Guid> switchTypeRepository)
 
         {
             _productRepository = productRepository;
@@ -103,7 +106,6 @@ namespace Acme.ProductSelling
             _caseMaterialRepository = caseMaterialRepository;
             _ramTypeRepository = ramTypeRepository;
             _switchTypeRepository = switchTypeRepository;
-            _connectivityRepository = connectivityRepository;
         }
         public async Task SeedAsync(DataSeedContext context)
         {
@@ -391,9 +393,6 @@ namespace Acme.ProductSelling
             var ddr4 = await _ramTypeRepository.InsertAsync(new RamType { Name = "DDR4" });
             var ddr5 = await _ramTypeRepository.InsertAsync(new RamType { Name = "DDR5" });
             //connectivity
-            var wiredConnectivity = await _connectivityRepository.InsertAsync(new Connectivity { Name = "Wired" });
-            var wirelessConnectivity = await _connectivityRepository.InsertAsync(new Connectivity { Name = "Wireless" });
-            var bluetoothConnectivity = await _connectivityRepository.InsertAsync(new Connectivity { Name = "Bluetooth" });
 
             var linearRed = await _switchTypeRepository.InsertAsync(new SwitchType { Name = "Cherry MX Red (Linear)" });
             var linearBlack = await _switchTypeRepository.InsertAsync(new SwitchType { Name = "Cherry MX Black (Linear)" });
@@ -465,7 +464,6 @@ namespace Acme.ProductSelling
 
 
             #region Products and Specs
-
             // Get lookup IDs for reuse
             var am5SocketId = sockets.First(s => s.Name == "AM5").Id;
             var lga1700SocketId = sockets.First(s => s.Name == "LGA1700").Id;
@@ -712,6 +710,26 @@ namespace Acme.ProductSelling
                 Brightness = 350,
                 VesaMount = true
             }, autoSave: true);
+            var productKeyboard_MultiMode = await CreateProductAsync(
+                keyboards.Id,
+                logitech.Id, // Giả sử 'logitech' đã được khởi tạo
+                4990000,
+                15,
+                "Logitech G915 TKL LIGHTSPEED Wireless",
+                "Bàn phím cơ TKL mỏng nhẹ, hiệu năng cao, cung cấp 3 chế độ kết nối: LIGHTSPEED không dây chuyên nghiệp cho game, Bluetooth tiện dụng để kết nối nhiều thiết bị, và chế độ có dây.",
+                45,
+                "https://resource.logitechg.com/w_692,c_lpad,ar_4:3,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/gaming/en/products/g915-tkl/g915-tkl-gallery/g915-tkl-carbon-gallery-1.png"
+            );
+
+            await _keyboardSpecRepository.InsertAsync(new KeyboardSpecification
+            {
+                ProductId = productKeyboard_MultiMode.Id,
+                KeyboardType = "Mechanical",
+                SwitchTypeId = linearRed.Id, // Giả định dùng switch Linear Red đã seed
+                Layout = KeyboardLayout.TKL,
+                Connectivity = ConnectivityType.WiredAndWireless, // Enum này đại diện cho khả năng đa kết nối
+                Backlight = "RGB LIGHTSYNC"
+            }, autoSave: true);
             #endregion
 
             #region PSU Products
@@ -877,7 +895,7 @@ namespace Acme.ProductSelling
             await _headsetSpecRepository.InsertAsync(new HeadsetSpecification
             {
                 ProductId = productHeadset1.Id,
-                ConnectivityId = wiredConnectivity.Id,
+                Connectivity = ConnectivityType.Wired,
                 DriverSize = 50,
                 HasMicrophone = true,
                 IsNoiseCancelling = true,
@@ -899,7 +917,7 @@ namespace Acme.ProductSelling
             await _headsetSpecRepository.InsertAsync(new HeadsetSpecification
             {
                 ProductId = productHeadset2.Id,
-                ConnectivityId = wiredConnectivity.Id,
+                Connectivity = ConnectivityType.Wired,
                 DriverSize = 53,
                 HasMicrophone = true,
                 IsNoiseCancelling = true,
@@ -1057,7 +1075,7 @@ namespace Acme.ProductSelling
                 PollingRate = 1000,
                 SensorType = "Optical",
                 Weight = 80,
-                ConnectivityId = wiredConnectivity.Id,
+                Connectivity = ConnectivityType.Wired,
                 ButtonCount = 6,
                 BacklightColor = "RGB",
                 Color = "Black"
@@ -1077,7 +1095,7 @@ namespace Acme.ProductSelling
                 PollingRate = 1000,
                 SensorType = "Optical",
                 Weight = 82,
-                ConnectivityId = wiredConnectivity.Id,
+                Connectivity = ConnectivityType.Wired,
                 ButtonCount = 8,
                 BacklightColor = "RGB",
                 Color = "Black"
@@ -1097,7 +1115,7 @@ namespace Acme.ProductSelling
                 PollingRate = 1000,
                 SensorType = "Optical",
                 Weight = 77,
-                ConnectivityId = wiredConnectivity.Id,
+                Connectivity = ConnectivityType.Wired,
                 ButtonCount = 6,
                 BacklightColor = "RGB",
                 Color = "White"
@@ -1117,7 +1135,7 @@ namespace Acme.ProductSelling
                 PollingRate = 1000,
                 SensorType = "Optical",
                 Weight = 63,
-                ConnectivityId = wirelessConnectivity.Id,
+                Connectivity = ConnectivityType.Wireless,
                 ButtonCount = 5,
                 BacklightColor = "RGB",
                 Color = "White"
@@ -1137,7 +1155,7 @@ namespace Acme.ProductSelling
                 PollingRate = 1000,
                 SensorType = "Optical",
                 Weight = 53,
-                ConnectivityId = wiredConnectivity.Id,
+                Connectivity = ConnectivityType.Wired,
                 ButtonCount = 6,
                 BacklightColor = "No",
                 Color = "White"
@@ -1157,7 +1175,7 @@ namespace Acme.ProductSelling
                 PollingRate = 1000,
                 SensorType = "Optical",
                 Weight = 77,
-                ConnectivityId = wiredConnectivity.Id,
+                Connectivity = ConnectivityType.Wired,
                 ButtonCount = 6,
                 BacklightColor = "RGB",
                 Color = "Black"
@@ -1177,7 +1195,7 @@ namespace Acme.ProductSelling
                 PollingRate = 1000,
                 SensorType = "Optical",
                 Weight = 59,
-                ConnectivityId = wiredConnectivity.Id,
+                Connectivity = ConnectivityType.Wired,
                 ButtonCount = 6,
                 BacklightColor = "RGB",
                 Color = "Pink"
@@ -1197,7 +1215,7 @@ namespace Acme.ProductSelling
                 PollingRate = 1000,
                 SensorType = "Optical",
                 Weight = 89,
-                ConnectivityId = wiredConnectivity.Id,
+                Connectivity = ConnectivityType.Wired,
                 ButtonCount = 6,
                 BacklightColor = "ARGB",
                 Color = "Black"
@@ -1218,7 +1236,7 @@ namespace Acme.ProductSelling
                 PollingRate = 8000,
                 SensorType = "Optical",
                 Weight = 65,
-                ConnectivityId = wiredConnectivity.Id,
+                Connectivity = ConnectivityType.Wired,
                 ButtonCount = 6,
                 BacklightColor = "RGB",
                 Color = "Black"
@@ -1238,11 +1256,50 @@ namespace Acme.ProductSelling
                 PollingRate = 1000,
                 SensorType = "Optical",
                 Weight = 85,
-                ConnectivityId = wiredConnectivity.Id,
+                Connectivity = ConnectivityType.Wired,
                 ButtonCount = 7,
                 BacklightColor = "ARGB",
                 Color = "White"
             }, autoSave: true);
+
+
+            var productMouse_WiredWireless1 = await CreateProductAsync(mice.Id, razer.Id, 3200000, 15, "Razer Basilisk Ultimate", "Chuột gaming không dây hiệu năng cao với dock sạc, hỗ trợ cả hai chế độ kết nối có dây và không dây 2.4GHz.", 55, "https://assets2.razerzone.com/images/pnx.assets/d20a4597d86f7284897d51a667364b18/razer-basilisk-ultimate-gallery-1.jpg");
+            await _mouseSpecRepository.InsertAsync(new MouseSpecification
+            {
+                ProductId = productMouse_WiredWireless1.Id,
+                Dpi = 20000,
+                PollingRate = 1000,
+                SensorType = "Razer Focus+",
+                Weight = 107,
+                Connectivity = ConnectivityType.WiredAndWireless, // Sử dụng enum
+                ButtonCount = 11,
+                BacklightColor = "RGB Chroma",
+                Color = "Black"
+            }, autoSave: true);
+            var productMouse_MultiMode = await CreateProductAsync(
+                mice.Id,
+                razer.Id, // Giả sử 'razer' đã được khởi tạo
+                4200000,
+                10,
+                "Razer Naga V2 Pro",
+                "Chuột MMO đỉnh cao với các tấm panel bên hông có thể thay đổi. Hỗ trợ kết nối HyperSpeed Wireless siêu tốc cho gaming, Bluetooth để tiết kiệm pin hoặc kết nối đa thiết bị, và chế độ có dây Speedflex.",
+                30,
+                "https://assets2.razerzone.com/images/pnx.assets/d7b5c3b0d5c41441b8f0dbde53d5f573/razer-naga-v2-pro-500x500.png"
+            );
+
+            await _mouseSpecRepository.InsertAsync(new MouseSpecification
+            {
+                ProductId = productMouse_MultiMode.Id,
+                Dpi = 30000,
+                PollingRate = 1000, // Có thể lên 4000 với dongle riêng
+                SensorType = "Focus Pro 30K Optical",
+                Weight = 134,
+                Connectivity = ConnectivityType.WiredAndWireless, // Bao gồm cả Bluetooth và Wireless 2.4GHz
+                ButtonCount = 19, // Với tấm panel 12 nút
+                BacklightColor = "Razer Chroma RGB",
+                Color = "Black"
+            }, autoSave: true);
+            #endregion
             #endregion
         }
 

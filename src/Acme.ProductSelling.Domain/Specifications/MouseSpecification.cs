@@ -1,6 +1,6 @@
-﻿using Acme.ProductSelling.Products.Lookups;
-using System;
-using Volo.Abp.Domain.Entities;
+﻿
+
+using Acme.ProductSelling.Products.Specs;
 
 namespace Acme.ProductSelling.Specifications
 {
@@ -11,8 +11,7 @@ namespace Acme.ProductSelling.Specifications
         public int PollingRate { get; set; } // Tần số quét
         public string SensorType { get; set; } // Loại cảm biến
         public int Weight { get; set; } // Trọng lượng
-        public Guid ConnectivityId { get; set; }
-        public virtual Connectivity Connectivity { get; set; }
+        public virtual ConnectivityType Connectivity { get; set; }
         public string Color { get; set; } // Màu sắc
         public string BacklightColor { get; set; } // Màu đèn nền
 

@@ -37,35 +37,34 @@ namespace Acme.ProductSelling.Products
                 headsetSpecRepository, objectMapper);
         }
 
-        public async Task CreateSpecificationAsync(Product product, CreateUpdateProductDto dto, SpecificationType specType)
+        public async Task CreateSpecificationAsync(Guid productId, CreateUpdateProductDto dto, SpecificationType specType)
         {
             if (_handlers.TryGetValue(specType, out var handler))
             {
-                await handler.CreateAsync(product, dto);
+                await handler.CreateAsync(productId, dto);
             }
         }
 
-        public async Task UpdateSpecificationAsync(Product product, CreateUpdateProductDto dto, SpecificationType specType)
+        public async Task DeleteAllSpecificationsAsync(Guid productId)
         {
-            if (_handlers.TryGetValue(specType, out var handler))
-            {
-                await handler.UpdateAsync(product, dto);
-            }
-        }
-
-        public async Task HandleCategoryChangeAsync(Product product, SpecificationType newSpecType)
-        {
-            var tasksToDelete = _handlers
-                .Where(kvp => kvp.Key != newSpecType)
-                .Select(kvp => kvp.Value.DeleteIfExistsAsync(product));
-
-            await Task.WhenAll(tasksToDelete);
-        }
-
-        public async Task DeleteAllSpecificationsAsync(Product product)
-        {
-            var deleteTasks = _handlers.Values.Select(handler => handler.DeleteIfExistsAsync(product));
+            var deleteTasks = _handlers.Values.Select(handler => handler.DeleteIfExistsAsync(productId));
             await Task.WhenAll(deleteTasks);
+        }
+
+        public async Task HandleCategoryChangeAsync(Guid productId, SpecificationType currentSpecType, SpecificationType newSpecType)
+        {
+            if (currentSpecType != newSpecType && _handlers.TryGetValue(currentSpecType, out var oldHandler))
+            {
+                await oldHandler.DeleteIfExistsAsync(productId);
+            }
+        }
+
+        public async Task UpdateSpecificationAsync(Guid productId, CreateUpdateProductDto dto, SpecificationType specType)
+        {
+            if (_handlers.TryGetValue(specType, out var handler))
+            {
+                await handler.UpdateAsync(productId, dto);
+            }
         }
 
         private Dictionary<SpecificationType, ISpecificationHandler> InitializeHandlers(
@@ -88,55 +87,55 @@ namespace Acme.ProductSelling.Products
             {
                 {
                     SpecificationType.Monitor, new SpecificationHandler<MonitorSpecification, CreateUpdateMonitorSpecificationDto>(
-                    monitorRepo, objectMapper, p => p.MonitorSpecificationId, (p, id) => p.MonitorSpecificationId = id)
+                    monitorRepo, objectMapper, dto => dto.MonitorSpecification)
                 },
                 {
                     SpecificationType.Mouse, new SpecificationHandler<MouseSpecification, CreateUpdateMouseSpecificationDto>(
-                    mouseRepo, objectMapper, p => p.MouseSpecificationId, (p, id) => p.MouseSpecificationId = id)
+                    mouseRepo, objectMapper, dto => dto.MouseSpecification)
                 },
                 {
                     SpecificationType.Laptop, new SpecificationHandler<LaptopSpecification, CreateUpdateLaptopSpecificationDto>(
-                    laptopRepo, objectMapper, p => p.LaptopSpecificationId, (p, id) => p.LaptopSpecificationId = id)
+                    laptopRepo, objectMapper, dto => dto.LaptopSpecification)
                 },
                 {
                     SpecificationType.CPU, new SpecificationHandler<CpuSpecification, CreateUpdateCpuSpecificationDto>(
-                    cpuRepo, objectMapper, p => p.CpuSpecificationId, (p, id) => p.CpuSpecificationId = id)
+                    cpuRepo, objectMapper, dto => dto.CpuSpecification)
                 },
                 {
                     SpecificationType.GPU, new SpecificationHandler<GpuSpecification, CreateUpdateGpuSpecificationDto>(
-                    gpuRepo, objectMapper, p => p.GpuSpecificationId, (p, id) => p.GpuSpecificationId = id)
+                    gpuRepo, objectMapper, dto => dto.GpuSpecification)
                 },
                 {
                     SpecificationType.RAM, new SpecificationHandler<RamSpecification, CreateUpdateRamSpecificationDto>(
-                    ramRepo, objectMapper, p => p.RamSpecificationId, (p, id) => p.RamSpecificationId = id)
+                    ramRepo, objectMapper, dto => dto.RamSpecification)
                 },
                 {
                     SpecificationType.Motherboard, new SpecificationHandler<MotherboardSpecification, CreateUpdateMotherboardSpecificationDto>(
-                    motherboardRepo, objectMapper, p => p.MotherboardSpecificationId, (p, id) => p.MotherboardSpecificationId = id)
+                    motherboardRepo, objectMapper, dto => dto.MotherboardSpecification)
                 },
                 {
                     SpecificationType.Storage, new SpecificationHandler<StorageSpecification, CreateUpdateStorageSpecificationDto>(
-                    storageRepo, objectMapper, p => p.StorageSpecificationId, (p, id) => p.StorageSpecificationId = id)
+                    storageRepo, objectMapper, dto => dto.StorageSpecification)
                 },
                 {
                     SpecificationType.PSU, new SpecificationHandler<PsuSpecification, CreateUpdatePsuSpecificationDto>(
-                    psuRepo, objectMapper, p => p.PsuSpecificationId, (p, id) => p.PsuSpecificationId = id)
+                    psuRepo, objectMapper,dto => dto.PsuSpecification)
                 },
                 {
                     SpecificationType.Case, new SpecificationHandler<CaseSpecification, CreateUpdateCaseSpecificationDto>(
-                    caseRepo, objectMapper, p => p.CaseSpecificationId, (p, id) => p.CaseSpecificationId = id)
+                    caseRepo, objectMapper,dto => dto.CaseSpecification)
                 },
                 {
                     SpecificationType.CPUCooler, new SpecificationHandler<CpuCoolerSpecification, CreateUpdateCpuCoolerSpecificationDto>(
-                    cpuCoolerRepo, objectMapper, p => p.CpuCoolerSpecificationId, (p, id) => p.CpuCoolerSpecificationId = id)
+                    cpuCoolerRepo, objectMapper, dto => dto.CpuCoolerSpecification)
                 },
                 {
                     SpecificationType.Keyboard, new SpecificationHandler<KeyboardSpecification, CreateUpdateKeyboardSpecificationDto>(
-                    keyboardRepo, objectMapper, p => p.KeyboardSpecificationId, (p, id) => p.KeyboardSpecificationId = id)
+                    keyboardRepo, objectMapper, dto => dto.KeyboardSpecification)
                 },
                 {
                     SpecificationType.Headset, new SpecificationHandler<HeadsetSpecification, CreateUpdateHeadsetSpecificationDto>(
-                    headsetRepo, objectMapper, p => p.HeadsetSpecificationId, (p, id) => p.HeadsetSpecificationId = id)
+                    headsetRepo, objectMapper,dto => dto.HeadsetSpecification)
                 }
             };
         }

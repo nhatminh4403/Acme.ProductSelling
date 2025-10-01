@@ -1,10 +1,16 @@
-﻿namespace Acme.ProductSelling.Specifications
+﻿using Acme.ProductSelling.Products.Specs;
+using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace Acme.ProductSelling.Specifications
 {
     public class CreateUpdatePsuSpecificationDto
     {
-        public int? Wattage { get; set; } // Watts
+        public int Wattage { get; set; } // Watts
         public string? EfficiencyRating { get; set; } // "80+ Bronze", "80+ Gold", etc.
-        public string? Modularity { get; set; } // "Full", "Semi", "Non-Modular"
-        public string? FormFactor { get; set; } // "ATX", "SFX"
+        [Required]
+        public PsuModularity Modularity { get; set; }
+        [Required]
+        public Guid FormFactorId { get; set; }
     }
 }

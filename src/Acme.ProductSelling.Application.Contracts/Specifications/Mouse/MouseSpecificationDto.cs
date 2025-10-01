@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Acme.ProductSelling.Products.Specs;
+using System;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications
@@ -10,7 +11,7 @@ namespace Acme.ProductSelling.Specifications
         public int PollingRate { get; set; } // Tần số quét
         public string SensorType { get; set; } // Loại cảm biến
         public int Weight { get; set; } // Trọng lượng
-        public string Connectivity { get; set; } // Kết nối
+        public ConnectivityType Connectivity { get; set; } // Kết nối
         public string Color { get; set; } // Màu sắc
         public string BacklightColor { get; set; } // Màu đèn nền
 

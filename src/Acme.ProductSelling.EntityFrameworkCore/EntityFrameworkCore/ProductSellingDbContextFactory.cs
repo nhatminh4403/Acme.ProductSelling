@@ -11,9 +11,10 @@ public class ProductSellingDbContextFactory : IDesignTimeDbContextFactory<Produc
 {
     public ProductSellingDbContext CreateDbContext(string[] args)
     {
+        ProductSellingEfCoreEntityExtensionMappings.Configure();
+
         var configuration = BuildConfiguration();
 
-        ProductSellingEfCoreEntityExtensionMappings.Configure();
 
         var builder = new DbContextOptionsBuilder<ProductSellingDbContext>()
             .UseSqlServer(configuration.GetConnectionString("Default"));

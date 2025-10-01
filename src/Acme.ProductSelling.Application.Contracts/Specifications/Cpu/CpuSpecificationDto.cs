@@ -5,7 +5,7 @@ namespace Acme.ProductSelling.Specifications
 {
     public class CpuSpecificationDto : EntityDto<Guid>
     {
-        public string Socket { get; set; }
+        public string SocketName { get; set; }
         public int CoreCount { get; set; }
         public int ThreadCount { get; set; }
         public float BaseClock { get; set; }

@@ -1,12 +1,15 @@
-﻿using Acme.ProductSelling.Carts;
+﻿using Acme.ProductSelling.Blogs;
+using Acme.ProductSelling.Carts;
 using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Comments;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Orders;
 using Acme.ProductSelling.Products;
+using Acme.ProductSelling.Products.Lookups;
 using Acme.ProductSelling.Specifications;
-using Acme.ProductSelling.Comments;
-using Acme.ProductSelling.Blogs;
+using Acme.ProductSelling.Specifications.Junctions;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
@@ -92,11 +95,26 @@ public class ProductSellingDbContext :
     public DbSet<Likes> Likes { get; set; }
     #endregion
 
+
+    #region Lookups and Junctions
+    public DbSet<CpuSocket> Sockets { get; set; }
+    public DbSet<Chipset> Chipsets { get; set; }
+    public DbSet<FormFactor> FormFactors { get; set; }
+    public DbSet<Material> Materials { get; set; }
+    public DbSet<PanelType> PanelTypes { get; set; }
+    public DbSet<RamType> RamTypes { get; set; }
+    public DbSet<SwitchType> SwitchTypes { get; set; }
+
+    public DbSet<CaseMaterial> CaseMaterials { get; set; }
+    public DbSet<CpuCoolerSocketSupport> CpuCoolerSocketSupports { get; set; }
+    #endregion
     public ProductSellingDbContext(DbContextOptions<ProductSellingDbContext> options)
         : base(options)
     {
 
     }
+
+    const string tablePrefix = "App";
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -118,76 +136,190 @@ public class ProductSellingDbContext :
 
         builder.Entity<Category>(b =>
         {
-            b.ToTable("Categories");
+            b.ToTable(tablePrefix + "Categories");
+            b.ConfigureByConvention();
             b.Property(c => c.Name).IsRequired().HasMaxLength(100);
-            b.HasMany(c => c.Products).WithOne(p => p.Category).HasForeignKey(p => p.CategoryId);
-            b.HasIndex(p => p.UrlSlug);
+            b.HasIndex(p => p.UrlSlug).IsUnique();
         });
         builder.Entity<Manufacturer>(b =>
         {
-            b.ToTable("Manufacturers");
+            b.ToTable(tablePrefix + "Manufacturers");
+            b.ConfigureByConvention();
             b.Property(c => c.Name).IsRequired().HasMaxLength(100);
             b.HasMany(c => c.Products).WithOne(p => p.Manufacturer).HasForeignKey(p => p.ManufacturerId);
-            b.HasIndex(p => p.UrlSlug);
+            b.HasIndex(p => p.UrlSlug).IsUnique();
         });
+
+        builder.Entity<CpuSocket>(b => 
+        { 
+            b.ToTable(tablePrefix + "Sockets");
+            b.Property(s => s.Name).IsRequired().HasMaxLength(50); 
+        });
+
+        builder.Entity<Chipset>(b => 
+        {
+            b.ToTable(tablePrefix + "Chipsets");
+            b.Property(c => c.Name).IsRequired().HasMaxLength(50); 
+        });
+
+        builder.Entity<FormFactor>(b => {
+            b.ToTable(tablePrefix + "FormFactors");
+            b.Property(f => f.Name).IsRequired().HasMaxLength(50); 
+        });
+
+        builder.Entity<Material>(b => 
+        { 
+            b.ToTable(tablePrefix + "Materials"); 
+            b.Property(m => m.Name).IsRequired().HasMaxLength(50); 
+        });
+        builder.Entity<PanelType>(b => 
+        { 
+            b.ToTable(tablePrefix + "PanelTypes"); 
+            b.Property(p => p.Name).IsRequired().HasMaxLength(50);
+        });
+        builder.Entity<RamType>(b => 
+        {
+            b.ToTable(tablePrefix + "RamTypes");
+            b.Property(r => r.Name).IsRequired().HasMaxLength(50);
+        });
+        builder.Entity<SwitchType>(b => {
+            b.ToTable(tablePrefix + "SwitchTypes");
+            b.Property(s => s.Name).IsRequired().HasMaxLength(50); 
+        });
+
+
         builder.Entity<Product>(b =>
         {
-            b.ToTable("Products");
+            b.ToTable(tablePrefix + "Products");
             b.Property(p => p.ProductName).IsRequired().HasMaxLength(100);
             b.Property(p => p.OriginalPrice).HasColumnType("decimal(18,2)");
             b.Property(p => p.DiscountedPrice).HasColumnType("decimal(18,2)").IsRequired(false);
             b.Property(p => p.DiscountPercent).IsRequired(true);
-            b.HasOne(p => p.Category).WithMany(c => c.Products).HasForeignKey(p => p.CategoryId);
-            b.HasOne(p => p.Manufacturer).WithMany(m => m.Products).HasForeignKey(p => p.ManufacturerId);
-            b.HasOne(p => p.MonitorSpecification).WithOne().HasForeignKey<Product>(p => p.MonitorSpecificationId).IsRequired(false);
-            b.HasOne(p => p.MouseSpecification).WithOne().HasForeignKey<Product>(p => p.MouseSpecificationId).IsRequired(false);
-            b.HasOne(p => p.LaptopSpecification).WithOne().HasForeignKey<Product>(p => p.LaptopSpecificationId).IsRequired(false); // Giả sử có
-            b.HasOne(p => p.CpuSpecification).WithOne().HasForeignKey<Product>(p => p.CpuSpecificationId).IsRequired(false);
-            b.HasOne(p => p.GpuSpecification).WithOne().HasForeignKey<Product>(p => p.GpuSpecificationId).IsRequired(false);
-            b.HasOne(p => p.RamSpecification).WithOne().HasForeignKey<Product>(p => p.RamSpecificationId).IsRequired(false);
-            b.HasOne(p => p.MotherboardSpecification).WithOne().HasForeignKey<Product>(p => p.MotherboardSpecificationId).IsRequired(false);
-            b.HasOne(p => p.StorageSpecification).WithOne().HasForeignKey<Product>(p => p.StorageSpecificationId).IsRequired(false);
-            b.HasOne(p => p.PsuSpecification).WithOne().HasForeignKey<Product>(p => p.PsuSpecificationId).IsRequired(false);
-            b.HasOne(p => p.CaseSpecification).WithOne().HasForeignKey<Product>(p => p.CaseSpecificationId).IsRequired(false);
-            b.HasOne(p => p.CpuCoolerSpecification).WithOne().HasForeignKey<Product>(p => p.CpuCoolerSpecificationId).IsRequired(false);
-            b.HasOne(p => p.KeyboardSpecification).WithOne().HasForeignKey<Product>(p => p.KeyboardSpecificationId).IsRequired(false);
-            b.HasOne(p => p.HeadsetSpecification).WithOne().HasForeignKey<Product>(p => p.HeadsetSpecificationId).IsRequired(false);
-            b.HasIndex(p => p.UrlSlug);
+
+            b.HasOne(p => p.Category).WithMany(c => c.Products).HasForeignKey(p => p.CategoryId).OnDelete(DeleteBehavior.Restrict);
+            b.HasOne(p => p.Manufacturer).WithMany(m => m.Products).HasForeignKey(p => p.ManufacturerId).OnDelete(DeleteBehavior.Restrict);
+            b.HasIndex(p => p.UrlSlug).IsUnique();
+        });
+
+        builder.Entity<CpuSpecification>(b =>
+        {
+            b.ToTable(tablePrefix + "CpuSpecifications");
+            b.HasOne(s => s.Product).WithOne(p => p.CpuSpecification).HasForeignKey<CpuSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Socket).WithMany().HasForeignKey(s => s.SocketId);
+        });
+        builder.Entity<MotherboardSpecification>(b =>
+        {
+            b.ToTable(tablePrefix + "MotherboardSpecifications");
+            b.HasOne(s => s.Product).WithOne(p => p.MotherboardSpecification).HasForeignKey<MotherboardSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Socket).WithMany().HasForeignKey(s => s.SocketId);
+            b.HasOne(s => s.Chipset).WithMany().HasForeignKey(s => s.ChipsetId);
+            b.HasOne(s => s.FormFactor).WithMany().HasForeignKey(s => s.FormFactorId);
+            b.HasOne(s => s.SupportedRamTypes).WithMany().HasForeignKey(s => s.RamTypeId); // Đã sửa tên
+        });
+
+        builder.Entity<CaseSpecification>(b =>
+        {
+            b.ToTable(tablePrefix + "CaseSpecifications");
+            b.HasOne(s => s.Product).WithOne(p => p.CaseSpecification).HasForeignKey<CaseSpecification>(s => s.ProductId);
+            b.HasOne(s => s.FormFactor).WithMany().HasForeignKey(s => s.FormFactorId);
+
+            b.HasMany(cs => cs.Materials) // CaseSpecification có nhiều CaseMaterial
+               .WithOne(cm => cm.CaseSpecification) // Mỗi CaseMaterial thuộc về một CaseSpecification
+               .HasForeignKey(cm => cm.CaseSpecificationId)
+               .IsRequired();
+        });
+        builder.Entity<CaseMaterial>(b =>
+        {
+            b.ToTable(tablePrefix + "CaseMaterials");
+            b.HasKey(cm => new { cm.CaseSpecificationId, cm.MaterialId }); // Khóa chính phức hợp
+            b.HasOne(cm => cm.Material).WithMany().HasForeignKey(cm => cm.MaterialId); // Quan hệ đến Material
+        });
+        builder.Entity<CpuCoolerSpecification>(b =>
+        {
+            b.ToTable(tablePrefix + "CpuCoolerSpecifications");
+            b.HasOne(s => s.Product).WithOne(p => p.CpuCoolerSpecification).HasForeignKey<CpuCoolerSpecification>(s => s.ProductId);
+
+            b.HasMany(ccs => ccs.SupportedSockets)
+               .WithOne(css => css.CpuCoolerSpecification)
+               .HasForeignKey(css => css.CpuCoolerSpecificationId)
+               .IsRequired();
+        }); 
+        builder.Entity<CpuCoolerSocketSupport>(b =>
+        {
+            b.ToTable(tablePrefix + "CpuCoolerSocketSupports");
+            b.HasKey(css => new { css.CpuCoolerSpecificationId, css.SocketId });
+            b.HasOne(css => css.Socket).WithMany().HasForeignKey(css => css.SocketId);
+        });
+        builder.Entity<KeyboardSpecification>(b =>
+        {
+            b.ToTable(tablePrefix + "KeyboardSpecifications");
+            b.HasOne(s => s.Product).WithOne(p => p.KeyboardSpecification).HasForeignKey<KeyboardSpecification>(s => s.ProductId);
+            b.HasOne(s => s.SwitchType).WithMany().HasForeignKey(s => s.SwitchTypeId);
+        });
+
+        builder.Entity<MonitorSpecification>(b =>
+        {
+            b.ToTable(tablePrefix + "MonitorSpecifications");
+            b.HasOne(s => s.Product).WithOne(p => p.MonitorSpecification).HasForeignKey<MonitorSpecification>(s => s.ProductId);
+            b.HasOne(s => s.PanelType).WithMany().HasForeignKey(s => s.PanelTypeId);
         });
 
 
+        builder.Entity<MouseSpecification>(b => 
+        {
+            b.ToTable(tablePrefix + "MouseSpecifications");
+            b.HasOne(s => s.Product).WithOne(p => p.MouseSpecification).HasForeignKey<MouseSpecification>(s => s.ProductId);
 
-        builder.Entity<MonitorSpecification>(b => { b.ToTable("AppMonitorSpecifications"); });
-        builder.Entity<MouseSpecification>(b => { b.ToTable("AppMouseSpecifications"); });
-        builder.Entity<LaptopSpecification>(b => { b.ToTable("AppLaptopSpecifications"); /* Cấu hình cột nếu cần */ });
-
-        builder.Entity<CpuSpecification>(b => { b.ToTable("AppCpuSpecifications"); /* Cấu hình cột nếu cần */ });
+        });
+        builder.Entity<LaptopSpecification>(b => 
+        {
+            b.ToTable(tablePrefix + "LaptopSpecifications");
+            b.HasOne(s => s.Product).WithOne(p => p.LaptopSpecification).HasForeignKey<LaptopSpecification>(s => s.ProductId);
+        });
         builder.Entity<GpuSpecification>(b =>
         {
-            b.ToTable("AppGpuSpecifications");
+            b.ToTable(tablePrefix + "AppGpuSpecifications");
             b.Property(s => s.Length).HasColumnType("decimal(18,2)");
         });
-        builder.Entity<RamSpecification>(b => { b.ToTable("AppRamSpecifications"); });
-        builder.Entity<MotherboardSpecification>(b => { b.ToTable("AppMotherboardSpecifications"); });
-        builder.Entity<StorageSpecification>(b => { b.ToTable("AppStorageSpecifications"); });
-        builder.Entity<PsuSpecification>(b => { b.ToTable("AppPsuSpecifications"); });
-        builder.Entity<CaseSpecification>(b => { b.ToTable("AppCaseSpecifications"); b.Property(s => s.MaxGpuLength).HasColumnType("decimal(18,2)"); b.Property(s => s.MaxCpuCoolerHeight).HasColumnType("decimal(18,2)"); });
-        builder.Entity<CpuCoolerSpecification>(b => { b.ToTable("AppCpuCoolerSpecifications"); b.Property(s => s.Height).HasColumnType("decimal(18,2)"); });
-        builder.Entity<KeyboardSpecification>(b => { b.ToTable("AppKeyboardSpecifications"); });
-        builder.Entity<HeadsetSpecification>(b => { b.ToTable("AppHeadsetSpecifications"); });
+        builder.Entity<RamSpecification>(b => 
+        {
+            b.ToTable(tablePrefix + "RamSpecifications"); 
+            b.HasOne(s => s.Product).WithOne(p =>p.RamSpecification).HasForeignKey<RamSpecification>(s => s.ProductId);
+            b.HasOne(s => s.RamType).WithMany().HasForeignKey(s => s.RamTypeId);
+
+        });
+
+
+        builder.Entity<StorageSpecification>(b =>
+        { 
+            b.ToTable(tablePrefix + "StorageSpecifications");
+            b.HasOne(s => s.Product).WithOne(p => p.StorageSpecification).HasForeignKey<StorageSpecification>(s => s.ProductId);
+            b.HasOne(s => s.FormFactor).WithMany().HasForeignKey(s => s.FormFactorId);
+        });
+        builder.Entity<PsuSpecification>(b => {
+            b.ToTable(tablePrefix + "PsuSpecifications");
+            b.HasOne(s => s.Product).WithOne(p => p.PsuSpecification).HasForeignKey<PsuSpecification>(s => s.ProductId);
+            b.HasOne(s => s.FormFactor).WithMany().HasForeignKey(s => s.FormFactorId);
+
+        });
+        builder.Entity<HeadsetSpecification>(b => {
+            b.ToTable(tablePrefix + "HeadsetSpecifications");
+            b.HasOne(s => s.Product).WithOne(p => p.HeadsetSpecification).HasForeignKey<HeadsetSpecification>(s => s.ProductId);
+
+        });
 
 
 
         builder.Entity<Order>(b =>
         {
-            b.ToTable("AppOrders"); // Tên bảng
-            b.ConfigureFullAuditedAggregateRoot(); // Cấu hình các trường audit
+            b.ToTable(tablePrefix + "Orders");
+            b.ConfigureFullAuditedAggregateRoot();
 
             b.Property(o => o.OrderNumber).IsRequired().HasMaxLength(OrderConsts.MaxOrderNumberLength);
             b.HasIndex(o => o.OrderNumber).IsUnique();
             b.Property(o => o.CustomerName).IsRequired().HasMaxLength(100);
             b.Property(o => o.CustomerPhone).HasMaxLength(OrderConsts.MaxCustomerPhoneLentgth);
-            b.Property(o => o.ShippingAddress).IsRequired(); // Độ dài mặc định hoặc set MaxLength
+            b.Property(o => o.ShippingAddress).IsRequired();
 
             b.Property(o => o.TotalAmount).HasColumnType("decimal(18,2)").IsRequired();
 
@@ -200,7 +332,7 @@ public class ProductSellingDbContext :
 
         builder.Entity<OrderItem>(b =>
         {
-            b.ToTable("AppOrderItems");
+            b.ToTable(tablePrefix + "OrderItems");
             b.ConfigureByConvention();
 
             b.Property(oi => oi.ProductName).IsRequired();
@@ -212,7 +344,7 @@ public class ProductSellingDbContext :
 
         builder.Entity<Cart>(b =>
         {
-            b.ToTable("AppCarts");
+            b.ToTable(tablePrefix + "Carts");
             b.ConfigureAuditedAggregateRoot();
 
             b.HasIndex(c => c.UserId).IsUnique();
@@ -225,7 +357,7 @@ public class ProductSellingDbContext :
 
         builder.Entity<CartItem>(b =>
         {
-            b.ToTable("AppCartItems");
+            b.ToTable(tablePrefix + "CartItems");
             b.ConfigureByConvention();
             b.Property(ci => ci.ProductPrice).HasConversion<decimal>()
                 .HasColumnType("decimal(18,2)")
@@ -236,19 +368,20 @@ public class ProductSellingDbContext :
 
         builder.Entity<Comment>(b =>
         {
-            b.ToTable("AppComments");
+            b.ToTable(tablePrefix + "Comments");
             b.ConfigureFullAuditedAggregateRoot();
             b.HasIndex(c => new { c.EntityType, c.EntityId });
         });
         builder.Entity<Likes>(b =>
         {
-            b.ToTable("AppLikes");
-            b.HasKey(l => new { l.CommentId, l.UserId }); // Thiết lập khóa chính gồm CommentId và UserId
-            b.HasIndex(x => new { x.CommentId, x.UserId }); // Tạo chỉ mục trên UserId để tối ưu hóa truy vấn
+            b.ToTable(tablePrefix + "Likes");
+            b.HasKey(l => new { l.CommentId, l.UserId }); 
+            b.HasIndex(x => new { x.CommentId, x.UserId }); 
         });
+
         builder.Entity<Blog>(b =>
         {
-            b.ToTable("AppBlogs");
+            b.ToTable(tablePrefix + "Blogs");
             b.ConfigureFullAuditedAggregateRoot();
             b.Property(b => b.Title).IsRequired();
             b.Property(b => b.Content).IsRequired();
