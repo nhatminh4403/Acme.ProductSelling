@@ -4,6 +4,7 @@ using Acme.ProductSelling.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Acme.ProductSelling.Migrations
 {
     [DbContext(typeof(ProductSellingDbContext))]
-    partial class ProductSellingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251003115701_Add_Anything_Missed")]
+    partial class Add_Anything_Missed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1369,9 +1372,6 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("RamFormFactor")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("RamTypeId")
                         .HasColumnType("uniqueidentifier");
 
@@ -1403,6 +1403,9 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("FormFactorId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Interface")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1416,9 +1419,6 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<int?>("Rpm")
                         .HasColumnType("int");
 
-                    b.Property<int>("StorageFormFactor")
-                        .HasColumnType("int");
-
                     b.Property<string>("StorageType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1427,6 +1427,8 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FormFactorId");
 
                     b.HasIndex("ProductId")
                         .IsUnique();
@@ -3580,11 +3582,19 @@ namespace Acme.ProductSelling.Migrations
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.StorageSpecification", b =>
                 {
+                    b.HasOne("Acme.ProductSelling.Products.Lookups.FormFactor", "FormFactor")
+                        .WithMany()
+                        .HasForeignKey("FormFactorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Acme.ProductSelling.Products.Product", "Product")
                         .WithOne("StorageSpecification")
                         .HasForeignKey("Acme.ProductSelling.Specifications.StorageSpecification", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("FormFactor");
 
                     b.Navigation("Product");
                 });

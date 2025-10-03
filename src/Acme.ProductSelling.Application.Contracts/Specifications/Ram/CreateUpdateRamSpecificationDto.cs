@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Acme.ProductSelling.Products.Specs;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Acme.ProductSelling.Specifications
@@ -13,5 +14,6 @@ namespace Acme.ProductSelling.Specifications
         public string? Timing { get; set; } // e.g., "16-18-18-38"
         public float? Voltage { get; set; } // V
         public bool HasRGB { get; set; } = false;
+        public RamFormFactor RamFormFactor { get; set; }
     }
 }

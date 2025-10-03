@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Products.Lookups;
+using Acme.ProductSelling.Products.Specs;
 using System;
 using Volo.Abp.Domain.Entities;
 
@@ -14,5 +15,7 @@ namespace Acme.ProductSelling.Specifications
         public string Timing { get; set; } // e.g., "16-18-18-38"
         public float Voltage { get; set; } // V
         public bool HasRGB { get; set; }
+
+        public RamFormFactor RamFormFactor { get; set; }
     }
 }

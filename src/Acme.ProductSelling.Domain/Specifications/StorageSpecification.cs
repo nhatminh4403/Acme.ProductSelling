@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Products.Lookups;
+using Acme.ProductSelling.Products.Specs;
 using System;
 using Volo.Abp.Domain.Entities;
 
@@ -11,8 +12,7 @@ namespace Acme.ProductSelling.Specifications
         public int Capacity { get; set; } // GB hoặc TB (ghi rõ đơn vị khi hiển thị)
         public int ReadSpeed { get; set; } // MB/s (có thể null cho HDD)
         public int WriteSpeed { get; set; } // MB/s (có thể null cho HDD)
-        public Guid FormFactorId { get; set; }
-        public virtual FormFactor FormFactor { get; set; }
+        public StorageFormFactor StorageFormFactor { get; set; }
         public int? Rpm { get; set; } // Nullable, chỉ cho HDD
     }
 }

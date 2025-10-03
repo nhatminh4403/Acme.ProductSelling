@@ -365,6 +365,8 @@ namespace Acme.ProductSelling
 
             #region Seed Lookup Tables
             // Chỉ seed nếu chưa có dữ liệu
+
+            //cpusocket
             var am4 = await _socketRepository.InsertAsync(new CpuSocket { Name = "AM4" });
             var am5 = await _socketRepository.InsertAsync(new CpuSocket { Name = "AM5" });
             var lga1700 = await _socketRepository.InsertAsync(new CpuSocket { Name = "LGA1700" });
@@ -392,7 +394,7 @@ namespace Acme.ProductSelling
             //ram
             var ddr4 = await _ramTypeRepository.InsertAsync(new RamType { Name = "DDR4" });
             var ddr5 = await _ramTypeRepository.InsertAsync(new RamType { Name = "DDR5" });
-            //connectivity
+            //switchtype
 
             var linearRed = await _switchTypeRepository.InsertAsync(new SwitchType { Name = "Cherry MX Red (Linear)" });
             var linearBlack = await _switchTypeRepository.InsertAsync(new SwitchType { Name = "Cherry MX Black (Linear)" });
@@ -404,42 +406,6 @@ namespace Acme.ProductSelling
             var lowProfile = await _switchTypeRepository.InsertAsync(new SwitchType { Name = "Kailh Choc (Low Profile)" });
             var opticalRed = await _switchTypeRepository.InsertAsync(new SwitchType { Name = "Razer Optical Red (Optical Linear)" });
             var hallEffect = await _switchTypeRepository.InsertAsync(new SwitchType { Name = "Wooting Lekker (Hall Effect Analog)" });
-
-            // HDD
-            var hdd35 = await _formFactorRepository.InsertAsync(
-                new FormFactor { Name = "HDD 3.5 inch" });
-            var hdd25 = await _formFactorRepository.InsertAsync(
-                new FormFactor { Name = "HDD 2.5 inch" });
-
-            // SSD SATA
-            var ssd25 = await _formFactorRepository.InsertAsync(
-                new FormFactor { Name = "SSD 2.5 inch SATA" });
-            var mSata = await _formFactorRepository.InsertAsync(
-                new FormFactor { Name = "SSD mSATA" });
-
-            // SSD M.2
-            var m2_2230 = await _formFactorRepository.InsertAsync(
-                new FormFactor { Name = "SSD M.2 2230" });
-            var m2_2242 = await _formFactorRepository.InsertAsync(
-                new FormFactor { Name = "SSD M.2 2242" });
-            var m2_2280 = await _formFactorRepository.InsertAsync(
-                new FormFactor { Name = "SSD M.2 2280" });
-            var m2_22110 = await _formFactorRepository.InsertAsync(
-                new FormFactor { Name = "SSD M.2 22110" });
-
-            // SSD Enterprise
-            var u2 = await _formFactorRepository.InsertAsync(
-                new FormFactor { Name = "SSD U.2 (SFF-8639)" });
-            var pcieAic = await _formFactorRepository.InsertAsync(
-                new FormFactor { Name = "SSD PCIe Add-in Card (AIC)" });
-            var e1s = await _formFactorRepository.InsertAsync(
-                new FormFactor { Name = "SSD EDSFF E1.S" });
-            var e1l = await _formFactorRepository.InsertAsync(
-                new FormFactor { Name = "SSD EDSFF E1.L" });
-            var e3s = await _formFactorRepository.InsertAsync(
-                new FormFactor { Name = "SSD EDSFF E3.S" });
-            var e3l = await _formFactorRepository.InsertAsync(
-                new FormFactor { Name = "SSD EDSFF E3.L" });
 
             if (await _socketRepository.GetCountAsync() > 0)
             {
@@ -612,8 +578,8 @@ namespace Acme.ProductSelling
                 Capacity = 1000,
                 ReadSpeed = 3500,
                 WriteSpeed = 3300,
-                FormFactorId = m2_2280.Id,
-                FormFactor = m2_2280
+                
+                StorageFormFactor = StorageFormFactor.SsdM2_2280
             }, autoSave: true);
 
             var productStorage2 = await CreateProductAsync(
@@ -631,8 +597,8 @@ namespace Acme.ProductSelling
                 Capacity = 1000,
                 ReadSpeed = 5150,
                 WriteSpeed = 4900,
-                FormFactorId = m2_2280.Id,
-                FormFactor = m2_2280
+                StorageFormFactor = StorageFormFactor.SsdM2_2280,
+                
             }, autoSave: true);
             #endregion
 

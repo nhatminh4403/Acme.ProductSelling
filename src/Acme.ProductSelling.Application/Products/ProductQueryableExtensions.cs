@@ -21,7 +21,7 @@ namespace Acme.ProductSelling.Products
                 .Include(p => p.MotherboardSpecification).ThenInclude(s=>s.SupportedRamTypes)
                 .Include(p => p.MotherboardSpecification).ThenInclude(s=>s.Chipset)
 
-                .Include(p => p.StorageSpecification).ThenInclude(form => form.FormFactor)
+                .Include(p => p.StorageSpecification)
                 .Include(p => p.PsuSpecification).ThenInclude(form => form.FormFactor)
                 .Include(p => p.CaseSpecification).ThenInclude(cs => cs.Materials).ThenInclude(cm => cm.Material)
                 .Include(p => p.CaseSpecification).ThenInclude(form => form.FormFactor)

@@ -7,6 +7,7 @@ using Acme.ProductSelling.Orders;
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Lookups;
 using Acme.ProductSelling.Specifications;
+using Acme.ProductSelling.Specifications.Lookups.DTOs;
 using AutoMapper;
 using System;
 using System.Linq;
@@ -26,6 +27,15 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
         CreateMap<CreateUpdateCategoryDto, Category>().ForMember(dest => dest.UrlSlug, opt => opt.MapFrom(src => src.UrlSlug));
         CreateMap<Category, CategoryLookupDto>();
         //lookup
+
+        CreateMap<CpuSocket, CpuSocketDto>();
+        CreateMap<Material, MaterialDto>();
+        CreateMap<Chipset, ChipsetDto>();
+        CreateMap<FormFactor, FormFactorDto>();
+        CreateMap<PanelType, PanelTypeDto>();
+        CreateMap<RamType, RamTypeDto>();
+        CreateMap<SwitchType, SwitchTypeDto>();
+
         CreateMap<CpuSocket, ProductLookupDto<Guid>>();
         CreateMap<Chipset, ProductLookupDto<Guid>>();
         CreateMap<FormFactor, ProductLookupDto<Guid>>();

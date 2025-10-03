@@ -4,7 +4,10 @@ using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products;
+using Acme.ProductSelling.Products.Specs;
 using Acme.ProductSelling.Specifications;
+using Acme.ProductSelling.Specifications.Lookups.InterfaceAppServices;
+using Acme.ProductSelling.Web.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -32,21 +35,55 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
         private readonly IProductAppService _productAppService;
         private readonly ICategoryAppService _categoryAppService;
         private readonly IManufacturerAppService _manufacturerAppService;
+
+        private readonly IPanelTypeAppService _panelTypeAppService;
+        private readonly IRamTypeAppService _ramTypeAppService;
+        private readonly IMaterialAppService _materialAppService;
+        private readonly IChipsetAppService _chipsetAppService;
+        private readonly ICpuSocketAppService _cpuSocketAppService;
+        private readonly ISwitchTypeAppService _switchTypeAppService;
+        private readonly IFormFactorAppSerivce _formFactorAppService;
+
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<ProductSellingResource> _localizer;
         private const string ProductImageUpload = FolderConsts.ImageFolder + "product-images";
+
+        public List<SelectListItem> CpuSockets { get; set; }
+        public List<SelectListItem> Chipsets { get; set; }
+        public List<SelectListItem> FormFactors { get; set; }
+        public List<SelectListItem> RamTypes { get; set; }
+        public List<SelectListItem> PanelTypes { get; set; }
+        public List<SelectListItem> SwitchTypes { get; set; }
+        public List<SelectListItem> Materials { get; set; }
+        public List<SelectListItem> StorageFormFactors { get; set; }
+
+
         public CreateModalModel(
            IProductAppService productAppService,
            ICategoryAppService categoryAppService,
            IManufacturerAppService manufacturerAppService,
            IWebHostEnvironment webHostEnvironment,
-           IStringLocalizer<ProductSellingResource> localizer)
+           IStringLocalizer<ProductSellingResource> localizer,
+           IPanelTypeAppService panelTypeAppService,
+           IRamTypeAppService ramTypeAppService,
+           IMaterialAppService materialAppService,
+           IChipsetAppService chipsetAppService,
+           ICpuSocketAppService cpuSocketAppService,
+           ISwitchTypeAppService switchTypeAppService,
+           IFormFactorAppSerivce formFactorAppService)
         {
             _productAppService = productAppService;
             _categoryAppService = categoryAppService;
             _manufacturerAppService = manufacturerAppService;
             _webHostEnvironment = webHostEnvironment;
             _localizer = localizer;
+            _panelTypeAppService = panelTypeAppService;
+            _ramTypeAppService = ramTypeAppService;
+            _materialAppService = materialAppService;
+            _chipsetAppService = chipsetAppService;
+            _cpuSocketAppService = cpuSocketAppService;
+            _switchTypeAppService = switchTypeAppService;
+            _formFactorAppService = formFactorAppService;
         }
 
         public async Task OnGetAsync()
@@ -80,6 +117,36 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
             Manufacturers.AddRange(manufacturerLookup.Items
                .Select(m => new SelectListItem(m.Name, m.Id.ToString()))
                .ToList());
+
+
+            var cpuSocketLookup = await _cpuSocketAppService.GetLookupAsync();
+            CpuSockets = cpuSocketLookup.Items.Select(m => new SelectListItem(m.Name, m.Id.ToString())).ToList();
+
+            var materialLookup = await _materialAppService.GetLookupAsync();
+            Materials = materialLookup.Items.Select(m => new SelectListItem(m.Name, m.Id.ToString())).ToList();
+
+            var chipsetLookup = await _chipsetAppService.GetLookupAsync();
+            Chipsets = chipsetLookup.Items.Select(m => new SelectListItem(m.Name, m.Id.ToString())).ToList();
+
+            var panelTypes = await _panelTypeAppService.GetLookupAsync();
+            PanelTypes = panelTypes.Items.Select(m => new SelectListItem(m.Name, m.Id.ToString())).ToList();
+
+            var ramTypes = await _ramTypeAppService.GetLookupAsync();
+            RamTypes = ramTypes.Items.Select(m => new SelectListItem(m.Name, m.Id.ToString())).ToList();
+
+            var formFactors = await _formFactorAppService.GetLookupAsync();
+            FormFactors = formFactors.Items.Select(m => new SelectListItem(m.Name, m.Id.ToString())).ToList();
+
+            var switchTypes = await _switchTypeAppService.GetLookupAsync();
+            SwitchTypes = switchTypes.Items.Select(m => new SelectListItem(m.Name, m.Id.ToString())).ToList();
+
+            StorageFormFactors = Enum.GetValues(typeof(StorageFormFactor))
+                .Cast<StorageFormFactor>()
+                .Select(e => new SelectListItem
+                {
+                    Text = e.GetEnumDescriptions(),
+                    Value = e.ToString()
+                }).ToList();
         }
 
         private void InitializeProductDto()
@@ -125,12 +192,10 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
                 {
                     Logger.LogWarning($"ModelState Error - Key: {error.Key}, Errors: {string.Join(", ", error.Value.Errors.Select(e => e.ErrorMessage))}");
                 }
-                await LoadDropdownDataAsync(); // Repopulate dropdowns for the form
+                await LoadDropdownDataAsync();
                 return Page();
-                // Return the page to show validation errors
             }
 
-            // 3. Handle Image Upload if "upload" was selected and a file is present
             if (imageSourceType == "upload" && Product.ProductImageFile != null && Product.ProductImageFile.Length > 0)
             {
                 try
@@ -160,27 +225,17 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
             }
             else if (imageSourceType == "url")
             {
-                // ImageUrl is already set in Product.ImageUrl from the form input.
-                // No further action needed here for the URL itself.
-                // Product.ProductImageFile should be null or ignored by the app service if URL is chosen.
-                Product.ProductImageFile = null; // Explicitly nullify if URL is chosen
+
+                Product.ProductImageFile = null;
             }
             else
             {
-                // This case should ideally be caught by the initial validation.
-                // If image is required, and neither is provided.
-                Product.ImageUrl = null; // Ensure ImageUrl is null if no valid source was processed.
+                Product.ImageUrl = null;
             }
 
-
-            // 4. Ensure specification objects are nulled out if their category is not selected.
-            //    The JavaScript already disables inputs, but this is a server-side safeguard.
-            //    Alternatively, the ProductAppService can also handle this by only mapping specs
-            //    that are relevant to the category. However, doing it here can be cleaner
-            //    to ensure DTO consistency.
             if (Product.CategoryId != Guid.Empty)
             {
-                var categoryLookup = await _categoryAppService.GetCategoryLookupAsync(); // Cache this if called often
+                var categoryLookup = await _categoryAppService.GetCategoryLookupAsync();
                 var selectedCategoryInfo = categoryLookup.Items.FirstOrDefault(c => c.Id == Product.CategoryId);
 
                 if (selectedCategoryInfo != null)
@@ -189,14 +244,11 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
                 }
                 else
                 {
-                    // Category ID was provided but not found in lookup - unlikely if dropdown is populated correctly.
-                    // Handle as an error or clear all specs.
-                    ResetUnusedSpecifications(SpecificationType.None); // Default to no specs
+                    ResetUnusedSpecifications(SpecificationType.None);
                 }
             }
             else
             {
-                // No category selected, clear all specifications
                 ResetUnusedSpecifications(SpecificationType.None);
             }
 
@@ -211,7 +263,6 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
             catch (UserFriendlyException ex)
             {
                 Logger.LogWarning(ex, "User-friendly error creating product.");
-                // Add error to a specific field if possible, or general model error
                 ModelState.AddModelError(string.Empty, ex.Message);
                 await LoadDropdownDataAsync();
                 return Page();

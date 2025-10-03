@@ -294,7 +294,6 @@ public class ProductSellingDbContext :
         { 
             b.ToTable(tablePrefix + "StorageSpecifications");
             b.HasOne(s => s.Product).WithOne(p => p.StorageSpecification).HasForeignKey<StorageSpecification>(s => s.ProductId);
-            b.HasOne(s => s.FormFactor).WithMany().HasForeignKey(s => s.FormFactorId);
         });
         builder.Entity<PsuSpecification>(b => {
             b.ToTable(tablePrefix + "PsuSpecifications");

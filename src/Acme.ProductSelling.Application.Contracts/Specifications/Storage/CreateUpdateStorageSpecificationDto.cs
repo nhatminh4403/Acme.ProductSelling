@@ -1,4 +1,8 @@
-﻿namespace Acme.ProductSelling.Specifications
+﻿using Acme.ProductSelling.Products.Specs;
+using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace Acme.ProductSelling.Specifications
 {
     public class CreateUpdateStorageSpecificationDto
     {
@@ -7,7 +11,7 @@
         public int? Capacity { get; set; } // GB hoặc TB (ghi rõ đơn vị khi hiển thị)
         public int? ReadSpeed { get; set; } // MB/s (có thể null cho HDD)
         public int WriteSpeed { get; set; } // MB/s (có thể null cho HDD)
-        public string? FormFactor { get; set; } // "M.2 2280", "2.5\"", "3.5\""
+        public StorageFormFactor StorageFormFactor { get; set; }
         public int? Rpm { get; set; } // Nullable, chỉ cho HDD
     }
 }
