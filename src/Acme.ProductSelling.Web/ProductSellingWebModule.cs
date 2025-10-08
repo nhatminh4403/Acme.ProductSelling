@@ -367,6 +367,8 @@ public class ProductSellingWebModule : AbpModule
         app.UseRouting();
         app.UseMiddleware<CultureRedirectMiddleware>();
         app.UseMiddleware<CultureSyncMiddleware>();
+        //app.UseMiddleware<CultureMiddleware>();
+
         app.UseAbpRequestLocalization();
 
         app.UseAbpSecurityHeaders();

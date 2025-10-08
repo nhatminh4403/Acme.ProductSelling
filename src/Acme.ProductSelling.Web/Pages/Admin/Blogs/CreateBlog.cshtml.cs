@@ -95,7 +95,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
             {
 
                 await _blogAppService.CreateAsync(Blog);
-                return RedirectToPage("/Admin/Blogs/Index");
+                return Redirect("/admin/blogs/");
             }
             catch (UserFriendlyException ex)
             {

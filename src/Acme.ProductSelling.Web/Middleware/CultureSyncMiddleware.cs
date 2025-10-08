@@ -27,7 +27,6 @@ namespace Acme.ProductSelling.Web.Middleware
 
             Console.WriteLine($"[CultureSyncMiddleware] Processing path: {path}");
 
-            // Bỏ qua static resources và API calls
             if (IsStaticResource(path))
             {
                 await _next(context);

@@ -144,6 +144,7 @@ namespace Acme.ProductSelling.Web.Middleware
         {
             if (string.IsNullOrEmpty(path))
                 return false;
+            var normalizedPath = path.TrimEnd('/');
 
             var prefixList = new[]
             {
@@ -155,7 +156,7 @@ namespace Acme.ProductSelling.Web.Middleware
             };
             foreach (var prefix in prefixList)
             {
-                if (path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                if (normalizedPath.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
                     return true;
             }
             if (path.Contains("."))
