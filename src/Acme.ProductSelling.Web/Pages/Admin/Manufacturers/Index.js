@@ -20,7 +20,7 @@
                     rowAction: {
                         items: [
                             {
-                                text: l('Manufacturer:Edit'),
+                                text: l('Manufacturer:EditManufacturer'),
                                 visible: abp.auth.isGranted('ProductSelling.Manufacturers.Edit'),
                                 action: function (data) {
                                     editModal.open({ id: data.record.id });

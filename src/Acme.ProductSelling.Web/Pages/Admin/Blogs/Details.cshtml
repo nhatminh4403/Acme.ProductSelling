@@ -1,7 +1,6 @@
 ﻿@page "/admin/blogs/details/{Id:Guid}"
 @model Acme.ProductSelling.Web.Pages.Admin.Blogs.DetailsModel
 
-
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
 @inject IStringLocalizer<ProductSellingResource> L
@@ -9,37 +8,63 @@
 @{
     ViewData["Title"] = L["UI:Title:Admin:BlogDetails"];
 }
+
 @section styles {
-    <link href="~/css/admin/blog.css" rel="stylesheet" />
+    <link href="~/css/admin/blogs/details.css" rel="stylesheet" />
 }
 
-<abp-card>
-    <abp-card-header>
-        <abp-card-title>@Model.Blog.Title</abp-card-title>
-        <div class="text-muted small">
-            <span>@L["Author"]: @Model.Blog.Author</span> |
-            <span>@L["PostedOn"]: @Model.Blog.PublishedDate.ToShortDateString()</span>
-        </div>
-    </abp-card-header>
-
-    <abp-card-body>
-        <!-- Hiển thị ảnh đại diện nếu có -->
+<div class="modern-blog-container">
+    <!-- Hero Section with Image -->
+    <abp-card class="blog-hero-card border-0 shadow-lg">
         @if (!string.IsNullOrEmpty(Model.Blog.MainImageUrl))
         {
-            <div class="mb-4 text-center">
-                <img src="@Model.Blog.MainImageUrl" class="img-fluid rounded" alt="@Model.Blog.Title" style="max-height: 400px;" />
+            <div class="blog-hero-image">
+                <img src="@Model.Blog.MainImageUrl" alt="@Model.Blog.Title" />
+                <div class="hero-overlay"></div>
             </div>
         }
 
-        <!-- Hiển thị nội dung HTML -->
-        <div class="blog-content">
-            @Html.Raw(Model.Blog.Content)
-        </div>
+        <abp-card-body class="blog-hero-content">
+            <div class="blog-meta mb-3">
+                <abp-badge badge-type="Secondary" class="me-2">
+                    <i class="fas fa-user me-1"></i>@Model.Blog.Author
+                </abp-badge>
+                <abp-badge badge-type="Info">
+                    <i class="fas fa-calendar-alt me-1"></i>@Model.Blog.PublishedDate.ToString("MMM dd, yyyy")
+                </abp-badge>
+            </div>
 
-    </abp-card-body>
+            <h1 class="blog-title display-4 fw-bold mb-4">@Model.Blog.Title</h1>
+        </abp-card-body>
+    </abp-card>
 
-    <abp-card-footer>
-        <a asp-page="./Index" class="btn btn-secondary">@L["BackToList"]</a>
-        <a asp-page="./Edit" asp-route-id="@Model.Blog.Id" class="btn btn-primary">@L["Edit"]</a>
-    </abp-card-footer>
-</abp-card>
+    <!-- Content Section -->
+    <abp-row class="mt-4">
+        <abp-column size-lg="_10" size-xl="_8" class="mx-auto">
+            <abp-card class="blog-content-card border-0 shadow">
+                <abp-card-body class="p-4 p-md-5">
+                    <div class="blog-content">
+                        @Html.Raw(Model.Blog.Content)
+                    </div>
+                </abp-card-body>
+            </abp-card>
+
+            <!-- Action Buttons -->
+            <div class="blog-actions mt-4 d-flex gap-2 justify-content-between">
+                <abp-button button-type="Secondary"
+                            size="Large"
+                            icon="fas fa-arrow-left"
+                            href="./Index"
+                            text="@L["BackToList"]" />
+
+                <abp-button button-type="Primary"
+                            size="Large"
+                            icon="fas fa-edit"
+                            href="./Edit?id=@Model.Blog.Id"
+                            text="@L["Edit"]" />
+            </div>
+        </abp-column>
+    </abp-row>
+</div>
+
+

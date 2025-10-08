@@ -19,9 +19,9 @@
     var returnUrl = System.Net.WebUtility.UrlEncode(
         request.PathBase + request.Path + request.QueryString
     );
-    if (string.IsNullOrWhiteSpace(returnUrl) || returnUrl == "%2F") // Nếu returnUrl rỗng hoặc chỉ là "/"
+    if (string.IsNullOrWhiteSpace(returnUrl) || returnUrl == "%2F") 
     {
-        returnUrl = "%2F"; // Đảm bảo nó là root
+        returnUrl = "%2F"; 
     }
 }
 

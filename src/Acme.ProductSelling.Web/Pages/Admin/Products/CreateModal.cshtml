@@ -116,7 +116,9 @@
                         <h6><i class="fas fa-desktop"></i> Monitor Specifications</h6>
                         <div class="row">
                             <div class="col-md-6">
-                                @* <abp-input asp-for="Product.MonitorSpecification.PanelType" /> *@
+                                <abp-select asp-for="Product.MonitorSpecification.PanelTypeId"
+                                            asp-items="Model.PanelTypes"
+                                            label="@L["Specification:Monitor:PanelType"]" />
                                 <abp-input asp-for="Product.MonitorSpecification.ScreenSize" type="number" step="0.1" />
                                 <abp-input asp-for="Product.MonitorSpecification.Resolution" />
                                 <abp-input asp-for="Product.MonitorSpecification.RefreshRate" type="number" />
@@ -259,7 +261,7 @@
                                 <abp-input asp-for="Product.StorageSpecification.StorageType" />
                                 <abp-input asp-for="Product.StorageSpecification.Capacity" type="number" />
                                 <abp-input asp-for="Product.StorageSpecification.Interface" />
-                                <abp-select asp-for="Product.StorageSpecification.FormFactor"
+                                <abp-select asp-for="Product.StorageSpecification.StorageFormFactor"
                                             asp-items="Model.StorageFormFactors"
                                             label="Storage Form Factor" />
                             </div>
@@ -393,242 +395,247 @@
     </abp-modal>
 </form>
 
-<style>
-    .form-container {
-        display: grid;
-        gap: 20px;
-    }
-
-        .form-container.two-columns-layout {
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+@section styles {
+    <style>
+        .form-container {
+            display: grid;
+            gap: 20px;
         }
 
-    .basic-info-section, .specs-section {
-        padding: 15px;
-        border: 1px solid #dee2e6;
-        border-radius: .25rem;
-        background-color: #f8f9fa;
-    }
-
-    .specs-section {
-        background-color: #e9ecef;
-    }
-
-    #imageUrlInputContainer .mb-3 {
-        margin-bottom: 0 !important;
-    }
-</style>
-<script>
-    $(function () { // Đợi DOM sẵn sàng
-
-            var nameInput = $('#Product_ProductName');
-
-            var slugInput = $('#Product_UrlSlug');
-
-            if (nameInput.length && slugInput.length) {
-                nameInput.on('input keyup', function () {
-                    var nameValue = $(this).val();
-                    var slugValue = generateSlug(nameValue);
-                    slugInput.val(slugValue);
-                });
-
-                // Tùy chọn: Nếu Name có giá trị sẵn (khi edit), tạo slug ngay khi load
-                if (nameInput.val()) {
-                     slugInput.val(generateSlug(nameInput.val()));
-                }
+            .form-container.two-columns-layout {
+                grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
             }
 
-            function generateSlug(text) {
-                if (!text) {
-                    return "";
-                }
-
-                text = text.replace(/Đ/g, 'D');
-                text = text.replace(/đ/g, 'd');
-
-
-                text = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-
-
-                text = text.replace(/\s+/g, '-');
-
-                text = text.replace(/[^\w-]+/g, '');
-
-                text = text.toLowerCase();
-
-                text = text.replace(/-+/g, '-');
-                text = text.replace(/^-+|-+$/g, '');
-
-                return text;
-            }
-        });
-    (function () {
-        const imageSourceUrlRadio = document.getElementById('imageSourceUrl');
-        const imageSourceUploadRadio = document.getElementById('imageSourceUpload');
-        const imageUrlInputContainer = document.getElementById('imageUrlInputContainer');
-        const imageUploadInputContainer = document.getElementById('imageUploadInputContainer');
-        const productImageFileInput = document.getElementById('productImageFile');
-        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
-        const imagePreview = document.getElementById('imagePreview');
-        const imageUrlInput = imageUrlInputContainer.querySelector("input[name='Product.ImageUrl']");
-
-        function toggleImageInputFields() {
-            if (imageSourceUrlRadio.checked) {
-                imageUrlInputContainer.style.display = 'block';
-                imageUploadInputContainer.style.display = 'none';
-
-                if(imageUrlInput && imageUrlInput.value) {
-                    imagePreview.src = imageUrlInput.value;
-                    imagePreviewContainer.style.display = 'block';
-                } else {
-                    imagePreviewContainer.style.display = 'none';
-                }
-                productImageFileInput.value = '';
-            } else {
-                imageUrlInputContainer.style.display = 'none';
-                imageUploadInputContainer.style.display = 'block';
-
-
-                if (productImageFileInput.files && productImageFileInput.files[0]) {
-                    displayImagePreview(productImageFileInput.files[0]);
-                } else {
-                    imagePreviewContainer.style.display = 'none';
-                }
-            }
+        .basic-info-section, .specs-section {
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: .25rem;
+            background-color: #f8f9fa;
         }
 
-        function displayImagePreview(fileOrUrl) {
-            if (typeof fileOrUrl === 'string') {
-                imagePreview.src = fileOrUrl;
-                imagePreviewContainer.style.display = 'block';
-            } else {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    imagePreview.src = e.target.result;
-                    imagePreviewContainer.style.display = 'block';
-                }
-                reader.readAsDataURL(fileOrUrl);
-            }
+        .specs-section {
+            background-color: #e9ecef;
         }
 
-        if (imageUrlInput) {
-            imageUrlInput.addEventListener('input', function() {
-                if (imageSourceUrlRadio.checked) {
-                    if (this.value) {
-                        displayImagePreview(this.value);
-                    } else {
-                         imagePreviewContainer.style.display = 'none';
+        #imageUrlInputContainer .mb-3 {
+            margin-bottom: 0 !important;
+        }
+    </style>
+
+}
+
+@section scripts {
+    <script>
+        $(function () {
+
+                var nameInput = $('#Product_ProductName');
+
+                var slugInput = $('#Product_UrlSlug');
+
+                if (nameInput.length && slugInput.length) {
+                    nameInput.on('input keyup', function () {
+                        var nameValue = $(this).val();
+                        var slugValue = generateSlug(nameValue);
+                        slugInput.val(slugValue);
+                    });
+                    if (nameInput.val()) {
+                         slugInput.val(generateSlug(nameInput.val()));
                     }
+                }
+
+                function generateSlug(text) {
+                    if (!text) {
+                        return "";
+                    }
+
+                    text = text.replace(/Đ/g, 'D');
+                    text = text.replace(/đ/g, 'd');
+
+
+                    text = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+
+                    text = text.replace(/\s+/g, '-');
+
+                    text = text.replace(/[^\w-]+/g, '');
+
+                    text = text.toLowerCase();
+
+                    text = text.replace(/-+/g, '-');
+                    text = text.replace(/^-+|-+$/g, '');
+
+                    return text;
                 }
             });
-        }
+        (function () {
+            const imageSourceUrlRadio = document.getElementById('imageSourceUrl');
+            const imageSourceUploadRadio = document.getElementById('imageSourceUpload');
+            const imageUrlInputContainer = document.getElementById('imageUrlInputContainer');
+            const imageUploadInputContainer = document.getElementById('imageUploadInputContainer');
+            const productImageFileInput = document.getElementById('productImageFile');
+            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+            const imagePreview = document.getElementById('imagePreview');
+            const imageUrlInput = imageUrlInputContainer.querySelector("input[name='Product.ImageUrl']");
 
-        if (imageSourceUrlRadio && imageSourceUploadRadio) {
-            imageSourceUrlRadio.addEventListener('change', toggleImageInputFields);
-            imageSourceUploadRadio.addEventListener('change', toggleImageInputFields);
+            function toggleImageInputFields() {
+                if (imageSourceUrlRadio.checked) {
+                    imageUrlInputContainer.style.display = 'block';
+                    imageUploadInputContainer.style.display = 'none';
 
-            toggleImageInputFields();
-        }
-
-        if (productImageFileInput) {
-            productImageFileInput.addEventListener('change', function (event) {
-                if (this.files && this.files[0]) {
-                    if (imageSourceUploadRadio.checked) {
-                       displayImagePreview(this.files[0]);
+                    if(imageUrlInput && imageUrlInput.value) {
+                        imagePreview.src = imageUrlInput.value;
+                        imagePreviewContainer.style.display = 'block';
+                    } else {
+                        imagePreviewContainer.style.display = 'none';
                     }
+                    productImageFileInput.value = '';
                 } else {
-                    if (imageSourceUploadRadio.checked) {
+                    imageUrlInputContainer.style.display = 'none';
+                    imageUploadInputContainer.style.display = 'block';
+
+
+                    if (productImageFileInput.files && productImageFileInput.files[0]) {
+                        displayImagePreview(productImageFileInput.files[0]);
+                    } else {
                         imagePreviewContainer.style.display = 'none';
                     }
                 }
-            });
-        }
-
-        const categorySpecTypes = @Html.Raw(JsonConvert.SerializeObject(Model.CategorySpecTypesJson ?? new Dictionary<string, string>()));
-        const categorySelect = document.getElementById("Product_CategoryId_Create");
-        const formContainer = document.getElementById("productFormContainer");
-        const specsSection = document.getElementById("productSpecsSection");
-        const allSpecForms = specsSection.querySelectorAll(".spec-form");
-
-        function showSpecForm(categoryId) {
-            allSpecForms.forEach(form => {
-                form.style.display = 'none';
-                form.querySelectorAll('input, select, textarea').forEach(inputElement => {
-                 inputElement.disabled = true;
-                 });
-            });
-
-            if (!categoryId || categoryId === "" || categoryId === "00000000-0000-0000-0000-000000000000") {
-                specsSection.style.display = 'none';
-                formContainer.classList.remove('two-columns-layout');
-                return;
             }
 
-            specsSection.style.display = 'block';
-            formContainer.classList.add('two-columns-layout');
-
-            const specType = categorySpecTypes[categoryId.toString()];
-            let specFormToShowId = "spec-None";
-
-            if (specType) {
-                const targetId = "spec-" + specType;
-                if (specsSection.querySelector("#" + targetId)) {
-                    specFormToShowId = targetId;
+            function displayImagePreview(fileOrUrl) {
+                if (typeof fileOrUrl === 'string') {
+                    imagePreview.src = fileOrUrl;
+                    imagePreviewContainer.style.display = 'block';
                 } else {
-                     console.warn("Spec form for type '" + specType + "' with ID '"
-                     + targetId + "' not found. Falling back to 'spec-None'.");
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        imagePreview.src = e.target.result;
+                        imagePreviewContainer.style.display = 'block';
+                    }
+                    reader.readAsDataURL(fileOrUrl);
                 }
-            } else {
-                console.warn("No spec type found for category:", categoryId, ". Falling back to 'spec-None'.");
             }
 
-            const formToDisplay = specsSection.querySelector("#" + specFormToShowId);
-            if(formToDisplay) {
-                formToDisplay.style.display = 'block';
-                formToDisplay.querySelectorAll('input, select, textarea').forEach(inputElement => {
-                    inputElement.disabled = false;
+            if (imageUrlInput) {
+                imageUrlInput.addEventListener('input', function() {
+                    if (imageSourceUrlRadio.checked) {
+                        if (this.value) {
+                            displayImagePreview(this.value);
+                        } else {
+                             imagePreviewContainer.style.display = 'none';
+                        }
+                    }
+                });
+            }
+
+            if (imageSourceUrlRadio && imageSourceUploadRadio) {
+                imageSourceUrlRadio.addEventListener('change', toggleImageInputFields);
+                imageSourceUploadRadio.addEventListener('change', toggleImageInputFields);
+
+                toggleImageInputFields();
+            }
+
+            if (productImageFileInput) {
+                productImageFileInput.addEventListener('change', function (event) {
+                    if (this.files && this.files[0]) {
+                        if (imageSourceUploadRadio.checked) {
+                           displayImagePreview(this.files[0]);
+                        }
+                    } else {
+                        if (imageSourceUploadRadio.checked) {
+                            imagePreviewContainer.style.display = 'none';
+                        }
+                    }
+                });
+            }
+
+            const categorySpecTypes = @Html.Raw(JsonConvert.SerializeObject(Model.CategorySpecTypesJson ?? new Dictionary<string, string>()));
+            const categorySelect = document.getElementById("Product_CategoryId_Create");
+            const formContainer = document.getElementById("productFormContainer");
+            const specsSection = document.getElementById("productSpecsSection");
+            const allSpecForms = specsSection.querySelectorAll(".spec-form");
+
+            function showSpecForm(categoryId) {
+                allSpecForms.forEach(form => {
+                    form.style.display = 'none';
+                    form.querySelectorAll('input, select, textarea').forEach(inputElement => {
+                     inputElement.disabled = true;
+                     });
+                });
+
+                if (!categoryId || categoryId === "" || categoryId === "00000000-0000-0000-0000-000000000000") {
+                    specsSection.style.display = 'none';
+                    formContainer.classList.remove('two-columns-layout');
+                    return;
+                }
+
+                specsSection.style.display = 'block';
+                formContainer.classList.add('two-columns-layout');
+
+                const specType = categorySpecTypes[categoryId.toString()];
+                let specFormToShowId = "spec-None";
+
+                if (specType) {
+                    const targetId = "spec-" + specType;
+                    if (specsSection.querySelector("#" + targetId)) {
+                        specFormToShowId = targetId;
+                    } else {
+                         console.warn("Spec form for type '" + specType + "' with ID '"
+                         + targetId + "' not found. Falling back to 'spec-None'.");
+                    }
+                } else {
+                    console.warn("No spec type found for category:", categoryId, ". Falling back to 'spec-None'.");
+                }
+
+                const formToDisplay = specsSection.querySelector("#" + specFormToShowId);
+                if(formToDisplay) {
+                    formToDisplay.style.display = 'block';
+                    formToDisplay.querySelectorAll('input, select, textarea').forEach(inputElement => {
+                        inputElement.disabled = false;
+                    });
+                } else {
+                    console.error("Fallback spec form 'spec-None' not found!");
+                }
+            }
+
+            if (categorySelect) {
+                showSpecForm(categorySelect.value);
+                categorySelect.addEventListener("change", function() {
+                    showSpecForm(this.value);
                 });
             } else {
-                console.error("Fallback spec form 'spec-None' not found!");
+                console.error("Category select element 'Product_CategoryId_Create' not found.");
             }
-        }
 
-        if (categorySelect) {
-            showSpecForm(categorySelect.value);
-            categorySelect.addEventListener("change", function() {
-                showSpecForm(this.value);
-            });
-        } else {
-            console.error("Category select element 'Product_CategoryId_Create' not found.");
-        }
+            const originalPriceInput = document.querySelector("input[name='Product.OriginalPrice']");
+            const discountPercentInput = document.querySelector("input[name='Product.DiscountPercent']");
+            const discountedPriceInput = document.querySelector("input[name='Product.DiscountedPrice']");
 
-        const originalPriceInput = document.querySelector("input[name='Product.OriginalPrice']");
-        const discountPercentInput = document.querySelector("input[name='Product.DiscountPercent']");
-        const discountedPriceInput = document.querySelector("input[name='Product.DiscountedPrice']");
+            function calculateDiscountedPrice() {
+                if (originalPriceInput && discountPercentInput && discountedPriceInput) {
+                    const originalPrice = parseFloat(originalPriceInput.value) || 0;
+                    let discountPercent = parseFloat(discountPercentInput.value) || 0;
 
-        function calculateDiscountedPrice() {
-            if (originalPriceInput && discountPercentInput && discountedPriceInput) {
-                const originalPrice = parseFloat(originalPriceInput.value) || 0;
-                let discountPercent = parseFloat(discountPercentInput.value) || 0;
+                    if (discountPercent < 0) {
+                        discountPercentInput.value = 0;
+                        discountPercent = 0;
+                    }
+                    if (discountPercent > 100) {
+                        discountPercentInput.value = 100;
+                        discountPercent = 100;
+                    }
 
-                if (discountPercent < 0) {
-                    discountPercentInput.value = 0;
-                    discountPercent = 0;
+                    const discountedPrice = originalPrice * (1 - (discountPercent / 100));
+                    discountedPriceInput.value = discountedPrice.toFixed(2);
                 }
-                if (discountPercent > 100) {
-                    discountPercentInput.value = 100;
-                    discountPercent = 100;
-                }
-
-                const discountedPrice = originalPrice * (1 - (discountPercent / 100));
-                discountedPriceInput.value = discountedPrice.toFixed(2);
             }
-        }
 
-        if (originalPriceInput && discountPercentInput) {
-            originalPriceInput.addEventListener('input', calculateDiscountedPrice);
-            discountPercentInput.addEventListener('input', calculateDiscountedPrice);
-            calculateDiscountedPrice();
-        }
-    })();
-</script>
+            if (originalPriceInput && discountPercentInput) {
+                originalPriceInput.addEventListener('input', calculateDiscountedPrice);
+                discountPercentInput.addEventListener('input', calculateDiscountedPrice);
+                calculateDiscountedPrice();
+            }
+        })();
+    </script>
+
+}

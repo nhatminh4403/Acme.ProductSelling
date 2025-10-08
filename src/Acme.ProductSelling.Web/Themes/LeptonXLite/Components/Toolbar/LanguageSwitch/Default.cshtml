@@ -25,7 +25,6 @@
     string encodedReturnUrl;
     if (isAdminPage)
     {
-        // Nếu là trang admin hoặc có quyền admin, không cần mã hóa returnUrl
         encodedReturnUrl = Context.Request.GetEncodedPathAndQuery();
     }
     else
@@ -41,15 +40,12 @@
 
             var pathWithoutCulture = "/" + string.Join("/", pathSegments.Skip(1));
 
-            // Ghép path đã xử lý với query string ban đầu
             rawReturnUrl = pathWithoutCulture + Context.Request.QueryString;
         }
         else
         {
-            // Nếu path không chứa culture, dùng path nguyên bản
             rawReturnUrl = Context.Request.GetEncodedPathAndQuery();
         }
-        // Mã hóa URL để sử dụng trong tham số returnUrl
         encodedReturnUrl = WebUtility.UrlEncode(rawReturnUrl);
     }
 

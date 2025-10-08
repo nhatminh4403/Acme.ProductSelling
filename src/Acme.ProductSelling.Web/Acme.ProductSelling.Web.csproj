@@ -80,7 +80,10 @@
     <PackageReference Include="Volo.Abp.Studio.Client.AspNetCore" Version="1.3.2" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="wwwroot\js\admin\CreateBlog.js" />
+    <None Include="wwwroot\js\admin\blogs\create.js" />
     <None Include="wwwroot\js\admin\Index.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\images\products\" />
   </ItemGroup>
 </Project>

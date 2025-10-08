@@ -106,7 +106,7 @@
                                 <li><a class="dropdown-item" asp-page="/Orders/OrderHistory">@L["Order:MyOrders"]</a></li>
                                 @if (hasAdminPermission || CurrentUser.IsInRole("Admin") || CurrentUser.IsInRole("Admin".ToLower()))
                                 {
-                                    <li><a class="dropdown-item" asp-page="/Admin/Index">@L["Admin:Panel"]</a></li>
+                                    <li><a class="dropdown-item" href="/admin">@L["Admin:Panel"]</a></li>
                                 }
 
                                 <li><hr class="dropdown-divider"></li>
@@ -213,9 +213,9 @@
                 <div class="col-6 col-md-2 mb-4">
                     <h6 class="fw-bold">@L["Footer:SupportHotline"] <small class="text-muted">(8:00 - 21:00)</small></h6>
                     <ul class="list-unstyled">
-                        <li>@L["Footer:Sales"]: <a href="tel:19005301" class="text-primary">1900.5301</a></li>
-                        <li>@L["Footer:Warranty"]: <a href="tel:19005325" class="text-primary">1900.5325</a></li>
-                        <li>@L["Footer:Complaints"]: <a href="tel:18006173" class="text-primary">1800.6173</a></li>
+                        <li>@L["Footer:Sales"] <a href="tel:19005301" class="text-primary">1900.5301</a></li>
+                        <li>@L["Footer:Warranty"] <a href="tel:19005325" class="text-primary">1900.5325</a></li>
+                        <li>@L["Footer:Complaints"] <a href="tel:18006173" class="text-primary">1800.6173</a></li>
                         <li>Email: <a href="mailto:nhatminh4403@gmail.com" class="text-primary">nhatminh4403@gmail.com</a></li>
                     </ul>
                 </div>

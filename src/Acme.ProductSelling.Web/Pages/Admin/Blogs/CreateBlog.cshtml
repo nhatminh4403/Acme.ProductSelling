@@ -20,184 +20,151 @@
 @section scripts {
     <script src="https://cdn.ckeditor.com/ckeditor5/46.0.3/ckeditor5.umd.js" crossorigin=""></script>
 
-    <script src="~/js/admin/ck-editor-main.js"></script>
+    <script src="~/js/admin/blogs/ck-editor-main.js"></script>
 
-    <script src="/js/admin/CreateBlog.js" > </script>
+    <script src="/js/admin/blogs/create.js" > </script>
 }
 @section styles {
     <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/46.0.3/ckeditor5.css" crossorigin>
-    <style>
-        .editor-container {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .ck-editor__editable {
-            min-height: 400px;
-        }
-
-        .statistic .value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #007bff;
-        }
-
-        .statistic .label {
-            font-size: 0.875rem;
-            color: #6c757d;
-        }
-
-        .card-title {
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .form-label.required:after {
-            content: " *";
-            color: #dc3545;
-        }
-
-        #featuredImagePreview img {
-            max-height: 200px;
-            width: 100%;
-            object-fit: cover;
-        }
-    </style>
+    <link href="~/css/admin/blogs/create.css" rel="stylesheet" />
 }
 
-<abp-card>
 
-    <abp-card-header>
-        <abp-card-title>
+<div class="blog-create-header">
+    <div class="header-content">
+        <h1>
+            <span class="header-icon">✍️</span>
             @L["UI:Title:CreateNewBlog"]
-        </abp-card-title>
-    </abp-card-header>
+        </h1>
+    </div>
+</div>
 
-    <abp-card-body>
-        <form method="post" id="blogForm" enctype="multipart/form-data">
-            @Html.AntiForgeryToken()
-            <div class="card-body">
-                <div class="row">
-                    <!-- Main Content Column -->
-                    <div class="col-lg-8">
+<form method="post" id="blogForm" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+        <!-- Main Content Column -->
+        <div class="col-lg-8">
+            
+            <!-- Content Editor -->
+            <div class="custom-card sidebar-sticky">
+                <div class="custom-card-header">
+                    <i class="fas fa-edit"></i>
+                    <span>@L["Content"]</span>
+                </div>
+                <div class="custom-card-body">
+                    <div class="form-group">
+                        <abp-label asp-for="Blog.Content" required="true" />
+                        <div class="editor-wrapper">
+                            <div class="editor-container">
+                                <div id="editor"></div>
+                            </div>
+                        </div>
+                        <abp-input asp-for="Blog.Content" suppress-label="true" class="d-none" />
+                        <span asp-validation-for="Blog.Content" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Column -->
+        <div class="col-lg-4">
+            <div class="sidebar-sticky">
+                <!-- Publishing Options -->
+                <div class="custom-card">
+                    <div class="custom-card-header">
+                        <i class="fas fa-file-alt"></i>
+                        <span>@L["BasicInformation"]</span>
+                    </div>
+                    <div class="custom-card-body">
                         <!-- Title -->
                         <div class="form-group">
-                            
+                            <abp-label asp-for="Blog.Title" />
                             <abp-input asp-for="Blog.Title" class="form-control" readonly="true" />
                             <span asp-validation-for="Blog.Title" class="text-danger"></span>
-                            <small class="form-text text-muted">Leave blank to auto-extract from first heading in content</small>
+                            <small class="form-text">@L["LeaveBlankToAutoGenerate"]</small>
                         </div>
+
                         <!-- URL Slug -->
                         <div class="form-group">
                             <abp-label asp-for="Blog.UrlSlug" />
                             <div class="input-group">
-
                                 <abp-input asp-for="Blog.UrlSlug" class="form-control" readonly="true" />
-                                <span asp-validation-for="Blog.UrlSlug" class="text-danger"></span>
-
+                                <i class="fas fa-link input-group-icon"></i>
                             </div>
-                            <small class="form-text text-muted">@L["LeaveBlankToAutoGenerate"]</small>
-                        </div>
-
-                        <!-- Content Editor -->
-                        <div class="form-group">
-                            <abp-label asp-for="Blog.Content" required="true" />
-                            <div class="editor-container">
-                                <div id="editor"></div>
-                            </div>
-                            <!-- Hidden input for form binding -->
-                            <abp-input asp-for="Blog.Content" suppress-label="true" class="d-none" />
-                            <span asp-validation-for="Blog.Content" class="text-danger"></span>
+                            <span asp-validation-for="Blog.UrlSlug" class="text-danger"></span>
                         </div>
                     </div>
+                </div>
+                <div class="custom-card">
+                    <div class="custom-card-header">
+                        <i class="fas fa-image"></i>
+                        <span>@L["MainImage"]</span>
+                    </div>
+                    <div class="custom-card-body">
+                        <abp-input asp-for="Blog.MainImageId" suppress-label="true" class="d-none" />
 
-                    <!-- Sidebar Column -->
-                    <div class="col-lg-4">
-                        <!-- Publishing Options -->
-                        <abp-card>
-                            <abp-card-header>
-                                <abp-card-title>
-                                    <i class="fas fa-cog"></i> @L["Publishing"]
-                                </abp-card-title>
-                            </abp-card-header>
-                            <abp-card-body>
-                                <abp-input asp-for="Blog.PublishedDate" label="@L["PublishedDate"]" required="true" />
-                                <abp-input asp-for="Blog.Author" label="@L["Author"]" required="true" placeholder="Author name" />
-                                <span asp-validation-for="Blog.Author" class="text-danger"></span>
+                        <div class="image-upload-area" id="uploadArea">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p class="mb-2 fw-bold">Drop image here or click to upload</p>
+                            <abp-input asp-for="CoverImageFile" type="file" accept="image/*" />
+                        </div>
 
-                                <div class="form-group text-center">
-                                    <button type="submit" class="btn btn-primary btn-lg">
-                                        <i class="fas fa-save"></i>
-                                        <span>@L["CreateBlogPost"]</span>
-                                    </button>
-                                </div>
-                            </abp-card-body>
-                        </abp-card>
+                        <div id="mainImagePreview" class="mt-3" style="display: none;">
+                            <img id="mainImageImg" src="" alt="Main Image Preview">
+                            <div class="image-actions">
+                                <button type="button" class="btn-danger-gradient" id="removeMainImageBtn">
+                                    <i class="fas fa-trash me-1"></i>
+                                    @L["Remove"]
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Main Image -->
+                <div class="custom-card">
+                    <div class="custom-card-header">
+                        <i class="fas fa-rocket"></i>
+                        <span>@L["Publishing"]</span>
+                    </div>
+                    <div class="custom-card-body">
+                        <div class="form-group">
+                            <abp-input asp-for="Blog.PublishedDate" label="@L["PublishedDate"]" required="true" />
+                        </div>
+                        <div class="form-group">
+                            <abp-input asp-for="Blog.Author" label="@L["Author"]" required="true" placeholder="@L["AuthorName"]" />
+                        </div>
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn-primary-gradient">
+                                <i class="fas fa-paper-plane me-2"></i>
+                                @L["CreateBlogPost"]
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-                        <!-- Main Image -->
-                        <abp-card class="mt-3">
-                            <abp-card-header>
-                                <abp-card-title>
-                                    <i class="fas fa-image"></i> @L["MainImage"]
-                                </abp-card-title>
-                            </abp-card-header>
-                            <abp-card-body>
-                                @* <abp-input asp-for="CoverImageFile"
-                                           label="@L["MainImageUrl"]"
-                                           placeholder="Image URL or upload through editor" /> *@
-
-                                <!-- Hidden field for MainImageId -->
-                                <abp-input asp-for="Blog.MainImageId" suppress-label="true" class="d-none" />
-
-                                <div class="text-center mb-3">
-                                    <abp-input asp-for="CoverImageFile" type="file" accept="image/*">
-                                    </abp-input>
-
-                                    <span asp-validation-for="CoverImageFile" class="text-danger"></span>
-                                </div>
-
-                                <div id="mainImagePreview" class="mt-2" style="display: none;">
-                                    <img id="mainImageImg" src="" class="img-fluid rounded" alt="Main Image Preview">
-                                    <div class="text-center mt-2">
-                                        <abp-button button-type="Warning"
-                                                    icon="fas fa-trash"
-                                                    text="@L["Remove"]"
-                                                    size="Small"
-                                                    button-style="Danger"
-                                                    id="removeMainImageBtn" />
-                                    </div>
-                                </div>
-                            </abp-card-body>
-                        </abp-card>
-
-                        <!-- Statistics -->
-                        <abp-card class="mt-3">
-                            <abp-card-header>
-                                <abp-card-title>
-                                    <i class="fas fa-chart-bar"></i> @L["Statistics"]
-                                </abp-card-title>
-                            </abp-card-header>
-                            <abp-card-body>
-                                <div class="row text-center">
-                                    <div class="col-6">
-                                        <div class="statistic">
-                                            <div class="value" id="wordCount">0</div>
-                                            <div class="label">@L["Words"]</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="statistic">
-                                            <div class="value" id="readingTime">0 min</div>
-                                            <div class="label">@L["ReadTime"]</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </abp-card-body>
-                        </abp-card>
+                
+        
+                <!-- Statistics -->
+                <div class="custom-card">
+                    <div class="custom-card-header">
+                        <i class="fas fa-chart-line"></i>
+                        <span>@L["Statistics"]</span>
+                    </div>
+                    <div class="custom-card-body">
+                        <div class="stats-container">
+                            <div class="stat-card">
+                                <div class="value" id="wordCount">0</div>
+                                <div class="label">@L["Words"]</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="value" id="readingTime">0</div>
+                                <div class="label">Min Read</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </form>
-    </abp-card-body>
-</abp-card>
-
+        </div>
+    </div>
+</form>

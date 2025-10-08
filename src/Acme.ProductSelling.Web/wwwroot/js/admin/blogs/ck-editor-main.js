@@ -83,7 +83,7 @@ const {
     WordCount
 } = window.CKEDITOR;
 
-const LICENSE_KEY = 'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3NTc4MDc5OTksImp0aSI6IjVhY2FjNmViLTcyZjctNGIzMC1hOTlmLWQwYmZjNGZkMTM5OSIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiLCJzaCJdLCJ3aGl0ZUxhYmVsIjp0cnVlLCJsaWNlbnNlVHlwZSI6InRyaWFsIiwiZmVhdHVyZXMiOlsiKiJdLCJ2YyI6ImY2NzIyZTNlIn0.fNGID-WwTd1wZ9jvWBucm45ysky4grBjUG3BZY_uPxL6Ub3waACMI1CPsyjb82Fp0i5h6B8Bw9lsz63APU9aMA';
+const LICENSE_KEY = 'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3ODgxMzQzOTksImp0aSI6IjM2ZmMyZmYzLTQwYzgtNGUzZS1iMzNlLTA5MzQ0ZTc1MTc1YiIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiXSwiZmVhdHVyZXMiOlsiRFJVUCIsIkUyUCIsIkUyVyJdLCJ2YyI6IjE5MjRiNmUwIn0.XNgx0RPpCrovWKqPOHruQ9fn87ddiVSBol-8DFDCp_wufEtbl6RjRMo9ZcPKQrZy3dfYRJziIvGDQSbuv83C6A';
 
 const editorConfig = {
     toolbar: {
@@ -388,9 +388,8 @@ const editorConfig = {
     table: {
         contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
     },
-    // Image upload configuration (you might need to customize this based on your backend)
     simpleUpload: {
-        uploadUrl: apiUrl, // Replace with your actual upload endpoint
+        uploadUrl: apiUrl, 
         withCredentials: true,
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
@@ -422,14 +421,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
 
-
-            // Get form inputs
             const titleInput = document.querySelector('#Blog_Title');
-
 
             let userHasManuallyEditedTitle = false;
             let debounceTimeout;
-            const DEBOUNCE_DELAY = 150;
+            const DEBOUNCE_DELAY = 50;
             
             const extractFirstHeading = (htmlContent) => {
                 const tempDiv = document.createElement('div');
@@ -448,13 +444,10 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             // Listen for changes in the editor content with debouncing
             editor.model.document.on('change:data', () => {
-                // Always sync main content immediately
                 document.querySelector('#Blog_Content').value = editor.getData();
 
-                // Clear the previous timeout
                 clearTimeout(debounceTimeout);
 
-                // Set a new timeout to run the logic after a pause in typing
                 debounceTimeout = setTimeout(() => {
                     if (titleInput && !userHasManuallyEditedTitle) {
                         const editorData = editor.getData();
@@ -473,15 +466,6 @@ document.addEventListener('DOMContentLoaded', function () {
         .catch(error => {
             console.error('Error initializing CKEditor:', error);
         });
-
-
-
-
-
-
-
-
-
 
 
     // Main image upload functionality
