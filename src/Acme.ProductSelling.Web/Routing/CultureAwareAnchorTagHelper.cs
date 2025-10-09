@@ -20,20 +20,16 @@ namespace Acme.ProductSelling.Web.Routing
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            // Kiểm tra nếu đã có href attribute thì bỏ qua để tránh xung đột
             if (output.Attributes.ContainsName("href"))
             {
-                //base.Process(context, output);
                 return;
             }
 
-            // Lấy culture hiện tại từ URL hoặc từ CultureInfo
             if (RouteValues == null)
             {
                 RouteValues = new Dictionary<string, string>();
             }
 
-            // Chỉ thêm culture nếu chưa có
             if (!RouteValues.ContainsKey("culture"))
             {
                 var currentCulture = GetCurrentCulture();

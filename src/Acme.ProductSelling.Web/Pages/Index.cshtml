@@ -59,7 +59,7 @@
         <div class="col-md-12 d-flex flex-column gap-1 ">
             <section class="container mt-2">
                 <div class="row d-flex align-items-stretch pt-2 h-100">
-                    <div class="col-lg-3 p-0 d-block bg-light rounded h-100">
+                    <div class="col-lg-3 p-0 d-none d-lg-block bg-light rounded h-100">
                         <ul class="list-group category-sidebar-menu border">
                             @if (Model.BrandsWithAssociatedCategory != null && Model.BrandsWithAssociatedCategory.Items.Any())
                             {
@@ -69,7 +69,7 @@
                                         <a asp-page="/Products/ProductsByCategory" asp-route-slug="@category.CategoryUrlSlug"
                                            class="d-flex justify-content-between align-items-center text-decoration-none text-dark">
 
-                                            <span>@HelperMethods.GetCategoryLocalizerName(category.CategoryName,L)</span>
+                                            <span>@HelperMethods.GetCategoryLocalizerName(category.CategoryName, L)</span>
                                             <i class="bi bi-chevron-right small"></i>
                                         </a>
                                         <div class="megamenu-data-source d-none">
@@ -130,7 +130,7 @@
                                                                 <div class="subcategory">
                                                                     <h5 class="subcategory-title">CATEGORY_TITLE_4</h5>
                                                                     <div class="subcategory-links">
-       
+
 
                                                                         <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-slug="@category.CategoryUrlSlug">
                                                                             <span>@L["SeeAll"]</span>
@@ -173,7 +173,7 @@
                                                                 <div class="subcategory">
                                                                     <h5 class="subcategory-title">CATEGORY_TITLE_7</h5>
                                                                     <div class="subcategory-links">
-     
+
 
                                                                         <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-slug="@category.CategoryUrlSlug">
                                                                             <span>@L["SeeAll"]</span>
@@ -201,7 +201,7 @@
                                                                 <div class="subcategory">
                                                                     <h5 class="subcategory-title">CATEGORY_TITLE_9</h5>
                                                                     <div class="subcategory-links">
-   
+
                                                                         <a asp-page="/Products/ProductsByCategory" class="fw-bold" asp-route-slug="@category.CategoryUrlSlug">
                                                                             <span>@L["SeeAll"]</span>
                                                                         </a>
@@ -250,7 +250,7 @@
                     </div>
 
                     <!-- Banner Carousel -->
-                    <div class="col-lg-9 ps-lg-1 d-flex flex-column h-100">
+                    <div class="col-12 col-lg-9 ps-lg-1 d-flex flex-column h-100">
                         <div id="megamenu-display-area" style="display: none;"></div>
                         <div id="mainBannerCarousel" class="carousel slide z-0 mt-0 pt-0 h-100" data-bs-ride="carousel">
                             <div class="carousel-indicators">

@@ -61,7 +61,6 @@
                             </div>
                         </div>
                         <abp-input asp-for="Blog.Content" suppress-label="true" class="d-none" />
-                        <span asp-validation-for="Blog.Content" class="text-danger"></span>
                     </div>
                 </div>
             </div>
@@ -81,7 +80,6 @@
                         <div class="form-group">
                             <abp-label asp-for="Blog.Title" />
                             <abp-input asp-for="Blog.Title" class="form-control" readonly="true" />
-                            <span asp-validation-for="Blog.Title" class="text-danger"></span>
                             <small class="form-text">@L["LeaveBlankToAutoGenerate"]</small>
                         </div>
 
@@ -92,7 +90,6 @@
                                 <abp-input asp-for="Blog.UrlSlug" class="form-control" readonly="true" />
                                 <i class="fas fa-link input-group-icon"></i>
                             </div>
-                            <span asp-validation-for="Blog.UrlSlug" class="text-danger"></span>
                         </div>
                     </div>
                 </div>

@@ -18,7 +18,7 @@ namespace Acme.ProductSelling.Web.Components.CategoriesMenu
 
             var categoryLookup = await _categoryAppService.GetCategoryLookupAsync();
             var brandsWithAssociatedCategory = await _categoryAppService.GetListWithManufacturersAsync();
-            ;
+            
             return View(brandsWithAssociatedCategory.Items);
         }
 

@@ -333,6 +333,21 @@
         border-bottom-right-radius: 7px;
     }
 
+@media (max-width: 991.98px) {
+    .navbar-nav {
+        margin-top: 1rem;
+    }
+
+    .category-dropdown-container {
+        width: 100%;
+    }
+
+    #navbarDropdownCategories {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
 @media (max-width: 576px) {
     .login-dropdown-content {
         min-width: 180px;
@@ -346,5 +361,9 @@
     .dropdown-btn-login,
     .dropdown-btn-register {
         width: 100%;
+    }
+
+    .footer-social-icons {
+        justify-content: center;
     }
 }

@@ -10,9 +10,9 @@ namespace Acme.ProductSelling.Web.Routing
         private readonly string _defaultCulture;
         private readonly string[] _excludedPrefixes = new[]
         {
-            "/admin",
+            "/admin", "/Admin", 
             "/identity",
-            "/account",
+            "/account","/Account",
             "/tenantmanagement",
             "/setting-management",
             "/swagger",
@@ -31,17 +31,14 @@ namespace Acme.ProductSelling.Web.Routing
 
             var template = selectorModel.AttributeRouteModel.Template;
 
-            // Check if this page should be excluded from culture routing
             foreach (var excludedPrefix in _excludedPrefixes)
             {
                 if (template.StartsWith(excludedPrefix.TrimStart('/'), System.StringComparison.OrdinalIgnoreCase))
                 {
-                    // Don't apply culture routes to excluded pages
                     return;
                 }
             }
 
-            // Apply culture routing only to non-excluded pages
             var selectors = model.Selectors.ToList();
             model.Selectors.Clear();
 
@@ -59,7 +56,6 @@ namespace Acme.ProductSelling.Web.Routing
                     });
                 }
 
-                // Keep the original route as fallback
                 model.Selectors.Add(selector);
             }
         }

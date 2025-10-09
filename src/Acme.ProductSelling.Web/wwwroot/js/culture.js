@@ -37,43 +37,47 @@
         }
         return null;
     }
-
     static updateAllLinks() {
         const currentCulture = CultureHelper.getCurrentCulture();
         const links = document.querySelectorAll('a[href^="/"]');
 
-        let updatedCount = 0;
-
         links.forEach(link => {
             const href = link.getAttribute('href');
-            if (href && !href.startsWith(`/${currentCulture}/`) &&
-                !href.startsWith('/api/') &&
-                !href.startsWith('/_framework/') &&
-                !href.startsWith('/css/') &&
-                !href.startsWith('/js/') &&
-                !href.startsWith('/lib/') &&
-                !href.startsWith('/admin/') &&
-                !href.startsWith('/Abp/') &&
-                !href.startsWith('/identity/') &&
-                !href.startsWith('/account/') &&
-                !href.includes('.')) {
+            if (!href) return;
+            if (link.hasAttribute('data-no-culture')) {
+                return; // Skip
+            }
+            // Extract path without culture prefix for checking
+            const pathParts = href.split('/').filter(s => s);
+            const pathWithoutCulture = pathParts.length > 0 && ['en', 'vi'].includes(pathParts[0].toLowerCase())
+                ? '/' + pathParts.slice(1).join('/')
+                : href;
 
-                const pathParts = href.split('/');
-                if (pathParts.length >= 2 && ['en', 'vi'].includes(pathParts[1].toLowerCase())) {
-                    pathParts[1] = currentCulture;
-                    const newHref = pathParts.join('/');
-                    link.setAttribute('href', newHref);
-                    updatedCount++;
-                } else {
-                    const newHref = `/${currentCulture}${href}`;
-                    link.setAttribute('href', newHref);
-                    updatedCount++;
-                }
+            // Check if it's a path that should be excluded
+            if (href.startsWith(`/${currentCulture}/`) ||
+                pathWithoutCulture.startsWith('/api/') ||
+                pathWithoutCulture.startsWith('/_framework/') ||
+                pathWithoutCulture.startsWith('/css/') ||
+                pathWithoutCulture.startsWith('/js/') ||
+                pathWithoutCulture.startsWith('/lib/') ||
+                pathWithoutCulture.toLowerCase().startsWith('/admin/') ||
+                pathWithoutCulture.startsWith('/Abp/') ||
+                pathWithoutCulture.startsWith('/identity/') ||
+                pathWithoutCulture.startsWith('/account/') ||
+                href.includes('.')) {
+                return; // Skip this link
+            }
+
+            // Add or update culture prefix
+            const segments = href.split('/').filter(s => s);
+            if (segments.length >= 1 && ['en', 'vi'].includes(segments[0].toLowerCase())) {
+                segments[0] = currentCulture;
+                link.setAttribute('href', '/' + segments.join('/'));
+            } else {
+                link.setAttribute('href', `/${currentCulture}${href}`);
             }
         });
-
     }
-
     static syncCultureWithUrl() {
         const urlCulture = CultureHelper.getCultureFromUrl();
         const cookieCulture = CultureHelper.getCookie('culture');

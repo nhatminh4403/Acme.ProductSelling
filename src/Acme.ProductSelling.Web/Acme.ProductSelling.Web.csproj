@@ -84,6 +84,7 @@
     <None Include="wwwroot\js\admin\Index.js" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Views\Shared\Components\" />
     <Folder Include="wwwroot\images\products\" />
   </ItemGroup>
 </Project>

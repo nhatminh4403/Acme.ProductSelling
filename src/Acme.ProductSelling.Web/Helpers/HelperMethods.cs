@@ -9,10 +9,7 @@ namespace Acme.ProductSelling.Web.Helpers
 {
     public static class HelperMethods
     {
-        private static readonly HttpClient _httpClient = new HttpClient()
-        {
-            Timeout = TimeSpan.FromSeconds(10)
-        };
+        private static readonly HttpClient _httpClient = new HttpClient();
         public static string GetCategoryLocalizerName(string categoryName, IStringLocalizer<ProductSellingResource> localizer = null)
         {
             if (string.IsNullOrEmpty(categoryName))
