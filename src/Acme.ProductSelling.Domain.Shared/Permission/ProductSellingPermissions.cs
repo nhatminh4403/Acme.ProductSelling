@@ -4,8 +4,6 @@ public static class ProductSellingPermissions
 {
     public const string GroupName = "ProductSelling";
 
-
-
     public static class Products
     {
         public const string Default = GroupName + ".Products";
@@ -57,5 +55,12 @@ public static class ProductSellingPermissions
         public const string Edit = Default + ".Edit";
         public const string Delete = Default + ".Delete";
         public const string Approve = Default + ".Approve";
+    }
+
+    public static class Chatbots
+    {
+        public const string Default = GroupName + ".Chatbot";
+        public const string Admin = Default + ".Admin";
+        public const string ViewHistory = Default + ".ViewHistory";
     }
 }

@@ -43,6 +43,11 @@ public class ProductSellingPermissionDefinitionProvider : PermissionDefinitionPr
         commentsPermission.AddChild(ProductSellingPermissions.Comments.Edit, L("Permission:Comments.Edit"));
         commentsPermission.AddChild(ProductSellingPermissions.Comments.Delete, L("Permission:Comments.Delete"));
         commentsPermission.AddChild(ProductSellingPermissions.Comments.Approve, L("Permission:Comments.Approve"));
+
+        var chatbotPermission = myGroup.AddPermission(ProductSellingPermissions.Chatbots.Default, L("Permission:Chatbot"));
+        var chatbotAdminPermission = myGroup.AddPermission(ProductSellingPermissions.Chatbots.Admin, L("Permission:Chatbot:Admin"));
+        var chatbotHistoryPermission = myGroup.AddPermission(ProductSellingPermissions.Chatbots.ViewHistory, L("Permission:Chatbot:ViewHistory"));
+
     }
 
     private static LocalizableString L(string name)

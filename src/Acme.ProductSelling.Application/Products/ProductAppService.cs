@@ -34,15 +34,19 @@ namespace Acme.ProductSelling.Products
         public ProductAppService(
             IRepository<Product, Guid> productRepository,
             IRepository<Category, Guid> categoryRepository,
-
+            IRepository<CaseMaterial> caseMaterialRepository,
+            IRepository<CaseSpecification, Guid> caseSpecificationRepository,
+            IRepository<CpuCoolerSpecification, Guid> cpuCoolerSpecificationRepository,
             ISpecificationService specificationService)
             : base(productRepository)
         {
             _categoryRepository = categoryRepository;
             _productRepository = productRepository;
-            ConfigurePolicies();
-
+            _caseMaterialRepository = caseMaterialRepository;
+            _caseSpecificationRepository = caseSpecificationRepository;
+            _cpuCoolerSpecificationRepository = cpuCoolerSpecificationRepository;
             _specificationService = specificationService;
+            ConfigurePolicies();
         }
         private void ConfigurePolicies()
         {
