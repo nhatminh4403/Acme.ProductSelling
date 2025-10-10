@@ -92,7 +92,7 @@ namespace Acme.ProductSelling.Orders
 
                 // 6. Gửi các sự kiện và thông báo cần thiết
                 // Ví dụ: Gửi Event để gửi email, thông báo cho kho hàng...
-                // await _distributedEventBus.PublishAsync(new OrderConfirmedEto(order.Id));
+                 //await _distributedEventBus.PublishAsync(new OrderConfirmedEto(order.Id));
 
                 // Gửi thông báo real-time
                 await _orderNotificationService.NotifyOrderStatusChangeAsync(order);

@@ -305,7 +305,6 @@ const editorConfig = {
             'resizeImage'
         ]
     },
-    // Remove the initialData since we're using it with a form field
     licenseKey: LICENSE_KEY,
     link: {
         addTargetToExternalLinks: true,
@@ -331,9 +330,7 @@ const editorConfig = {
         feeds: [
             {
                 marker: '@',
-                feed: [
-                    /* See: https://ckeditor.com/docs/ckeditor5/latest/features/mentions.html */
-                ]
+                feed: []
             }
         ]
     },
@@ -389,7 +386,7 @@ const editorConfig = {
         contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells', 'tableProperties', 'tableCellProperties']
     },
     simpleUpload: {
-        uploadUrl: apiUrl, 
+        uploadUrl: apiUrl,
         withCredentials: true,
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
@@ -407,7 +404,6 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(editor => {
             ckEditor = editor;
 
-
             const wordCount = editor.plugins.get('WordCount');
             const wordCountContainer = document.querySelector('#wordCount');
             const readingTimeContainer = document.querySelector('#readingTime');
@@ -415,58 +411,78 @@ document.addEventListener('DOMContentLoaded', function () {
             if (wordCountContainer && readingTimeContainer) {
                 wordCount.on('update', (evt, stats) => {
                     wordCountContainer.textContent = stats.words;
-
                     const readingTime = Math.ceil(stats.words / 200);
-                    readingTimeContainer.textContent = readingTime + ' min';
+                    readingTimeContainer.textContent = readingTime;
                 });
             }
 
             const titleInput = document.querySelector('#Blog_Title');
-
             let userHasManuallyEditedTitle = false;
             let debounceTimeout;
-            const DEBOUNCE_DELAY = 50;
-            
-            const extractFirstHeading = (htmlContent) => {
+            const DEBOUNCE_DELAY = 500;
+
+            // Function to extract first heading and get content without it
+            const extractAndRemoveFirstHeading = (htmlContent) => {
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = htmlContent;
                 const firstHeading = tempDiv.querySelector('h1, h2, h3, h4, h5, h6');
-                return firstHeading ? firstHeading.textContent.trim() : null;
+
+                if (firstHeading) {
+                    const headingText = firstHeading.textContent.trim();
+                    // Remove the first heading element
+                    firstHeading.remove();
+                    return {
+                        title: headingText,
+                        contentWithoutHeading: tempDiv.innerHTML
+                    };
+                }
+
+                return {
+                    title: null,
+                    contentWithoutHeading: htmlContent
+                };
             };
 
             if (titleInput) {
-                titleInput.addEventListener('input', () => {
+                titleInput.addEventListener('input', function () {
                     const titleValue = this.value.trim();
                     userHasManuallyEditedTitle = titleValue !== '';
-                   
                 });
-               
             }
+
             // Listen for changes in the editor content with debouncing
             editor.model.document.on('change:data', () => {
-                document.querySelector('#Blog_Content').value = editor.getData();
-
                 clearTimeout(debounceTimeout);
 
                 debounceTimeout = setTimeout(() => {
-                    if (titleInput && !userHasManuallyEditedTitle) {
-                        const editorData = editor.getData();
-                        const extractedTitle = extractFirstHeading(editorData);
+                    const editorData = editor.getData();
 
-                        if (titleInput.value !== (extractedTitle || '')) {
-                            titleInput.value = extractedTitle || '';
-                            titleInput.dispatchEvent(new Event('input', { bubbles: true }));
-                            titleInput.dispatchEvent(new Event('keyup', { bubbles: true }));
-                        }   
+                    if (titleInput && !userHasManuallyEditedTitle) {
+                        const result = extractAndRemoveFirstHeading(editorData);
+
+                        if (result.title) {
+                            // Update title field
+                            if (titleInput.value !== result.title) {
+                                titleInput.value = result.title;
+                                titleInput.dispatchEvent(new Event('input', { bubbles: true }));
+                                titleInput.dispatchEvent(new Event('keyup', { bubbles: true }));
+                            }
+
+                            // Update editor content without the heading (only if content changed)
+                            if (editorData !== result.contentWithoutHeading) {
+                                editor.setData(result.contentWithoutHeading);
+                            }
+                        }
                     }
+
+                    // Always update the hidden content field
+                    document.querySelector('#Blog_Content').value = editor.getData();
                 }, DEBOUNCE_DELAY);
             });
-
         })
         .catch(error => {
             console.error('Error initializing CKEditor:', error);
         });
-
 
     // Main image upload functionality
     const uploadMainImageBtn = document.querySelector('#uploadMainImageBtn');
@@ -485,14 +501,12 @@ document.addEventListener('DOMContentLoaded', function () {
         mainImageUpload.addEventListener('change', function (e) {
             const file = e.target.files[0];
             if (file) {
-                // Preview the image
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     mainImageImg.src = e.target.result;
                     mainImagePreview.style.display = 'block';
                 };
                 reader.readAsDataURL(file);
-
             }
         });
 
@@ -526,4 +540,3 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
-

@@ -10,6 +10,7 @@
 
 @{
     ViewData["Title"] = L["BlogTitle"];
+    Layout = "/Views/Shared/_Layout.cshtml";
 }
 
 <div class="blog-header text-center py-5 bg-primary text-white">
@@ -37,7 +38,7 @@
                             <i class="bi bi-person"></i> @blog.Author
                             • @blog.PublishedDate.ToString("dd/MM/yyyy")
                         </p>
-                        <a asp-page="./Detail" asp-route-id="@blog.Id"
+                        <a asp-page="/Blogs/Details" asp-route-slug="@blog.UrlSlug"
                            class="btn btn-primary btn-sm">@L["ReadMore"]</a>
                     </div>
                 </div>

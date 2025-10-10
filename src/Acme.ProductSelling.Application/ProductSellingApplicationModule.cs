@@ -83,10 +83,10 @@ public class ProductSellingApplicationModule : AbpModule
 
         var configuration = context.Services.GetConfiguration();
 
-        if (configuration.GetValue<bool>("Chatbot:AutoTrainOnStartup"))
-        {
-            context.Services.AddHostedService<ChatbotModelTrainingService>();
-        }
+        //if (configuration.GetValue<bool>("Chatbot:AutoTrainOnStartup"))
+        //{
+        //    context.Services.AddHostedService<ChatbotModelTrainingService>();
+        //}
     }
 
 }

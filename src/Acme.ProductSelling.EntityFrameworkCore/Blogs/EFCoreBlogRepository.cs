@@ -16,7 +16,7 @@ namespace Acme.ProductSelling.Blogs
         {
         }
 
-        public async Task<IEnumerable<Blog>> GetListAsync()
+        public async Task<List<Blog>> GetListAsync()
         {
             var dbSet = await GetDbSetAsync();
             return dbSet.ToList();

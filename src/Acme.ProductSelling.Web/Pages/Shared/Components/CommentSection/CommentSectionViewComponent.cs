@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.AspNetCore.Mvc;
 
-namespace Acme.ProductSelling.Web.Pages.Components.CommentSection
+namespace Acme.ProductSelling.Web.Pages.Shared.Components.CommentSection
 {
     public class CommentSectionViewComponent : AbpViewComponent
     {

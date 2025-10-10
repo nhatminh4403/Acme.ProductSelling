@@ -52,6 +52,7 @@ namespace Acme.ProductSelling.Blogs
             GetListPolicyName = ProductSellingPermissions.Blogs.Default;
         }
 
+        [AllowAnonymous]
         public virtual async Task<BlogDto> GetBlogBySlug(string slug)
         {
             var blog = await _repository.FirstOrDefaultAsync(b => b.UrlSlug == slug);
@@ -147,8 +148,6 @@ namespace Acme.ProductSelling.Blogs
             return blog == null ? throw new EntityNotFoundException(typeof(Blog), id) : ObjectMapper.Map<Blog, BlogDto>(blog);
         }
 
-
-
         private void ConfigureHtmlSanitizer()
         {
             // Clear existing configuration
@@ -239,16 +238,5 @@ namespace Acme.ProductSelling.Blogs
             return System.Net.WebUtility.HtmlDecode(text?.Trim() ?? string.Empty);
         }
 
-    }
-    public class ExtractTitleRequestDto
-    {
-        public string Content { get; set; }
-    }
-
-    public class TitleExtractionResultDto
-    {
-        public string Title { get; set; }
-        public string UrlSlug { get; set; }
-        public bool Success { get; set; }
     }
 }

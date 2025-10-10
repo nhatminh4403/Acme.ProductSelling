@@ -1,15 +1,20 @@
-using Acme.ProductSelling.Blogs;
+    using Acme.ProductSelling.Blogs;
+using Acme.ProductSelling.Manufacturers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Blogs
 {
+    [AllowAnonymous]
     public class IndexModel : AbpPageModel
     {
         private readonly IBlogAppService _blogAppService;
+        private readonly IBlogRepository _blogRepository;
         [BindProperty(SupportsGet = true)]
         public int CurrentPage { get; set; } = 1;
         [BindProperty(SupportsGet = true)]
@@ -17,19 +22,20 @@ namespace Acme.ProductSelling.Web.Pages.Blogs
 
         public PagedResultDto<BlogDto> BlogList { get; set; }
 
-        public IndexModel(IBlogAppService blogAppService)
+        public IndexModel(IBlogAppService blogAppService, IBlogRepository blogRepository)
         {
             _blogAppService = blogAppService;
-            BlogList = new PagedResultDto<BlogDto>();
+            _blogRepository = blogRepository;
         }
         public async Task OnGetAsync()
         {
-            BlogList = await _blogAppService.GetListAsync(new PagedAndSortedResultRequestDto
+            var blogs = await _blogRepository.GetListAsync();
+
+            BlogList = new PagedResultDto<BlogDto>
             {
-                MaxResultCount = PageSize,
-                SkipCount = (CurrentPage - 1) * PageSize,
-                Sorting = "CreationTime DESC"
-            });
+                Items = ObjectMapper.Map<List<Blog>, List<BlogDto>>(blogs),
+                TotalCount = blogs.Count
+            };
         }
     }
 }

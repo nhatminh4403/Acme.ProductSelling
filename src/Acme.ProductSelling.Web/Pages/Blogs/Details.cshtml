@@ -9,14 +9,20 @@
 @* @using IHtmlSanitizer *@
 @inject IStringLocalizer<ProductSellingResource> L
 @{
-    ViewData["Title"] = Model.Blog.Title;
+    var title = Model.Blog.Title;
+    ViewData["Title"] = title.ToString();
+    Layout = "/Views/Shared/_Layout.cshtml";
 }
 
-<div>
-    @Html.Raw(Model.Blog.Content))
+<div class="container">
+    @Model.Blog.Title
+    @Model.Blog.Author - @Model.Blog.PublishedDate
+    @Html.Raw(Model.Blog.Content)
 </div>
 
-@await Component.InvokeAsync("Comments", new { entityType = typeof(Blog).ToString(), entityId = Model.Blog.Id })
+<div class="container">
+    @await Component.InvokeAsync("CommentSection", new { entityType = typeof(Blog).ToString(), entityId = Model.Blog.Id })
+</div>
 
 @section styles {
 

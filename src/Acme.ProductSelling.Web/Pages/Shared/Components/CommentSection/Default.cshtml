@@ -1,5 +1,5 @@
 ﻿@using Acme.ProductSelling.Comments
-@using Acme.ProductSelling.Web.Pages.Components.CommentSection
+@using Acme.ProductSelling.Web.Pages.Shared.Components.CommentSection
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
 
@@ -11,7 +11,6 @@
     <h4>Comments</h4>
     <hr />
 
-    <!-- Form để đăng comment mới -->
     <form id="new-comment-form" method="post">
         <input type="hidden" name="EntityType" value="@Model.EntityType" />
         <input type="hidden" name="EntityId" value="@Model.EntityId" />

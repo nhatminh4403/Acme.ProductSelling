@@ -12,7 +12,7 @@
 @using Volo.Abp.Users
 @using Volo.Abp.AspNetCore.Mvc.UI.RazorPages
 @using Volo.Abp.AspNetCore.Mvc.UI.Bundling
-@using Acme.ProductSelling.Web.Pages.Components.CultureDebug
+@using Acme.ProductSelling.Web.Pages.Shared.Components.CategoriesMenu
 
 @inject ICurrentUser CurrentUser
 @inject IStringLocalizer<ProductSellingResource> L
@@ -158,7 +158,7 @@
                         <a class="nav-link dropdown-toggle" href="#" id="mobileCategoriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-list me-2"></i>@L["Category:Categories"]
                         </a>
-                        @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Components.CategoriesMenu.CategoriesMenuViewComponent))
+                        @await Component.InvokeAsync(typeof(CategoriesMenuViewComponent))
                     </li>
 
                     <hr />

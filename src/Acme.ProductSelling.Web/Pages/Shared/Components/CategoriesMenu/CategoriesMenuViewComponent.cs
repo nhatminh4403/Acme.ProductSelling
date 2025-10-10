@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Volo.Abp.AspNetCore.Mvc;
 
-namespace Acme.ProductSelling.Web.Components.CategoriesMenu
+namespace Acme.ProductSelling.Web.Pages.Shared.Components.CategoriesMenu
 {
     public class CategoriesMenuViewComponent : AbpViewComponent
     {
