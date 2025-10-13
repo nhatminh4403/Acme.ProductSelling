@@ -12,6 +12,7 @@
     var monthlyData = Json.Serialize(Model.MoneyStatisticsList);
     var allYearlyData = Json.Serialize(Model.YearlyStatistics);
     ViewData["Title"] = L["Admin:Menu:Home"];
+    Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
 }
 @section scripts {
 
@@ -23,7 +24,7 @@
 
     </script>
     <script src="~/js/admin/chart-area-demo.js"></script>
-    <script src="~/js/admin/Index.js"></script>
+    @* <script src="~/js/admin/Index.js"></script> *@
 }
 
 @section styles {
@@ -89,7 +90,7 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                @L["Admin:Statistics:EarningsLastMonth"]
+                                @L["Admin:Statistics:EarningsLastMonth"] 
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalMoneyLastMonth VND</div>
                         </div>

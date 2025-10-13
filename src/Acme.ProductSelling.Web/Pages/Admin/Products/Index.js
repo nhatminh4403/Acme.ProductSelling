@@ -1,4 +1,15 @@
 ﻿$(function () {
+    // Wait for ABP to be fully initialized
+    abp.event.on('abp.dynamicScriptsInitialized', function () {
+        initializeProductsPage();
+    });
+
+    // If already initialized, run immediately
+    if (window.abp && abp.appPath) {
+        initializeProductsPage();
+    }
+});
+function initializeProductsPage() {
     var productService = acme.productSelling.products.product;
     var l = abp.localization.getResource('ProductSelling');
 
@@ -60,7 +71,7 @@
                 },
                 {
                     title: l('Product:Category'),
-                    data: "categoryName",
+                    data: "categoryId",
                     width: "5%",
                     className: "text-end"
 
@@ -116,4 +127,4 @@
     editModal.onResult(function () {
         dataTable.ajax.reload();
     });
-});
+};

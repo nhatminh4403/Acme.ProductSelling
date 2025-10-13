@@ -33,14 +33,18 @@ using Volo.Abp;
 using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.Localization;
+using Volo.Abp.AspNetCore.Mvc.UI;
+//using Volo.Abp.AspNetCore.Mvc.UI;
 using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
 using Volo.Abp.AspNetCore.Mvc.UI.Packages.Bootstrap;
 using Volo.Abp.AspNetCore.Mvc.UI.Packages.DatatablesNet;
 using Volo.Abp.AspNetCore.Mvc.UI.Packages.JQuery;
+using Volo.Abp.AspNetCore.Mvc.UI.Packages.JQueryValidation;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Toolbars;
+using Volo.Abp.AspNetCore.Mvc.UI.Theming;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.AspNetCore.SignalR;
 using Volo.Abp.Autofac;
@@ -51,9 +55,11 @@ using Volo.Abp.Modularity;
 using Volo.Abp.OpenIddict;
 using Volo.Abp.PermissionManagement;
 using Volo.Abp.Security.Claims;
+using Volo.Abp.SettingManagement.Web;
 using Volo.Abp.Studio.Client.AspNetCore;
 using Volo.Abp.Swashbuckle;
 using Volo.Abp.TenantManagement.Web;
+using Volo.Abp.Ui.LayoutHooks;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
@@ -84,7 +90,8 @@ namespace Acme.ProductSelling.Web;
     typeof(AbpAspNetCoreSignalRModule),
     typeof(ProductSellingHttpApiClientModule),
     typeof(AbpAspNetCoreMvcUiThemeSharedModule),
-    typeof(AbpAspNetCoreMvcModule)
+    typeof(AbpAspNetCoreMvcModule),
+    typeof(AbpAspNetCoreMvcUiModule)
 
 )]
 
@@ -196,8 +203,41 @@ public class ProductSellingWebModule : AbpModule
         ConfigureRequestLocalization(services);
         context.Services.AddTransient<CultureAwareAnchorTagHelper>();
 
+        ConfigureAdminPages(services);
     }
+    private void ConfigureAdminPages(IServiceCollection services)
+    {
+        Configure<RazorPagesOptions>(options =>
+        {
+            options.Conventions.AddPageRoute("/Identity/Users/Index", "/admin/Identity/Users");
+            options.Conventions.AddPageRoute("/Identity/Roles/Index", "/admin/Identity/Roles");
+            options.Conventions.AddPageRoute("/TenantManagement/Tenants/Index", "/admin/TenantManagement/Tenants");
+            options.Conventions.AddPageRoute("/SettingManagement/Index", "/admin/SettingManagement");
+        });
 
+        Configure<RazorPagesOptions>(options =>
+        {
+
+            options.Conventions.AddPageApplicationModelConvention("/Identity", model =>
+            {
+                // Fix: Use model.Properties to set layout for the folder's pages
+                model.Properties["Layout"] = "/Pages/Admin/Shared/_AdminLayout.cshtml";
+            });
+
+            // Setting Management pages
+            options.Conventions.AddPageApplicationModelConvention("/SettingManagement", model =>
+            {
+                model.Properties["Layout"] = "/Pages/Admin/Shared/_AdminLayout.cshtml";
+            });
+
+            // Tenant Management pages
+            options.Conventions.AddPageApplicationModelConvention("/TenantManagement", model =>
+            {
+                model.Properties["Layout"] = "/Pages/Admin/Shared/_AdminLayout.cshtml";
+            });
+        });
+
+    }
     private void ConfigureRequestLocalization(IServiceCollection services)
     {
         services.Configure<RequestLocalizationOptions>(options =>
@@ -244,7 +284,6 @@ public class ProductSellingWebModule : AbpModule
                 LeptonXLiteThemeBundles.Styles.Global,
                 bundle =>
                 {
-                    bundle.AddFiles("/global-styles.css");
                     bundle.AddContributors(typeof(BootstrapStyleContributor));
                 }
             );
@@ -255,12 +294,40 @@ public class ProductSellingWebModule : AbpModule
                     bundle.AddContributors(typeof(JQueryScriptContributor));
                     bundle.AddContributors(typeof(BootstrapScriptContributor));
                     bundle.AddContributors(typeof(DatatablesNetScriptContributor));
+
+                    bundle.AddFiles("/js/culture.js");
+                }
+            );
+
+
+            options.StyleBundles.Add(
+                "Main.Global",
+                bundle =>
+                {
+                    bundle.AddFiles("/global-styles.css");
+                }
+            );
+
+            options.ScriptBundles.Add(
+                "Main.Global",
+                bundle =>
+                {
                     bundle.AddFiles("/js/cart.js");
                     bundle.AddFiles("/global-scripts.js");
-                    bundle.AddFiles("/js/culture.js");
-                    //bundle.AddFiles("/js/orderSignalR.js");
+                    bundle.AddFiles("/js/main.js");
                 }
-                );
+            );
+
+            options.ScriptBundles.Add(
+                "Admin.Global", // Give it a descriptive name
+                bundle =>
+                {
+                    bundle.AddContributors(typeof(DatatablesNetScriptContributor));
+
+                    bundle.AddFiles("/js/admin/main.js");
+
+                }
+            );
         });
     }
 

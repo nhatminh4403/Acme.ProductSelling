@@ -2,7 +2,9 @@
     var categoryService = acme.productSelling.categories.category; 
     var l = abp.localization.getResource('ProductSelling'); 
 
-    var createModal = new abp.ModalManager(abp.appPath + 'Admin/Categories/CreateModal'); 
+    var createModal = new abp.ModalManager({
+        viewUrl: abp.appPath + 'Admin/Categories/CreateModal'
+    });
     var editModal = new abp.ModalManager(abp.appPath + 'Admin/Categories/EditModal');  
 
     var dataTable = $('#CategoriesTable').DataTable(

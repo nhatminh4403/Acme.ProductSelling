@@ -8,11 +8,12 @@
 @inject IAuthorizationService AuthorizationService
 @model Acme.ProductSelling.Web.Pages.Admin.Manufacturers.IndexModel
 @{
-    ViewData["Title"] = L["UI:Title:Admin:Manufacturers"];
+    ViewData["Title"] = L["UI:Title:Admin:Manufacturers"]; Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
+
 }
 @section Scripts {
     <abp-script src="/Pages/Admin/Manufacturers/Index.js" />
-    <script src="~/js/admin/Index.js"></script>
+    @* <script src="~/js/admin/Index.js"></script> *@
 
 }
 

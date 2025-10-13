@@ -62,16 +62,43 @@ public class ProductSellingMenuContributor : IMenuContributor
             l["Admin:Menu:Blogs"],
             icon: "fa-solid fa-list",
             url: "/admin/blogs"
-           
-            ));
+        ));
+
+        void UpdateMenuItemUrls(ApplicationMenuItem menuItem)
+        {
+            if (!string.IsNullOrEmpty(menuItem.Url))
+            {
+                // Remove leading ~ if present, then add /admin prefix
+                var cleanUrl = menuItem.Url.TrimStart('~');
+                menuItem.Url = "/admin" + cleanUrl;
+            }
+
+            // Update all child items recursively
+            foreach (var item in menuItem.Items)
+            {
+                UpdateMenuItemUrls(item);
+            }
+        }
+
         var administration = context.Menu.GetAdministration();
         administration.Order = 6;
+        var identityMenu = administration.GetMenuItem(IdentityMenuNames.GroupName);
+        if (identityMenu != null)
+        {
+            // Update parent URL if it has one
+            UpdateMenuItemUrls(identityMenu);
 
+        }
 
-        administration.SetSubItemOrder(IdentityMenuNames.GroupName, 1);
-
+        // Update Tenant Management menu items
         if (MultiTenancyConsts.IsEnabled)
         {
+            var tenantMenu = administration.GetMenuItem(TenantManagementMenuNames.GroupName);
+            if (tenantMenu != null)
+            {
+                UpdateMenuItemUrls(tenantMenu);
+
+            }
             administration.SetSubItemOrder(TenantManagementMenuNames.GroupName, 1);
         }
         else
@@ -79,11 +106,19 @@ public class ProductSellingMenuContributor : IMenuContributor
             administration.TryRemoveMenuItem(TenantManagementMenuNames.GroupName);
         }
 
-        administration.SetSubItemOrder(SettingManagementMenuNames.GroupName, 3);
+        // Update Settings menu
+        var settingsMenu = administration.GetMenuItem(SettingManagementMenuNames.GroupName);
+        if (settingsMenu != null)
+        {
+            UpdateMenuItemUrls(settingsMenu);
 
-        //Administration->Settings
-        administration.SetSubItemOrder(SettingManagementMenuNames.GroupName, 7);
+        }
+
+        administration.SetSubItemOrder(IdentityMenuNames.GroupName, 1);
+        administration.SetSubItemOrder(SettingManagementMenuNames.GroupName, 3);
 
         return Task.CompletedTask;
     }
+
+
 }

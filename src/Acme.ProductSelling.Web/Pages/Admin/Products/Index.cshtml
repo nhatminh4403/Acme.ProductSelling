@@ -10,13 +10,12 @@
 @inject IAuthorizationService AuthorizationService
 @{
     ViewData["Title"] = L["UI:Title:Admin:Products"];
-    var categorySpecTypes = Json.Serialize(Model.CategorySpecTypesJson);
+    var categorySpecTypes = Json.Serialize(Model.CategorySpecTypesJson); 
+    Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
+
 }
 @section scripts {
-
-    <abp-script src="/Pages/Admin/Products/Index.js" />
-    <script src="~/js/admin/Index.js"></script>
-
+    <script src="/Pages/Admin/Products/Index.js"></script>
 }
 
 @section styles {

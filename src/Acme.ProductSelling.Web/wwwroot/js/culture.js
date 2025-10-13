@@ -64,6 +64,8 @@
                 pathWithoutCulture.startsWith('/Abp/') ||
                 pathWithoutCulture.startsWith('/identity/') ||
                 pathWithoutCulture.startsWith('/account/') ||
+                pathWithoutCulture.startsWith('/SettingManagement/') ||
+                pathWithoutCulture.startsWith('/TenantManagement/') ||
                 href.includes('.')) {
                 return; // Skip this link
             }

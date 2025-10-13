@@ -1,0 +1,16 @@
+﻿@using Volo.Abp.UI.Navigation
+@using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Themes.LeptonXLite.Components.Menu
+@model MenuViewModel
+
+@if (Model.Menu.Items.Any())
+{
+    <ul style="list-style: none; padding: 0;">
+        @foreach (var menuItem in Model.Menu.Items)
+        {
+            @await Html.PartialAsync("~/Themes/LeptonXLite/Components/Menu/_MenuItem.cshtml", menuItem)
+        }
+    </ul>
+}
+
+
+<div class="overlay" id="overlay"></div>

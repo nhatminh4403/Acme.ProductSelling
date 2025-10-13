@@ -14,7 +14,7 @@ namespace Acme.ProductSelling.Web.Routing
             "/identity",
             "/account","/Account",
             "/tenantmanagement",
-            "/setting-management",
+            "/SettingManagement",
             "/swagger",
             "/api"
         };

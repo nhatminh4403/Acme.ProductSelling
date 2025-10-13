@@ -9,7 +9,8 @@
 @inject IStringLocalizer<ProductSellingResource> L
 @inject IAuthorizationService AuthorizationService
 @{
-    ViewData["Title"] = L["UI:Title:Admin:Orders"];
+    ViewData["Title"] = L["UI:Title:Admin:Orders"]; Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
+
 }
 @section scripts {
     <abp-script-bundle>
