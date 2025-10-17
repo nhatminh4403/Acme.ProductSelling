@@ -1,0 +1,58 @@
+﻿@using Acme.ProductSelling.Web.Themes.LeptonXLite.Components.Toolbar.LanguageSwitch
+@{
+
+}
+
+<header class="header">
+    <div class="header-left">
+        <button class="toggle-btn" id="toggleBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="header-title">Dashboard</div>
+    </div>
+    <div class="header-right">
+        <!-- Language Switcher - Placeholder for .NET Component -->
+        <div class="language-switcher" id="languageSwitcher">
+            @await Component.InvokeAsync(typeof(LanguageSwitchViewComponent))
+        </div>
+
+        <!-- Account Dropdown -->
+        <div class="account-dropdown">
+            <div class="account-btn" id="accountBtn">
+                <div class="account-avatar">JD</div>
+                <div class="account-info">
+                    <div class="account-name">John Doe</div>
+                    <div class="account-role">Administrator</div>
+                </div>
+                <i class="fas fa-chevron-down account-arrow" id="accountArrow"></i>
+            </div>
+            <div class="dropdown-menu-custom" id="accountDropdown">
+                <div class="dropdown-header">
+                    <div class="dropdown-user-name">John Doe</div>
+                    <div class="dropdown-user-email">john.doe@example.com</div>
+                </div>
+                <a href="#" class="dropdown-item-custom">
+                    <i class="fas fa-user"></i>
+                    <span>My Profile</span>
+                </a>
+                <a href="#" class="dropdown-item-custom">
+                    <i class="fas fa-cog"></i>
+                    <span>Account Settings</span>
+                </a>
+                <a href="#" class="dropdown-item-custom">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </a>
+                <a href="#" class="dropdown-item-custom">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Help & Support</span>
+                </a>
+                <div class="dropdown-divider-custom"></div>
+                <a href="#" class="dropdown-item-custom danger">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</header>

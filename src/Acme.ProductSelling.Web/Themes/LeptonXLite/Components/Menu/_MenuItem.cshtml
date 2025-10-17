@@ -1,57 +1,64 @@
-﻿﻿@using Volo.Abp.UI.Navigation
-@model ApplicationMenuItem
-@{
-    var elementId = string.IsNullOrEmpty(Model.ElementId) ? string.Empty : $"id=\"{Model.ElementId}\"";
-    var cssClass = string.IsNullOrEmpty(Model.CssClass) ? string.Empty : Model.CssClass;
-    var disabled = Model.IsDisabled ? "disabled" : string.Empty;
-    var url = string.IsNullOrEmpty(Model.Url) ? "#" : Url.IsLocalUrl(Model.Url) ? Url.Content(Model.Url.EnsureStartsWith('~')) : Model.Url;
-    var customComponentType = Model.GetComponentTypeOrDefault();
+﻿@using Volo.Abp.UI.Navigation
+@model IEnumerable<ApplicationMenuItem>
 
+@{
+    var currentPath = ViewData["CurrentPath"] as string ?? "";
+    var level = (int)(ViewData["Level"] ?? 1);
+
+    Func<ApplicationMenuItem, string, bool> isMenuItemActive =
+        ViewData["IsActiveChecker"] as Func<ApplicationMenuItem, string, bool>;
 }
-@if (Model.IsLeaf)
+
+@foreach (var menuItem in Model)
 {
-    if (customComponentType != null && typeof(ViewComponent).IsAssignableFrom(customComponentType))
-    {
-        @(await Component.InvokeAsync(customComponentType))
-    }
-    else if (Model.Url != null)
-    {
-        <a class="dropdown-item @cssClass @disabled" href="@url" target="@Model.Target" @Html.Raw(elementId) data-no-culture="true">
-            @if (Model.Icon != null)
-            {
-                if (Model.Icon.StartsWith("fa"))
-                {
-                    <i class="@Model.Icon"></i>
-                }
-            }
-            @Model.DisplayName
-        </a>
-    }
-}
-else
-{
-    <div class="dropdown-submenu">
-        @if (customComponentType != null && typeof(ViewComponent).IsAssignableFrom(customComponentType))
+    var hasSubmenu = menuItem.Items.Any();
+
+    var isBranchActive = hasSubmenu && isMenuItemActive(menuItem, currentPath);
+
+    var isLinkActive = !string.IsNullOrEmpty(menuItem.Url) &&
+                       currentPath.Equals(menuItem.Url.TrimEnd('/'), StringComparison.OrdinalIgnoreCase);
+
+    var openClass = isBranchActive ? "open" : "";
+
+    var activeLinkClass = isLinkActive ? "active" : "";
+
+    <li class="menu-item @openClass" data-level="@level">
+        @if (!hasSubmenu)
         {
-            @(await Component.InvokeAsync(customComponentType))
-        }
-        else
-        {
-            <a role="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" data-no-culture="true"
-               aria-haspopup="true" aria-expanded="false">
-                <span class="lp-icon">
-                    <i class="@(Model.Icon ?? "")"></i>
-                </span>
-                <span class="lp-text">
-                    @Model.DisplayName
+            <a href="@menuItem.Url" class="menu-link @activeLinkClass" data-no-culture="true">
+                <span>
+                    @if (!string.IsNullOrEmpty(menuItem.Icon))
+                    {
+                        <i class="@menuItem.Icon"></i>
+                    }
+                    <span class="menu-text">@menuItem.DisplayName</span>
                 </span>
             </a>
-            <div class="dropdown-menu border-0 shadow-sm">
-                @foreach (var childMenuItem in Model.Items)
-                {
-                    @await Html.PartialAsync("~/Themes/Basic/Components/Menu/_MenuItem.cshtml", childMenuItem)
-                }
-            </div>
         }
-    </div>
+        else // This item has a submenu
+        {
+            <div class="menu-link @(isBranchActive ? "active" : "")" onclick="toggleSubmenu(this)">
+                <span>
+                    @if (!string.IsNullOrEmpty(menuItem.Icon))
+                    {
+                        <i class="@menuItem.Icon"></i>
+                    }
+                    else
+                    {
+                        <i class="fas fa-layer-group"></i>
+                    }
+                    <span class="menu-text">@menuItem.DisplayName</span>
+                </span>
+                <i class="fas fa-chevron-down arrow-icon @(isBranchActive ? "rotated" : "")"></i>
+            </div>
+
+            <ul class="submenu @(isBranchActive ? "open" : "")">
+                @{
+                    var nextLevelViewData = new ViewDataDictionary(ViewData);
+                    nextLevelViewData["Level"] = level + 1;
+                }
+                @await Html.PartialAsync("~/Themes/LeptonXLite/Components/Menu/_MenuItem.cshtml", menuItem.Items, nextLevelViewData)
+            </ul>
+        }
+    </li>
 }

@@ -14,6 +14,7 @@
 @using Volo.Abp.AspNetCore.Mvc.UI.RazorPages
 @using Volo.Abp.AspNetCore.Mvc.UI.Bundling
 @using Volo.Abp.UI.Navigation
+@using Acme.ProductSelling.Web.Pages.Admin.Shared.Components.Header
 @* @using Acme.ProductSelling.Web.Themes.LeptonXLite.Components.Menu *@
 @inject ICurrentUser CurrentUser
 @inject IStringLocalizer<ProductSellingResource> L
@@ -42,47 +43,10 @@
 <body>
 
     <!-- Main Content -->
-
-    <header class="header">
-        <button class="toggle-btn" id="toggleBtn">
-            <i class="fa-solid fa-bars"></i>
-        </button>
-        <div class="header-title">Dashboard</div>
-    </header>
-
+    @await Component.InvokeAsync(typeof(HeaderViewComponent))
     <!-- Sidebar -->
-    @* @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Themes.LeptonXLite.Components.Menu.MainNavbarMenuViewComponent)) *@
-    <aside class="sidebar" id="sidebar">
-        @{
-            var mainMenu = await MenuManager.GetAsync(StandardMenus.Main);
-            var currentPath = Context.Request.Path.Value?.TrimEnd('/') ?? "";
-        }
-
-        @functions {
-            public bool IsMenuItemActive(ApplicationMenuItem menuItem, string currentPath)
-            {
-                var menuItemUrl = menuItem.Url?.TrimEnd('/') ?? "";
-                if (!string.IsNullOrEmpty(menuItemUrl) && currentPath.Equals(menuItemUrl, StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-                if (!menuItem.Items.Any())
-                {
-                    return false;
-                }
-                return menuItem.Items.Any(subItem => IsMenuItemActive(subItem, currentPath));
-            }
-        }
-
-        <ul style="list-style: none; padding: 0;">
-            @await Html.PartialAsync("~/Pages/Admin/Shared/_MenuPartial.cshtml", mainMenu.Items, new ViewDataDictionary(ViewData)
-            {
-                { "CurrentPath", currentPath },
-                        { "Level", 1 },
-                        { "IsActiveChecker", (Func<ApplicationMenuItem, string, bool>)IsMenuItemActive }
-            })
-        </ul>
-    </aside>
+    @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Themes.LeptonXLite.Components.Menu.MainNavbarMenuViewComponent))
+ 
 
     <!-- Main Content Area -->
     <main class="main-content" id="mainContent">

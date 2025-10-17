@@ -2,15 +2,35 @@
 @using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Themes.LeptonXLite.Components.Menu
 @model MenuViewModel
 
-@if (Model.Menu.Items.Any())
-{
-    <ul style="list-style: none; padding: 0;">
-        @foreach (var menuItem in Model.Menu.Items)
-        {
-            @await Html.PartialAsync("~/Themes/LeptonXLite/Components/Menu/_MenuItem.cshtml", menuItem)
-        }
-    </ul>
-}
+<aside class="sidebar" id="sidebar">
+    @{
+        var currentPath = Context.Request.Path.Value?.TrimEnd('/') ?? "";
+    }
 
+    @functions {
+        public bool IsMenuItemActive(ApplicationMenuItem menuItem, string currentPath)
+        {
+            var menuItemUrl = menuItem.Url?.TrimEnd('/') ?? "";
+            if (!string.IsNullOrEmpty(menuItemUrl) && currentPath.Equals(menuItemUrl, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+            if (!menuItem.Items.Any())
+            {
+                return false;
+            }
+            return menuItem.Items.Any(subItem => IsMenuItemActive(subItem, currentPath));
+        }
+    }
+
+    <ul style="list-style: none; padding: 0;">
+        @await Html.PartialAsync("~/Themes/LeptonXLite/Components/Menu/_MenuItem.cshtml", Model.Menu.Items, new ViewDataDictionary(ViewData)
+        {
+            { "CurrentPath", currentPath },
+                { "Level", 1 },
+                { "IsActiveChecker", (Func<ApplicationMenuItem, string, bool>)IsMenuItemActive }
+        })
+    </ul>
+</aside>
 
 <div class="overlay" id="overlay"></div>
