@@ -8,3 +8,13 @@
 @addTagHelper *, Owl.reCAPTCHA
 @addTagHelper *, Acme.ProductSelling.Web
 @using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization;
+@using Acme.ProductSelling.Localization;
+@using System.Globalization;
+
+@using Microsoft.Extensions.Localization;
+@using Acme.ProductSelling.Utils;
+@using Volo.Abp.Users;
+@using Acme.ProductSelling.Web.Helpers;
+
+@inject IStringLocalizer<ProductSellingResource> L

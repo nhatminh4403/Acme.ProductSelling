@@ -1,6 +1,29 @@
 ﻿@page
-@using Volo.Abp.TenantManagement.Web.Pages.TenantManagement
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Pages.Shared.Components.AbpPageToolbar
+@using Volo.Abp.FeatureManagement
+@using Volo.Abp.TenantManagement
+@using Volo.Abp.TenantManagement.Localization
+@using Volo.Abp.TenantManagement.Web.Navigation
+@using Volo.Abp.TenantManagement.Web.Pages.TenantManagement.Tenants
+@using Volo.Abp.UI.Navigation.Localization.Resource
 @model Volo.Abp.TenantManagement.Web.Pages.TenantManagement.Tenants.IndexModel
+@inject IHtmlLocalizer<AbpTenantManagementResource> L
+@inject IHtmlLocalizer<AbpUiNavigationResource> LUiNavigation
+@inject IAuthorizationService Authorization
+@inject IPageLayout PageLayout
 @{
     Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
 }
+
+@section content_toolbar {
+    @await Component.InvokeAsync(typeof(AbpPageToolbarViewComponent), 
+    new { pageName = typeof(Volo.Abp.TenantManagement.Web.Pages.TenantManagement.Tenants.IndexModel).FullName })
+}
+<abp-card id="TenantsWrapper">
+    <abp-card-body>
+        <abp-table class="nowrap"></abp-table>
+    </abp-card-body>
+</abp-card>
