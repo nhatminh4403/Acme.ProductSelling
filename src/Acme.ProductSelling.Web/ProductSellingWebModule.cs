@@ -323,9 +323,15 @@ public class ProductSellingWebModule : AbpModule
                 bundle =>
                 {
                     bundle.AddContributors(typeof(DatatablesNetScriptContributor));
-
                     bundle.AddFiles("/js/admin/main.js");
 
+                }
+            );
+            options.StyleBundles.Add(
+                "Admin.Global", // Give it a descriptive name
+                bundle =>
+                {
+                    bundle.AddFiles("/css/admin/main/style.css");
                 }
             );
         });
