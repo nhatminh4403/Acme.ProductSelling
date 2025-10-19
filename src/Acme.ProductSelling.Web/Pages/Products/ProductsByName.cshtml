@@ -1,10 +1,7 @@
 ﻿@page "/products/search/{Name?}"
 @model Acme.ProductSelling.Web.Pages.Products.ProductsByNameModel
-@using System.Globalization
 @using Acme.ProductSelling.Web.Helpers
-@using Acme.ProductSelling.Localization
-@using Microsoft.Extensions.Localization
-@inject IStringLocalizer<ProductSellingResource> L
+
 @{
     Layout = "/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = L["UI:Title:AllProductsByName", Model.Name];

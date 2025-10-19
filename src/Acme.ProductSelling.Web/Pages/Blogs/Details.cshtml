@@ -1,13 +1,9 @@
 ﻿@page "/blogs/{Slug}"
 @model Acme.ProductSelling.Web.Pages.Blogs.DetailsModel
 
-@using Acme.ProductSelling.Localization
-@using Microsoft.Extensions.Localization
 @using Acme.ProductSelling.Web.Helpers
 @using Acme.ProductSelling.Blogs
-@using System.Globalization
 @* @using IHtmlSanitizer *@
-@inject IStringLocalizer<ProductSellingResource> L
 @{
     var title = Model.Blog.Title;
     ViewData["Title"] = title.ToString();

@@ -218,18 +218,15 @@
                 cartService = acme.productSelling.carts.cart;
             }
 
-            var $cartButton = $('a[href="/cart"]');
-            var $countElement = $cartButton.find('.badge');
+            // FIXED: Target both desktop and mobile cart buttons
+            var $cartButtons = $('#shopping-cart-widget, #shopping-cart-widget-mobile');
 
-            if ($cartButton.length === 0) {
+            if ($cartButtons.length === 0) {
+                console.warn('Cart buttons not found');
                 return;
             }
 
-            if ($countElement.length === 0) {
-                $countElement =
-                    $('<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>');
-                $cartButton.append($countElement);
-            }
+            console.log('Found', $cartButtons.length, 'cart button(s)');
 
             function isUserAuthenticated() {
                 try {
@@ -250,25 +247,58 @@
             }
 
             if (!isUserAuthenticated()) {
-                $countElement.text('0').addClass('d-none');
+                console.log('User not authenticated, hiding badges');
+                $cartButtons.each(function () {
+                    var $badge = $(this).find('.cart-item-count');
+                    if ($badge.length > 0) {
+                        $badge.text('0').addClass('d-none');
+                    }
+                });
                 return;
             }
 
             if (!cartService || typeof cartService.getItemCount !== 'function') {
-                $countElement.addClass('d-none');
+                console.warn('Cart service not available');
+                $cartButtons.each(function () {
+                    var $badge = $(this).find('.cart-item-count');
+                    if ($badge.length > 0) {
+                        $badge.addClass('d-none');
+                    }
+                });
                 return;
             }
 
             cartService.getItemCount().then(function (count) {
-                $countElement.text(count || 0);
-                if (count && count > 0) {
-                    $countElement.removeClass('d-none');
-                } else {
-                    $countElement.addClass('d-none');
-                }
+                console.log('Cart count retrieved:', count);
+
+                // Update both desktop and mobile badges
+                $cartButtons.each(function () {
+                    var $cartButton = $(this);
+                    var $badge = $cartButton.find('.cart-item-count');
+
+                    // If badge doesn't exist, create it
+                    if ($badge.length === 0) {
+                        console.log('Creating badge for', $cartButton.attr('id'));
+                        $badge = $('<span class="cart-item-count position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>');
+                        $cartButton.append($badge);
+                    }
+
+                    // Update badge
+                    $badge.text(count || 0);
+                    if (count && count > 0) {
+                        $badge.removeClass('d-none');
+                    } else {
+                        $badge.addClass('d-none');
+                    }
+                });
             }).catch(function (error) {
                 console.error("Get cart count error:", error);
-                $countElement.addClass('d-none');
+                $cartButtons.each(function () {
+                    var $badge = $(this).find('.cart-item-count');
+                    if ($badge.length > 0) {
+                        $badge.addClass('d-none');
+                    }
+                });
             });
         } catch (error) {
             console.error('Error in updateCartWidgetCount:', error);

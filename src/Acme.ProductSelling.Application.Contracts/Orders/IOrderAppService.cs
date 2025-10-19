@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -19,6 +20,9 @@ namespace Acme.ProductSelling.Orders
 
         Task<OrderDto> ConfirmPayPalOrderAsync(Guid orderId);
         Task MarkAsCodPaidAndCompletedAsync(Guid orderId);
+        Task ShipOrderAsync(Guid orderId);
+        Task DeliverOrderAsync(Guid orderId);
 
+        Task<PagedResultDto<OrderDto>> GetProfitReportAsync(PagedAndSortedResultRequestDto input);
     }
 }

@@ -413,7 +413,6 @@
     </div>
     <script src="~/libs/abp/core/abp.js"></script>
     <abp-script-bundle name="@LeptonXLiteThemeBundles.Scripts.Global" />
-    <abp-script-bundle name="Main.Global" />
 
     <script src="~/Abp/ServiceProxyScript" asp-append-version="true"></script>
     <script src="~/Abp/ApplicationLocalizationScript?cultureName=@CultureInfo.CurrentUICulture.Name"></script>
@@ -421,9 +420,10 @@
 
     <script src="~/libs/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
     @await RenderSectionAsync("scripts", required: false)
-    <script src="~/js/cart.js"></script>
-    <script src="~/global-scripts.js"></script>
+ 
     <abp-script src="/libs/signalr/browser/signalr.js" />
     <abp-script src="/js/orderSignalR.js" />
+    <abp-script-bundle name="Main.Global" />
+
 </body>
 </html>

@@ -48,17 +48,14 @@ namespace Acme.ProductSelling.Carts
             try
             {
                 var userId = GetCurrentUserId();
-                // Include Items để thao tác trực tiếp
                 var cart = await (await _cartRepository.WithDetailsAsync(c => c.Items))
                                 .FirstOrDefaultAsync(c => c.UserId == userId);
 
                 if (cart == null)
                 {
-                    // Tạo giỏ hàng mới nếu chưa có
                     cart = new Cart(_guidGenerator.Create(), userId);
                     await _cartRepository.InsertAsync(cart, autoSave: true);
 
-                    // Tải lại để đảm bảo có tất cả thuộc tính
                     cart = await (await _cartRepository.WithDetailsAsync(c => c.Items))
                                 .FirstOrDefaultAsync(c => c.Id == cart.Id);
                 }
@@ -69,7 +66,7 @@ namespace Acme.ProductSelling.Carts
             {
                 Logger.LogError($"Error in GetOrCreateCurrentUserCartAsync: {ex.Message}");
                 throw new UserFriendlyException(L["Cart:CartInccessible.TryAgain"]);
-            }//Could not access your shopping cart. Please try again later.
+            }
         }
 
         public async Task<CartDto> GetAsync()
@@ -101,6 +98,7 @@ namespace Acme.ProductSelling.Carts
                             {
                                 itemDto.ProductPrice = product.OriginalPrice;
                             }
+                            itemDto.ProductUrlSlug = product.UrlSlug;
                         }
                     }
                     // Xóa item khỏi DTO nếu SP không tìm thấy

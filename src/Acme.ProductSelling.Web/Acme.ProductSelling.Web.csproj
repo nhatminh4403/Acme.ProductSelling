@@ -37,6 +37,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Dto.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.UI" Version="9.0.0" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="9.0.0" />
@@ -87,8 +90,6 @@
     <None Include="wwwroot\js\admin\blogs\create.js" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Data\" />
-    <Folder Include="Models\" />
     <Folder Include="Views\Shared\Components\" />
     <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\images\" />

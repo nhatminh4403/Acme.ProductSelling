@@ -40,7 +40,7 @@ namespace Acme.ProductSelling.Orders
 
         private Order() { /* Required by EF Core */ }
 
-        // --- CONSTRUCTOR ĐƯỢC RÚT GỌN ---
+        // --- CONSTRUCTOR ---
         public Order(
             Guid id, string orderNumber, DateTime orderDate, Guid? customerId,
             string customerName, string customerPhone, string shippingAddress, string paymentMethod)
@@ -54,7 +54,6 @@ namespace Acme.ProductSelling.Orders
             ShippingAddress = Check.NotNullOrWhiteSpace(shippingAddress, nameof(shippingAddress));
             PaymentMethod = Check.NotNullOrWhiteSpace(paymentMethod, nameof(paymentMethod));
 
-            // AppService sẽ chịu trách nhiệm set các trạng thái ban đầu
             // Mặc định, một đơn hàng vừa tạo luôn có PaymentStatus.Unpaid
             PaymentStatus = PaymentStatus.Unpaid;
         }
@@ -102,14 +101,51 @@ namespace Acme.ProductSelling.Orders
         {
             if (!IsNextStatusValid(newStatus))
             {
-                //var errorMessage = localizer != null
-                //   ? localizer["OrderStatusChangeNotAllowed", Status, newStatus]
-                //   : $"Không thể chuyển trạng thái từ '{Status}' sang '{newStatus}'.";
-                // Thông điệp lỗi chung chung, AppService sẽ xử lý việc dịch
                 throw new UserFriendlyException("OrderStatusChangeNotAllowed",
                     $"Không thể chuyển trạng thái từ '{Status}' sang '{newStatus}'.");
             }
             Status = newStatus;
+        }
+
+        /// <summary>
+        /// FIXED: Updated to allow proper payment status transitions
+        /// </summary>
+        public void SetPaymentStatus(PaymentStatus newPaymentStatus, IStringLocalizer<ProductSellingResource> localizer = null)
+        {
+            // Define valid payment status transitions
+            var validTransitions = new Dictionary<PaymentStatus, PaymentStatus[]>
+            {
+                { PaymentStatus.Unpaid, new[] { PaymentStatus.Pending, PaymentStatus.PendingOnDelivery, PaymentStatus.Paid, PaymentStatus.Cancelled } },
+                { PaymentStatus.Pending, new[] { PaymentStatus.Paid, PaymentStatus.Failed, PaymentStatus.Cancelled } },
+                { PaymentStatus.PendingOnDelivery, new[] { PaymentStatus.Paid, PaymentStatus.Cancelled } },
+                { PaymentStatus.Paid, new[] { PaymentStatus.Refunded } },
+                { PaymentStatus.Failed, new[] { PaymentStatus.Pending } }, // Retry payment
+                { PaymentStatus.Cancelled, new PaymentStatus[] { } }, // No transitions from cancelled
+                { PaymentStatus.Refunded, new PaymentStatus[] { } }  // No transitions from refunded
+            };
+
+            // Check if transition is valid
+            if (!validTransitions.ContainsKey(PaymentStatus) ||
+                !validTransitions[PaymentStatus].Contains(newPaymentStatus))
+            {
+                throw new UserFriendlyException("InvalidPaymentStatusChange",
+                    $"Không thể chuyển trạng thái thanh toán từ '{PaymentStatus}' sang '{newPaymentStatus}'.");
+            }
+
+            PaymentStatus = newPaymentStatus;
+        }
+
+        /// <summary>
+        /// NEW: Sets payment status to PendingOnDelivery for COD orders when shipped
+        /// </summary>
+        public void SetPendingOnDelivery()
+        {
+            if (PaymentMethod != PaymentMethods.COD)
+            {
+                throw new UserFriendlyException("OnlyForCODOrders",
+                    "Trạng thái PendingOnDelivery chỉ dành cho đơn COD.");
+            }
+            SetPaymentStatus(PaymentStatus.PendingOnDelivery);
         }
 
         /// <summary>
@@ -124,17 +160,7 @@ namespace Acme.ProductSelling.Orders
                 SetStatus(OrderStatus.Confirmed);
             }
         }
-        public void SetPaymentStatus(PaymentStatus newPaymentStatus, IStringLocalizer<ProductSellingResource> localizer = null)
-        {
-            // Chỉ cho phép chuyển sang trạng thái thanh toán đã hoàn thành hoặc thất bại
-            if (newPaymentStatus != PaymentStatus.Paid && newPaymentStatus != PaymentStatus.Failed)
-            {
-                throw new UserFriendlyException("InvalidPaymentStatusChange",
-                    $"Chỉ có thể chuyển sang '{PaymentStatus.Paid}' hoặc '{PaymentStatus.Failed}'.");
-            }
-            PaymentStatus = newPaymentStatus;
-            // Nếu thanh toán đã hoàn thành, chuyển trạng thái đơn hàng sang 'Confirmed'
-        }
+
         /// <summary>
         /// Dành cho admin xác nhận đã thu tiền đơn COD.
         /// </summary>
@@ -150,14 +176,13 @@ namespace Acme.ProductSelling.Orders
                     $"Trạng thái thanh toán phải là '{PaymentStatus.PendingOnDelivery}'.");
             }
 
-            PaymentStatus = PaymentStatus.Paid; // Đã đổi thành Paid
-            SetStatus(OrderStatus.Delivered);   // Đã hoàn thành
+            PaymentStatus = PaymentStatus.Paid;
+            SetStatus(OrderStatus.Delivered);
         }
 
         public void CancelByUser(IStringLocalizer<ProductSellingResource> localizer = null)
         {
             // Người dùng chỉ có thể hủy khi đơn hàng ở trạng thái 'Placed'
-            // và thanh toán chưa được thực hiện (cho chắc chắn).
             if (Status != OrderStatus.Placed)
             {
                 throw new UserFriendlyException(localizer["Order:OrderCanOnlyBeCancelledWhenPlaced"]);
@@ -168,7 +193,7 @@ namespace Acme.ProductSelling.Orders
             }
 
             SetStatus(OrderStatus.Cancelled);
-            PaymentStatus = PaymentStatus.Unpaid; // Hoặc một trạng thái hủy khác
+            PaymentStatus = PaymentStatus.Unpaid;
         }
 
         // --- CÁC PHƯƠNG THỨC RIÊNG TƯ (PRIVATE METHODS) ---

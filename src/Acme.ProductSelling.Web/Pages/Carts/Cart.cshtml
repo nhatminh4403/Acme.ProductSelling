@@ -1,11 +1,5 @@
 ﻿@page "/cart"
 @model Acme.ProductSelling.Web.Pages.Carts.CartModel
-@using Acme.ProductSelling.Localization
-@using Microsoft.Extensions.Localization
-@using Acme.ProductSelling.Categories
-@using System.Globalization
-@inject IStringLocalizer<ProductSellingResource> L
-
 
 @{
     ViewData["Title"] = L["Cart:ShoppingCart"];
@@ -39,8 +33,8 @@
                         <tr>
 
                             <td>
-                                <a asp-page="/ProductDetail"
-                                   asp-route-id="@item.ProductId" class="text-dark text-decoration-none fw-bold">
+                                <a asp-page="/Products/ProductDetail"
+                                   asp-route-slug="@item.ProductUrlSlug" class="text-dark text-decoration-none fw-bold">
                                     @item.ProductName
                                 </a>
                                 @* Có thể thêm các thông tin khác như thuộc tính sản phẩm nếu cần *@

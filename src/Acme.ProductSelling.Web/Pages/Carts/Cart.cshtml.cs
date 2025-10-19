@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Carts;
+using Acme.ProductSelling.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -17,7 +18,6 @@ namespace Acme.ProductSelling.Web.Pages.Carts
         public CartDto Cart { get; set; }
 
         private readonly ICartAppService _cartAppService;
-
         public List<CartItemDto> CartItems { get; set; } = new List<CartItemDto>();
         public decimal TotalPrice { get; set; }
 
@@ -30,6 +30,7 @@ namespace Acme.ProductSelling.Web.Pages.Carts
         {
             var cart = await _cartAppService.GetAsync();
             CartItems = cart.CartItems.ToList();
+
             TotalPrice = cart.TotalPrice;
             Cart = cart;
             return Page();

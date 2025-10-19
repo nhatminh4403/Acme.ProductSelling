@@ -161,6 +161,9 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
         //order - cart
         CreateMap<Order, OrderDto>()
             .ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => src.Status))
+            .ForMember(dest => dest.OrderStatusText, opt => opt.MapFrom(src => src.Status.ToString()))
+            .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.PaymentStatus))
+            .ForMember(dest => dest.PaymentStatusText, opt => opt.MapFrom(src => src.PaymentStatus.ToString()))
              .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod));
         CreateMap<CreateOrderDto, Order>()
             .ForMember(dest => dest.OrderItems, opt => opt.Ignore())

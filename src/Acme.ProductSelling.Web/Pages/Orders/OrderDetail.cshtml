@@ -1,10 +1,6 @@
 ﻿@page "/Orders/OrderDetail/{id:Guid}"
 @model Acme.ProductSelling.Web.Pages.Orders.OrderDetailModel
-@using Microsoft.AspNetCore.Mvc.Localization
-@using Acme.ProductSelling.Localization
-@using System.Globalization
-@using Microsoft.Extensions.Localization
-@inject IStringLocalizer<ProductSellingResource> L
+
 @{
     ViewData["Title"] = L["UI:Titles:OrderDetails"];
     Layout = "/Views/Shared/_Layout.cshtml";

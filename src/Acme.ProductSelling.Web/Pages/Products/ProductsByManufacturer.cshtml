@@ -1,11 +1,7 @@
 ﻿@page "/collections/{CategoryUrlSlug}/{ManufacturerUrlSlug}"
 @model Acme.ProductSelling.Web.Pages.Products.ProductsByManufacturerModel
-@using System.Globalization
 @using Acme.ProductSelling.Web.Helpers
-@using Acme.ProductSelling.Localization
-@using Microsoft.Extensions.Localization
 @using Acme.ProductSelling.Categories
-@inject IStringLocalizer<ProductSellingResource> L
 @{
     ViewData["Title"] = L["UI:Title:ProductByManufacturer", Model.ManufacturerName];
     Layout = "/Views/Shared/_Layout.cshtml";

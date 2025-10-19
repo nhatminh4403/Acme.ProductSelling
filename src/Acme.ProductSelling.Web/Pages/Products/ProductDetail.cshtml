@@ -1,12 +1,8 @@
 ﻿@page "/products/{Slug}"
 @model Acme.ProductSelling.Web.Pages.Products.ProductDetailModel
-@using Acme.ProductSelling.Localization
-@using Microsoft.Extensions.Localization
 @using Acme.ProductSelling.Categories
-@using System.Globalization
 @using Acme.ProductSelling.Web.Helpers
 
-@inject IStringLocalizer<ProductSellingResource> L
 @{
     ViewData["Title"] = Model.Product?.ProductName ?? L["Product:ProductDetail"];
     Layout = "/Views/Shared/_Layout.cshtml";

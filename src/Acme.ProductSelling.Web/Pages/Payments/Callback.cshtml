@@ -1,11 +1,7 @@
 ﻿@page "Callback/{vnp_ResponseCode}/{OrderId}/{OrderNumber}"
 @model Acme.ProductSelling.Web.Pages.Payments.CallbackModel
 
-@using Microsoft.AspNetCore.Mvc.Localization
-@using Acme.ProductSelling.Localization
-@using Microsoft.Extensions.Localization
 @using Volo.Abp.AspNetCore.Mvc.UI.Packages.SignalR
-@inject IStringLocalizer<ProductSellingResource> L
 @inject Volo.Abp.Users.ICurrentUser CurrentUser
 @{
     ViewData["Title"] = L["Title:PaymentCallback"];

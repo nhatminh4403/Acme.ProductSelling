@@ -39,6 +39,7 @@ namespace Acme.ProductSelling.Web.Admin.Pages
         public async Task OnGetAsync(int? year = null)
         {
             var orders = await _orderAppService.GetListAsync(input);
+            var totalProfit = await _orderAppService.GetProfitReportAsync(input);
             var currentMonth = DateTime.Now.Month;
             var currentYear = DateTime.Now.Year;
             var lastMonth = currentMonth == 1 ? 12 : currentMonth - 1;
@@ -47,10 +48,12 @@ namespace Acme.ProductSelling.Web.Admin.Pages
             TotalOrderCount = orders.TotalCount;
             SelectedYear = year ?? currentYear;
 
-            AvailableYears = Enumerable.Range(currentYear - 2, 3).OrderByDescending(y => y).ToList();
+            AvailableYears = Enumerable.Range(currentYear - 2, 3).ToList();
             InitializeThreeYearsData(currentYear);
 
-            foreach (var order in orders.Items)
+
+
+            foreach (var order in totalProfit.Items)
             {
                 TotatOrderPrice += order.TotalAmount;
 

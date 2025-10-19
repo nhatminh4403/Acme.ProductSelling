@@ -40,6 +40,8 @@ public static class ProductSellingPermissions
         public const string Delete = Default + ".Delete";
         public const string ChangeStatus = Default + ".ChangeStatus";
         public const string ConfirmCodPayment = Default + ".ConfirmCodPayment";
+        public const string ShipOrder = Default + ".ShipOrder";
+        public const string ViewProfitReport = Default + ".ViewProfitReport";
     }
     public static class Blogs
     {

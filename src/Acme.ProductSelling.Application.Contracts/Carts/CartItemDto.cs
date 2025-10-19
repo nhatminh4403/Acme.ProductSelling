@@ -10,5 +10,6 @@ namespace Acme.ProductSelling.Carts
         public decimal ProductPrice { get; set; } // Lấy từ thông tin Product liên kết
         public int Quantity { get; set; }
         public decimal LineTotal => ProductPrice * Quantity;
+        public string ProductUrlSlug { get; set; } // Lấy từ thông tin Product liên kết
     }
 }

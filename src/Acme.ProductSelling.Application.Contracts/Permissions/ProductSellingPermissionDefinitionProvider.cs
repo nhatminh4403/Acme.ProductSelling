@@ -27,6 +27,8 @@ public class ProductSellingPermissionDefinitionProvider : PermissionDefinitionPr
         orderPermission.AddChild(ProductSellingPermissions.Orders.Delete, L("Permission:Orders.Delete"));
         orderPermission.AddChild(ProductSellingPermissions.Orders.ChangeStatus, L("Permission:Orders.ChangeStatus"));
         orderPermission.AddChild(ProductSellingPermissions.Orders.ConfirmCodPayment, L("Permission:Orders.ConfirmCodPayment"));
+        orderPermission.AddChild(ProductSellingPermissions.Orders.ShipOrder, L("Permission:Orders.ShipOrder"));
+        orderPermission.AddChild(ProductSellingPermissions.Orders.ViewProfitReport, L("Permission:Orders.ViewProfitReport"));
 
         var manufacturersPermission = myGroup.AddPermission(ProductSellingPermissions.Manufacturers.Default, L("Permission:Manufacturers"));
         manufacturersPermission.AddChild(ProductSellingPermissions.Manufacturers.Create, L("Permission:Manufacturers.Create"));

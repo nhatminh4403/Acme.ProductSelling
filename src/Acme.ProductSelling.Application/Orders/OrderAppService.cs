@@ -26,6 +26,7 @@ using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
 using Volo.Abp.Users;
+
 namespace Acme.ProductSelling.Orders
 {
     public class OrderAppService : ApplicationService, IOrderAppService
@@ -40,6 +41,7 @@ namespace Acme.ProductSelling.Orders
         private readonly IPaymentGatewayResolver _paymentGatewayResolver;
         private readonly IOrderNotificationService _orderNotificationService;
         private readonly IStringLocalizer<ProductSellingResource> _localizer;
+
         public OrderAppService(
             IRepository<Order, Guid> orderRepository,
             IRepository<Product, Guid> productRepository,
@@ -61,13 +63,9 @@ namespace Acme.ProductSelling.Orders
             _backgroundJobManager = backgroundJobManager;
             _paymentGatewayResolver = gatewayResolver;
             _orderNotificationService = orderNotificationService;
-
             _localizer = localizer;
-            //GetPolicyName = ProductSellingPermissions.Orders.Default;
-            //CreatePolicyName = ProductSellingPermissions.Orders.Create;
-            //UpdatePolicyName = ProductSellingPermissions.Orders.Edit;
-            //DeletePolicyName = ProductSellingPermissions.Orders.Delete;
         }
+
         [Authorize]
         public async Task<OrderDto> ConfirmPayPalOrderAsync(Guid guid)
         {
@@ -90,14 +88,8 @@ namespace Acme.ProductSelling.Orders
                 await _orderRepository.UpdateAsync(order, autoSave: true);
                 Logger.LogInformation("Đã cập nhật trạng thái đơn hàng {OrderId} thành {Status}", order.Id, order.Status);
 
-                // 6. Gửi các sự kiện và thông báo cần thiết
-                // Ví dụ: Gửi Event để gửi email, thông báo cho kho hàng...
-                 //await _distributedEventBus.PublishAsync(new OrderConfirmedEto(order.Id));
-
-                // Gửi thông báo real-time
                 await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
 
-                // 7. Trả về thông tin đơn hàng đã được cập nhật
                 return ObjectMapper.Map<Order, OrderDto>(order);
             }
             else
@@ -105,13 +97,9 @@ namespace Acme.ProductSelling.Orders
                 Logger.LogWarning("Bỏ qua xác nhận." +
                       " Đơn hàng {OrderId} không ở trạng thái PendingPayment. " +
                       "Trạng thái hiện tại: {Status}", order.Id, order.Status);
-                // Nếu đơn hàng đã được xác nhận trước đó, chỉ cần trả về thông tin
                 return ObjectMapper.Map<Order, OrderDto>(order);
             }
-
-
         }
-
 
         [Authorize(ProductSellingPermissions.Orders.Default)]
         public async Task<PagedResultDto<OrderDto>> GetListAsync(PagedAndSortedResultRequestDto input)
@@ -128,6 +116,7 @@ namespace Acme.ProductSelling.Orders
                 ObjectMapper.Map<List<Order>, List<OrderDto>>(items)
             );
         }
+
         public async Task<CreateOrderResultDto> CreateAsync(CreateOrderDto input)
         {
             var customerId = _currentUser.Id.Value;
@@ -135,12 +124,10 @@ namespace Acme.ProductSelling.Orders
             var existingPendingOrder = await (await _orderRepository.WithDetailsAsync(o => o.OrderItems))
                 .FirstOrDefaultAsync(o =>
                     o.CustomerId == customerId &&
-                    o.PaymentStatus == PaymentStatus.Pending /*&&
-                    o.Status == OrderStatus.Placed*/
+                    o.PaymentStatus == PaymentStatus.Pending
                 );
 
-
-            // B1: Lấy giỏ hàng hiện tại của người dùng. Sẽ dùng cho cả hai trường hợp.
+            // B1: Lấy giỏ hàng hiện tại của người dùng
             var cart = await (await _cartRepository.WithDetailsAsync(c => c.Items))
                                   .FirstOrDefaultAsync(c => c.UserId == customerId);
             if (cart == null || !cart.Items.Any())
@@ -155,9 +142,7 @@ namespace Acme.ProductSelling.Orders
                 Logger.LogInformation("Phát hiện đơn hàng {OrderNumber} đang chờ thanh toán. Tái sử dụng...", existingPendingOrder.OrderNumber);
                 orderToProcess = existingPendingOrder;
 
-                // --- BƯỚC CẬP NHẬT ĐƠN HÀNG CŨ ---
-
-                // 1. Hoàn lại stock cho các sản phẩm trong đơn hàng cũ
+                // Hoàn lại stock cho các sản phẩm trong đơn hàng cũ
                 foreach (var oldItem in orderToProcess.OrderItems)
                 {
                     var product = await _productRepository.FindAsync(oldItem.ProductId);
@@ -168,18 +153,17 @@ namespace Acme.ProductSelling.Orders
                     }
                 }
 
-                // 2. Xóa tất cả các item cũ khỏi đơn hàng
+                // Xóa tất cả các item cũ khỏi đơn hàng
                 orderToProcess.OrderItems.Clear();
 
-                // 3. Cập nhật lại thông tin giao hàng và phương thức thanh toán
+                // Cập nhật lại thông tin giao hàng và phương thức thanh toán
                 orderToProcess.UpdateShippingInfo(input.CustomerName, input.CustomerPhone, input.ShippingAddress);
-                orderToProcess.UpdatePaymentMethod(input.PaymentMethod); // Cần tạo các phương thức này trong Order entity
+                orderToProcess.UpdatePaymentMethod(input.PaymentMethod);
             }
             else
             {
                 Logger.LogInformation("Bắt đầu tiến trình tạo đơn hàng mới cho user {UserId}.", customerId);
 
-                // --- BƯỚC TẠO ĐƠN HÀNG MỚI ---
                 orderToProcess = new Order(
                     GuidGenerator.Create(),
                     $"DH-{DateTime.UtcNow:yyyyMMddHHmmss}-{GuidGenerator.Create().ToString("N").Substring(0, 6)}",
@@ -187,13 +171,10 @@ namespace Acme.ProductSelling.Orders
                     input.ShippingAddress, input.PaymentMethod
                 );
 
-                // Trạng thái ban đầu cho đơn hàng mới
                 orderToProcess.SetStatus(OrderStatus.Placed);
             }
 
-            // --- BƯỚC CHUNG: ĐỒNG BỘ ĐƠN HÀNG VỚI GIỎ HÀNG HIỆN TẠI ---
-
-            // 1. Thêm các item từ giỏ hàng hiện tại vào đơn hàng (cũ hoặc mới)
+            // --- ĐỒNG BỘ ĐƠN HÀNG VỚI GIỎ HÀNG HIỆN TẠI ---
             var productIdsInCart = cart.Items.Select(i => i.ProductId).ToList();
             var productsInDb = (await _productRepository.GetListAsync(p => productIdsInCart.Contains(p.Id)))
                                .ToDictionary(p => p.Id);
@@ -211,47 +192,48 @@ namespace Acme.ProductSelling.Orders
                                                     product.ProductName,
                                                     product.DiscountedPrice ?? product.OriginalPrice,
                                                     cartItem.Quantity);
-                    product.StockCount -= cartItem.Quantity; // Giảm stock mới
+                    product.StockCount -= cartItem.Quantity;
                     await _productRepository.UpdateAsync(product);
                 }
             }
 
-            // 2. Tính lại tổng tiền
+            // Tính lại tổng tiền
             orderToProcess.CalculateTotals();
 
-            // 3. Đặt trạng thái thanh toán
+            // FIXED: Đặt trạng thái thanh toán
             if (input.PaymentMethod == PaymentMethods.COD)
             {
-                orderToProcess.SetPaymentStatus(PaymentStatus.Unpaid);
-                orderToProcess.SetStatus(OrderStatus.Placed); // Đơn COD thì trạng thái là Placed
+                // COD orders stay Unpaid (already set by constructor)
+                // No need to call SetPaymentStatus here
+                orderToProcess.SetStatus(OrderStatus.Placed);
             }
             else
             {
+                // Online payment orders: set to Pending
                 orderToProcess.SetPaymentStatus(PaymentStatus.Pending);
-
                 orderToProcess.SetStatus(OrderStatus.Placed);
             }
 
-            // 4. Xử lý qua gateway
+            // Xử lý qua gateway
             var gateway = _paymentGatewayResolver.Resolve(input.PaymentMethod);
             var gatewayResult = await gateway.ProcessAsync(orderToProcess);
 
-            // 5. Lưu đơn hàng (Insert nếu là mới, Update nếu là cũ)
+            // Lưu đơn hàng
             await _orderRepository.UpsertAsync(orderToProcess, autoSave: true);
 
-            // 6. Lên lịch job cho COD (logic không đổi)
+            // Lên lịch job cho COD
             if (orderToProcess.PaymentMethod == PaymentMethods.COD && orderToProcess.Status == OrderStatus.Placed)
             {
                 await _backgroundJobManager.EnqueueAsync<SetOrderPendingJobArgs>(
                     new SetOrderPendingJobArgs { OrderId = orderToProcess.Id },
-                    delay: TimeSpan.FromSeconds(30) // Giữ nguyên logic cũ
+                    delay: TimeSpan.FromSeconds(30)
                 );
             }
 
-            // 7. Dọn dẹp giỏ hàng
+            // Dọn dẹp giỏ hàng
             await _cartRepository.DeleteAsync(cart, autoSave: true);
 
-            // 8. Gửi thông báo
+            // Gửi thông báo
             await _orderNotificationService.NotifyOrderStatusChangeAsync(orderToProcess);
 
             return new CreateOrderResultDto
@@ -274,6 +256,7 @@ namespace Acme.ProductSelling.Orders
             }
             return ObjectMapper.Map<Order, OrderDto>(order);
         }
+
         public async Task<OrderDto> GetByOrderNumberAsync(string orderNumber)
         {
             var order = await _orderRepository.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
@@ -315,7 +298,7 @@ namespace Acme.ProductSelling.Orders
             );
         }
 
-        [Authorize(ProductSellingPermissions.Orders.Edit)] // Phân quyền cho Admin
+        [Authorize(ProductSellingPermissions.Orders.Edit)]
         public async Task<OrderDto> UpdateStatusAsync(Guid id, UpdateOrderStatusDto input)
         {
             var order = await _orderRepository.GetAsync(id);
@@ -333,7 +316,7 @@ namespace Acme.ProductSelling.Orders
         [Authorize]
         public async Task DeleteAsync(Guid id)
         {
-            var order = await _orderRepository.GetAsync(id, includeDetails: true); // include OrderItems
+            var order = await _orderRepository.GetAsync(id, includeDetails: true);
             if (order.CustomerId != CurrentUser.Id) throw new AbpAuthorizationException(L["Account:Unauthorized"]);
 
             order.CancelByUser(_localizer);
@@ -348,22 +331,125 @@ namespace Acme.ProductSelling.Orders
             await _orderRepository.UpdateAsync(order);
             await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
         }
+
+        /// <summary>
+        /// NEW: Admin ships an order. For COD orders, sets payment status to PendingOnDelivery
+        /// </summary>
+        [Authorize(ProductSellingPermissions.Orders.Edit)]
+        public async Task ShipOrderAsync(Guid orderId)
+        {
+            var order = await _orderRepository.GetAsync(orderId);
+
+            // Validate order can be shipped
+            if (order.Status != OrderStatus.Confirmed && order.Status != OrderStatus.Processing)
+            {
+                throw new UserFriendlyException(
+                    L["Order:CannotShip"],
+                    $"Chỉ có thể ship đơn hàng ở trạng thái Confirmed hoặc Processing. Trạng thái hiện tại: {order.Status}"
+                );
+            }
+
+            // Update order status to Shipped
+            order.SetStatus(OrderStatus.Shipped);
+
+            // For COD orders, update payment status to PendingOnDelivery
+            if (order.PaymentMethod == PaymentMethods.COD)
+            {
+                order.SetPendingOnDelivery(); // ← Uses the new method!
+                Logger.LogInformation(
+                    "COD Order {OrderId} shipped. Payment status set to PendingOnDelivery",
+                    orderId
+                );
+            }
+            else
+            {
+                // For online payment orders, they should already be paid before shipping
+                if (order.PaymentStatus != PaymentStatus.Paid)
+                {
+                    Logger.LogWarning(
+                        "Shipping order {OrderId} with payment method {PaymentMethod} but payment status is {PaymentStatus}",
+                        orderId, order.PaymentMethod, order.PaymentStatus
+                    );
+                }
+            }
+
+            await _orderRepository.UpdateAsync(order, autoSave: true);
+            await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
+
+            Logger.LogInformation("Order {OrderId} has been shipped", orderId);
+        }
+
+        /// <summary>
+        /// NEW: Delivery driver delivers order. For COD, admin confirms payment collected
+        /// </summary>
+        [Authorize(ProductSellingPermissions.Orders.Edit)]
+        public async Task DeliverOrderAsync(Guid orderId)
+        {
+            var order = await _orderRepository.GetAsync(orderId);
+
+            // Validate order can be delivered
+            if (order.Status != OrderStatus.Shipped)
+            {
+                throw new UserFriendlyException(
+                    L["Order:CannotDeliver"],
+                    $"Chỉ có thể giao đơn hàng ở trạng thái Shipped. Trạng thái hiện tại: {order.Status}"
+                );
+            }
+
+            // For COD orders, mark as paid and delivered
+            if (order.PaymentMethod == PaymentMethods.COD)
+            {
+                order.MarkAsCodPaidAndCompleted(_localizer);
+                Logger.LogInformation(
+                    "COD Order {OrderId} delivered. Payment collected and confirmed.",
+                    orderId
+                );
+            }
+            else
+            {
+                // For online payment orders, just mark as delivered
+                order.SetStatus(OrderStatus.Delivered);
+                Logger.LogInformation("Order {OrderId} delivered", orderId);
+            }
+
+            await _orderRepository.UpdateAsync(order, autoSave: true);
+            await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
+        }
+
         [Authorize(ProductSellingPermissions.Orders.ConfirmCodPayment)]
         public async Task MarkAsCodPaidAndCompletedAsync(Guid orderId)
         {
             var order = await _orderRepository.GetAsync(orderId);
 
-            // 2. Gọi phương thức nghiệp vụ trong Entity. 
-            // Entity sẽ tự kiểm tra các quy tắc logic.
-            order.MarkAsCodPaidAndCompleted();
+            // Gọi phương thức nghiệp vụ trong Entity
+            order.MarkAsCodPaidAndCompleted(_localizer);
 
-            // 3. Lưu lại thay đổi
+            // Lưu lại thay đổi
             await _orderRepository.UpdateAsync(order, autoSave: true);
 
-            // 4. Gửi các thông báo cần thiết
+            // Gửi các thông báo cần thiết
             await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
 
             Logger.LogInformation("Đơn hàng COD {OrderId} đã được xác nhận thanh toán và hoàn thành.", orderId);
+        }
+
+
+        [Authorize(ProductSellingPermissions.Orders.Default)]
+        public async Task<PagedResultDto<OrderDto>> GetProfitReportAsync(PagedAndSortedResultRequestDto input)
+        {
+            var query = (await _orderRepository.GetQueryableAsync())
+                .Include(o => o.OrderItems)
+                .Where(o => o.Status == OrderStatus.Delivered && o.PaymentStatus == PaymentStatus.Paid);
+
+            var totalCount = await AsyncExecuter.CountAsync(query);
+
+            var items = await AsyncExecuter.
+                ToListAsync(query.OrderBy(input.Sorting ?? "CreationTime DESC").PageBy(input));
+
+            return new PagedResultDto<OrderDto>(
+                totalCount,
+                ObjectMapper.Map<List<Order>, List<OrderDto>>(items)
+            );
         }
     }
 }
