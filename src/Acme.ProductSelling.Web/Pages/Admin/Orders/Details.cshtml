@@ -1,0 +1,391 @@
+﻿@page "/admin/orders/details/{OrderNumber}"
+
+
+@using Acme.ProductSelling.Localization
+@using Microsoft.Extensions.Localization
+@using System.Globalization
+@inject IStringLocalizer<ProductSellingResource> L
+
+@model Acme.ProductSelling.Web.Pages.Admin.Orders.DetailsModel
+
+@{
+    ViewData["Title"] = L["Order:OrderDetail"];
+    Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
+}
+
+@section styles {
+    <style>
+        .order-detail-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+            color:#0d0d0d;
+        }
+
+        .info-row {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+            .info-row:last-child {
+                border-bottom: none;
+            }
+
+        .info-label {
+            font-weight: 600;
+            min-width: 180px;
+            color: #495057;
+        }
+
+        .info-value {
+            flex: 1;
+            color: #212529;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .status-detail {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+    </style>
+}
+
+<!-- Page Header with Actions -->
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_8">
+                <h3 class="mb-0">
+                    <i class="bi bi-receipt me-2"></i>
+                    @L["Order:OrderDetail"]: @Model.Order.OrderNumber
+                </h3>
+            </abp-column>
+            <abp-column size-md="_4" class="text-end">
+                <a asp-page="/Admin/Orders/Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left me-1"></i>
+                    @L["BackToList"]
+                </a>
+                @if (Model.Order.OrderStatusText == "Confirmed" || Model.Order.OrderStatusText == "Processing")
+                {
+                    <button type="button" class="btn btn-success" id="btnShipOrder">
+                        <i class="bi bi-truck me-1"></i>
+                        @L["ShipOrder"]
+                    </button>
+                }
+                @if (Model.Order.OrderStatusText == "Shipped")
+                {
+                    <button type="button" class="btn btn-primary" id="btnDeliverOrder">
+                        <i class="bi bi-check-circle me-1"></i>
+                        @L["DeliverOrder"]
+                    </button>
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+</abp-card>
+
+<!-- Order Information Section - Using Normal HTML -->
+<div class="order-detail-section mt-3">
+    <div class="section-title">
+        <i class="bi bi-info-circle me-2"></i>
+        @L["Order:BasicInformation"]
+    </div>
+
+    <div class="info-row">
+        <div class="info-label">@L["Order:OrderNumber"]:</div>
+        <div class="info-value">
+            <strong>@Model.Order.OrderNumber</strong>
+        </div>
+    </div>
+
+    <div class="info-row">
+        <div class="info-label">@L["Order:OrderDate"]:</div>
+        <div class="info-value">
+            @Model.Order.OrderDate.ToString("dd/MM/yyyy HH:mm:ss", CultureInfo.GetCultureInfo("vi-VN"))
+        </div>
+    </div>
+
+    <div class="info-row">
+        <div class="info-label">@L["Order:OrderStatus"]:</div>
+        <div class="info-value">
+            <span class="status-badge @GetStatusBadgeClass(Model.Order.OrderStatusText)">
+                @L[$"Enum:OrderStatus.{Model.Order.OrderStatusText}"]
+            </span>
+        </div>
+    </div>
+
+    <div class="info-row">
+        <div class="info-label">@L["Order:PaymentMethod"]:</div>
+        <div class="info-value">
+            <span class="badge bg-secondary">@Model.Order.PaymentMethod</span>
+        </div>
+    </div>
+
+    <div class="info-row">
+        <div class="info-label">@L["Order:PaymentStatus"]:</div>
+        <div class="info-value">
+            <span class="status-badge @GetPaymentStatusBadgeClass(Model.Order.PaymentStatusText)">
+                @L[$"Enum:PaymentStatus.{Model.Order.PaymentStatusText}"]
+            </span>
+        </div>
+    </div>
+</div>
+
+<!-- Customer Information - Using ABP Card -->
+<abp-card class="mb-3">
+    <abp-card-header>
+        <abp-card-title>
+            <i class="bi bi-person me-2"></i>
+            @L["Order:CustomerInformation"]
+        </abp-card-title>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-row>
+            <abp-column size-md="_6">
+                <div class="info-row">
+                    <div class="info-label">@L["Order:CustomerName"]:</div>
+                    <div class="info-value">@Model.Order.CustomerName</div>
+                </div>
+            </abp-column>
+            <abp-column size-md="_6">
+                <div class="info-row">
+                    <div class="info-label">@L["Order:CustomerPhone"]:</div>
+                    <div class="info-value">
+                        <a href="tel:@Model.Order.CustomerPhone">@Model.Order.CustomerPhone</a>
+                    </div>
+                </div>
+            </abp-column>
+        </abp-row>
+        <abp-row>
+            <abp-column size="_12">
+                <div class="info-row">
+                    <div class="info-label">@L["Order:ShippingAddress"]:</div>
+                    <div class="info-value">@Model.Order.ShippingAddress</div>
+                </div>
+            </abp-column>
+        </abp-row>
+    </abp-card-body>
+</abp-card>
+
+<!-- Order Items Table - Using ABP Table -->
+<abp-card>
+    <abp-card-header>
+        <abp-card-title>
+            <i class="bi bi-cart me-2"></i>
+            @L["Order:OrderItems"]
+        </abp-card-title>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table hoverable-rows="true" responsive-sm="true">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>@L["Product:ProductName"]</th>
+                    <th class="text-end">@L["Product:Price"]</th>
+                    <th class="text-center">@L["Order:Quantity"]</th>
+                    <th class="text-end">@L["Order:LineTotal"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int index = 1;
+                    foreach (var item in Model.Order.OrderItems)
+                    {
+                        <tr>
+                            <td>@index</td>
+                            <td>
+                                <strong>@item.ProductName</strong>
+                            </td>
+                            <td class="text-end">
+                                @item.Price.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-info">@item.Quantity</span>
+                            </td>
+                            <td class="text-end">
+                                <strong>@item.LineTotalAmount.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</strong>
+                            </td>
+                        </tr>
+                        index++;
+                    }
+                }
+            </tbody>
+            <tfoot>
+                <tr class="table-active">
+                    <td colspan="4" class="text-end">
+                        <strong>@L["Order:Total"]:</strong>
+                    </td>
+                    <td class="text-end">
+                        <h5 class="mb-0 text-primary">
+                            @Model.Order.TotalAmount.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
+                        </h5>
+                    </td>
+                </tr>
+            </tfoot>
+        </abp-table>
+    </abp-card-body>
+</abp-card>
+
+<!-- Timeline Section - Using Normal HTML with Bootstrap -->
+<div class="order-detail-section mt-3">
+    <div class="section-title">
+        <i class="bi bi-clock-history me-2"></i>
+        @L["Order:OrderHistory"]
+    </div>
+
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-marker bg-success"></div>
+            <div class="timeline-content">
+                <h6 class="mb-1 status-detail">@L["Order:OrderCreated"]</h6>
+                <p class="text-muted mb-0">
+                    @Model.Order.CreationTime.ToString("dd/MM/yyyy HH:mm:ss")
+                </p>
+            </div>
+        </div>
+
+        @if (Model.Order.LastModificationTime.HasValue)
+        {
+            <div class="timeline-item">
+                <div class="timeline-marker bg-info"></div>
+                <div class="timeline-content">
+                    <h6 class="mb-1 status-detail">@L["Order:LastUpdated"]</h6>
+                    <p class="text-muted mb-0">
+                        @Model.Order.LastModificationTime.Value.ToString("dd/MM/yyyy HH:mm:ss")
+                    </p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(function() {
+            var orderService = acme.productSelling.orders.order;
+            var l = abp.localization.getResource('ProductSelling');
+            var orderId = '@Model.Order.Id';
+
+            $('#btnShipOrder').click(function() {
+                abp.message.confirm(
+                    l('Order:AreYouSureYouWantToShipOrder', '@Model.Order.OrderNumber'),
+                    l('Confirmation')
+                ).then(function(confirmed) {
+                    if (confirmed) {
+                        orderService.shipOrder(orderId)
+                            .then(function() {
+                                abp.notify.success(l('Order:OrderShippedSuccessfully'));
+                                location.reload();
+                            })
+                            .catch(function(error) {
+                                abp.notify.error(error.message || l('Order:ShipOrderFailed'));
+                            });
+                    }
+                });
+            });
+
+            $('#btnDeliverOrder').click(function() {
+                abp.message.confirm(
+                    l('Order:AreYouSureYouWantToDeliverOrder', '@Model.Order.OrderNumber'),
+                    l('Confirmation')
+                ).then(function(confirmed) {
+                    if (confirmed) {
+                        orderService.deliverOrder(orderId)
+                            .then(function() {
+                                abp.notify.success(l('Order:OrderDeliveredSuccessfully'));
+                                location.reload();
+                            })
+                            .catch(function(error) {
+                                abp.notify.error(error.message || l('Order:DeliverOrderFailed'));
+                            });
+                    }
+                });
+            });
+        });
+    </script>
+
+    <style>
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+            .timeline::before {
+                content: '';
+                position: absolute;
+                left: 8px;
+                top: 0;
+                bottom: 0;
+                width: 2px;
+                background: #dee2e6;
+            }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -26px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #dee2e6;
+        }
+
+        .timeline-content {
+            padding-left: 10px;
+        }
+    </style>
+}
+
+@functions {
+    string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Placed" => "bg-info text-white",
+            "Pending" => "bg-light text-dark",
+            "Confirmed" => "bg-primary text-white",
+            "Processing" => "bg-warning text-dark",
+            "Shipped" => "bg-success text-white",
+            "Delivered" => "bg-dark text-white",
+            "Cancelled" => "bg-danger text-white",
+            _ => "bg-secondary text-white"
+        };
+    }
+
+    string GetPaymentStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Unpaid" => "bg-secondary text-white",
+            "PendingOnDelivery" => "bg-info text-white",
+            "Pending" => "bg-warning text-dark",
+            "Paid" => "bg-success text-white",
+            "Failed" => "bg-danger text-white",
+            "Refunded" => "bg-dark text-white",
+            "Cancelled" => "bg-secondary text-white",
+            _ => "bg-dark text-white"
+        };
+    }
+}

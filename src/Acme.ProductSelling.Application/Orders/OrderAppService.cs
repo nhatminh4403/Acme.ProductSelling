@@ -259,7 +259,10 @@ namespace Acme.ProductSelling.Orders
 
         public async Task<OrderDto> GetByOrderNumberAsync(string orderNumber)
         {
-            var order = await _orderRepository.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
+            //var order = await _orderRepository.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
+            var order = await (await
+                            _orderRepository.WithDetailsAsync(o => o.OrderItems))
+                             .FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
             if (order == null)
             {
                 throw new UserFriendlyException(L["Order:OrderNotFound"]);

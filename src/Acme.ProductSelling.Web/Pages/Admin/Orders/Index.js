@@ -26,7 +26,7 @@
                                 text: l('Edit'),
                                 visible: abp.auth.isGranted('ProductSelling.Orders.Edit'),
                                 action: function (data) {
-                                    window.location.href = '/Admin/Orders/Detail/' + data.record.id;
+                                    window.location.href = '/Admin/Orders/Details/' + data.record.id;
                                 }
                             },
                             {
@@ -112,7 +112,7 @@
                     title: l('Order:OrderNumber'),
                     data: "orderNumber",
                     render: function (data, type, row) {
-                        return `<a href="/Admin/Orders/OrderDetail/${row.id}">${data}</a>`;
+                        return `<a href="/admin/orders/details/${data}">${data}</a>`;
                     }
                 },
                 {

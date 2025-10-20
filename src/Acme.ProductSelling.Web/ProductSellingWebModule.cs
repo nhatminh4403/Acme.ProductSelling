@@ -204,6 +204,7 @@ public class ProductSellingWebModule : AbpModule
         context.Services.AddTransient<CultureAwareAnchorTagHelper>();
 
         ConfigureAdminPages(services);
+        ConfigureRouting(services);
     }
     private void ConfigureAdminPages(IServiceCollection services)
     {
@@ -336,7 +337,13 @@ public class ProductSellingWebModule : AbpModule
             );
         });
     }
-
+    private void ConfigureRouting(IServiceCollection services)
+    {
+        services.AddRouting(options =>
+        {
+            options.LowercaseUrls = true;
+        });
+    } 
     private void ConfigureUrls(IConfiguration configuration)
     {
         Configure<AppUrlOptions>(options =>
