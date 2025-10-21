@@ -1,7 +1,7 @@
 ﻿(function ($) {
     var l = abp.localization.getResource('ProductSelling');
 
-    // 1. KẾT NỐI HUB
+    
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("/signalr-hubs/orders", {
             accessTokenFactory: () => {
@@ -13,7 +13,7 @@
         .withAutomaticReconnect()
         .build();
 
-    // 2. LẮNG NGHE SỰ KIỆN
+    
     connection.on("ReceiveOrderStatusUpdate", function (orderId,
         newOrderStatus, newOrderStatusText,
         newPaymentStatus, newPaymentStatusText) {
@@ -41,7 +41,7 @@
         }
     });
 
-    // 3. CÁC HÀM HELPER
+    // HELPER
     function updateRowStatus(rowElement, newOrderStatus, newOrderStatusText, newPaymentStatus, newPaymentStatusText) {
         var orderStatusCell = rowElement.find('.order-status-cell');
         var orderBadgeClass = getOrderStatusBadgeClass(newOrderStatus);
@@ -55,7 +55,7 @@
             var paymentBadgeHtml = `<span class="badge ${paymentBadgeClass}">${newPaymentStatusText}</span>`;
             paymentStatusCell.html(paymentBadgeHtml);
         }
-        // Cập nhật nút hủy
+        
         var cancelButtonForm = rowElement.find('.cancel-order-form');
         if ((newOrderStatus.toLowerCase() !== 'placed' || newPaymentStatus.toLowerCase() === 'paid') && cancelButtonForm.length) {
             cancelButtonForm.remove(); // Xóa nút nếu không còn ở trạng thái "Placed"
