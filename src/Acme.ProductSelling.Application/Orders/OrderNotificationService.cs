@@ -1,5 +1,6 @@
 ﻿using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Orders.Hubs;
+using Acme.ProductSelling.Orders.Services;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Localization;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace Acme.ProductSelling.Orders
 
         public async Task NotifyOrderStatusChangeAsync(Order order)
         {
-            var newOrderStatusString = order.Status.ToString();
+            var newOrderStatusString = order.OrderStatus.ToString();
             var ordersStatusTextLocalized = _localizer[$"Enum:OrderStatus.{newOrderStatusString}"];
 
             var paymentStatusString = order.PaymentStatus.ToString();

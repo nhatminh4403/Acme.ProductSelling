@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Acme.ProductSelling.Orders.Dtos;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
-namespace Acme.ProductSelling.Orders
+namespace Acme.ProductSelling.Orders.Services
 {
     public interface IOrderAppService : IApplicationService
     {
@@ -22,7 +23,7 @@ namespace Acme.ProductSelling.Orders
         Task MarkAsCodPaidAndCompletedAsync(Guid orderId);
         Task ShipOrderAsync(Guid orderId);
         Task DeliverOrderAsync(Guid orderId);
-
+        Task<List<OrderHistoryDto>> GetOrderHistoryAsync(Guid orderId);
         Task<PagedResultDto<OrderDto>> GetProfitReportAsync(PagedAndSortedResultRequestDto input);
     }
 }

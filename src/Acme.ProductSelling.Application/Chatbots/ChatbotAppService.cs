@@ -105,7 +105,7 @@ namespace Acme.ProductSelling.Chatbots
                 if (order != null)
                 {
                     return $@"Order #{order.Id}
-                    Status: {order.Status}
+                    Status: {order.OrderStatus}
                     Total: ${order.TotalAmount}
                     Date: {order.CreationTime:MMM dd, yyyy}
                     Items: {string.Join(", ", order.OrderItems.Select(i => i.ProductName))}";
@@ -122,7 +122,7 @@ namespace Acme.ProductSelling.Chatbots
                     .ToListAsync();
 
                 return string.Join("\n", recentOrders.Select(o =>
-                    $"Order #{o.Id}: {o.Status} - ${o.TotalAmount}"));
+                    $"Order #{o.Id}: {o.OrderStatus} - ${o.TotalAmount}"));
             }
 
             return "No order information available.";

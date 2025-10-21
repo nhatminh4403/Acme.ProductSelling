@@ -1,10 +1,5 @@
 ﻿@page "/admin/orders/details/{OrderNumber}"
-
-
-@using Acme.ProductSelling.Localization
-@using Microsoft.Extensions.Localization
-@using System.Globalization
-@inject IStringLocalizer<ProductSellingResource> L
+@using Acme.ProductSelling.Orders.Dtos
 
 @model Acme.ProductSelling.Web.Pages.Admin.Orders.DetailsModel
 
@@ -14,59 +9,12 @@
 }
 
 @section styles {
-    <style>
-        .order-detail-section {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .section-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #e9ecef;
-            color:#0d0d0d;
-        }
-
-        .info-row {
-            display: flex;
-            padding: 10px 0;
-            border-bottom: 1px solid #f8f9fa;
-        }
-
-            .info-row:last-child {
-                border-bottom: none;
-            }
-
-        .info-label {
-            font-weight: 600;
-            min-width: 180px;
-            color: #495057;
-        }
-
-        .info-value {
-            flex: 1;
-            color: #212529;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-        .status-detail {
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-    </style>
+    <link href="~/css/admin/orders/detail.css" rel="stylesheet" />
 }
-
+@section scripts {
+    <script src="~/js/admin/orders/detail.js">
+    </script>
+}
 <!-- Page Header with Actions -->
 <abp-card>
     <abp-card-header>
@@ -244,119 +192,77 @@
 </abp-card>
 
 <!-- Timeline Section - Using Normal HTML with Bootstrap -->
-<div class="order-detail-section mt-3">
-    <div class="section-title">
-        <i class="bi bi-clock-history me-2"></i>
-        @L["Order:OrderHistory"]
-    </div>
-
-    <div class="timeline">
-        <div class="timeline-item">
-            <div class="timeline-marker bg-success"></div>
-            <div class="timeline-content">
-                <h6 class="mb-1 status-detail">@L["Order:OrderCreated"]</h6>
-                <p class="text-muted mb-0">
-                    @Model.Order.CreationTime.ToString("dd/MM/yyyy HH:mm:ss")
-                </p>
-            </div>
-        </div>
-
-        @if (Model.Order.LastModificationTime.HasValue)
+<abp-card class="mt-3">
+    <abp-card-header>
+        <abp-card-title>
+            <i class="bi bi-clock-history me-2"></i>
+            @L["Order:OrderHistory"]
+        </abp-card-title>
+    </abp-card-header>
+    <abp-card-body>
+        @if (Model.OrderHistory != null && Model.OrderHistory.Any())
         {
-            <div class="timeline-item">
-                <div class="timeline-marker bg-info"></div>
-                <div class="timeline-content">
-                    <h6 class="mb-1 status-detail">@L["Order:LastUpdated"]</h6>
-                    <p class="text-muted mb-0">
-                        @Model.Order.LastModificationTime.Value.ToString("dd/MM/yyyy HH:mm:ss")
-                    </p>
-                </div>
+            <div class="timeline">
+                @foreach (var history in Model.OrderHistory)
+                {
+                    <div class="timeline-item">
+                        <div class="timeline-marker @GetHistoryMarkerClass(history)"></div>
+                        <div class="timeline-content">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">@history.ChangeDescription</h6>
+                                    <p class="text-muted mb-1">
+                                        <i class="bi bi-person me-1"></i>
+                                        <strong>@history.ChangedBy</strong>
+                                    </p>
+                                    <p class="text-muted mb-1">
+                                        <i class="bi bi-clock me-1"></i>
+                                        @history.CreationTime.ToString("dd/MM/yyyy HH:mm:ss")
+                                    </p>
+                                </div>
+                                <div class="text-end">
+                                    @if (history.OldStatus != history.NewStatus)
+                                    {
+                                        <div class="mb-2">
+                                            <small class="text-muted d-block">Order Status:</small>
+                                            <span class="badge @GetStatusBadgeClass(history.OldStatus)">
+                                                @L[$"Enum:OrderStatus.{history.OldStatus}"]
+                                            </span>
+                                            <i class="bi bi-arrow-right mx-1"></i>
+                                            <span class="badge @GetStatusBadgeClass(history.NewStatus)">
+                                                @L[$"Enum:OrderStatus.{history.NewStatus}"]
+                                            </span>
+                                        </div>
+                                    }
+                                    @if (history.OldPaymentStatus != history.NewPaymentStatus)
+                                    {
+                                        <div>
+                                            <small class="text-muted d-block">Payment Status:</small>
+                                            <span class="badge @GetPaymentStatusBadgeClass(history.OldPaymentStatus)">
+                                                @L[$"Enum:PaymentStatus.{history.OldPaymentStatus}"]
+                                            </span>
+                                            <i class="bi bi-arrow-right mx-1"></i>
+                                            <span class="badge @GetPaymentStatusBadgeClass(history.NewPaymentStatus)">
+                                                @L[$"Enum:PaymentStatus.{history.NewPaymentStatus}"]
+                                            </span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
         }
-    </div>
-</div>
-
-@section scripts {
-    <script>
-        $(function() {
-            var orderService = acme.productSelling.orders.order;
-            var l = abp.localization.getResource('ProductSelling');
-            var orderId = '@Model.Order.Id';
-
-            $('#btnShipOrder').click(function() {
-                abp.message.confirm(
-                    l('Order:AreYouSureYouWantToShipOrder', '@Model.Order.OrderNumber'),
-                    l('Confirmation')
-                ).then(function(confirmed) {
-                    if (confirmed) {
-                        orderService.shipOrder(orderId)
-                            .then(function() {
-                                abp.notify.success(l('Order:OrderShippedSuccessfully'));
-                                location.reload();
-                            })
-                            .catch(function(error) {
-                                abp.notify.error(error.message || l('Order:ShipOrderFailed'));
-                            });
-                    }
-                });
-            });
-
-            $('#btnDeliverOrder').click(function() {
-                abp.message.confirm(
-                    l('Order:AreYouSureYouWantToDeliverOrder', '@Model.Order.OrderNumber'),
-                    l('Confirmation')
-                ).then(function(confirmed) {
-                    if (confirmed) {
-                        orderService.deliverOrder(orderId)
-                            .then(function() {
-                                abp.notify.success(l('Order:OrderDeliveredSuccessfully'));
-                                location.reload();
-                            })
-                            .catch(function(error) {
-                                abp.notify.error(error.message || l('Order:DeliverOrderFailed'));
-                            });
-                    }
-                });
-            });
-        });
-    </script>
-
-    <style>
-        .timeline {
-            position: relative;
-            padding-left: 30px;
+        else
+        {
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                @L["Order:NoHistoryAvailable"]
+            </div>
         }
-
-            .timeline::before {
-                content: '';
-                position: absolute;
-                left: 8px;
-                top: 0;
-                bottom: 0;
-                width: 2px;
-                background: #dee2e6;
-            }
-
-        .timeline-item {
-            position: relative;
-            padding-bottom: 20px;
-        }
-
-        .timeline-marker {
-            position: absolute;
-            left: -26px;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            border: 3px solid white;
-            box-shadow: 0 0 0 2px #dee2e6;
-        }
-
-        .timeline-content {
-            padding-left: 10px;
-        }
-    </style>
-}
+    </abp-card-body>
+</abp-card>
 
 @functions {
     string GetStatusBadgeClass(string status)
@@ -373,7 +279,22 @@
             _ => "bg-secondary text-white"
         };
     }
+    string GetHistoryMarkerClass(OrderHistoryDto history)
+    {
+        // Different colors based on the change type
+        if (history.NewStatus == "Delivered")
+            return "bg-success";
+        if (history.NewStatus == "Shipped")
+            return "bg-primary";
+        if (history.NewStatus == "Cancelled")
+            return "bg-danger";
+        if (history.NewPaymentStatus == "Paid")
+            return "bg-success";
+        if (history.NewPaymentStatus == "Failed")
+            return "bg-danger";
 
+        return "bg-info";
+    }
     string GetPaymentStatusBadgeClass(string status)
     {
         return status switch

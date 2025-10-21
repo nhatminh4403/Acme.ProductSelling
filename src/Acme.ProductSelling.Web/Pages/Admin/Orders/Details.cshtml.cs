@@ -1,8 +1,10 @@
-using Acme.ProductSelling.Orders;
+using Acme.ProductSelling.Orders.Dtos;
+using Acme.ProductSelling.Orders.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Acme.ProductSelling.Web.Pages.Admin.Orders
@@ -14,6 +16,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Orders
         
         private readonly IOrderAppService _orderAppService;
         private readonly ILogger<DetailsModel> _logger;
+        public List<OrderHistoryDto> OrderHistory { get; set; }
 
         public OrderDto Order { get; set; }
         public DetailsModel(IOrderAppService orderAppService, ILogger<DetailsModel> logger)
@@ -33,6 +36,8 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Orders
                     return NotFound();
                 }
 
+                var orderId = Order.Id;
+                OrderHistory = await _orderAppService.GetOrderHistoryAsync(orderId);
                 return Page();
             }
             catch (Exception ex)

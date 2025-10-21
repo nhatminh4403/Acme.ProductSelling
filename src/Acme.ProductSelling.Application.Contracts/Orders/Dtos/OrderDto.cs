@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Volo.Abp.Application.Dtos;
-namespace Acme.ProductSelling.Orders
+namespace Acme.ProductSelling.Orders.Dtos
 {
     public class OrderDto : AuditedEntityDto<Guid>
     {
@@ -16,8 +16,8 @@ namespace Acme.ProductSelling.Orders
         public List<OrderItemDto> OrderItems { get; set; } = new List<OrderItemDto>();
         public OrderStatus OrderStatus { get; set; }
         public string OrderStatusText { get; set; }
-        public string PaymentMethod { get; set; } 
-        public PaymentStatus PaymentStatus { get; set; } 
-        public string PaymentStatusText { get; set; } 
+        public string PaymentMethod { get; set; }
+        public PaymentStatus PaymentStatus { get; set; }
+        public string PaymentStatusText { get; set; }
     }
 }

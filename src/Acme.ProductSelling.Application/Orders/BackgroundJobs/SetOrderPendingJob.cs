@@ -1,5 +1,6 @@
 ﻿using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Orders.Hubs;
+using Acme.ProductSelling.Orders.Services;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -48,7 +49,7 @@ namespace Acme.ProductSelling.Orders.BackgroundJobs
                     return;
                 }
 
-                if (order.Status == OrderStatus.Placed)
+                if (order.OrderStatus == OrderStatus.Placed)
                 {
 
                     order.SetStatus(OrderStatus.Pending);
@@ -69,7 +70,7 @@ namespace Acme.ProductSelling.Orders.BackgroundJobs
 
                     _logger.LogWarning("[JOB-SKIP] Bỏ qua cập nhật." +
                         " Order {OrderId} không ở trạng thái 'Placed'." +
-                        " Trạng thái thực tế là {Status}.", args.OrderId, order.Status);
+                        " Trạng thái thực tế là {Status}.", args.OrderId, order.OrderStatus);
                 }
             }
             catch (Exception ex)

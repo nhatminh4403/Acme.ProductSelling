@@ -87,6 +87,7 @@ public class ProductSellingDbContext :
     public DbSet<Manufacturer> Manufacturers { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<OrderHistory> OrderHistories { get; set; }
 
     public DbSet<Cart> Carts { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
@@ -346,7 +347,17 @@ public class ProductSellingDbContext :
 
         });
 
+        builder.Entity<OrderHistory>(b =>
+        {
+            b.ToTable("AppOrderHistories");
+            b.ConfigureByConvention();
 
+            b.Property(x => x.ChangeDescription).HasMaxLength(500);
+            b.Property(x => x.ChangedBy).HasMaxLength(256);
+
+            b.HasIndex(x => x.OrderId);
+            b.HasIndex(x => x.CreationTime);
+        });
         builder.Entity<Cart>(b =>
         {
             b.ToTable(tablePrefix + "Carts");

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-namespace Acme.ProductSelling.Orders
+namespace Acme.ProductSelling.Orders.Dtos
 {
     public class CreateOrderDto
     {

@@ -313,9 +313,9 @@ public class ProductSellingWebModule : AbpModule
                 "Main.Global",
                 bundle =>
                 {
-                    bundle.AddFiles("/js/cart.js");
+                    bundle.AddFiles("/js/global/cart/cart.js");
                     bundle.AddFiles("/global-scripts.js");
-                    bundle.AddFiles("/js/main.js");
+                    bundle.AddFiles("/js/global/main.js");
                 }
             );
 

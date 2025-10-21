@@ -4,6 +4,7 @@ using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Comments;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Orders;
+using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Lookups;
 using Acme.ProductSelling.Specifications;
@@ -160,8 +161,8 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
 
         //order - cart
         CreateMap<Order, OrderDto>()
-            .ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => src.Status))
-            .ForMember(dest => dest.OrderStatusText, opt => opt.MapFrom(src => src.Status.ToString()))
+            .ForMember(dest => dest.OrderStatus, opt => opt.MapFrom(src => src.OrderStatus))
+            .ForMember(dest => dest.OrderStatusText, opt => opt.MapFrom(src => src.OrderStatus.ToString()))
             .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.PaymentStatus))
             .ForMember(dest => dest.PaymentStatusText, opt => opt.MapFrom(src => src.PaymentStatus.ToString()))
              .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod));

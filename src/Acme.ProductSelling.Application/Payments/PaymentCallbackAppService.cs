@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Orders;
+using Acme.ProductSelling.Orders.Services;
 using Acme.ProductSelling.PaymentGateway.MoMo.Models;
 using Acme.ProductSelling.PaymentGateway.MoMo.Services;
 using Acme.ProductSelling.PaymentGateway.VnPay.Dtos;
@@ -83,7 +84,7 @@ namespace Acme.ProductSelling.Payments
             _logger.LogWarning("Bỏ qua xử lý IPN cho OrderId:" +
                 " {OrderId}. Lý do: Giao dịch không thành công" +
                 " (Code: {VnpCode}) hoặc đơn hàng không ở trạng thái PendingPayment (Trạng thái thực tế: {Status}).",
-                order.Id, response.VnPayResponseCode, order.Status);
+                order.Id, response.VnPayResponseCode, order.OrderStatus);
 
             return new VnPaymentResponseModel { VnPayResponseCode = "02", OrderDescription = "Order already confirmed" };
         }
@@ -125,7 +126,7 @@ namespace Acme.ProductSelling.Payments
                 }
                 else
                 {
-                    _logger.LogWarning("Bỏ qua xử lý MoMo IPN cho OrderId: {OrderId}. ResultCode: {resultCode}, OrderStatus: {status}", order.Id, request.resultCode, order.Status);
+                    _logger.LogWarning("Bỏ qua xử lý MoMo IPN cho OrderId: {OrderId}. ResultCode: {resultCode}, OrderStatus: {status}", order.Id, request.resultCode, order.OrderStatus);
                 }
             }
             catch (Exception ex)

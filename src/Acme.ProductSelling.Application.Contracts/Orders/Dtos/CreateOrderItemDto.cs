@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-namespace Acme.ProductSelling.Orders
+namespace Acme.ProductSelling.Orders.Dtos
 {
     public class CreateOrderItemDto
     {

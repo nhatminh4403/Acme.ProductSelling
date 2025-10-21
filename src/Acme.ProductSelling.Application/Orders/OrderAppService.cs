@@ -1,7 +1,9 @@
 ﻿using Acme.ProductSelling.Carts;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Orders.BackgroundJobs;
+using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Orders.Hubs;
+using Acme.ProductSelling.Orders.Services;
 using Acme.ProductSelling.Payments;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products;
@@ -41,6 +43,7 @@ namespace Acme.ProductSelling.Orders
         private readonly IPaymentGatewayResolver _paymentGatewayResolver;
         private readonly IOrderNotificationService _orderNotificationService;
         private readonly IStringLocalizer<ProductSellingResource> _localizer;
+        private readonly IOrderHistoryAppService _orderHistoryAppService;
 
         public OrderAppService(
             IRepository<Order, Guid> orderRepository,
@@ -52,7 +55,8 @@ namespace Acme.ProductSelling.Orders
             IBackgroundJobManager backgroundJobManager,
             IPaymentGatewayResolver gatewayResolver,
             IOrderNotificationService orderNotificationService,
-            IStringLocalizer<ProductSellingResource> localizer)
+            IStringLocalizer<ProductSellingResource> localizer,
+            IOrderHistoryAppService orderHistoryAppService)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
@@ -64,6 +68,7 @@ namespace Acme.ProductSelling.Orders
             _paymentGatewayResolver = gatewayResolver;
             _orderNotificationService = orderNotificationService;
             _localizer = localizer;
+            _orderHistoryAppService = orderHistoryAppService;
         }
 
         [Authorize]
@@ -86,7 +91,7 @@ namespace Acme.ProductSelling.Orders
             {
                 order.MarkAsPaidOnline();
                 await _orderRepository.UpdateAsync(order, autoSave: true);
-                Logger.LogInformation("Đã cập nhật trạng thái đơn hàng {OrderId} thành {Status}", order.Id, order.Status);
+                Logger.LogInformation("Đã cập nhật trạng thái đơn hàng {OrderId} thành {Status}", order.Id, order.OrderStatus);
 
                 await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
 
@@ -96,7 +101,7 @@ namespace Acme.ProductSelling.Orders
             {
                 Logger.LogWarning("Bỏ qua xác nhận." +
                       " Đơn hàng {OrderId} không ở trạng thái PendingPayment. " +
-                      "Trạng thái hiện tại: {Status}", order.Id, order.Status);
+                      "Trạng thái hiện tại: {Status}", order.Id, order.OrderStatus);
                 return ObjectMapper.Map<Order, OrderDto>(order);
             }
         }
@@ -222,7 +227,7 @@ namespace Acme.ProductSelling.Orders
             await _orderRepository.UpsertAsync(orderToProcess, autoSave: true);
 
             // Lên lịch job cho COD
-            if (orderToProcess.PaymentMethod == PaymentMethods.COD && orderToProcess.Status == OrderStatus.Placed)
+            if (orderToProcess.PaymentMethod == PaymentMethods.COD && orderToProcess.OrderStatus == OrderStatus.Placed)
             {
                 await _backgroundJobManager.EnqueueAsync<SetOrderPendingJobArgs>(
                     new SetOrderPendingJobArgs { OrderId = orderToProcess.Id },
@@ -235,6 +240,15 @@ namespace Acme.ProductSelling.Orders
 
             // Gửi thông báo
             await _orderNotificationService.NotifyOrderStatusChangeAsync(orderToProcess);
+
+            await _orderHistoryAppService.LogOrderChangeAsync(
+                orderToProcess.Id,
+                OrderStatus.Pending, // No previous status
+                orderToProcess.OrderStatus,
+                PaymentStatus.Unpaid,
+                orderToProcess.PaymentStatus,
+                "Order created"
+            );
 
             return new CreateOrderResultDto
             {
@@ -305,12 +319,20 @@ namespace Acme.ProductSelling.Orders
         public async Task<OrderDto> UpdateStatusAsync(Guid id, UpdateOrderStatusDto input)
         {
             var order = await _orderRepository.GetAsync(id);
-
+            var oldStatus = order.OrderStatus;
+            var oldPaymentStatus = order.PaymentStatus;
             order.SetStatus(input.NewStatus);
             order.SetPaymentStatus(input.NewPaymentStatus);
 
             await _orderRepository.UpdateAsync(order, autoSave: true);
-
+            await _orderHistoryAppService.LogOrderChangeAsync(
+                id,
+                oldStatus,
+                order.OrderStatus,
+                oldPaymentStatus,
+                order.PaymentStatus,
+                "Status updated by admin"
+            );
             await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
 
             return ObjectMapper.Map<Order, OrderDto>(order);
@@ -343,12 +365,15 @@ namespace Acme.ProductSelling.Orders
         {
             var order = await _orderRepository.GetAsync(orderId);
 
+            var oldOrderStatus = order.OrderStatus;
+            var oldPaymentStatus = order.PaymentStatus;
+
             // Validate order can be shipped
-            if (order.Status != OrderStatus.Confirmed && order.Status != OrderStatus.Processing)
+            if (order.OrderStatus != OrderStatus.Confirmed && order.OrderStatus != OrderStatus.Processing)
             {
                 throw new UserFriendlyException(
                     L["Order:CannotShip"],
-                    $"Chỉ có thể ship đơn hàng ở trạng thái Confirmed hoặc Processing. Trạng thái hiện tại: {order.Status}"
+                    $"Chỉ có thể ship đơn hàng ở trạng thái Confirmed hoặc Processing. Trạng thái hiện tại: {order.OrderStatus}"
                 );
             }
 
@@ -377,6 +402,15 @@ namespace Acme.ProductSelling.Orders
             }
 
             await _orderRepository.UpdateAsync(order, autoSave: true);
+
+            await _orderHistoryAppService.LogOrderChangeAsync(
+                orderId,
+                oldOrderStatus,
+                order.OrderStatus,
+                oldPaymentStatus,
+                order.PaymentStatus,
+                "Order shipped"
+            );
             await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
 
             Logger.LogInformation("Order {OrderId} has been shipped", orderId);
@@ -389,13 +423,15 @@ namespace Acme.ProductSelling.Orders
         public async Task DeliverOrderAsync(Guid orderId)
         {
             var order = await _orderRepository.GetAsync(orderId);
+            var oldOrderStatus = order.OrderStatus;
+            var oldPaymentStatus = order.PaymentStatus;
 
             // Validate order can be delivered
-            if (order.Status != OrderStatus.Shipped)
+            if (order.OrderStatus != OrderStatus.Shipped)
             {
                 throw new UserFriendlyException(
                     L["Order:CannotDeliver"],
-                    $"Chỉ có thể giao đơn hàng ở trạng thái Shipped. Trạng thái hiện tại: {order.Status}"
+                    $"Chỉ có thể giao đơn hàng ở trạng thái Shipped. Trạng thái hiện tại: {order.OrderStatus}"
                 );
             }
 
@@ -416,6 +452,16 @@ namespace Acme.ProductSelling.Orders
             }
 
             await _orderRepository.UpdateAsync(order, autoSave: true);
+
+            // Log the change
+            await _orderHistoryAppService.LogOrderChangeAsync(
+                orderId,
+                oldOrderStatus,
+                order.OrderStatus,
+                oldPaymentStatus,
+                order.PaymentStatus,
+                "Order delivered"
+            );
             await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
         }
 
@@ -442,7 +488,7 @@ namespace Acme.ProductSelling.Orders
         {
             var query = (await _orderRepository.GetQueryableAsync())
                 .Include(o => o.OrderItems)
-                .Where(o => o.Status == OrderStatus.Delivered && o.PaymentStatus == PaymentStatus.Paid);
+                .Where(o => o.OrderStatus == OrderStatus.Delivered && o.PaymentStatus == PaymentStatus.Paid);
 
             var totalCount = await AsyncExecuter.CountAsync(query);
 
@@ -453,6 +499,10 @@ namespace Acme.ProductSelling.Orders
                 totalCount,
                 ObjectMapper.Map<List<Order>, List<OrderDto>>(items)
             );
+        }
+        public async Task<List<OrderHistoryDto>> GetOrderHistoryAsync(Guid orderId)
+        {
+            return await _orderHistoryAppService.GetOrderHistoryAsync(orderId);
         }
     }
 }
