@@ -10,16 +10,16 @@ namespace Acme.ProductSelling.Products
         {
             return query
                 .Include(p => p.Category)
-                .Include(p => p.MonitorSpecification).ThenInclude(p=> p.PanelType)
+                .Include(p => p.MonitorSpecification).ThenInclude(p => p.PanelType)
                 .Include(p => p.MouseSpecification)
                 .Include(p => p.LaptopSpecification)
                 .Include(p => p.CpuSpecification).ThenInclude(s => s.Socket)
                 .Include(p => p.GpuSpecification)
                 .Include(p => p.RamSpecification).ThenInclude(ram => ram.RamType)
-                .Include(p => p.MotherboardSpecification).ThenInclude(s=>s.Socket)
-                .Include(p => p.MotherboardSpecification).ThenInclude(s=>s.FormFactor)
-                .Include(p => p.MotherboardSpecification).ThenInclude(s=>s.SupportedRamTypes)
-                .Include(p => p.MotherboardSpecification).ThenInclude(s=>s.Chipset)
+                .Include(p => p.MotherboardSpecification).ThenInclude(s => s.Socket)
+                .Include(p => p.MotherboardSpecification).ThenInclude(s => s.FormFactor)
+                .Include(p => p.MotherboardSpecification).ThenInclude(s => s.SupportedRamTypes)
+                .Include(p => p.MotherboardSpecification).ThenInclude(s => s.Chipset)
 
                 .Include(p => p.StorageSpecification)
                 .Include(p => p.PsuSpecification).ThenInclude(form => form.FormFactor)

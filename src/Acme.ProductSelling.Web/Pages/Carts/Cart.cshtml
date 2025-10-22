@@ -11,8 +11,6 @@
 <div class="container mt-4 mb-5">
     <h1>@L["Cart:ShoppingCart"]</h1>
 
-    @* Hiển thị thông báo từ Alerts (nếu có sau khi Post) *@
-    <abp-alert-list />
 
     @if (Model.Cart != null && Model.Cart.CartItems.Any())
     {

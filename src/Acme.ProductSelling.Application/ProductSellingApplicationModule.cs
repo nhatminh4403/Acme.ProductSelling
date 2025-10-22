@@ -1,18 +1,12 @@
-using Acme.ProductSelling.Blogs;
-using Acme.ProductSelling.Chatbots.Services;
 using Acme.ProductSelling.EntityFrameworkCore;
 using Acme.ProductSelling.PaymentGateway.MoMo;
 using Acme.ProductSelling.PaymentGateway.PayPal;
 using Acme.ProductSelling.PaymentGateway.VnPay;
 using Ganss.Xss;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Volo.Abp.Account;
 using Volo.Abp.AutoMapper;
+using Volo.Abp.BackgroundJobs;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
 using Volo.Abp.Modularity;
@@ -87,6 +81,7 @@ public class ProductSellingApplicationModule : AbpModule
         //{
         //    context.Services.AddHostedService<ChatbotModelTrainingService>();
         //}
+        
     }
 
 }

@@ -17,7 +17,7 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
 {
     public ProductSellingApplicationAutoMapperProfile()
     {
-            //manufacture
+        //manufacture
         CreateMap<Manufacturer, ManufacturerDto>().ForMember(dest => dest.UrlSlug, opt => opt.MapFrom(src => src.UrlSlug));
         CreateMap<CreateUpdateManufacturerDto, Manufacturer>();
         CreateMap<Manufacturer, ManufacturerLookupDto>();
@@ -126,7 +126,7 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
             .ForMember(dest => dest.ProductId, opt => opt.Ignore())
             .ForMember(dest => dest.Product, opt => opt.Ignore())
             .ForMember(dest => dest.FormFactor, opt => opt.Ignore())
-            .ForMember(dest => dest.Materials, opt => opt.Ignore()); 
+            .ForMember(dest => dest.Materials, opt => opt.Ignore());
 
         CreateMap<CreateUpdateCpuCoolerSpecificationDto, CpuCoolerSpecification>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())

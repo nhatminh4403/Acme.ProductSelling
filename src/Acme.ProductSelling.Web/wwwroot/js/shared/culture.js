@@ -66,6 +66,10 @@
                 pathWithoutCulture.startsWith('/account/') ||
                 pathWithoutCulture.startsWith('/SettingManagement/') ||
                 pathWithoutCulture.startsWith('/TenantManagement/') ||
+                pathWithoutCulture.startsWith('/PermissionManagement/') ||
+                pathWithoutCulture.startsWith('/hangfire/') || 
+                pathWithoutCulture.startsWith('/swagger/') ||
+                pathWithoutCulture.startsWith('/Identity/') || 
                 href.includes('.')) {
                 return; // Skip this link
             }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-
 namespace Acme.ProductSelling.Specifications
 {
     public class CreateUpdateCpuCoolerSpecificationDto

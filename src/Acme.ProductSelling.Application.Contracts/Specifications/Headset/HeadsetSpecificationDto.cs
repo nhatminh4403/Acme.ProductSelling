@@ -1,7 +1,6 @@
 ﻿using Acme.ProductSelling.Products.Specs;
 using System;
 using Volo.Abp.Application.Dtos;
-
 namespace Acme.ProductSelling.Specifications
 {
     public class HeadsetSpecificationDto : EntityDto<Guid>

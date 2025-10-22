@@ -1,6 +1,5 @@
 ﻿using System;
 using Volo.Abp.EventBus;
-
 namespace Acme.ProductSelling.Orders
 {
     [EventName("Acme.ProductSelling.OrderStatusChanged")]

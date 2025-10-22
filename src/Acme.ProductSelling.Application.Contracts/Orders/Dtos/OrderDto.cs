@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Volo.Abp.Application.Dtos;
 namespace Acme.ProductSelling.Orders.Dtos
 {
-    public class OrderDto : AuditedEntityDto<Guid>
+    public class OrderDto : FullAuditedEntityDto<Guid>
     {
         public string OrderNumber { get; set; }
         public DateTime OrderDate { get; set; }

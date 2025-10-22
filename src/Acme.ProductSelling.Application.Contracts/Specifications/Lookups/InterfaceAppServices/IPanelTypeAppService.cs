@@ -4,7 +4,6 @@ using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
-
 namespace Acme.ProductSelling.Specifications.Lookups.InterfaceAppServices
 {
     public interface IPanelTypeAppService : ICrudAppService<PanelTypeDto, Guid, PagedAndSortedResultRequestDto, ProductLookupDto<Guid>>

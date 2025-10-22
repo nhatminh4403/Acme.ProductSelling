@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-
 namespace Acme.ProductSelling.Chatbots.Dtos
 {
     public class ChatResponseDto

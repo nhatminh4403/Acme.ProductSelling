@@ -7,9 +7,9 @@ namespace Acme.ProductSelling.Products
 {
     public interface ISpecificationService : ITransientDependency
     {
-    Task CreateSpecificationAsync(Guid productId, CreateUpdateProductDto dto, SpecificationType specType);
-    Task UpdateSpecificationAsync(Guid productId, CreateUpdateProductDto dto, SpecificationType specType);
-    Task HandleCategoryChangeAsync(Guid productId, SpecificationType currentSpecType, SpecificationType newSpecType);
-    Task DeleteAllSpecificationsAsync(Guid productId);
+        Task CreateSpecificationAsync(Guid productId, CreateUpdateProductDto dto, SpecificationType specType);
+        Task UpdateSpecificationAsync(Guid productId, CreateUpdateProductDto dto, SpecificationType specType);
+        Task HandleCategoryChangeAsync(Guid productId, SpecificationType currentSpecType, SpecificationType newSpecType);
+        Task DeleteAllSpecificationsAsync(Guid productId);
     }
 }

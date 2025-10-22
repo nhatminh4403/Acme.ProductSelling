@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Volo.Abp.Application.Dtos;
-
 namespace Acme.ProductSelling.Specifications
 {
     public class CpuCoolerSpecificationDto : EntityDto<Guid>
@@ -17,5 +16,4 @@ namespace Acme.ProductSelling.Specifications
         public string LedLighting { get; set; } // "None", "RGB", "ARGB"
         public int RadiatorSize { get; set; }
     }
-
 }

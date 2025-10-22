@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Localization;
+using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Orders.Services;
 using Acme.ProductSelling.Permissions;
 using Microsoft.AspNetCore.Authorization;
@@ -25,7 +26,7 @@ namespace Acme.ProductSelling.Web.Admin.Pages
         public Dictionary<int, List<MoneyStatistics>> YearlyStatistics { get; set; }
         public int SelectedYear { get; set; }
         public List<int> AvailableYears { get; set; } = new();
-        private PagedAndSortedResultRequestDto input { get; set; } = new();
+        private GetOrderListInput input { get; set; } = new();
         private readonly IOrderAppService _orderAppService;
 
         public IndexModel(IOrderAppService orderAppService, IStringLocalizer<ProductSellingResource> stringLocalizer)

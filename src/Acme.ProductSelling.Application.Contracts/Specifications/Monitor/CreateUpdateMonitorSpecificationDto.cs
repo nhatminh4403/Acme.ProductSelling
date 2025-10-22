@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-
 namespace Acme.ProductSelling.Specifications
 {
     public class CreateUpdateMonitorSpecificationDto

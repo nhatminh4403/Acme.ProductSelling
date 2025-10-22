@@ -1,7 +1,6 @@
 ﻿using Acme.ProductSelling.Specifications;
 using System;
 using System.Threading.Tasks;
-using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
 
@@ -46,7 +45,7 @@ namespace Acme.ProductSelling.Products
             {
                 if (currentSpecId != null)
                 {
-                        //var existingSpec = await _repository.GetAsync(currentSpecId.Value);
+                    //var existingSpec = await _repository.GetAsync(currentSpecId.Value);
                     _objectMapper.Map(specDto, currentSpecId);
                     await _repository.UpdateAsync(currentSpecId, autoSave: true);
                 }
@@ -58,7 +57,7 @@ namespace Acme.ProductSelling.Products
             else if (currentSpecId != null)
             {
                 await _repository.DeleteAsync(currentSpecId, autoSave: true);
-                
+
             }
         }
 

@@ -1,6 +1,5 @@
 ﻿using Acme.ProductSelling.Payments;
 using System.ComponentModel.DataAnnotations;
-
 namespace Acme.ProductSelling.Orders.Dtos
 {
     public class UpdateOrderStatusDto

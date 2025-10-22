@@ -1,18 +1,11 @@
-﻿using Acme.ProductSelling.Permissions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
-using Volo.Abp.Application.Dtos;
-using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Identity;
-using Volo.Abp.ObjectMapping;
 using Volo.Abp.Users;
-using System.Linq.Dynamic.Core;
-using Volo.Abp;
-using AutoMapper.Internal.Mappers;
 namespace Acme.ProductSelling.Comments
 {
     public class CommentAppService : ProductSellingAppService, ICommentAppService
@@ -23,7 +16,7 @@ namespace Acme.ProductSelling.Comments
         private readonly IRepository<Likes> _commentLikeRepository;
 
         public CommentAppService(IRepository<Comment, Guid> commentRepository,
-            IIdentityUserRepository userRepository, ICurrentUser currentUser, IRepository<Likes> commentLikeRepository) 
+            IIdentityUserRepository userRepository, ICurrentUser currentUser, IRepository<Likes> commentLikeRepository)
         {
             _commentRepository = commentRepository;
             _userRepository = userRepository;

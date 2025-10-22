@@ -2,9 +2,6 @@
 using Acme.ProductSelling.Specifications.Lookups.DTOs;
 using Acme.ProductSelling.Specifications.Lookups.InterfaceAppServices;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -25,7 +22,7 @@ namespace Acme.ProductSelling.Products.Specification.Lookups
 
         protected override async Task MapToEntityAsync(ProductLookupDto<Guid> updateInput, Chipset entity)
         {
-           entity.Name = updateInput.Name;
+            entity.Name = updateInput.Name;
         }
         protected override async Task<Chipset> MapToEntityAsync(ProductLookupDto<Guid> createInput)
         {

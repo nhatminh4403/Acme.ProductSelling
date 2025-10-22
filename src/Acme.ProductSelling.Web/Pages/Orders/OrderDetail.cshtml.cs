@@ -2,9 +2,11 @@
 using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Orders.Services;
 using Acme.ProductSelling.Payments;
+using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
@@ -18,6 +20,7 @@ namespace Acme.ProductSelling.Web.Pages.Orders
 
         [BindProperty(SupportsGet = true)]
         public Guid Id { get; set; }
+        public List<OrderHistoryDto> OrderHistory { get; set; }
 
         public OrderDto Order { get; set; }
 
@@ -34,11 +37,14 @@ namespace Acme.ProductSelling.Web.Pages.Orders
             }
 
             Order = await _orderAppService.GetAsync(Id);
+            if (Order.CustomerId != CurrentUser.Id)
+                return Forbid();
 
             if (Order == null)
             {
                 return RedirectToPage("/Orders/OrderHistory");
             }
+            OrderHistory = await _orderAppService.GetOrderHistoryAsync(Id);
 
             return Page();
         }
@@ -59,31 +65,32 @@ namespace Acme.ProductSelling.Web.Pages.Orders
                 return RedirectToPage(new { id = orderId });
             }
         }
-        public string GetStatusBadgeClass(OrderStatus status)
+        public string GetOrderStatusBadgeClass(string orderStatus)
         {
-            return status switch
+            return orderStatus switch
             {
-                OrderStatus.Placed => "primary",
-                OrderStatus.Pending => "warning",
-                OrderStatus.Confirmed => "info",
-                OrderStatus.Processing => "info",
-                OrderStatus.Shipped => "primary",
-                OrderStatus.Delivered => "success",
-                OrderStatus.Cancelled => "danger",
-                _ => "secondary"
+                "Placed" => "bg-info text-white",
+                "Pending" => "bg-light text-dark",
+                "Confirmed" => "bg-primary text-white",
+                "Processing" => "bg-warning text-dark",
+                "Shipped" => "bg-success text-white",
+                "Delivered" => "bg-dark text-white",
+                "Cancelled" => "bg-danger text-white",
+                _ => "bg-secondary text-white"
             };
         }
-        public string GetPaymentStatusBadgeClass(PaymentStatus paymentStatus)
+        public string GetPaymentStatusBadgeClass(string paymentStatus)
         {
             return paymentStatus switch
             {
-                PaymentStatus.Unpaid => "warning",
-                PaymentStatus.Pending => "info",
-                PaymentStatus.Paid => "success",
-                PaymentStatus.Failed => "danger",
-                PaymentStatus.Refunded => "secondary",
-                PaymentStatus.Cancelled => "dark",
-                _ => "secondary"
+                "Unpaid" => "bg-secondary text-white",
+                "PendingOnDelivery" => "bg-info text-white",
+                "Pending" => "bg-warning text-dark",
+                "Paid" => "bg-success text-white",
+                "Failed" => "bg-danger text-white",
+                "Refunded" => "bg-dark text-white",
+                "Cancelled" => "bg-secondary text-white",
+                _ => "bg-dark text-white"
             };
         }
     }

@@ -15,20 +15,21 @@
     <ProjectReference Include="../Acme.ProductSelling.PaymentGateway.VnPay/Acme.ProductSelling.PaymentGateway.VnPay.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.12.3" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
     <PackageReference Include="HtmlSanitizer" Version="9.0.886" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.10" />
     <PackageReference Include="Microsoft.ML" Version="4.0.2" />
     <PackageReference Include="Microsoft.ML.FastTree" Version="4.0.2" />
     <PackageReference Include="OpenAI" Version="2.5.0" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-    <PackageReference Include="Volo.Abp.PermissionManagement.Application" Version="9.3.5" />
-    <PackageReference Include="Volo.Abp.FeatureManagement.Application" Version="9.3.5" />
-    <PackageReference Include="Volo.Abp.SettingManagement.Application" Version="9.3.5" />
-    <PackageReference Include="Volo.Abp.Account.Application" Version="9.3.5" />
-    <PackageReference Include="Volo.Abp.Identity.Application" Version="9.3.5" />
-    <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="9.3.5" />
+    <PackageReference Include="Volo.Abp.BackgroundJobs.HangFire" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.Application" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.FeatureManagement.Application" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Application" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.Account.Application" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.Identity.Application" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="9.3.6" />
   </ItemGroup>
 </Project>

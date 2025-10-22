@@ -2,6 +2,7 @@
 using Acme.ProductSelling.EntityFrameworkCore;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.MultiTenancy;
+using Acme.ProductSelling.Orders.BackgroundJobs.OrderCleanup;
 using Acme.ProductSelling.Orders.Hubs;
 using Acme.ProductSelling.PaymentGateway.MoMo;
 using Acme.ProductSelling.PaymentGateway.PayPal;
@@ -19,6 +20,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -49,6 +51,7 @@ using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.AspNetCore.SignalR;
 using Volo.Abp.Autofac;
 using Volo.Abp.AutoMapper;
+using Volo.Abp.BackgroundJobs;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity.Web;
 using Volo.Abp.Modularity;
@@ -63,6 +66,9 @@ using Volo.Abp.Ui.LayoutHooks;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
+using Volo.Abp.Hangfire;
+using Volo.Abp.BackgroundJobs.Hangfire;
+using Hangfire;
 #endregion
 
 namespace Acme.ProductSelling.Web;
@@ -91,7 +97,9 @@ namespace Acme.ProductSelling.Web;
     typeof(ProductSellingHttpApiClientModule),
     typeof(AbpAspNetCoreMvcUiThemeSharedModule),
     typeof(AbpAspNetCoreMvcModule),
-    typeof(AbpAspNetCoreMvcUiModule)
+    typeof(AbpAspNetCoreMvcUiModule),
+    typeof(AbpBackgroundJobOptions),
+    typeof(AbpBackgroundJobsHangfireModule)
 
 )]
 
@@ -138,7 +146,10 @@ public class ProductSellingWebModule : AbpModule
                 serverBuilder.SetIssuer(new Uri(configuration["AuthServer:Authority"]!));
             });
         }
+        pre
     }
+
+
 
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
@@ -205,6 +216,10 @@ public class ProductSellingWebModule : AbpModule
 
         ConfigureAdminPages(services);
         ConfigureRouting(services);
+        Configure<AbpBackgroundJobOptions>(options =>
+        {
+            options.IsJobExecutionEnabled = true;
+        });
     }
     private void ConfigureAdminPages(IServiceCollection services)
     {
@@ -296,7 +311,7 @@ public class ProductSellingWebModule : AbpModule
                     bundle.AddContributors(typeof(BootstrapScriptContributor));
                     bundle.AddContributors(typeof(DatatablesNetScriptContributor));
 
-                    bundle.AddFiles("/js/culture.js");
+                    bundle.AddFiles("/js/shared/culture.js");
                 }
             );
 
@@ -335,6 +350,15 @@ public class ProductSellingWebModule : AbpModule
                     bundle.AddFiles("/css/admin/main/style.css");
                 }
             );
+            options.ScriptBundles.Add(
+                "Shared.Order.SignalR",
+                bundle =>
+                {
+                    bundle.AddFiles("/libs/signalr/browser/signalr.js");
+
+                    bundle.AddFiles("/js/orders/order-signalr.js");
+                }
+            );
         });
     }
     private void ConfigureRouting(IServiceCollection services)
@@ -343,7 +367,7 @@ public class ProductSellingWebModule : AbpModule
         {
             options.LowercaseUrls = true;
         });
-    } 
+    }
     private void ConfigureUrls(IConfiguration configuration)
     {
         Configure<AppUrlOptions>(options =>
@@ -436,7 +460,8 @@ public class ProductSellingWebModule : AbpModule
 
         if (!env.IsDevelopment())
         {
-            app.UseErrorPage();
+            //app.UseErrorPage();
+            app.UseExceptionHandler("/loi");
             app.UseHsts();
         }
 
@@ -477,8 +502,16 @@ public class ProductSellingWebModule : AbpModule
         });
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
-        //app.UseConfiguredEndpoints();
+
+        RecurringJob.AddOrUpdate<CleanupOldOrdersJob>(
+                "cleanup-old-orders",
+                job => job.ExecuteAsync(new CleanupOldOrdersJobArgs { MonthsOld = 6 }),
+                Cron.Monthly(1, 2) 
+        );
+
+        app.UseHangfireDashboard();
         app.UseExceptionHandler("/Error");
-        app.UseStatusCodePagesWithReExecute("/Error/Error");
+
+        app.UseStatusCodePagesWithReExecute("/loi", "?statusCode={0}");
     }
 }

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
-
 namespace Acme.ProductSelling.Blogs
 {
     public interface IBlogAppService : ICrudAppService<BlogDto,
@@ -13,6 +12,5 @@ namespace Acme.ProductSelling.Blogs
         Task<BlogDto> GetBlogBySlug(string slug);
         string ExtractTitleFromHtml(string htmlContent);
         string GenerateUrlSlug(string title);
-
     }
 }

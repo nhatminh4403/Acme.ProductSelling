@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-
 namespace Acme.ProductSelling.Carts
 {
     public class CartDto

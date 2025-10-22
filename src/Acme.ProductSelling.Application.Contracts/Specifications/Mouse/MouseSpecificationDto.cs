@@ -1,7 +1,6 @@
 ﻿using Acme.ProductSelling.Products.Specs;
 using System;
 using Volo.Abp.Application.Dtos;
-
 namespace Acme.ProductSelling.Specifications
 {
     public class MouseSpecificationDto : EntityDto<Guid>
@@ -14,6 +13,5 @@ namespace Acme.ProductSelling.Specifications
         public ConnectivityType Connectivity { get; set; } // Kết nối
         public string Color { get; set; } // Màu sắc
         public string BacklightColor { get; set; } // Màu đèn nền
-
     }
 }

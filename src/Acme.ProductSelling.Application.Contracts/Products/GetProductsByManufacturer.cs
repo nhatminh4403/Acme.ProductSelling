@@ -1,6 +1,5 @@
 ﻿using System;
 using Volo.Abp.Application.Dtos;
-
 namespace Acme.ProductSelling.Products
 {
     public class GetProductsByManufacturer : PagedAndSortedResultRequestDto
@@ -12,5 +11,4 @@ namespace Acme.ProductSelling.Products
         public string CategoryName { get; set; }
         public string ManufacturerName { get; set; }
     }
-
 }

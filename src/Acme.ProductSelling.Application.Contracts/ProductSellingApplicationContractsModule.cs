@@ -9,9 +9,7 @@ using Volo.Abp.Modularity;
 using Volo.Abp.PermissionManagement;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
-
 namespace Acme.ProductSelling;
-
 [DependsOn(
     typeof(AcmeProductSellingPaymentGatewayVnPayModule),
     typeof(ProductSellingDomainModule),
@@ -26,7 +24,6 @@ namespace Acme.ProductSelling;
     typeof(AcmeProductSellingPaymentGatewayPayPalModule),
     typeof(AbpAspNetCoreSignalRModule)
 )]
-
 public class ProductSellingApplicationContractsModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)

@@ -1,0 +1,63 @@
+﻿@page "/admin/orders/deleted"
+@model Acme.ProductSelling.Web.Pages.Admin.Orders.DeletedOrderModel
+@{
+    ViewData["Title"] = L["Orders:DeletedOrders"];
+    Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
+}
+@section scripts {
+    <abp-script src="/Pages/Admin/Orders/DeletedOrders.js" />
+}
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <abp-card-title>@L["Orders:DeletedOrders"]</abp-card-title>
+            </abp-column>
+            <abp-column size-md="_6" class="text-end">
+                <a href="@Url.Page("/Admin/Orders/Index")" class="btn btn-secondary">
+                    @L["BackToList"]
+                </a>
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <table class="table table-striped table-bordered" id="DeletedOrdersTable">
+            <thead>
+                @* ... Your table header remains the same ... *@
+            </thead>
+            <tbody>
+                @* ... Your "no data" row remains the same ... *@
+
+                @foreach (var order in Model.DeletedOrders.Items)
+                {
+                    <!-- The <tr> now needs a unique ID so we can remove it -->
+                    <tr data-row-id="@order.Id">
+                        <td>
+                            <a href="@Url.Page("/Admin/Orders/Details", new { id = order.Id })">
+                                @order.OrderNumber
+                            </a>
+                        </td>
+                        <td>@order.CustomerName</td>
+                        <td>@order.TotalAmount.ToString("N0") VNĐ</td>
+                        <td>@order.OrderDate.ToShortDateString()</td>
+                        <td>
+                            @if (order.DeletionTime.HasValue)
+                            {
+                                @order.DeletionTime.Value.ToString("g")
+                            }
+                        </td>
+                        <td>
+                            @* --- THIS IS THE KEY CHANGE --- *@
+                            @* Remove the <form> and use a standard button with a class and data-id *@
+                            <button class="btn btn-sm btn-primary restore-button" data-id="@order.Id">
+                                @L["Restore"]
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <!-- You can add pagination controls here if needed -->
+
+    </abp-card-body>
+</abp-card>

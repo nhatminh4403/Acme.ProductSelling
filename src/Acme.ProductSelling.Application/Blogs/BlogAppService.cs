@@ -1,20 +1,12 @@
-﻿using Acme.ProductSelling.Categories;
-using Acme.ProductSelling.Identity;
-using Acme.ProductSelling.Permissions;
-using Acme.ProductSelling.Products;
-using Acme.ProductSelling.Utils;
+﻿using Acme.ProductSelling.Permissions;
 using Ganss.Xss;
 using HtmlAgilityPack;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
@@ -41,7 +33,7 @@ namespace Acme.ProductSelling.Blogs
             _HtmlSanitizer = htmlSanitizer;
 
             ConfigureHtmlSanitizer();
-     }
+        }
 
         private void ConfigurePolicies()
         {
@@ -89,7 +81,7 @@ namespace Acme.ProductSelling.Blogs
                 _guidGenerator.Create(),
                 input.Title,
                 sanitizedContent,
-              //input.Content,
+                //input.Content,
                 input.PublishedDate,
                 input.Author, authorId,
 

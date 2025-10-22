@@ -9,22 +9,22 @@
     <ProjectReference Include="..\Acme.ProductSelling.Domain.Shared\Acme.ProductSelling.Domain.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.10" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-    <PackageReference Include="Volo.Abp.AspNetCore.SignalR" Version="9.3.5" />
-    <PackageReference Include="Volo.Abp.Emailing" Version="9.3.5" />
-    <PackageReference Include="Volo.Abp.Caching" Version="9.3.5" />
-    <PackageReference Include="Volo.Abp.PermissionManagement.Domain.Identity" Version="9.3.5" />
-    <PackageReference Include="Volo.Abp.PermissionManagement.Domain.OpenIddict" Version="9.3.5" />
-    <PackageReference Include="Volo.Abp.BackgroundJobs.Domain" Version="9.3.5" />
-    <PackageReference Include="Volo.Abp.AuditLogging.Domain" Version="9.3.5" />
-    <PackageReference Include="Volo.Abp.FeatureManagement.Domain" Version="9.3.5" />
-    <PackageReference Include="Volo.Abp.SettingManagement.Domain" Version="9.3.5" />
-    <PackageReference Include="Volo.Abp.BlobStoring.Database.Domain" Version="9.3.5" />
+    <PackageReference Include="Volo.Abp.AspNetCore.SignalR" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.Emailing" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.Caching" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.Domain.Identity" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.Domain.OpenIddict" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.BackgroundJobs.Domain" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.AuditLogging.Domain" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.FeatureManagement.Domain" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Domain" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.BlobStoring.Database.Domain" Version="9.3.6" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.OpenIddict.Domain" Version="9.3.5" />
-    <PackageReference Include="Volo.Abp.Identity.Domain" Version="9.3.5" />
-    <PackageReference Include="Volo.Abp.TenantManagement.Domain" Version="9.3.5" />
+    <PackageReference Include="Volo.Abp.OpenIddict.Domain" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.Identity.Domain" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Domain" Version="9.3.6" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,5 @@
 ﻿using System;
 using Volo.Abp.Application.Dtos;
-
 namespace Acme.ProductSelling.Blogs
 {
     public class BlogDto : AuditedEntityDto<Guid>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
-
 namespace Acme.ProductSelling.Carts
 {
     public interface ICartAppService : IApplicationService

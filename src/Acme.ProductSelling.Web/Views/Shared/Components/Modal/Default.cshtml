@@ -1,0 +1,95 @@
+﻿@* login *@
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">@L["Login"]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label for="loginEmail" class="form-label">@L["Login:Email"]</label>
+                        <input type="text" class="form-control" id="loginEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="loginPassword" class="form-label">@L["Login:Password"]</label>
+                        <input type="password" class="form-control" id="loginPassword" required>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="rememberMeCheck">
+                        <label class="form-check-label" for="rememberMeCheck">@L["Login:RememberMe"]</label>
+                    </div>
+                    <p class="text-center small">
+                        <a href="#">@L["Login:ForgotPassword"]</a> |
+                        <a data-bs-toggle="modal" data-bs-target="#registerModal" class="text-decoration-underline"
+                           data-bs-dismiss="modal">@L["Login:CreateAccount"]</a>
+                    </p>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    @L["CloseButton"]
+                </button><button type="submit" class="btn btn-primary"
+                                 form="loginForm">
+                    @L["Login:Default"]
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@* register *@
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registerModalLabel">@L["Register"]</h5>
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="registerForm">
+                    <div class="mb-3">
+                        <label for="registerName" class="form-label">@L["Register:FullName"]</label>
+                        <input type="text" class="form-control" id="registerName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerEmail" class="form-label">@L["Register:Email"]</label>
+                        <input type="email"
+                               class="form-control" id="registerEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerPassword" class="form-label">@L["Register:Password"]</label>
+                        <input type="password" class="form-control" id="registerPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerConfirmPassword" class="form-label">
+                            @L["Register:ConfirmPassword"]
+                        </label>
+
+
+                        <input type="password" class="form-control" id="registerConfirmPassword" required>
+                    </div>
+                    <p class="text-center small">
+                        @L["Register:HaveAnAccount?"]
+                        <a data-bs-toggle="modal" class="text-decoration-underline text-primary"
+                           data-bs-target="#loginModal" data-bs-dismiss="modal">@L["Login:LoginHere"]</a>
+                    </p>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    @L["CloseButton"]
+                </button><button type="submit" class="btn btn-primary"
+                                 form="registerForm">
+                    @L["Register:RegisterButton"]
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

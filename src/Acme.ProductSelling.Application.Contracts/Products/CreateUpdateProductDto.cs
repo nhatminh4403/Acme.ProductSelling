@@ -16,7 +16,6 @@ namespace Acme.ProductSelling.Products
         public decimal DiscountedPrice { get; set; }
         [Range(0, 100)]
         public double DiscountPercent { get; set; }
-
         [Required]
         [Range(0, 999999)]
         public int StockCount { get; set; }

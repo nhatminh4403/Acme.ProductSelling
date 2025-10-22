@@ -1,11 +1,8 @@
 using Volo.Abp.Threading;
-
 namespace Acme.ProductSelling;
-
 public static class ProductSellingDtoExtensions
 {
     private static readonly OneTimeRunner OneTimeRunner = new OneTimeRunner();
-
     public static void Configure()
     {
         OneTimeRunner.Run(() =>

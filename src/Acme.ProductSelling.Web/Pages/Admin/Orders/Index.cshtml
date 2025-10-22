@@ -13,23 +13,28 @@
 
 }
 @section scripts {
-    <abp-script-bundle>
-        <abp-script src="/libs/signalr/browser/signalr.js" />
-        <abp-script src="/js/orderSignalR.js" />
-        <abp-script src="/Pages/Admin/Orders/Index.js" />
-    </abp-script-bundle>
+    <abp-script-bundle name="Shared.Order.SignalR" />
+    <abp-script src="/Pages/Admin/Orders/Index.js" />
 }
 <abp-card class="py-3 px-1">
     <abp-card-header>
         <abp-row>
             <abp-column size-md="_6" class="d-flex justify-content-start align-items-center">
-                @* Tiêu đề Card *@
                 <abp-card-title class="mb-0 ms-3">@L["Order:Orders"]</abp-card-title>
             </abp-column>
+
+            <abp-column size-md="_6" class="d-flex justify-content-end align-items-center">
+                <div class="form-check form-switch me-3">
+                    <input class="form-check-input" type="checkbox" id="IncludeDeletedCheckbox">
+                    <label class="form-check-label" for="IncludeDeletedCheckbox">
+                        @L["ShowDeleted"]
+                    </label>
+                </div>
+            </abp-column>
+
         </abp-row>
     </abp-card-header>
     <abp-card-body>
-        @* Tag Helper tạo bảng, DataTables sẽ gắn vào id này *@
         <abp-table striped-rows="true" id="OrdersTable"></abp-table>
     </abp-card-body>
 </abp-card>

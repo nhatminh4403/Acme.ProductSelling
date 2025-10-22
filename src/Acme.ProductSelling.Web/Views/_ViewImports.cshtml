@@ -5,3 +5,13 @@
 @addTagHelper *, Volo.Abp.AspNetCore.Mvc.UI.Bootstrap
 @addTagHelper *, Volo.Abp.AspNetCore.Mvc.UI.Bundling
 @addTagHelper *, Acme.ProductSelling.Web
+@using Microsoft.AspNetCore.Mvc.Localization;
+@using Acme.ProductSelling.Localization;
+@using System.Globalization;
+
+@using Microsoft.Extensions.Localization;
+@using Acme.ProductSelling.Utils;
+@using Volo.Abp.Users;
+@using Acme.ProductSelling.Web.Helpers;
+
+@inject IStringLocalizer<ProductSellingResource> L

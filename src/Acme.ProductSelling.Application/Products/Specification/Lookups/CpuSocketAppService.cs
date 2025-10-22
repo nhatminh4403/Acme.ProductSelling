@@ -2,9 +2,7 @@
 using Acme.ProductSelling.Specifications.Lookups.DTOs;
 using Acme.ProductSelling.Specifications.Lookups.InterfaceAppServices;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -27,7 +25,7 @@ namespace Acme.ProductSelling.Products.Specification.Lookups
                 Id = item.Id,
                 Name = item.Name
             })
-                .OrderBy(dto => dto.Name) 
+                .OrderBy(dto => dto.Name)
                 .ToList();
 
             return new ListResultDto<ProductLookupDto<Guid>>(lookupDtos);
@@ -40,7 +38,7 @@ namespace Acme.ProductSelling.Products.Specification.Lookups
             };
         }
 
-         
+
         protected override async Task MapToEntityAsync(ProductLookupDto<Guid> updateInput, CpuSocket entity)
         {
             entity.Name = updateInput.Name;

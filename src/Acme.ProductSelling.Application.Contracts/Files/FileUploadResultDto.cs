@@ -1,5 +1,4 @@
 ﻿using System;
-
 namespace Acme.ProductSelling.Files
 {
     public class FileUploadResultDto

@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using Volo.Abp.Application.Dtos;
-
 namespace Acme.ProductSelling.Categories
 {
     public class CategoryWithManufacturersDto : EntityDto<Guid>

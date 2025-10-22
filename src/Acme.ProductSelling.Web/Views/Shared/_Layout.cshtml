@@ -4,22 +4,15 @@
 @using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
 @using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
 @using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Languages;
-@using Acme.ProductSelling.Web.Themes.LeptonXLite.Components.Toolbar.LanguageSwitch
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
-@using Microsoft.AspNetCore.Authorization
-@using Acme.ProductSelling.Permissions
 @using Volo.Abp.Users
 @using Volo.Abp.AspNetCore.Mvc.UI.RazorPages
 @using Volo.Abp.AspNetCore.Mvc.UI.Bundling
-@using Acme.ProductSelling.Web.Pages.Shared.Components.CategoriesMenu
 
-@inject ICurrentUser CurrentUser
 @inject IStringLocalizer<ProductSellingResource> L
-@inject IAuthorizationService AuthorizationService
 
 @{
-    var hasAdminPermission = await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Products.Default);
     var title = ViewData["Title"]?.ToString();
     var titleAppName = L["Menu:AppName"].ToString();
     bool checkTitle = title.ToLower().Contains(titleAppName.ToLower());
@@ -35,6 +28,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
     <link href="~/images/monitor.png" rel="shortcut icon" type="image/x-icon" />
     <abp-style-bundle name="@LeptonXLiteThemeBundles.Styles.Global" />
     <abp-style-bundle name="Main.Global" />
@@ -55,362 +49,18 @@
     </style>
 </head>
 <body class="abp-application-layout bg-light d-flex flex-column min-vh-100">
-    <nav class="navbar navbar-expand-lg navbar-light border-bottom sticky-top border-black" style="background-color: aqua">
-        <div class="container">
-            <a class="navbar-brand" href="/" aria-label="Home">
-                <img src="~/images/monitor.png" alt="Home" style="width: 75px; aspect-ratio: 16/9;" loading="lazy" />
-            </a>
+    
+    @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Views.Shared.Components.Header.HeaderViewComponent))
 
-            <div class="d-flex align-items-center d-lg-none ms-auto gap-2">
-                <button class="btn btn-outline-dark" type="button" data-bs-toggle="collapse" data-bs-target="#searchCollapse" aria-expanded="false" aria-controls="searchCollapse">
-                    <i class="bi bi-search fs-5"></i>
-                </button>
-                <a href="/cart" id="shopping-cart-widget-mobile" class="btn btn-outline-dark position-relative flex-shrink-0" aria-label="Cart">
-                    <i class="bi bi-cart3 fs-5"></i>
-                    <span class="cart-item-count position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">0</span>
-                </a>
-                <button class="btn btn-outline-dark" type="button" style="box-shadow:none" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <i class="bi bi-list fs-5"></i>
-                </button>
-            </div>
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-
-                <form class="d-none d-lg-flex my-2 my-lg-0 flex-grow-1 mx-lg-2" asp-page="/Products/ProductsByName" method="get">
-                    <div class="input-group rounded bg-white">
-                        <input class="form-control border-0" name="name" type="search" autocomplete="off" placeholder="@L["Search..."]" aria-label="@L["Search..."]">
-                        <button class="btn border-0 border-start-0" type="submit" style="white-space: nowrap;">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </div>
-                </form>
-                <div class="d-none d-lg-flex align-items-center ms-auto">
-                    <div class="me-2">
-                        <a href="#" class="btn fw-bold text-success text-start shadow-none" style="font-size: small">
-                            <span>
-                                @L["UI:Hotline"] <br />
-                                0123456789
-                            </span>
-                        </a>
-                    </div>
-                    @if (CurrentUser.IsAuthenticated)
-                    {
-                        <div class="d-flex align-items-center ms-lg-auto">
-                            <div class="dropdown me-2">
-                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-person-circle me-1"></i>
-                                    @CurrentUser.UserName
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                    <li><a class="dropdown-item" asp-page="/Account/Manage/Index">@L["Account:ManageYourProfile"]</a></li>
-                                    <li><a class="dropdown-item" asp-page="/Orders/OrderHistory">@L["Order:MyOrders"]</a></li>
-                                    @if (hasAdminPermission || CurrentUser.IsInRole("Admin") || CurrentUser.IsInRole("Admin".ToLower()))
-                                    {
-                                        <li><a class="dropdown-item" href="@Url.Page("/Admin/Index", new { area = "" })" data-no-culture="true">@L["Admin:Panel"]</a></li>
-                                    }
-
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <a class="dropdown-item" href="/Account/Logout?returnUrl=/" id="logoutButton" data-no-culture="true">
-                                            <i class="bi bi-box-arrow-right me-2"></i>@L["Logout"]
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <a href="/cart" id="shopping-cart-widget" class="btn btn-outline-dark me-2 position-relative flex-shrink-0" aria-label="Cart">
-                                <i class="bi bi-cart3 fs-5"></i>
-                                <span class="cart-item-count position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">0</span>
-                            </a>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="d-flex align-items-center ms-lg-auto">
-                            <div class="login-dropdown">
-                                <button type="button" class="btn btn-success d-flex align-items-center flex-shrink-0 me-2 login-btn-main">
-                                    <i class="bi bi-person-fill me-1"></i>
-                                    @L["Login"]
-                                    <i class="bi bi-chevron-down ms-1" style="font-size: 0.8em;"></i>
-                                </button>
-                                <div class="login-dropdown-content">
-                                    <div class="dropdown-welcome-text">
-                                        <i class="bi bi-hand-thumbs-up"></i>
-                                        @L["Login:Welcome"]
-                                    </div>
-                                    <div class="dropdown-buttons">
-                                        <button class="dropdown-btn-login" data-bs-toggle="modal" data-bs-target="#loginModal">
-                                            @L["Login:Default"]
-                                        </button>
-                                        <button class="dropdown-btn-register" data-bs-toggle="modal" data-bs-target="#registerModal">
-                                            @L["Register:Default"]
-                                        </button>
-                                    </div>
-                                    <a href="#" class="dropdown-help-link">
-                                        <i class="bi bi-question-circle"></i>
-                                        @L["Help"]
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                </div>
-
-                <ul class="navbar-nav d-lg-none mt-3">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="mobileCategoriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-list me-2"></i>@L["Category:Categories"]
-                        </a>
-                        @await Component.InvokeAsync(typeof(CategoriesMenuViewComponent))
-                    </li>
-
-                    <hr />
-
-                    <!-- Mobile Menu Items for Authenticated User -->
-                    @if (CurrentUser.IsAuthenticated)
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link" asp-page="/Account/Manage/Index">@L["Account:ManageYourProfile"]</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-page="/Orders/OrderHistory">@L["Order:MyOrders"]</a>
-                        </li>
-                        @if (hasAdminPermission || CurrentUser.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" href="@Url.Page("/Admin/Index")" data-no-culture="true">@L["Admin:Panel"]</a>
-                            </li>
-                        }
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Account/Logout?returnUrl=/" data-no-culture="true">@L["Logout"]</a>
-                        </li>
-                    }
-                    else
-                    {
-                        <!-- Mobile Menu Items for Guest User -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">@L["Login"]</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#registerModal">@L["Register"]</a>
-                        </li>
-                    }
-
-                    <hr />
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">@L["UI:Hotline"]: 0123456789</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="collapse w-100 d-lg-none" id="searchCollapse">
-            <div class="container">
-                <form class="d-flex my-2" asp-page="/Products/ProductsByName" method="get">
-                    <div class="input-group rounded bg-white">
-                        <input class="form-control border-0" name="name" type="search" autocomplete="off" placeholder="@L["Search..."]" aria-label="@L["Search..."]">
-                        <button class="btn border-0 border-start-0" type="submit" style="white-space: nowrap;">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </nav>
     <div style="background: #ececec">
 
         @RenderBody()
     </div>
-    <footer class="bg-white text-dark mt-auto border-top ">
-        <div class="container" style="padding-top:10px">
-            <!-- Upper section -->
-            <div class="row justify-content-evenly text-center text-md-start" style="margin-top:10px">
-                <!-- Cột 1 -->
-                <div class="col-6 col-md-2 mb-4">
-                    <h6 class="fw-bold">@L["Footer:AboutUs"]</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:Introduction"]</a></li>
-                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:Careers"]</a></li>
-                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:Contact"]</a></li>
-                    </ul>
-                </div>
 
-                <!-- Cột 2 -->
-                <div class="col-6 col-md-2 mb-4">
-                    <h6 class="fw-bold">@L["Footer:Policies"]</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:WarrantyPolicy"]</a></li>
-                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:ShippingPolicy"]</a></li>
-                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:PrivacyPolicy"]</a></li>
-                    </ul>
-                </div>
-                <!-- Cột 3 -->
-                <div class="col-6 col-md-2 mb-4">
-                    <h6 class="fw-bold">@L["Footer:Information"]</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:StoreSystem"]</a></li>
-                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:ShoppingGuide"]</a></li>
-                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:PaymentGuide"]</a></li>
-                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:InstallmentGuide"]</a></li>
-                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:WarrantyLookup"]</a></li>
-                        <li><a href="#" class="text-decoration-none text-dark">@L["Footer:BuildPC"]</a></li>
-                    </ul>
-                </div>
+    @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Views.Shared.Components.Footer.FooterViewComponent))
 
-                <!-- Cột 4 -->
-                <div class="col-6 col-md-2 mb-4">
-                    <h6 class="fw-bold">
-                        @L["Footer:SupportHotline"] <small class="text-muted d-block d-md-inline">(8:00 - 21:00)</small>
-                    </h6>
-                    <ul class="list-unstyled">
-                        <li>@L["Footer:Sales"] <a href="tel:19005301" class="text-primary">1900.5301</a></li>
-                        <li>@L["Footer:Warranty"] <a href="tel:19005325" class="text-primary">1900.5325</a></li>
-                        <li>@L["Footer:Complaints"] <a href="tel:18006173" class="text-primary">1800.6173</a></li>
-                        <li>Email: <a href="mailto:nhatminh4403@gmail.com" class="text-primary">nhatminh4403@gmail.com</a></li>
-                    </ul>
-                </div>
+    @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Views.Shared.Components.Modal.ModalViewComponent))
 
-                <!-- Cột 5: Cách thức thanh toán và Ngôn ngữ -->
-                <div class="col-12 col-md-2 mb-4">
-                    <!-- Phần thanh toán -->
-                    <div class="mb-4">
-                        <h6 class="fw-bold">@L["Footer:PaymentMethods"]</h6>
-                        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-start gap-2">
-                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_1.png?v=8602" loading="lazy" alt="Internet Banking" width="50">
-                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_2.png?v=8602" alt="JCB" loading="lazy" width="50">
-                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_3.png?v=8602" loading="lazy" alt="MasterCard" width="50">
-                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_4.png?v=8602" alt="ZaloPay" loading="lazy" width="50">
-                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_5.png?v=8602" alt="Tiền mặt" loading="lazy" width="50">
-                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_6.png?v=8602" loading="lazy" alt="Trả góp 0%" width="50">
-                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_7.png?v=8602" alt="Visa" loading="lazy" width="50">
-                            <img src="https://theme.hstatic.net/200000722513/1001090675/14/pay_8.png?v=8602" alt="Momo" loading="lazy" width="50">
-                        </div>
-                    </div>
-
-                    <!-- Phần ngôn ngữ -->
-                    <div>
-                        <h6 class="fw-bold">@L["Footer:Language"]</h6>
-                        <div class="mt-3">
-                            @await Component.InvokeAsync(typeof(LanguageSwitchViewComponent))
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <hr style="margin-top:unset;margin-bottom:unset">
-
-            <div class="row align-items-center">
-                <div class="col-md-6 mb-3 mb-md-0 text-decoration-none text-center text-md-start">
-                    <span class="fw-bold me-3">@L["Footer:ConnectWithUs"]</span>
-                    <a href="#" class="me-2 text-decoration-none">
-                        <img src="https://file.hstatic.net/200000636033/file/facebook_1_0e31d70174824ea184c759534430deec.png" loading="lazy" alt="FB" width="30">
-                    </a>
-                    <a href="#" class="me-2 text-decoration-none">
-                        <img src="https://file.hstatic.net/200000722513/file/tiktok-logo_fe1e020f470a4d679064cec31bc676e4.png" loading="lazy" alt="TikTok" width="30">
-                    </a>
-                    <a href="#" class="me-2">
-                        <img src="https://file.hstatic.net/200000636033/file/youtube_1_d8de1f41ca614424aca55aa0c2791684.png" loading="lazy" alt="YouTube" width="30">
-                    </a>
-
-                </div>
-                <div class="col-md-6 text-md-end text-decoration-none text-center">
-                    <img src="https://theme.hstatic.net/200000722513/1001090675/14/logo-bct.png?v=8602" loading="lazy" alt="Đã thông báo Bộ Công Thương" width="150">
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="loginModalLabel">@L["Login"]</h5><button type="button" class="btn-close"
-                                                                                         data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="loginForm">
-                        @Html.AntiForgeryToken()
-                        <div class="mb-3">
-                            <label for="loginEmail" class="form-label">@L["Login:Email"]</label>
-                            <input type="text" class="form-control" id="loginEmail" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="loginPassword" class="form-label">@L["Login:Password"]</label>
-                            <input type="password" class="form-control" id="loginPassword" required>
-                        </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="rememberMeCheck">
-                            <label class="form-check-label" for="rememberMeCheck">@L["Login:RememberMe"]</label>
-                        </div>
-                        <p class="text-center small">
-                            <a href="#">@L["Login:ForgotPassword"]</a> |
-                            <a data-bs-toggle="modal" data-bs-target="#registerModal" class="text-decoration-underline"
-                               data-bs-dismiss="modal">@L["Login:CreateAccount"]</a>
-                        </p>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary"
-                            data-bs-dismiss="modal">
-                        @L["CloseButton"]
-                    </button><button type="submit" class="btn btn-primary"
-                                     form="loginForm">
-                        @L["Login:Default"]
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="registerModalLabel">@L["Register"]</h5>
-                    <button type="button" class="btn-close"
-                            data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="registerForm">
-                        <div class="mb-3">
-                            <label for="registerName" class="form-label">@L["Register:FullName"]</label>
-                            <input type="text" class="form-control" id="registerName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="registerEmail" class="form-label">@L["Register:Email"]</label>
-                            <input type="email"
-                                   class="form-control" id="registerEmail" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="registerPassword" class="form-label">@L["Register:Password"]</label>
-                            <input type="password" class="form-control" id="registerPassword" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="registerConfirmPassword" class="form-label">
-                                @L["Register:ConfirmPassword"]
-                            </label>
-
-
-                            <input type="password" class="form-control" id="registerConfirmPassword" required>
-                        </div>
-                        <p class="text-center small">
-                            @L["Register:HaveAnAccount?"]
-                            <a data-bs-toggle="modal" class="text-decoration-underline text-primary"
-                               data-bs-target="#loginModal" data-bs-dismiss="modal">@L["Login:LoginHere"]</a>
-                        </p>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary"
-                            data-bs-dismiss="modal">
-                        @L["CloseButton"]
-                    </button><button type="submit" class="btn btn-primary"
-                                     form="registerForm">
-                        @L["Register:RegisterButton"]
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
     <script src="~/libs/abp/core/abp.js"></script>
     <abp-script-bundle name="@LeptonXLiteThemeBundles.Scripts.Global" />
 
@@ -420,9 +70,7 @@
 
     <script src="~/libs/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
     @await RenderSectionAsync("scripts", required: false)
- 
-    <abp-script src="/libs/signalr/browser/signalr.js" />
-    <abp-script src="/js/orderSignalR.js" />
+
     <abp-script-bundle name="Main.Global" />
 
 </body>

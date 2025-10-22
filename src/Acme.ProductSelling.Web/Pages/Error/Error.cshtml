@@ -2,11 +2,21 @@
 @model Acme.ProductSelling.Web.Views.Shared.ErrorModel
 
 @{
-    ViewData["Title"] = "Có lỗi xảy ra";
+    // The page title in the browser tab will now be dynamic
+    ViewData["Title"] = Model.ErrorTitle;
 }
+
 <div class="text-center mt-5">
-    <h1>Đã xảy ra lỗi!</h1>
-    <p>Xin lỗi, đã có lỗi xảy ra trong quá trình xử lý yêu cầu của bạn.</p>
+
+    @* Optionally display the status code in a large font for clarity *@
+    @if (Model.StatusCode != 0)
+    {
+        <h1 class="display-1 text-danger">@Model.StatusCode</h1>
+    }
+
+    <h1>@Model.ErrorTitle</h1>
+    <p>@Model.ErrorMessage</p>
+
     <button onclick="window.history.back()" class="btn btn-primary mt-3">Quay về trang trước</button>
     <br />
     <a href="/" class="mt-2 d-block">Hoặc quay về trang chủ</a>

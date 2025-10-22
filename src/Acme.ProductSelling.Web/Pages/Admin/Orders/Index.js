@@ -4,7 +4,11 @@
 
     var createModal = new abp.ModalManager(abp.appPath + 'Admin/Orders/CreateModal');
     var editModal = new abp.ModalManager(abp.appPath + 'Admin/Orders/EditModal');
-
+    var getFilter = function () {
+        return {
+            includeDeleted: $('#IncludeDeletedCheckbox').is(':checked')
+        };
+    };
     // Cấu hình DataTables
     var dataTable = $('#OrdersTable').DataTable(
         abp.libs.datatables.normalizeConfiguration({
@@ -13,7 +17,7 @@
             order: [[2, "desc"]],
             searching: true,
             scrollX: true,
-            ajax: abp.libs.datatables.createAjax(orderService.getList),
+            ajax: abp.libs.datatables.createAjax(orderService.getList,getFilter),
             rowId: 'id',
             columnDefs: [
                 {
@@ -207,7 +211,9 @@
         e.preventDefault();
         createModal.open();
     });
-
+    $('#IncludeDeletedCheckbox').on('change', function () {
+        dataTable.ajax.reload();
+    });
     createModal.onResult(function () {
         dataTable.ajax.reload();
     });

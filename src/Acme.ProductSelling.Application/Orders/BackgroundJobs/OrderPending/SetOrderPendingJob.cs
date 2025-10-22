@@ -12,15 +12,15 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp.EventBus.Distributed;
 using Volo.Abp.Uow;
 
-namespace Acme.ProductSelling.Orders.BackgroundJobs
+namespace Acme.ProductSelling.Orders.BackgroundJobs.OrderPending
 {
-    public class SetOrderPendingJob : IAsyncBackgroundJob<SetOrderPendingJobArgs>, ITransientDependency
+    public class SetOrderPendingJob : IAsyncBackgroundJob<SetOrderBackgroundJobArgs>, ITransientDependency
     {
         private readonly IRepository<Order, Guid> _orderRepository;
         private readonly IHubContext<OrderHub, IOrderClient> _orderHubContext;
         private readonly IStringLocalizer<ProductSellingResource> _localizer;
-        private readonly IOrderNotificationService _orderNotificationService; // <-- THAY ĐỔI
-        private readonly ILogger<SetOrderPendingJob> _logger; // Thêm logger
+        private readonly IOrderNotificationService _orderNotificationService;
+        private readonly ILogger<SetOrderPendingJob> _logger;
         private readonly IDistributedEventBus _distributedEventBus;
         public SetOrderPendingJob(
                   IRepository<Order, Guid> orderRepository,
@@ -39,7 +39,7 @@ namespace Acme.ProductSelling.Orders.BackgroundJobs
         }
 
         [UnitOfWork]
-        public async Task ExecuteAsync(SetOrderPendingJobArgs args)
+        public async Task ExecuteAsync(SetOrderBackgroundJobArgs args)
         {
             try
             {

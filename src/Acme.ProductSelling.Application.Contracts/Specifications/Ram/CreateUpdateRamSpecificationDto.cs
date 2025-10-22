@@ -1,7 +1,6 @@
 ﻿using Acme.ProductSelling.Products.Specs;
 using System;
 using System.ComponentModel.DataAnnotations;
-
 namespace Acme.ProductSelling.Specifications
 {
     public class CreateUpdateRamSpecificationDto

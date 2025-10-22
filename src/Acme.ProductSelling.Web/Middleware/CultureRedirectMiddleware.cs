@@ -152,7 +152,7 @@ namespace Acme.ProductSelling.Web.Middleware
                 "/swagger", "/signalr", "/favicon.ico", "/_vs/","/health-status",
                 "/signalr-hubs","/admin", "/identity", "/account", "/TenantManagement",
                 "/SettingManagement","/abp","/abp-web-resources", "/swagger-ui", "/swagger/v1/swagger.json",
-                "/Abp","/libs","/.well-known", "/connect",
+                "/Abp","/libs","/.well-known", "/connect","/hangfire"
             };
             foreach (var prefix in prefixList)
             {
