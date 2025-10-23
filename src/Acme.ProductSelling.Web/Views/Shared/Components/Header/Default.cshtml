@@ -7,13 +7,16 @@
 
 @{
     var hasAdminPermission = await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Products.Default);
-
+    var title = ViewData["Title"]?.ToString();
+    var titleAppName = L["Menu:AppName"].ToString();
+    bool checkTitle = title.ToLower().Contains(titleAppName.ToLower());
 }
 <nav class="navbar navbar-expand-lg navbar-light border-bottom sticky-top border-black" style="background-color: aqua">
     <div class="container">
         <a class="navbar-brand" href="/" aria-label="Home">
             <img src="~/images/monitor.png" alt="Home" style="width: 75px; aspect-ratio: 16/9;" loading="lazy" />
         </a>
+
 
         <div class="d-flex align-items-center d-lg-none ms-auto gap-2">
             <button class="btn btn-outline-dark" type="button" data-bs-toggle="collapse" data-bs-target="#searchCollapse" aria-expanded="false" aria-controls="searchCollapse">
@@ -27,9 +30,22 @@
                 <i class="bi bi-list fs-5"></i>
             </button>
         </div>
-
+        
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            @if (!checkTitle)
+            {
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center @(checkTitle ? "d-lg-none" : "")">
+                    <li class="nav-item dropdown category-dropdown-container me-2">
+                        <button class="btn btn-success dropdown-toggle d-flex align-items-center" type="button"
+                                id="navbarDropdownCategories" aria-expanded="false">
+                            <i class="bi bi-list me-2"></i>
+                            @L["Categories"]
+                        </button>
+                        @await Component.InvokeAsync(typeof(CategoriesMenuViewComponent))
+                    </li>
+                </ul>
 
+            }
             <form class="d-none d-lg-flex my-2 my-lg-0 flex-grow-1 mx-lg-2" asp-page="/Products/ProductsByName" method="get">
                 <div class="input-group rounded bg-white">
                     <input class="form-control border-0" name="name" type="search" autocomplete="off" placeholder="@L["Search..."]" aria-label="@L["Search..."]">
@@ -107,6 +123,7 @@
                         </div>
                     </div>
                 }
+         
             </div>
 
             <ul class="navbar-nav d-lg-none mt-3">
@@ -147,7 +164,6 @@
                     </li>
                 }
 
-                <hr />
                 <li class="nav-item">
                     <a class="nav-link" href="#">@L["UI:Hotline"]: 0123456789</a>
                 </li>

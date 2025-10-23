@@ -4,7 +4,9 @@
 
 @using Acme.ProductSelling.Web.Helpers
 
-
+@section styles {
+    <link href="~/css/shared/products/product-item.css" rel="stylesheet" />
+}
 @functions {
 }
 
@@ -20,29 +22,41 @@
 
     @if (Model.Products != null && Model.Products.Items.Any())
     {
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
             @* Ví dụ 4 cột *@
             @foreach (var product in Model.Products.Items)
             {
                 <div class="col">
-                    <div class="card h-100">
+
+                    <div class="card product-card shadow-sm">
                         @if (!string.IsNullOrWhiteSpace(product.ImageUrl))
                         {
                             <a asp-page="/Products/ProductDetail" asp-route-slug="@product.UrlSlug">
-                                <img src="@(await HelperMethods.IsImageUrlValidAsync(product.ImageUrl) ? product.ImageUrl : $"https://placehold.co/80x80?text={product.ProductName.Substring(0, 1)}")" class="img-fluid rounded border" alt="@product.ProductName" loading="lazy">
+                                <img src="@($"https://placehold.co/200x200?text={product.ProductName.Substring(0, 1)}")"
+                                     class="card-img-top p-3"
+                                     loading="lazy"
+                                     alt="@product.ProductName"
+                                     style="max-height: 180px; object-fit: contain;">
                             </a>
                         }
                         else
                         {
-                            <div class="text-center p-5 border rounded bg-light">
-                                <i class="fas fa-image fa-5x text-secondary"></i>
-                            </div>
+                            <div class="text-center p-5 bg-light"> <i class="fas fa-image fa-3x text-secondary"></i> </div>
                         }
+
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">
-                                <a asp-page="/Products/ProductDetail" asp-route-slug="@product.UrlSlug" class="text-decoration-none">@product.ProductName</a>
-                            </h5>
-                            @if (product.DiscountPercent > 0)
+                            <div class="product-header mb-2">
+                                <h6 class="card-title mb-1 fs-6" style="min-height: 40px;">
+                                    <a asp-page="/Products/ProductDetail"
+                                       class="text-decoration-none text-dark"
+                                       asp-route-slug="@product.UrlSlug"
+                                       title="@product.ProductName">
+                                        @(product.ProductName.Length > 50 ? product.ProductName.Substring(0, 47) + "..." : product.ProductName)
+                                    </a>
+                                </h6>
+                            </div>
+
+                            @if (product.DiscountPercent > 0 || product.DiscountedPrice != null)
                             {
                                 <div class="card-text mt-auto">
                                     <div class="text-muted text-decoration-line-through small mb-0">
@@ -62,12 +76,17 @@
                                     @product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
                                 </div>
                             }
-                            <a asp-page="/Products/ProductDetail" asp-route-slug="@product.UrlSlug"
-                               class="btn btn-outline-primary btn-sm mt-2">
+                        </div>
+
+                        <div class="card-footer bg-transparent border-0 text-center pb-2">
+                            <a asp-page="/Products/ProductDetail"
+                               asp-route-slug="@product.UrlSlug"
+                               class="btn btn-sm btn-primary w-100">
                                 @L["ViewDetails"]
                             </a>
                         </div>
                     </div>
+
                 </div>
             }
         </div>

@@ -1,16 +1,10 @@
-﻿@using System.Globalization
-@using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
+﻿@using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 @using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic.Bundling;
 @using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
 @using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
 @using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Languages;
-@using Acme.ProductSelling.Localization
-@using Microsoft.Extensions.Localization
-@using Volo.Abp.Users
 @using Volo.Abp.AspNetCore.Mvc.UI.RazorPages
 @using Volo.Abp.AspNetCore.Mvc.UI.Bundling
-
-@inject IStringLocalizer<ProductSellingResource> L
 
 @{
     var title = ViewData["Title"]?.ToString();
