@@ -1,5 +1,4 @@
-﻿
-/* Getting-Started */
+﻿/* ===== Getting Started ===== */
 .starting-content {
     position: relative;
     z-index: 2;
@@ -8,33 +7,27 @@
 .card-bg-image {
     pointer-events: none;
     position: absolute;
+    bottom: 0;
+    right: 0;
     width: 100%;
     max-width: 630px;
     height: auto;
-    bottom: 0;
-    right: 0;
     z-index: 1;
 }
-/* Getting Started End */
 
 .section-spacing {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+    margin: 2rem 0;
 }
 
-.container {
+.container, .container .row {
     position: relative;
 }
-
-    .container .row {
-        position: relative;
-    }
 
 .row.align-items-stretch {
     min-height: 400px;
 }
 
-/* Category Sidebar Menu */
+/* ===== Category Sidebar ===== */
 .category-sidebar-menu {
     padding: 0;
     list-style: none;
@@ -42,47 +35,27 @@
     z-index: 1010;
 }
 
-    .category-sidebar-menu .list-group-item.category-menu-item {
-        padding-top: 0.47rem;
-        padding-bottom: 0.47rem;
+    .category-sidebar-menu .category-menu-item {
+        padding: 0.47rem 0;
         cursor: pointer;
+        position: relative;
     }
 
-    .category-sidebar-menu ul li:first-child {
-        -webkit-border-top-right-radius: inherit;
-        border-top-right-radius: inherit;
-        -webkit-border-top-left-radius: inherit;
-        border-top-left-radius: inherit;
-    }
-
-.category-menu-item {
-    position: relative;
-    padding: 0;
+.category-menu-item > a {
+    display: block;
+    padding: 8px 24px;
+    text-decoration: none;
 }
 
-    .category-menu-item.category-menu-item > a {
-        padding: 8px 24px;
-    }
-
-    .category-menu-item.category-menu-item-active > a {
-        background-color: #4CE1CA;
-    }
-
-    .category-menu-item.list-group-item-action:not(.active):hover {
-        background-color: #4CE1CA;
-    }
-
-    .category-menu-item > a:hover {
-        background-color: #4CE1CA;
-    }
-
-.category-sidebar-menu .list-group-item.category-menu-item:hover {
+.category-menu-item-active > a,
+.category-menu-item:hover > a,
+.category-sidebar-menu .list-group-item:hover {
     background-color: #4CE1CA;
 }
 
-    .category-sidebar-menu .list-group-item.category-menu-item:hover > a.category-main-link,
-    .category-sidebar-menu .list-group-item.category-menu-item:hover > a.category-main-link span,
-    .category-sidebar-menu .list-group-item.category-menu-item:hover > a.category-main-link i {
+    .category-sidebar-menu .list-group-item:hover > a.category-main-link,
+    .category-sidebar-menu .list-group-item:hover > a.category-main-link span,
+    .category-sidebar-menu .list-group-item:hover > a.category-main-link i {
         background-color: transparent !important;
     }
 
@@ -96,7 +69,7 @@
     z-index: 1;
 }
 
-/* Subcategory */
+/* ===== Subcategory ===== */
 .subcategory {
     margin-bottom: 1.5rem;
 }
@@ -104,8 +77,8 @@
 .subcategory-title {
     font-size: 1rem;
     font-weight: 600;
-    margin-bottom: 0.5rem;
     color: #333;
+    margin-bottom: 0.5rem;
 }
 
 .subcategory-links {
@@ -115,9 +88,9 @@
 
     .subcategory-links a {
         color: #666;
+        font-size: 0.9rem;
         text-decoration: none;
         margin-bottom: 0.25rem;
-        font-size: 0.9rem;
         transition: color 0.2s;
     }
 
@@ -125,7 +98,7 @@
             color: #007bff;
         }
 
-/* Featured Products */
+/* ===== Featured Products ===== */
 .featured-products {
     border-left: 1px solid #eee;
     padding-left: 20px;
@@ -133,7 +106,14 @@
 
 .product-card {
     margin-bottom: 15px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    height: 100%;
 }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
+    }
 
     .product-card img {
         height: 120px;
@@ -143,9 +123,9 @@
 
     .product-card h6 {
         font-size: 14px;
-        margin-bottom: 5px;
         font-weight: 500;
         line-height: 1.3;
+        margin-bottom: 5px;
     }
 
 .product-price {
@@ -161,20 +141,20 @@
     margin-left: 5px;
 }
 
-/* Megamenu */
+/* ===== Megamenu ===== */
 .megamenu-title {
     font-weight: bold;
     color: #333;
     font-size: 18px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
     margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
 }
 
 .megamenu-content-wrapper {
-    background: white;
+    background: #fff;
     border: 1px solid rgba(0,0,0,.125);
-    border-radius: 0.25rem;
+    border-radius: .25rem;
     padding: 15px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     height: 100%;
@@ -185,11 +165,10 @@
     margin-bottom: 20px;
 }
 
-/* Category Column View */
+/* ===== Category Column ===== */
 .col-category {
     width: 10%;
-    padding-left: 5px;
-    padding-right: 5px;
+    padding: 0 5px;
     margin-bottom: 15px;
 }
 
@@ -197,7 +176,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    transition: transform 0.2s ease;
+    transition: transform 0.2s;
     padding: 5px;
 }
 
@@ -223,18 +202,18 @@
     color: #0d6efd !important;
 }
 
-/* Banner and Carousel */
+/* ===== Banner & Carousel ===== */
 .carousel {
     position: relative;
-    border-radius: 0.25rem;
+    border-radius: .25rem;
     overflow: hidden;
-    transition: display 0.2s ease;
+    transition: display .2s;
 }
 
 .promo-banner {
     height: 130px;
     margin-top: 15px;
-    background-color: #f8f9fa;
+    background: #f8f9fa;
     border-radius: 4px;
     overflow: hidden;
 }
@@ -245,37 +224,32 @@
         object-fit: cover;
     }
 
-/* Carousel */
+/* ===== Product Carousel ===== */
 .product-carousel .carousel-item .row {
-    margin-left: -0.5rem;
-    margin-right: -0.5rem;
+    margin: 0 -0.5rem;
 }
 
 .product-carousel .carousel-item .col-carousel {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-}
-
-.product-carousel .card {
-    margin-bottom: 0;
+    padding: 0 0.5rem;
 }
 
 .carousel-control-prev, .carousel-control-next {
-    width: 5%; /* Smaller control buttons */
+    width: 5%;
 }
 
 .carousel-control-prev-icon, .carousel-control-next-icon {
-    background-color: rgba(0,0,0,0.3);
-    border-radius: 0.25rem;
-    padding: 0.5rem;
+    background: rgba(0,0,0,0.3);
+    border-radius: .25rem;
+    padding: .5rem;
 }
-/* Miscellaneous */
+
+/* ===== Misc ===== */
 .list-group-item {
     cursor: pointer;
 }
 
 .list-group-item-action:hover {
-    background-color: #4CE1CA !important;
+    background: #4CE1CA !important;
 }
 
 .col-md-2-4 {
@@ -283,7 +257,67 @@
     padding: 0 15px;
 }
 
-/* Responsive Media Queries */
+/* ===== Product Carousel Custom Controls ===== */
+.product-carousel-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.product-carousel-track {
+    display: flex;
+    gap: 1rem;
+    transition: transform .5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.product-carousel-item {
+    flex: 0 0 auto;
+    width: calc(100% - 2rem);
+    scroll-snap-align: start;
+}
+
+.carousel-control-custom {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+    .carousel-control-custom:hover {
+        background: #f8f9fa;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    .carousel-control-custom:disabled {
+        opacity: .3;
+        cursor: not-allowed;
+    }
+
+.carousel-control-prev-custom {
+    left: -15px;
+}
+
+.carousel-control-next-custom {
+    right: -15px;
+}
+
+.product-carousel-wrapper {
+    padding: 0 25px;
+    margin: 0 -10px;
+}
+
+/* ===== Responsive ===== */
 @media (max-width: 1199px) {
     .col-category {
         width: 12.5%;
@@ -338,5 +372,30 @@
 @media (max-width: 400px) {
     .col-category {
         width: 33.33%;
+    }
+}
+
+/* ===== Product Carousel Widths ===== */
+@media (min-width: 576px) {
+    .product-carousel-item {
+        width: calc(50% - 1rem);
+    }
+}
+
+@media (min-width: 768px) {
+    .product-carousel-item {
+        width: calc(33.333% - 1rem);
+    }
+}
+
+@media (min-width: 992px) {
+    .product-carousel-item {
+        width: calc(25% - 1rem);
+    }
+}
+
+@media (min-width: 1200px) {
+    .product-carousel-item {
+        width: calc(20% - 1rem);
     }
 }
