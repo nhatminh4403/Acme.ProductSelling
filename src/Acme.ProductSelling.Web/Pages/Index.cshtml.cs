@@ -11,7 +11,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Pagination;
-
+using Acme.ProductSelling.Extensions;
 namespace Acme.ProductSelling.Web.Pages;
 
 public class IndexModel : ProductSellingPageModel
@@ -102,25 +102,17 @@ public class IndexModel : ProductSellingPageModel
 
         foreach (var category in categoriesToFeature)
         {
-            long totalProductsInCategory = await _productRepository.GetCountAsync();
-            totalProductsInCategory = await _productRepository.GetListAsync(p => p.CategoryId == category.Id).ContinueWith(t => t.Result.Count);
-            int skipCountForNewest = (int)Math.Max(0, totalProductsInCategory - productsPerCarousel);
+            var allProductsInCategory = await _productRepository.GetListAsync(p => p.CategoryId == category.Id);
 
-            List<Product> productsFromRepo = await _productRepository.GetListAsync(
-                skipCount: skipCountForNewest,
-                maxResultCount: productsPerCarousel,
-                sorting: "CreationTime",
-                filter: category.Id.ToString()
-            );
+            // 2. Use your extension method to shuffle the list, then take the desired number of products.
+            var randomProducts = allProductsInCategory.Shuffle().Take(productsPerCarousel).ToList();
 
-            List<Product> correctlySortedProducts = productsFromRepo.OrderByDescending(p => p.CreationTime).ToList();
-
-            if (correctlySortedProducts.Any())
+            if (randomProducts.Any())
             {
                 FeaturedProductCarousels.Add(new FeaturedCategoryProductsDto
                 {
                     Category = category,
-                    Products = ObjectMapper.Map<List<Product>, List<ProductDto>>(correctlySortedProducts)
+                    Products = ObjectMapper.Map<List<Product>, List<ProductDto>>(randomProducts)
                 });
             }
         }

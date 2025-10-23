@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Acme.ProductSelling.Extenstions
+namespace Acme.ProductSelling.Extensions
 {
     public static class RandomShuffleExtensions
     {

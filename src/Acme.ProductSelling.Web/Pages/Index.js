@@ -55,15 +55,14 @@
         if (overlay.style.display === 'block') overlay.style.height = '100%';
     });
 
-    // ======= RESPONSIVE CAROUSEL =======
+    // ======= RESPONSIVE CAROUSEL (Updated for Infinite Scroll) =======
     class ResponsiveCarousel {
         constructor(container) {
             this.container = container;
             this.track = container.querySelector('.product-carousel-track');
             this.prev = container.querySelector('.carousel-control-prev-custom');
             this.next = container.querySelector('.carousel-control-next-custom');
-            this.items = Array.from(this.track.children);
-            this.index = 0;
+            this.isMoving = false; // Flag to prevent multiple clicks during transition
             this.init();
         }
 
@@ -73,33 +72,90 @@
         }
 
         init() {
-            this.update();
+            this.originalItems = Array.from(this.track.children);
+            this.totalOriginalItems = this.originalItems.length;
+
+            // If there are not enough items to scroll, hide controls and stop.
+            if (this.totalOriginalItems <= this.perView) {
+                this.prev.style.display = 'none';
+                this.next.style.display = 'none';
+                return;
+            }
+
+            // --- Logic for infinite scrolling: Cloning items ---
+            const itemsToCloneCount = this.perView;
+
+            // Clone the last items and add them to the beginning.
+            const clonesStart = this.originalItems.slice(-itemsToCloneCount).map(item => item.cloneNode(true));
+            this.track.prepend(...clonesStart);
+
+            // Clone the first items and add them to the end.
+            const clonesEnd = this.originalItems.slice(0, itemsToCloneCount).map(item => item.cloneNode(true));
+            this.track.append(...clonesEnd);
+
+            this.items = Array.from(this.track.children);
+            // Start the index at the beginning of the *original* items.
+            this.index = itemsToCloneCount;
+
+            this.bindEvents();
+            // Set the initial position without any animation.
+            this.updatePosition(false);
+        }
+
+        bindEvents() {
             this.prev.addEventListener('click', () => this.move(-1));
             this.next.addEventListener('click', () => this.move(1));
-            window.addEventListener('resize', () => this.update());
+
+            // When the transition ends, check if we need to "jump" to the real items.
+            this.track.addEventListener('transitionend', () => {
+                this.isMoving = false; // Allow moving again
+
+                // Check if we've moved to the prepended clones at the beginning
+                if (this.index < this.perView) {
+                    this.index += this.totalOriginalItems; // Jump to the corresponding items at the end
+                    this.updatePosition(false); // Update without animation
+                }
+                // Check if we've moved to the appended clones at the end
+                else if (this.index >= this.perView + this.totalOriginalItems) {
+                    this.index -= this.totalOriginalItems; // Jump to the corresponding items at the start
+                    this.updatePosition(false); // Update without animation
+                }
+            });
+
+            window.addEventListener('resize', () => this.updatePosition(false));
 
             // Touch swipe
             let startX = 0;
-            this.track.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+            this.track.addEventListener('touchstart', e => {
+                startX = e.touches[0].clientX;
+            }, { passive: true });
+
             this.track.addEventListener('touchend', e => {
+                if (this.isMoving) return;
                 const diff = startX - e.changedTouches[0].clientX;
                 if (Math.abs(diff) > 50) this.move(diff > 0 ? 1 : -1);
             });
         }
 
         move(dir) {
-            const max = Math.max(0, this.items.length - this.perView);
-            this.index = Math.min(Math.max(this.index + dir, 0), max);
-            this.update();
+            if (this.isMoving) return; // Don't move if a transition is in progress
+            this.isMoving = true;
+
+            this.index += dir;
+            this.updatePosition(true); // Move with animation
         }
 
-        update() {
-            const itemWidth = this.items[0].offsetWidth;
-            const gap = 16;
+        updatePosition(animated = true) {
+            // This method handles updating the carousel's visual state.
+            this.track.style.transition = animated
+                ? 'transform .5s cubic-bezier(0.4, 0, 0.2, 1)'
+                : 'none';
+
+            const itemWidth = this.originalItems[0]?.offsetWidth || 0;
+            if (itemWidth === 0) return; // Exit if items have no width yet
+
+            const gap = 16; // Corresponds to `gap: 1rem;` in your CSS
             this.track.style.transform = `translateX(-${this.index * (itemWidth + gap)}px)`;
-            const max = Math.max(0, this.items.length - this.perView);
-            this.prev.disabled = this.index === 0;
-            this.next.disabled = this.index >= max;
         }
     }
 
