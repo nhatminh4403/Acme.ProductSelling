@@ -1,15 +1,10 @@
 ﻿using Acme.ProductSelling.Payments;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Volo.Abp.Domain.Entities.Auditing;
-using static Acme.ProductSelling.Permissions.ProductSellingPermissions;
 
 namespace Acme.ProductSelling.Orders
 {
-    public class OrderHistory  : CreationAuditedEntity<Guid>
+    public class OrderHistory : CreationAuditedEntity<Guid>
     {
         public Guid OrderId { get; set; }
         public OrderStatus OldStatus { get; set; }

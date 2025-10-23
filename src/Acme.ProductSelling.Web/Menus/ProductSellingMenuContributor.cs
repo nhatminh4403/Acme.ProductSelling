@@ -1,6 +1,5 @@
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.MultiTenancy;
-using Acme.ProductSelling.Permissions;
 using System.Threading.Tasks;
 using Volo.Abp.Identity.Web.Navigation;
 using Volo.Abp.SettingManagement.Web.Navigation;

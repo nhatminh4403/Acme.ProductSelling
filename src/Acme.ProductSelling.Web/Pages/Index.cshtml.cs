@@ -33,7 +33,7 @@ public class IndexModel : ProductSellingPageModel
 
     public PagedResultDto<CategoryDto> CategoryList { get; set; }
     public PagedResultDto<ManufacturerDto> ManufacturerList { get; set; }
-    public ListResultDto<CategoryWithManufacturersDto> BrandsWithAssociatedCategory { get; set; }
+    //public ListResultDto<CategoryWithManufacturersDto> BrandsWithAssociatedCategory { get; set; }
 
     public PagerModel PagerModel { get; set; }
 
@@ -72,13 +72,8 @@ public class IndexModel : ProductSellingPageModel
             TotalCount = productList.TotalCount
         };
 
-        var categoryLookup = await _categoryRepository.GetListAsync();
 
-        CategoryList = new PagedResultDto<CategoryDto>
-        {
-            Items = ObjectMapper.Map<List<Category>, List<CategoryDto>>(categoryLookup),
-            TotalCount = categoryLookup.Count
-        };
+
 
         var manufacturerLookup = await _manufacturerRepository.GetListAsync();
 
@@ -87,12 +82,18 @@ public class IndexModel : ProductSellingPageModel
             Items = ObjectMapper.Map<List<Manufacturer>, List<ManufacturerDto>>(manufacturerLookup),
             TotalCount = manufacturerLookup.Count
         };
-        var brandsWithAssociatedCategory = await _categoryAppService.GetListWithManufacturersAsync();
-        BrandsWithAssociatedCategory = new ListResultDto<CategoryWithManufacturersDto>
-        {
-            Items = brandsWithAssociatedCategory.Items
-        };
+        //var brandsWithAssociatedCategory = await _categoryAppService.GetListWithManufacturersAsync();
+        //BrandsWithAssociatedCategory = new ListResultDto<CategoryWithManufacturersDto>
+        //{
+        //    Items = brandsWithAssociatedCategory.Items
+        //};
+        var categoryLookup = await _categoryRepository.GetListAsync();
 
+        CategoryList = new PagedResultDto<CategoryDto>
+        {
+            Items = ObjectMapper.Map<List<Category>, List<CategoryDto>>(categoryLookup),
+            TotalCount = categoryLookup.Count
+        };
         FeaturedProductCarousels = new List<FeaturedCategoryProductsDto>();
         int numberOfFeaturedCategories = 4; // Display carousels for 4 categories
         int productsPerCarousel = 8;

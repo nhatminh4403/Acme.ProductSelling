@@ -1,5 +1,4 @@
 ﻿using Acme.ProductSelling.Carts;
-using Acme.ProductSelling.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

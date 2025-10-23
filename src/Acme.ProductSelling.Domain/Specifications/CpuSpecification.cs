@@ -1,6 +1,5 @@
 ﻿using Acme.ProductSelling.Products.Lookups;
 using System;
-using Volo.Abp.Domain.Entities;
 
 namespace Acme.ProductSelling.Specifications
 {

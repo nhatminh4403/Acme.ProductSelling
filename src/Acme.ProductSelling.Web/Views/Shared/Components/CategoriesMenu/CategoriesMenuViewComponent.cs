@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Volo.Abp.AspNetCore.Mvc;
 
-namespace Acme.ProductSelling.Web.Pages.Shared.Components.CategoriesMenu
+namespace Acme.ProductSelling.Web.Views.Shared.Components.CategoriesMenu
 {
     public class CategoriesMenuViewComponent : AbpViewComponent
     {
@@ -18,7 +18,7 @@ namespace Acme.ProductSelling.Web.Pages.Shared.Components.CategoriesMenu
 
             var categoryLookup = await _categoryAppService.GetCategoryLookupAsync();
             var brandsWithAssociatedCategory = await _categoryAppService.GetListWithManufacturersAsync();
-            
+
             return View(brandsWithAssociatedCategory.Items);
         }
 

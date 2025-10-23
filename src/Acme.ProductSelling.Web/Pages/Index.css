@@ -245,6 +245,30 @@
         object-fit: cover;
     }
 
+/* Carousel */
+.product-carousel .carousel-item .row {
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+}
+
+.product-carousel .carousel-item .col-carousel {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.product-carousel .card {
+    margin-bottom: 0;
+}
+
+.carousel-control-prev, .carousel-control-next {
+    width: 5%; /* Smaller control buttons */
+}
+
+.carousel-control-prev-icon, .carousel-control-next-icon {
+    background-color: rgba(0,0,0,0.3);
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+}
 /* Miscellaneous */
 .list-group-item {
     cursor: pointer;

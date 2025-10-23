@@ -1,6 +1,5 @@
 using Acme.ProductSelling.Blogs;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Threading.Tasks;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
@@ -14,7 +13,7 @@ namespace Acme.ProductSelling.Web.Pages.Blogs
 
         public BlogDto Blog { get; private set; }
 
-        
+
 
         private readonly IBlogAppService _blogAppService;
         public DetailsModel(IBlogAppService blogAppService)

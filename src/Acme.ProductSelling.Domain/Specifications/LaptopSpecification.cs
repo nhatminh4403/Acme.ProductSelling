@@ -1,7 +1,4 @@
-﻿using System;
-using Volo.Abp.Domain.Entities;
-
-namespace Acme.ProductSelling.Specifications
+﻿namespace Acme.ProductSelling.Specifications
 {
     public class LaptopSpecification : SpecificationBase
     {

@@ -13,6 +13,8 @@ using Acme.ProductSelling.Web.HealthChecks;
 using Acme.ProductSelling.Web.Menus;
 using Acme.ProductSelling.Web.Middleware;
 using Acme.ProductSelling.Web.Routing;
+using Hangfire;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
@@ -20,7 +22,6 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -41,34 +42,28 @@ using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
 using Volo.Abp.AspNetCore.Mvc.UI.Packages.Bootstrap;
 using Volo.Abp.AspNetCore.Mvc.UI.Packages.DatatablesNet;
 using Volo.Abp.AspNetCore.Mvc.UI.Packages.JQuery;
-using Volo.Abp.AspNetCore.Mvc.UI.Packages.JQueryValidation;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Toolbars;
-using Volo.Abp.AspNetCore.Mvc.UI.Theming;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.AspNetCore.SignalR;
 using Volo.Abp.Autofac;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.BackgroundJobs;
+using Volo.Abp.BackgroundJobs.Hangfire;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity.Web;
 using Volo.Abp.Modularity;
 using Volo.Abp.OpenIddict;
 using Volo.Abp.PermissionManagement;
 using Volo.Abp.Security.Claims;
-using Volo.Abp.SettingManagement.Web;
 using Volo.Abp.Studio.Client.AspNetCore;
 using Volo.Abp.Swashbuckle;
 using Volo.Abp.TenantManagement.Web;
-using Volo.Abp.Ui.LayoutHooks;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
-using Volo.Abp.Hangfire;
-using Volo.Abp.BackgroundJobs.Hangfire;
-using Hangfire;
 #endregion
 
 namespace Acme.ProductSelling.Web;
@@ -98,7 +93,7 @@ namespace Acme.ProductSelling.Web;
     typeof(AbpAspNetCoreMvcUiThemeSharedModule),
     typeof(AbpAspNetCoreMvcModule),
     typeof(AbpAspNetCoreMvcUiModule),
-    typeof(AbpBackgroundJobOptions),
+    //typeof(AbpBackgroundJobOptions),
     typeof(AbpBackgroundJobsHangfireModule)
 
 )]
@@ -146,7 +141,7 @@ public class ProductSellingWebModule : AbpModule
                 serverBuilder.SetIssuer(new Uri(configuration["AuthServer:Authority"]!));
             });
         }
-        
+
     }
 
 
@@ -174,6 +169,8 @@ public class ProductSellingWebModule : AbpModule
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;
             });
         }
+
+        ConfigureHangfire(services, configuration);
 
         ConfigureBundles();
         ConfigureUrls(configuration);
@@ -220,6 +217,18 @@ public class ProductSellingWebModule : AbpModule
         {
             options.IsJobExecutionEnabled = true;
         });
+    }
+
+    private void ConfigureHangfire(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddHangfire(config =>
+        {
+            config.UseSqlServerStorage(configuration.GetConnectionString("Default"));
+            // Or use other storage options:
+            // config.UseMemoryStorage(); // For development only
+            // config.UseRedisStorage("localhost:6379"); // For production
+        });
+        services.AddHangfireServer();
     }
     private void ConfigureAdminPages(IServiceCollection services)
     {
@@ -502,14 +511,13 @@ public class ProductSellingWebModule : AbpModule
         });
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
-
+        app.UseHangfireDashboard();
         RecurringJob.AddOrUpdate<CleanupOldOrdersJob>(
                 "cleanup-old-orders",
                 job => job.ExecuteAsync(new CleanupOldOrdersJobArgs { MonthsOld = 6 }),
-                Cron.Monthly(1, 2) 
+                Cron.Monthly(1, 2)
         );
 
-        app.UseHangfireDashboard();
         app.UseExceptionHandler("/Error");
 
         app.UseStatusCodePagesWithReExecute("/loi", "?statusCode={0}");

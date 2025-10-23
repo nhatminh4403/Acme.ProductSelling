@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc;
 
-namespace Acme.ProductSelling.Web.Pages.Shared.Components.ChatWidget
+namespace Acme.ProductSelling.Web.Pages.Components.ChatWidget
 {
     public class ChatWidgetViewComponent : AbpViewComponent
     {

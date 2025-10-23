@@ -1,15 +1,11 @@
-﻿using Acme.ProductSelling.Orders;
-using Acme.ProductSelling.Orders.Dtos;
+﻿using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Orders.Services;
-using Acme.ProductSelling.Payments;
-using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp;
-using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Orders
 {

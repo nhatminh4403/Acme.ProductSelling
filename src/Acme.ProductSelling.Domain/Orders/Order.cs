@@ -113,9 +113,9 @@ namespace Acme.ProductSelling.Orders
                 { PaymentStatus.Pending, new[] { PaymentStatus.Paid, PaymentStatus.Failed, PaymentStatus.Cancelled } },
                 { PaymentStatus.PendingOnDelivery, new[] { PaymentStatus.Paid, PaymentStatus.Cancelled } },
                 { PaymentStatus.Paid, new[] { PaymentStatus.Refunded } },
-                { PaymentStatus.Failed, new[] { PaymentStatus.Pending } }, 
-                { PaymentStatus.Cancelled, new PaymentStatus[] { } }, 
-                { PaymentStatus.Refunded, new PaymentStatus[] { } }  
+                { PaymentStatus.Failed, new[] { PaymentStatus.Pending } },
+                { PaymentStatus.Cancelled, new PaymentStatus[] { } },
+                { PaymentStatus.Refunded, new PaymentStatus[] { } }
             };
 
             // Check if transition is valid

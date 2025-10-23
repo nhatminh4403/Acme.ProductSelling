@@ -1,7 +1,6 @@
 ﻿using Acme.ProductSelling.Products;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 using Volo.Abp.Domain.Entities;
 
 namespace Acme.ProductSelling.Web.Pages.Products

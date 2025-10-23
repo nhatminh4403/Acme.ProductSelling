@@ -1,0 +1,39 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@using Volo.Abp.Application.Dtos;
+@using Acme.ProductSelling.Categories;
+@model PagedResultDto<CategoryDto>
+
+
+<section class="container bg-light my-3 rounded py-3">
+    <h2 class="border-bottom pb-2 mb-3 ps-2">@L["Home:CategoryList"]</h2>
+    <div class="row g-2 px-2">
+        @if (Model != null && Model.Items.Any())
+        {
+            foreach (var category in Model.Items)
+            {
+                <div class="col-category">
+                    <a asp-page="/Products/ProductsByCategory" asp-route-slug="@category.UrlSlug" class="text-decoration-none category-link">
+                        <div class="category-item-wrapper">
+                            <img src="@( $"https://placehold.co/80x80?text={category.Name.Substring(0,1)}" )"
+                                 loading="lazy"
+                                 alt="@category.Name" class="img-fluid category-img mb-2"
+                                 style="width: 80px; height: 80px; object-fit: cover;"> @* Added style for consistent image size *@
+
+                            <div class="category-name text-dark text-center">@HelperMethods.GetCategoryLocalizerName(category.Name, L)</div> @* Added text-center *@
+                        </div>
+                    </a>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-info">@L["Category:NoCategoriesFound"]</div>
+            </div>
+        }
+    </div>
+</section>

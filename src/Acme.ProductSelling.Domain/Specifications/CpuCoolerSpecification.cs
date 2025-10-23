@@ -1,7 +1,5 @@
 ﻿using Acme.ProductSelling.Specifications.Junctions;
-using System;
 using System.Collections.Generic;
-using Volo.Abp.Domain.Entities;
 
 namespace Acme.ProductSelling.Specifications
 {

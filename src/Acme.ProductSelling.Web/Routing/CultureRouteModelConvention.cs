@@ -10,7 +10,7 @@ namespace Acme.ProductSelling.Web.Routing
         private readonly string _defaultCulture;
         private readonly string[] _excludedPrefixes = new[]
         {
-            "/admin", "/Admin", 
+            "/admin", "/Admin",
             "/identity",
             "/account","/Account",
             "/tenantmanagement",

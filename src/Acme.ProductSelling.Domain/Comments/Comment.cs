@@ -15,8 +15,8 @@ namespace Acme.ProductSelling.Comments
 
         // Constructor
         protected Comment() { }
-        public Comment(Guid id, Guid userId,DateTime commentedOn,
-            string content,  string entityType, Guid entityId, Guid? parentId = null) : base(id)
+        public Comment(Guid id, Guid userId, DateTime commentedOn,
+            string content, string entityType, Guid entityId, Guid? parentId = null) : base(id)
         {
             UserId = userId;
             CommentedOn = commentedOn;

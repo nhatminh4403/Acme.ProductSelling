@@ -1,6 +1,5 @@
 ﻿using Acme.ProductSelling.Web.Pages;
 using Microsoft.AspNetCore.Mvc;
-using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Views.Shared
 {

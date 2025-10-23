@@ -1,4 +1,3 @@
-using Acme.ProductSelling;
 using Acme.ProductSelling.EntityFrameworkCore;
 using Volo.Abp.Autofac;
 using Volo.Abp.Modularity;

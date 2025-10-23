@@ -1,10 +1,6 @@
 ﻿using Acme.ProductSelling.Files;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Mvc;
@@ -26,7 +22,7 @@ namespace Acme.ProductSelling.Controllers
         {
             try
             {
-                var result = await _fileAppService.UploadImageAsync(upload,true);
+                var result = await _fileAppService.UploadImageAsync(upload, true);
                 return Ok(new { url = result.Url });
             }
             catch (UserFriendlyException ex)

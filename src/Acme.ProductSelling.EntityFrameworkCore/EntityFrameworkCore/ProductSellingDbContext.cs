@@ -10,7 +10,6 @@ using Acme.ProductSelling.Products.Lookups;
 using Acme.ProductSelling.Specifications;
 using Acme.ProductSelling.Specifications.Junctions;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
@@ -157,41 +156,43 @@ public class ProductSellingDbContext :
             b.HasIndex(p => p.UrlSlug).IsUnique();
         });
 
-        builder.Entity<CpuSocket>(b => 
-        { 
+        builder.Entity<CpuSocket>(b =>
+        {
             b.ToTable(tablePrefix + "Sockets");
-            b.Property(s => s.Name).IsRequired().HasMaxLength(50); 
+            b.Property(s => s.Name).IsRequired().HasMaxLength(50);
         });
 
-        builder.Entity<Chipset>(b => 
+        builder.Entity<Chipset>(b =>
         {
             b.ToTable(tablePrefix + "Chipsets");
-            b.Property(c => c.Name).IsRequired().HasMaxLength(50); 
+            b.Property(c => c.Name).IsRequired().HasMaxLength(50);
         });
 
-        builder.Entity<FormFactor>(b => {
+        builder.Entity<FormFactor>(b =>
+        {
             b.ToTable(tablePrefix + "FormFactors");
-            b.Property(f => f.Name).IsRequired().HasMaxLength(50); 
+            b.Property(f => f.Name).IsRequired().HasMaxLength(50);
         });
 
-        builder.Entity<Material>(b => 
-        { 
-            b.ToTable(tablePrefix + "Materials"); 
-            b.Property(m => m.Name).IsRequired().HasMaxLength(50); 
+        builder.Entity<Material>(b =>
+        {
+            b.ToTable(tablePrefix + "Materials");
+            b.Property(m => m.Name).IsRequired().HasMaxLength(50);
         });
-        builder.Entity<PanelType>(b => 
-        { 
-            b.ToTable(tablePrefix + "PanelTypes"); 
+        builder.Entity<PanelType>(b =>
+        {
+            b.ToTable(tablePrefix + "PanelTypes");
             b.Property(p => p.Name).IsRequired().HasMaxLength(50);
         });
-        builder.Entity<RamType>(b => 
+        builder.Entity<RamType>(b =>
         {
             b.ToTable(tablePrefix + "RamTypes");
             b.Property(r => r.Name).IsRequired().HasMaxLength(50);
         });
-        builder.Entity<SwitchType>(b => {
+        builder.Entity<SwitchType>(b =>
+        {
             b.ToTable(tablePrefix + "SwitchTypes");
-            b.Property(s => s.Name).IsRequired().HasMaxLength(50); 
+            b.Property(s => s.Name).IsRequired().HasMaxLength(50);
         });
 
 
@@ -250,7 +251,7 @@ public class ProductSellingDbContext :
                .WithOne(css => css.CpuCoolerSpecification)
                .HasForeignKey(css => css.CpuCoolerSpecificationId)
                .IsRequired();
-        }); 
+        });
         builder.Entity<CpuCoolerSocketSupport>(b =>
         {
             b.ToTable(tablePrefix + "CpuCoolerSocketSupports");
@@ -272,13 +273,13 @@ public class ProductSellingDbContext :
         });
 
 
-        builder.Entity<MouseSpecification>(b => 
+        builder.Entity<MouseSpecification>(b =>
         {
             b.ToTable(tablePrefix + "MouseSpecifications");
             b.HasOne(s => s.Product).WithOne(p => p.MouseSpecification).HasForeignKey<MouseSpecification>(s => s.ProductId);
 
         });
-        builder.Entity<LaptopSpecification>(b => 
+        builder.Entity<LaptopSpecification>(b =>
         {
             b.ToTable(tablePrefix + "LaptopSpecifications");
             b.HasOne(s => s.Product).WithOne(p => p.LaptopSpecification).HasForeignKey<LaptopSpecification>(s => s.ProductId);
@@ -288,27 +289,29 @@ public class ProductSellingDbContext :
             b.ToTable(tablePrefix + "AppGpuSpecifications");
             b.Property(s => s.Length).HasColumnType("decimal(18,2)");
         });
-        builder.Entity<RamSpecification>(b => 
+        builder.Entity<RamSpecification>(b =>
         {
-            b.ToTable(tablePrefix + "RamSpecifications"); 
-            b.HasOne(s => s.Product).WithOne(p =>p.RamSpecification).HasForeignKey<RamSpecification>(s => s.ProductId);
+            b.ToTable(tablePrefix + "RamSpecifications");
+            b.HasOne(s => s.Product).WithOne(p => p.RamSpecification).HasForeignKey<RamSpecification>(s => s.ProductId);
             b.HasOne(s => s.RamType).WithMany().HasForeignKey(s => s.RamTypeId);
 
         });
 
 
         builder.Entity<StorageSpecification>(b =>
-        { 
+        {
             b.ToTable(tablePrefix + "StorageSpecifications");
             b.HasOne(s => s.Product).WithOne(p => p.StorageSpecification).HasForeignKey<StorageSpecification>(s => s.ProductId);
         });
-        builder.Entity<PsuSpecification>(b => {
+        builder.Entity<PsuSpecification>(b =>
+        {
             b.ToTable(tablePrefix + "PsuSpecifications");
             b.HasOne(s => s.Product).WithOne(p => p.PsuSpecification).HasForeignKey<PsuSpecification>(s => s.ProductId);
             b.HasOne(s => s.FormFactor).WithMany().HasForeignKey(s => s.FormFactorId);
 
         });
-        builder.Entity<HeadsetSpecification>(b => {
+        builder.Entity<HeadsetSpecification>(b =>
+        {
             b.ToTable(tablePrefix + "HeadsetSpecifications");
             b.HasOne(s => s.Product).WithOne(p => p.HeadsetSpecification).HasForeignKey<HeadsetSpecification>(s => s.ProductId);
 
@@ -391,8 +394,8 @@ public class ProductSellingDbContext :
         builder.Entity<Likes>(b =>
         {
             b.ToTable(tablePrefix + "Likes");
-            b.HasKey(l => new { l.CommentId, l.UserId }); 
-            b.HasIndex(x => new { x.CommentId, x.UserId }); 
+            b.HasKey(l => new { l.CommentId, l.UserId });
+            b.HasIndex(x => new { x.CommentId, x.UserId });
         });
 
         builder.Entity<Blog>(b =>

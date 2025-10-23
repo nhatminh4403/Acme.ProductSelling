@@ -1,8 +1,6 @@
-    using Acme.ProductSelling.Blogs;
-using Acme.ProductSelling.Manufacturers;
+using Acme.ProductSelling.Blogs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;

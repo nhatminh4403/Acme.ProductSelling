@@ -1,5 +1,4 @@
-﻿using Acme.ProductSelling.Permissions;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +6,6 @@ using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Guids;
 using Volo.Abp.Identity;
-using Volo.Abp.PermissionManagement;
 //using Acme.ProductSelling.;
 
 namespace Acme.ProductSelling
@@ -42,7 +40,7 @@ namespace Acme.ProductSelling
                 email: "manager@abp.io",
                 password: "123456",
                 roleNameToAssign: managerRole.Name
-                //ProductSellingPermissions.Blogs.Default
+            //ProductSellingPermissions.Blogs.Default
             );
 
 
@@ -80,7 +78,7 @@ namespace Acme.ProductSelling
             var existingUser = await _identityUserRepository.FindByNormalizedUserNameAsync(normalizedUserName);
             if (existingUser != null)
             {
-                return existingUser; 
+                return existingUser;
             }
 
             var user = new Volo.Abp.Identity.IdentityUser(
@@ -89,7 +87,7 @@ namespace Acme.ProductSelling
                 email
             )
             {
-                Name = username, 
+                Name = username,
             };
             var creationResult = await _identityUserManager.CreateAsync(user, password);
             if (!creationResult.Succeeded)

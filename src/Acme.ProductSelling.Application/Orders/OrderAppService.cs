@@ -446,7 +446,7 @@ namespace Acme.ProductSelling.Orders
         public async Task<PagedResultDto<OrderDto>> GetDeletedOrdersAsync(PagedAndSortedResultRequestDto input)
         {
             var query = (await _orderRepository.GetQueryableAsync())
-                        .IgnoreQueryFilters() 
+                        .IgnoreQueryFilters()
                         .Where(o => o.IsDeleted)
                         .Include(o => o.OrderItems);
 

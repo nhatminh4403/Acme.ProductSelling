@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.AspNetCore.Mvc;
 
-namespace Acme.ProductSelling.Web.Pages.Shared.Components.CultureDebug
+namespace Acme.ProductSelling.Web.Views.Shared.Components.CultureDebug
 {
     public class CultureDebugViewComponent : AbpViewComponent
     {

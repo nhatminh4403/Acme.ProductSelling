@@ -33,7 +33,7 @@ namespace Acme.ProductSelling;
     typeof(AbpOpenIddictDomainModule),
     typeof(AbpTenantManagementDomainModule),
     typeof(BlobStoringDatabaseDomainModule)
-    
+
     )]
 public class ProductSellingDomainModule : AbpModule
 {

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.AspNetCore.Mvc;
 
-namespace Acme.ProductSelling.Web.Pages.Shared.Components.CommentSection
+namespace Acme.ProductSelling.Web.Pages.Components.CommentSection
 {
     public class CommentSectionViewComponent : AbpViewComponent
     {
@@ -18,7 +18,7 @@ namespace Acme.ProductSelling.Web.Pages.Shared.Components.CommentSection
         public async Task<IViewComponentResult> InvokeAsync(string entityType, Guid entityId)
         {
             var getListDto = new CommentListDto { EntityType = entityType, EntityId = entityId };
-            
+
             var comments = await _service.GetListAsync(getListDto);
 
             var model = new CommentSectionViewModel

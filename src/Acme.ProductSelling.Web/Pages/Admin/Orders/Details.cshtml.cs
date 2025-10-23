@@ -13,7 +13,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Orders
     {
         [BindProperty(SupportsGet = true)]
         public string OrderNumber { get; set; }
-        
+
         private readonly IOrderAppService _orderAppService;
         private readonly ILogger<DetailsModel> _logger;
         public List<OrderHistoryDto> OrderHistory { get; set; }
