@@ -1,17 +1,16 @@
 ﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Extensions;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Pagination;
-using Acme.ProductSelling.Extensions;
 namespace Acme.ProductSelling.Web.Pages;
 
 public class IndexModel : ProductSellingPageModel

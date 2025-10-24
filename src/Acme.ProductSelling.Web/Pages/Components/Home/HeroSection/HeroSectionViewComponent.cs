@@ -1,7 +1,6 @@
 ﻿using Acme.ProductSelling.Categories;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Volo.Abp.Application.Dtos;
 using Volo.Abp.AspNetCore.Mvc;
 
 namespace Acme.ProductSelling.Web.Pages.Components.Home.HeroSection
@@ -19,7 +18,7 @@ namespace Acme.ProductSelling.Web.Pages.Components.Home.HeroSection
             var brandsWithAssociatedCategory = await _categoryAppService.GetListWithManufacturersAsync();
 
 
-            return View("/Pages/Components/Home/HeroSection/Default.cshtml",brandsWithAssociatedCategory);
+            return View("/Pages/Components/Home/HeroSection/Default.cshtml", brandsWithAssociatedCategory);
         }
     }
 }

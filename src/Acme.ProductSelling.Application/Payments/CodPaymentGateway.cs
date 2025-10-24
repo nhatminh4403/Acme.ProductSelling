@@ -1,10 +1,9 @@
 ﻿using Acme.ProductSelling.Orders;
 using System.Threading.Tasks;
-using Volo.Abp.DependencyInjection;
 
 namespace Acme.ProductSelling.Payments
 {
-    public class CodPaymentGateway : IPaymentGateway, ITransientDependency
+    public class CodPaymentGateway : IPaymentGateway
     {
         public string Name => PaymentMethods.COD;
         public Task<PaymentGatewayResult> ProcessAsync(Order order)

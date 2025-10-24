@@ -1,4 +1,6 @@
-﻿namespace Acme.ProductSelling.PaymentGateway.MoMo.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Acme.ProductSelling.PaymentGateway.MoMo.Models
 {
     public class MoMoPaymentResponse
     {
@@ -8,5 +10,8 @@
         public string Message { get; set; }
         public string PayUrl { get; set; }
         public string Signature { get; set; }
+
+        [JsonPropertyName("transId")]
+        public long TransId { get; set; }
     }
 }

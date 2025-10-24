@@ -7,5 +7,7 @@ namespace Acme.ProductSelling.PaymentGateway.PayPal
     {
         string CreatePayment(decimal amount, string currency, string returnUrl, string cancelUrl);
         Payment ExecutePayment(string paymentId, string payerId);
+
+        PayPalOption GetPayPalOption();
     }
 }

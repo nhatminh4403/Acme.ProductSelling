@@ -14,7 +14,6 @@ using Acme.ProductSelling.Web.Menus;
 using Acme.ProductSelling.Web.Middleware;
 using Acme.ProductSelling.Web.Routing;
 using Hangfire;
-using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
@@ -299,6 +298,9 @@ public class ProductSellingWebModule : AbpModule
     private void ConfigureHealthChecks(ServiceConfigurationContext context)
     {
         context.Services.AddProductSellingHealthChecks();
+        context.Services.AddHealthChecks().AddCheck<VnPayHealthCheck>("VnPay");
+        context.Services.AddHealthChecks().AddCheck<MoMoHealthCheck>("MoMo");
+        context.Services.AddHealthChecks().AddCheck<PayPalHealthCheck>("PayPal");
     }
 
     private void ConfigureBundles()
@@ -481,6 +483,8 @@ public class ProductSellingWebModule : AbpModule
         app.UseRouting();
         app.UseMiddleware<CultureRedirectMiddleware>();
         app.UseMiddleware<CultureSyncMiddleware>();
+        app.UseMiddleware<PaymentIPWhitelistMiddleware>();
+
         //app.UseMiddleware<CultureMiddleware>();
 
         app.UseAbpRequestLocalization();

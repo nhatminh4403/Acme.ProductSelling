@@ -1,4 +1,5 @@
-﻿using Acme.ProductSelling.PaymentGateway.MoMo.Models;
+﻿using Acme.ProductSelling.PaymentGateway.MoMo.Configurations;
+using Acme.ProductSelling.PaymentGateway.MoMo.Models;
 using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
 
@@ -13,5 +14,7 @@ namespace Acme.ProductSelling.PaymentGateway.MoMo.Services
                                     int resultCode, string payType, long amount,
                                     string extraData, string signatureFromCallback, long responseTime);
         Task<bool> ValidateIPNRequest(MomoIPNRequest request);
+
+        MoMoOption GetMoMoOption();
     }
 }
