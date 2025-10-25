@@ -55,7 +55,13 @@ public class ProductSellingMenuContributor : IMenuContributor
             l["Admin:Menu:Orders"],
             icon: "fa-solid fa-list",
             url: "/admin/orders"
-        ));
+        ))
+            .AddItem(new ApplicationMenuItem(
+                ProductSellingMenus.DeletedOrders,
+                l["Admin:Menu:Orders:DeletedOrders"],
+                icon:"fa-solid fa-dumpster-fire",
+                url: "/admin/orders/deleted"));
+
         context.Menu.AddItem(new ApplicationMenuItem(
             ProductSellingMenus.Blogs,
             l["Admin:Menu:Blogs"],
@@ -67,12 +73,9 @@ public class ProductSellingMenuContributor : IMenuContributor
         {
             if (!string.IsNullOrEmpty(menuItem.Url))
             {
-                // Remove leading ~ if present, then add /admin prefix
                 var cleanUrl = menuItem.Url.TrimStart('~');
                 menuItem.Url = "/admin" + cleanUrl;
             }
-
-            // Update all child items recursively
             foreach (var item in menuItem.Items)
             {
                 UpdateMenuItemUrls(item);
@@ -84,7 +87,6 @@ public class ProductSellingMenuContributor : IMenuContributor
         var identityMenu = administration.GetMenuItem(IdentityMenuNames.GroupName);
         if (identityMenu != null)
         {
-            // Update parent URL if it has one
             UpdateMenuItemUrls(identityMenu);
 
         }
@@ -105,7 +107,6 @@ public class ProductSellingMenuContributor : IMenuContributor
             administration.TryRemoveMenuItem(TenantManagementMenuNames.GroupName);
         }
 
-        // Update Settings menu
         var settingsMenu = administration.GetMenuItem(SettingManagementMenuNames.GroupName);
         if (settingsMenu != null)
         {

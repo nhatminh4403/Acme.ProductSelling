@@ -9,6 +9,7 @@ using Acme.ProductSelling.PaymentGateway.PayPal;
 using Acme.ProductSelling.PaymentGateway.VnPay;
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Web.Filters;
+using Acme.ProductSelling.Web.Hangfire;
 using Acme.ProductSelling.Web.HealthChecks;
 using Acme.ProductSelling.Web.Menus;
 using Acme.ProductSelling.Web.Middleware;
@@ -332,6 +333,7 @@ public class ProductSellingWebModule : AbpModule
                 bundle =>
                 {
                     bundle.AddFiles("/global-styles.css");
+                    bundle.AddFiles("/css/base.css");
                 }
             );
 
@@ -506,6 +508,18 @@ public class ProductSellingWebModule : AbpModule
         {
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "ProductSelling API");
         });
+        app.UseHangfireDashboard("/hangfire", new DashboardOptions
+        {
+            // Tell Hangfire to use our custom filter
+            Authorization = new[] { new HangfireDashboardPermissionFilter() }
+        });
+        
+        RecurringJob.AddOrUpdate<CleanupOldOrdersJob>(
+                "cleanup-old-orders",
+                job => job.ExecuteAsync(new CleanupOldOrdersJobArgs { MonthsOld = 6 }),
+                Cron.Monthly(1, 2)
+        );
+
         app.UseConfiguredEndpoints(endpoints =>
         {
 
@@ -515,15 +529,9 @@ public class ProductSellingWebModule : AbpModule
         });
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
-        app.UseHangfireDashboard();
-        RecurringJob.AddOrUpdate<CleanupOldOrdersJob>(
-                "cleanup-old-orders",
-                job => job.ExecuteAsync(new CleanupOldOrdersJobArgs { MonthsOld = 6 }),
-                Cron.Monthly(1, 2)
-        );
 
-        app.UseExceptionHandler("/Error");
+        //app.UseExceptionHandler("/Error");
 
-        app.UseStatusCodePagesWithReExecute("/loi", "?statusCode={0}");
+        //app.UseStatusCodePagesWithReExecute("/loi", "?statusCode={0}");
     }
 }

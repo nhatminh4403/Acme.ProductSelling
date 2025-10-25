@@ -1,4 +1,5 @@
-﻿using Acme.ProductSelling.Products;
+﻿using Acme.ProductSelling.Permissions;
+using Acme.ProductSelling.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -68,7 +69,7 @@ namespace Acme.ProductSelling.Carts
                 throw new UserFriendlyException(L["Cart:CartInccessible.TryAgain"]);
             }
         }
-
+        [Authorize(ProductSellingPermissions.Carts.Default)]
         public async Task<CartDto> GetAsync()
         {
             try
@@ -114,6 +115,8 @@ namespace Acme.ProductSelling.Carts
             }//"Failed to retrieve shopping cart. Please try again."
         }
         [IgnoreAntiforgeryToken]
+
+        [Authorize(ProductSellingPermissions.Carts.Create)]
         public async Task AddItemAsync(AddToCartInput input)
         {
             try
@@ -192,6 +195,7 @@ namespace Acme.ProductSelling.Carts
             }
         }
 
+        [Authorize(ProductSellingPermissions.Carts.Edit)]
         public async Task UpdateItemAsync(UpdateCartItemInput input)
         {
             try
@@ -241,6 +245,7 @@ namespace Acme.ProductSelling.Carts
             }
         }
 
+        [Authorize(ProductSellingPermissions.Carts.Delete)]
         public async Task RemoveItemAsync(Guid cartItemId)
         {
             try
@@ -274,6 +279,7 @@ namespace Acme.ProductSelling.Carts
             }
         }
 
+        [Authorize(ProductSellingPermissions.Carts.Delete)]
         public async Task ClearAsync()
         {
             try

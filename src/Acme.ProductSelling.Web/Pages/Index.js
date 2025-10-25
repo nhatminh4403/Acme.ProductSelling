@@ -1,68 +1,92 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
-    // ======= MEGAMENU =======
+    // ======= MEGAMENU & CAROUSEL SYNC =======
+    const categoryMenu = document.querySelector('.category-sidebar-menu');
     const categoryItems = document.querySelectorAll('.category-sidebar-menu .category-menu-item.has-megamenu');
-    const carousel = document.getElementById('mainBannerCarousel');
-    if (window.innerWidth < 992 || !carousel) return;
+    const carouselEl = document.getElementById('mainBannerCarousel');
+    const carouselContainer = carouselEl ? carouselEl.parentElement : null;
 
-    // Tạo overlay nếu chưa có
-    let overlay = document.getElementById('megamenu-overlay');
-    if (!overlay) {
-        overlay = Object.assign(document.createElement('div'), {
-            id: 'megamenu-overlay',
-            style: `
-                position:absolute;top:0;left:0;width:100%;background:white;
-                z-index:2;display:none;overflow-y:auto;
-            `
+    if (window.innerWidth >= 992 && carouselEl && categoryMenu && carouselContainer) {
+        const mainBannerCarousel = new bootstrap.Carousel(carouselEl);
+        let overlay = document.getElementById('megamenu-overlay');
+
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'megamenu-overlay';
+            carouselContainer.style.position = 'relative';
+            carouselContainer.appendChild(overlay);
+        }
+
+        Object.assign(overlay.style, {
+            position: 'absolute',
+            left: '0',
+            width: '100%',
+            background: 'white',
+            zIndex: '2',
+            display: 'none',
+            overflowY: 'auto',
+            marginLeft: '1rem'
         });
-        const parent = carousel.parentElement;
-        parent.style.position = 'relative';
-        parent.appendChild(overlay);
+
+        let activeItem = null, hideTimeout;
+
+        const updateOverlayPosition = () => {
+            const menuRect = categoryMenu.getBoundingClientRect();
+            const carouselContainerRect = carouselContainer.getBoundingClientRect();
+            const topPosition = menuRect.top - carouselContainerRect.top;
+            overlay.style.top = `${topPosition}px`;
+            overlay.style.height = `${menuRect.height}px`;
+        };
+
+        const showOverlay = (item) => {
+            clearTimeout(hideTimeout);
+            if (activeItem !== item) {
+                activeItem?.classList.remove('category-menu-item-active');
+                item.classList.add('category-menu-item-active');
+                activeItem = item;
+                overlay.innerHTML = item.querySelector('.megamenu-data-source')?.innerHTML || '';
+            }
+            updateOverlayPosition();
+            overlay.style.display = 'block';
+            mainBannerCarousel.pause();
+        };
+
+        const hideOverlay = () => {
+            hideTimeout = setTimeout(() => {
+                overlay.style.display = 'none';
+                overlay.innerHTML = '';
+                activeItem?.classList.remove('category-menu-item-active');
+                activeItem = null;
+                mainBannerCarousel.cycle();
+            }, 200);
+        };
+
+        categoryItems.forEach(item => {
+            if (!item.querySelector('.megamenu-data-source')) return;
+            item.addEventListener('mouseenter', () => showOverlay(item));
+            item.addEventListener('mouseleave', hideOverlay);
+        });
+
+        overlay.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+        overlay.addEventListener('mouseleave', hideOverlay);
+
+        window.addEventListener('resize', () => {
+            if (overlay.style.display === 'block') {
+                updateOverlayPosition();
+            }
+        });
     }
 
-    let activeItem = null, hideTimeout;
-
-    const showOverlay = (item) => {
-        clearTimeout(hideTimeout);
-        activeItem?.classList.remove('category-menu-item-active');
-        item.classList.add('category-menu-item-active');
-        activeItem = item;
-
-        overlay.style.height = '100%';
-        overlay.innerHTML = item.querySelector('.megamenu-data-source')?.innerHTML || '';
-        overlay.style.display = 'block';
-    };
-
-    const hideOverlay = () => {
-        hideTimeout = setTimeout(() => {
-            overlay.style.display = 'none';
-            overlay.innerHTML = '';
-            activeItem?.classList.remove('category-menu-item-active');
-            activeItem = null;
-        }, 200);
-    };
-
-    categoryItems.forEach(item => {
-        if (!item.querySelector('.megamenu-data-source')) return;
-        item.addEventListener('mouseenter', () => showOverlay(item));
-        item.addEventListener('mouseleave', hideOverlay);
-    });
-
-    ['mouseenter', 'mouseleave'].forEach(evt =>
-        overlay.addEventListener(evt, evt === 'mouseenter' ? () => clearTimeout(hideTimeout) : hideOverlay)
-    );
-
-    window.addEventListener('resize', () => {
-        if (overlay.style.display === 'block') overlay.style.height = '100%';
-    });
-
-    // ======= RESPONSIVE CAROUSEL (Updated for Infinite Scroll) =======
+    // ======= INFINITE RESPONSIVE PRODUCT CAROUSEL =======
     class ResponsiveCarousel {
         constructor(container) {
             this.container = container;
             this.track = container.querySelector('.product-carousel-track');
             this.prev = container.querySelector('.carousel-control-prev-custom');
             this.next = container.querySelector('.carousel-control-next-custom');
-            this.isMoving = false; // Flag to prevent multiple clicks during transition
+            if (!this.track || !this.prev || !this.next) return;
+
+            this.isMoving = false;
+            this.autoScrollInterval = null; // To hold the interval ID
             this.init();
         }
 
@@ -75,61 +99,68 @@
             this.originalItems = Array.from(this.track.children);
             this.totalOriginalItems = this.originalItems.length;
 
-            // If there are not enough items to scroll, hide controls and stop.
             if (this.totalOriginalItems <= this.perView) {
                 this.prev.style.display = 'none';
                 this.next.style.display = 'none';
                 return;
             }
 
-            // --- Logic for infinite scrolling: Cloning items ---
             const itemsToCloneCount = this.perView;
 
-            // Clone the last items and add them to the beginning.
+            // Clone items for infinite effect
             const clonesStart = this.originalItems.slice(-itemsToCloneCount).map(item => item.cloneNode(true));
             this.track.prepend(...clonesStart);
-
-            // Clone the first items and add them to the end.
             const clonesEnd = this.originalItems.slice(0, itemsToCloneCount).map(item => item.cloneNode(true));
             this.track.append(...clonesEnd);
 
             this.items = Array.from(this.track.children);
-            // Start the index at the beginning of the *original* items.
             this.index = itemsToCloneCount;
 
             this.bindEvents();
-            // Set the initial position without any animation.
             this.updatePosition(false);
+            this.startAutoScroll(); // Start auto-scrolling on initialization
+        }
+
+        startAutoScroll() {
+            // Clear any existing interval to prevent duplicates
+            if (this.autoScrollInterval) clearInterval(this.autoScrollInterval);
+
+            // Set an interval to move the carousel. Duration is set to 7000ms (7 seconds).
+            this.autoScrollInterval = setInterval(() => {
+                this.move(1); // Move to the next item
+            }, 7000); // You can change this value (5000 to 10000ms)
+        }
+
+        stopAutoScroll() {
+            // Clear the interval to stop auto-scrolling
+            clearInterval(this.autoScrollInterval);
         }
 
         bindEvents() {
             this.prev.addEventListener('click', () => this.move(-1));
             this.next.addEventListener('click', () => this.move(1));
 
-            // When the transition ends, check if we need to "jump" to the real items.
+            // When a transition finishes, check if we need to jump to the reset position
             this.track.addEventListener('transitionend', () => {
                 this.isMoving = false; // Allow moving again
-
-                // Check if we've moved to the prepended clones at the beginning
                 if (this.index < this.perView) {
-                    this.index += this.totalOriginalItems; // Jump to the corresponding items at the end
-                    this.updatePosition(false); // Update without animation
-                }
-                // Check if we've moved to the appended clones at the end
-                else if (this.index >= this.perView + this.totalOriginalItems) {
-                    this.index -= this.totalOriginalItems; // Jump to the corresponding items at the start
-                    this.updatePosition(false); // Update without animation
+                    this.index += this.totalOriginalItems;
+                    this.updatePosition(false);
+                } else if (this.index >= this.perView + this.totalOriginalItems) {
+                    this.index -= this.totalOriginalItems;
+                    this.updatePosition(false);
                 }
             });
 
+            // Pause auto-scroll on mouse hover
+            this.container.addEventListener('mouseenter', () => this.stopAutoScroll());
+            this.container.addEventListener('mouseleave', () => this.startAutoScroll());
+
             window.addEventListener('resize', () => this.updatePosition(false));
 
-            // Touch swipe
+            // Touch swipe support
             let startX = 0;
-            this.track.addEventListener('touchstart', e => {
-                startX = e.touches[0].clientX;
-            }, { passive: true });
-
+            this.track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
             this.track.addEventListener('touchend', e => {
                 if (this.isMoving) return;
                 const diff = startX - e.changedTouches[0].clientX;
@@ -138,27 +169,26 @@
         }
 
         move(dir) {
-            if (this.isMoving) return; // Don't move if a transition is in progress
+            if (this.isMoving) return;
             this.isMoving = true;
-
             this.index += dir;
-            this.updatePosition(true); // Move with animation
+            this.updatePosition(true);
         }
 
         updatePosition(animated = true) {
-            // This method handles updating the carousel's visual state.
+            // The existing CSS transition provides the smooth, fluid animation
             this.track.style.transition = animated
                 ? 'transform .5s cubic-bezier(0.4, 0, 0.2, 1)'
                 : 'none';
 
             const itemWidth = this.originalItems[0]?.offsetWidth || 0;
-            if (itemWidth === 0) return; // Exit if items have no width yet
-
-            const gap = 16; // Corresponds to `gap: 1rem;` in your CSS
+            if (itemWidth === 0) return;
+            const gap = 16; // Assuming a 1rem (16px) gap, adjust if necessary
             this.track.style.transform = `translateX(-${this.index * (itemWidth + gap)}px)`;
         }
     }
 
+    // Initialize all infinite carousels on the page
     document.querySelectorAll('.product-carousel-container')
         .forEach(container => new ResponsiveCarousel(container));
 });

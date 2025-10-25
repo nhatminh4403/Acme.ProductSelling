@@ -367,3 +367,9 @@
         justify-content: center;
     }
 }
+.top-bar {
+    background: var(--primary-color);
+    color: #fff;
+    padding: 8px 0;
+    font-size: 14px;
+}

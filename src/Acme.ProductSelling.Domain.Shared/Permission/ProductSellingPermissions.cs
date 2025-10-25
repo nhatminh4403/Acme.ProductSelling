@@ -65,4 +65,8 @@ public static class ProductSellingPermissions
         public const string Admin = Default + ".Admin";
         public const string ViewHistory = Default + ".ViewHistory";
     }
+    public static class Hangfire
+    {
+        public const string Dashboard = GroupName + ".HangfireDashboard";
+    }
 }
