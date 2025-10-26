@@ -1,12 +1,14 @@
 ﻿
 :root {
-    --primary-color: #2563eb;
-    --secondary-color: #1e40af;
-    --accent-color: #f59e0b;
-    --hover-bg: #4CE1CA;
+    --header-bg: #4CE1CA;
+    --primary-color: #10b981;
+    --primary-hover: #059669;
     --text-dark: #1f2937;
-    --text-light: #6b7280;
+    --text-muted: #6b7280;
     --border-color: #e5e7eb;
-    --white: #fff;
-    --light-bg: #f9fafb;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
