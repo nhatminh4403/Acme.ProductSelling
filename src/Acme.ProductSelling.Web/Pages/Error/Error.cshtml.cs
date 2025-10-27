@@ -16,6 +16,10 @@ namespace Acme.ProductSelling.Web.Views.Shared
         {
             switch (StatusCode)
             {
+                case 400:
+                    ErrorTitle = "Yêu cầu không hợp lệ";
+                    ErrorMessage = "Yêu cầu của bạn không thể được xử lý do cú pháp không hợp lệ.";
+                    break;
                 case 401:
                     ErrorTitle = "Chưa xác thực";
                     ErrorMessage = "Bạn cần đăng nhập để xem trang này.";

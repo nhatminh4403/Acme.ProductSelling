@@ -12,7 +12,6 @@
     bool checkTitle = title.ToLower().Contains(titleAppName.ToLower());
 }
 
-
 <nav class="modern-header" id="mainHeader">
     <div class="header-container d-flex align-items-center">
         <!-- Logo -->
@@ -20,7 +19,12 @@
             <img src="~/images/monitor.png" alt="Home" class="logo-img" loading="lazy" />
         </a>
 
-        <!-- Category Button (Desktop) -->
+        <!-- Mobile Category Button - Shows on mobile/tablet only, positioned after logo -->
+        <button class="mobile-category-btn d-lg-none ms-2" type="button" id="mobileCategoryBtn" aria-label="Categories">
+            <i class="bi bi-grid-3x3-gap-fill"></i>
+        </button>
+
+        <!-- Desktop Category Button -->
         @if (!checkTitle)
         {
             <button class="category-btn d-none d-lg-flex ms-3" type="button" id="categoryMenuBtn" aria-label="Categories">
@@ -29,7 +33,7 @@
             </button>
         }
 
-        <!-- Search Bar (Desktop) -->
+        <!-- Desktop Search -->
         <div class="search-container d-none d-lg-block">
             <form class="search-form" asp-page="/Products/ProductsByName" method="get">
                 <input class="search-input" name="name" type="search" autocomplete="off"
@@ -42,7 +46,6 @@
 
         <!-- Desktop Actions -->
         <div class="header-actions ms-auto d-none d-lg-flex">
-            <!-- Hotline -->
             <a href="#" class="hotline-link">
                 <span class="hotline-label">@L["UI:Hotline"]</span>
                 <span class="hotline-number">0123456789</span>
@@ -50,7 +53,10 @@
 
             @if (CurrentUser.IsAuthenticated)
             {
-                <!-- User Menu -->
+                <a href="/cart" class="cart-btn" aria-label="Cart" id="shopping-cart-widget">
+                    <i class="bi bi-cart3 fs-5"></i>
+                    <span class="cart-badge d-none" id="cartBadge">0</span>
+                </a>
                 <div class="user-dropdown" id="userDropdown">
                     <button class="action-btn" type="button">
                         <i class="bi bi-person-circle"></i>
@@ -80,12 +86,6 @@
                         </a>
                     </div>
                 </div>
-
-                <!-- Cart -->
-                <a href="/cart" class="cart-btn" aria-label="Cart">
-                    <i class="bi bi-cart3 fs-5"></i>
-                    <span class="cart-badge d-none" id="cartBadge">0</span>
-                </a>
             }
             else
             {
@@ -118,20 +118,22 @@
             }
         </div>
 
-        <!-- Mobile Actions -->
+        <!-- Mobile Actions (Right side) -->
         <div class="d-flex d-lg-none ms-auto align-items-center gap-2">
-            <button class="mobile-menu-btn" type="button" id="searchToggleBtn">
+            <button class="mobile-menu-btn" type="button" id="searchToggleBtn" aria-label="Toggle Search">
                 <i class="bi bi-search"></i>
             </button>
+
             @if (CurrentUser.IsAuthenticated)
             {
-                <a href="/cart" class="cart-btn" aria-label="Cart">
+                <a href="/cart" class="cart-btn" aria-label="Cart" id="shopping-cart-widget-mobile">
                     <i class="bi bi-cart3"></i>
                     <span class="cart-badge d-none" id="cartBadgeMobile">0</span>
                 </a>
             }
-            <button class="mobile-menu-btn" type="button" id="mobileMenuBtn">
-                <i class="bi bi-list"></i>
+
+            <button class="mobile-menu-btn" type="button" id="mobileMenuBtn" aria-label="Account Menu">
+                <i class="bi bi-person-circle"></i>
             </button>
         </div>
 
@@ -147,6 +149,108 @@
         </div>
     </div>
 </nav>
+
+<!-- Mobile Account Menu Overlay -->
+<div class="mobile-account-overlay"></div>
+
+<!-- Mobile Account Menu -->
+<div class="mobile-account-menu">
+    <div class="mobile-account-header">
+        <h3 class="mobile-account-title">
+            <i class="bi bi-person-circle"></i>
+            @L["Account"]
+        </h3>
+        <button class="mobile-account-close" type="button" aria-label="Close">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+
+    <div class="mobile-account-body">
+        @if (CurrentUser.IsAuthenticated)
+        {
+            <!-- User Info -->
+            <div class="mobile-account-user">
+                <div class="mobile-account-avatar">
+                    @CurrentUser.UserName?.Substring(0, 1).ToUpper()
+                </div>
+                <div class="mobile-account-user-info">
+                    <h4 class="mobile-account-username">@CurrentUser.UserName</h4>
+                    <p class="mobile-account-email">@CurrentUser.Email</p>
+                </div>
+            </div>
+
+            <!-- Account Section -->
+            <div class="mobile-account-section">
+                <h5 class="mobile-account-section-title">@L["Account"]</h5>
+                <a class="mobile-account-item" asp-page="/Account/Manage/Index">
+                    <i class="bi bi-person"></i>
+                    <span>@L["Account:ManageYourProfile"]</span>
+                </a>
+                <a class="mobile-account-item" asp-page="/Orders/OrderHistory">
+                    <i class="bi bi-bag"></i>
+                    <span>@L["Order:MyOrders"]</span>
+                </a>
+                <a class="mobile-account-item" href="/cart">
+                    <i class="bi bi-cart3"></i>
+                    <span>@L["Cart"]</span>
+                </a>
+            </div>
+
+            @if (hasAdminPermission || CurrentUser.IsInRole("Admin") || CurrentUser.IsInRole("admin"))
+            {
+                <div class="mobile-account-divider"></div>
+                <!-- Admin Section -->
+                <div class="mobile-account-section">
+                    <h5 class="mobile-account-section-title">@L["Admin"]</h5>
+                    <a class="mobile-account-item" href="@Url.Page("/Admin/Index", new { area = "" })" data-no-culture="true">
+                        <i class="bi bi-shield-lock"></i>
+                        <span>@L["Admin:Panel"]</span>
+                    </a>
+                </div>
+            }
+
+            <div class="mobile-account-divider"></div>
+
+            <!-- Settings & Logout -->
+            <div class="mobile-account-section">
+                <h5 class="mobile-account-section-title">@L["Settings"]</h5>
+                <a class="mobile-account-item" href="#">
+                    <i class="bi bi-question-circle"></i>
+                    <span>@L["Help"]</span>
+                </a>
+                <a class="mobile-account-item danger" href="/Account/Logout?returnUrl=/" data-no-culture="true">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>@L["Logout"]</span>
+                </a>
+            </div>
+        }
+        else
+        {
+            <!-- Login Section for Non-authenticated Users -->
+            <div class="mobile-login-section">
+                <p class="mobile-login-text">
+                    <i class="bi bi-hand-thumbs-up"></i>
+                    @L["Login:Welcome"]
+                </p>
+                <div class="mobile-login-buttons">
+                    <button class="mobile-login-btn" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        @L["Login:Default"]
+                    </button>
+                    <button class="mobile-register-btn" data-bs-toggle="modal" data-bs-target="#registerModal">
+                        @L["Register:Default"]
+                    </button>
+                </div>
+
+                <div class="mobile-account-divider"></div>
+
+                <a class="mobile-account-item" href="#">
+                    <i class="bi bi-question-circle"></i>
+                    <span>@L["Help"]</span>
+                </a>
+            </div>
+        }
+    </div>
+</div>
 
 <!-- Category Megamenu Component -->
 @await Component.InvokeAsync(typeof(CategoriesMenuViewComponent))

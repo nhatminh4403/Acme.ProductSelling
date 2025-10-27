@@ -11,4 +11,9 @@
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
     --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    --register-btn-hover: #f9fafb;
+    --white: #ffffff;
+    --black: #000000;
+    --login-btn: #1f2937;
+    --login-btn-hover: #374151;
 }

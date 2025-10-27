@@ -15,6 +15,7 @@ using Acme.ProductSelling.Web.Menus;
 using Acme.ProductSelling.Web.Middleware;
 using Acme.ProductSelling.Web.Routing;
 using Hangfire;
+using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
@@ -223,9 +224,9 @@ public class ProductSellingWebModule : AbpModule
     {
         services.AddHangfire(config =>
         {
-            config.UseSqlServerStorage(configuration.GetConnectionString("Default"));
+            //config.UseSqlServerStorage(configuration.GetConnectionString("Default"));
             // Or use other storage options:
-            // config.UseMemoryStorage(); // For development only
+            config.UseMemoryStorage(); // For development only
             // config.UseRedisStorage("localhost:6379"); // For production
         });
         services.AddHangfireServer();
@@ -334,6 +335,7 @@ public class ProductSellingWebModule : AbpModule
                 {
                     bundle.AddFiles("/global-styles.css");
                     bundle.AddFiles("/css/base.css");
+                    bundle.AddFiles("/css/shared/header.css");
                 }
             );
 
@@ -477,6 +479,7 @@ public class ProductSellingWebModule : AbpModule
             app.UseExceptionHandler("/loi");
             app.UseHsts();
         }
+        app.UseMiddleware<QueryStringFilterMiddleware>();
 
         app.UseCorrelationId();
         app.MapAbpStaticAssets();
@@ -487,7 +490,6 @@ public class ProductSellingWebModule : AbpModule
         app.UseMiddleware<CultureSyncMiddleware>();
         app.UseMiddleware<PaymentIPWhitelistMiddleware>();
 
-        //app.UseMiddleware<CultureMiddleware>();
 
         app.UseAbpRequestLocalization();
 
@@ -530,8 +532,8 @@ public class ProductSellingWebModule : AbpModule
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
 
-        //app.UseExceptionHandler("/Error");
+        app.UseExceptionHandler("/Error");
 
-        //app.UseStatusCodePagesWithReExecute("/loi", "?statusCode={0}");
+        app.UseStatusCodePagesWithReExecute("/loi", "?statusCode={0}");
     }
 }
