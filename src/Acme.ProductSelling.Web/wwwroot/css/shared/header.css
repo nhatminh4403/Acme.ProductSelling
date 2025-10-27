@@ -1171,6 +1171,7 @@
         gap: 2rem;
     }
 }
+
 @media (max-width: 991px) {
     .mobile-category-btn {
         opacity: 1 !important;
@@ -1184,6 +1185,7 @@
         display: flex !important;
     }
 }
+
 @media (max-width: 768px) {
     .category-megamenu {
         max-width: 100%;
@@ -1322,18 +1324,30 @@
         opacity: 1;
     }
 }
+/* Category Button - Hidden by default on homepage */
+.category-btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* On pages with hero section */
 body:has(section.container.mt-2) .category-btn {
     opacity: 0;
     visibility: hidden;
     transform: scale(0.95);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
 }
 
     /* Show category button when scrolled past hero */
     body:has(section.container.mt-2) .category-btn.show-on-scroll {
-        opacity: 1;
-        visibility: visible;
-        transform: scale(1);
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: scale(1) !important;
+        width: auto;
+        padding: 0.625rem 1.25rem;
+        margin-left: 0.75rem;
     }
 
 /* Ensure button is always visible on non-homepage pages */
@@ -1343,3 +1357,43 @@ body:not(:has(section.container.mt-2)) .category-btn {
     transform: scale(1) !important;
 }
 
+/* Search Container Transitions */
+.search-container {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Expanded search bar when category button is hidden (at top) */
+body:has(section.container.mt-2) .search-container {
+    /*    max-width: 700px;*/
+    margin-left: 1.5rem;
+}
+
+    /* Shrink search bar when category button is visible (scrolled) */
+    body:has(section.container.mt-2) .search-container.shrink {
+        /*        max-width: 500px;*/
+        margin-left: 1rem;
+    }
+
+/* Desktop only - hide on mobile */
+@media (max-width: 991px) {
+    .mobile-category-btn {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: scale(1) !important;
+    }
+
+    body:has(section.container.mt-2) .category-btn {
+        display: none !important;
+    }
+}
+
+
+@media (min-width: 992px) and (max-width: 1200px) {
+    body:has(section.container.mt-2) .search-container {
+        margin-left: 1rem;
+    }
+
+        body:has(section.container.mt-2) .search-container.shrink {
+            margin-left: 0.5rem;
+        }
+}
