@@ -4,6 +4,7 @@ using Acme.ProductSelling.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Acme.ProductSelling.Migrations
 {
     [DbContext(typeof(ProductSellingDbContext))]
-    partial class ProductSellingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251028123601_Added_ECommerce_Properties_To_AppUser")]
+    partial class Added_ECommerce_Properties_To_AppUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

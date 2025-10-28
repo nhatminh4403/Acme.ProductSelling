@@ -14,8 +14,13 @@ namespace Acme.ProductSelling.Web.Views.Shared
         // The 'OnGet' method is executed when the page is requested
         public void OnGet()
         {
+            if (StatusCode == 0)
+            {
+                StatusCode = 401;
+            }
             switch (StatusCode)
             {
+
                 case 400:
                     ErrorTitle = "Yêu cầu không hợp lệ";
                     ErrorMessage = "Yêu cầu của bạn không thể được xử lý do cú pháp không hợp lệ.";

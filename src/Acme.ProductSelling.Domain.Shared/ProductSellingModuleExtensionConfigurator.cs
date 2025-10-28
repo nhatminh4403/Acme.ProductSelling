@@ -1,4 +1,7 @@
-﻿using Volo.Abp.Threading;
+﻿using Acme.ProductSelling.Users;
+using System;
+using Volo.Abp.ObjectExtending;
+using Volo.Abp.Threading;
 
 namespace Acme.ProductSelling;
 
@@ -61,6 +64,7 @@ public static class ProductSellingModuleExtensionConfigurator
                   });
               });
 
+        
          * See the documentation for more:
          * https://docs.abp.io/en/abp/latest/Module-Entity-Extensions
          */

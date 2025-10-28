@@ -9,6 +9,7 @@ using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Lookups;
 using Acme.ProductSelling.Specifications;
 using Acme.ProductSelling.Specifications.Junctions;
+using Acme.ProductSelling.Users;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -422,6 +423,15 @@ public class ProductSellingDbContext :
             b.ConfigureByConvention();
             b.Property(x => x.Message).IsRequired().HasMaxLength(500);
             b.Property(x => x.Intent).IsRequired().HasMaxLength(100);
+        });
+
+        builder.Entity<AppUser>(b =>
+        {
+            b.ToTable(AbpIdentityDbProperties.DbTablePrefix + "Users"); // Đảm bảo sử dụng cùng bảng với IdentityUser
+            b.ConfigureByConvention();
+            b.Property(u => u.DateOfBirth).IsRequired(false);
+            b.Property(u => u.Gender).IsRequired();
+            b.Property(u => u.ShippingAddress).HasMaxLength(256).IsRequired(false);
         });
     }
 }

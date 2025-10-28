@@ -4,6 +4,7 @@ using Acme.ProductSelling.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
@@ -12,9 +13,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Acme.ProductSelling.Migrations
 {
     [DbContext(typeof(ProductSellingDbContext))]
-    partial class ProductSellingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251028040231_Add_Extra_Properties_For_Users")]
+    partial class Add_Extra_Properties_For_Users
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2436,6 +2439,10 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("nvarchar(40)")
                         .HasColumnName("ConcurrencyStamp");
 
+                    b.Property<string>("ContactPhoneNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2")
                         .HasColumnName("CreationTime");
@@ -2451,11 +2458,6 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletionTime");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -2552,6 +2554,10 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("nvarchar(256)")
                         .HasColumnName("SecurityStamp");
 
+                    b.Property<string>("ShippingAddress")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<bool>("ShouldChangePasswordOnNextLogin")
                         .HasColumnType("bit");
 
@@ -2587,10 +2593,6 @@ namespace Acme.ProductSelling.Migrations
                     b.HasIndex("UserName");
 
                     b.ToTable("AbpUsers", (string)null);
-
-                    b.HasDiscriminator().HasValue("IdentityUser");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUserClaim", b =>
@@ -3434,25 +3436,6 @@ namespace Acme.ProductSelling.Migrations
                     b.HasKey("TenantId", "Name");
 
                     b.ToTable("AbpTenantConnectionStrings", (string)null);
-                });
-
-            modelBuilder.Entity("Acme.ProductSelling.Users.AppUser", b =>
-                {
-                    b.HasBaseType("Volo.Abp.Identity.IdentityUser");
-
-                    b.Property<DateTime?>("DateOfBirth")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ShippingAddress")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<int>("UserGender")
-                        .HasColumnType("int");
-
-                    b.ToTable("AbpUsers", (string)null);
-
-                    b.HasDiscriminator().HasValue("AppUser");
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Carts.CartItem", b =>

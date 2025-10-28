@@ -477,6 +477,8 @@ public class ProductSellingWebModule : AbpModule
         {
             //app.UseErrorPage();
             app.UseExceptionHandler("/loi");
+            app.UseStatusCodePagesWithReExecute("/loi", "?statusCode={0}");
+
             app.UseHsts();
         }
         app.UseMiddleware<QueryStringFilterMiddleware>();
@@ -534,6 +536,5 @@ public class ProductSellingWebModule : AbpModule
 
         app.UseExceptionHandler("/Error");
 
-        app.UseStatusCodePagesWithReExecute("/loi", "?statusCode={0}");
     }
 }
