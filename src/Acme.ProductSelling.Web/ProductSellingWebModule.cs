@@ -19,6 +19,7 @@ using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.Mvc;
@@ -398,6 +400,20 @@ public class ProductSellingWebModule : AbpModule
         {
             options.IsDynamicClaimsEnabled = true;
         });
+        context.Services.ConfigureApplicationCookie(options =>
+        {
+            options.Events.OnRedirectToLogin = context =>
+            {
+                context.Response.Redirect($"/loi?statusCode=401");
+                return Task.CompletedTask;
+            };
+
+            options.Events.OnRedirectToAccessDenied = context =>
+            {
+                context.Response.Redirect($"/loi?statusCode=403");
+                return Task.CompletedTask;
+            };
+        });
     }
 
     private void ConfigureAutoMapper()
@@ -517,7 +533,7 @@ public class ProductSellingWebModule : AbpModule
             // Tell Hangfire to use our custom filter
             Authorization = new[] { new HangfireDashboardPermissionFilter() }
         });
-        
+
         RecurringJob.AddOrUpdate<CleanupOldOrdersJob>(
                 "cleanup-old-orders",
                 job => job.ExecuteAsync(new CleanupOldOrdersJobArgs { MonthsOld = 6 }),

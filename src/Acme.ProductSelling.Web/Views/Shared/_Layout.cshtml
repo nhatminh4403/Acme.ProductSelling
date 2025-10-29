@@ -14,7 +14,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>@ViewData["Title"]</title>
+    <title>@ViewData["Title"] - XComputer</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
@@ -73,22 +73,17 @@
     @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Views.Shared.Components.Footer.FooterViewComponent))
     @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Views.Shared.Components.Modal.ModalViewComponent))
 
-    <!-- ===================================== -->
-    <!-- VENDOR & FRAMEWORK SCRIPTS -->
-    <!-- ===================================== -->
+
+    
     <script src="~/libs/abp/core/abp.js"></script>
+    <abp-script-bundle name="@LeptonXLiteThemeBundles.Scripts.Global" />
+    <!-- The line above contains JQuery that has already been configured in Web Module. NO CHANGES NEEDED -->
+
     <script src="~/Abp/ServiceProxyScript" asp-append-version="true"></script>
     <script src="~/Abp/ApplicationLocalizationScript?cultureName=@CultureInfo.CurrentUICulture.Name"></script>
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/libs/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
 
-    <!-- ABP THEME BUNDLES -->
-    <abp-script-bundle name="@LeptonXLiteThemeBundles.Scripts.Global" />
+
     <abp-script-bundle name="Main.Global" />
-
-    <!-- ===================================== -->
-    <!-- HEADER & DROPDOWN FUNCTIONALITY -->
-    <!-- ===================================== -->
     <script>
         const header = document.getElementById('mainHeader');
         let lastScroll = 0;
@@ -127,10 +122,6 @@
             if (loginDropdown) loginDropdown.classList.remove('active');
         });
     </script>
-
-    <!-- ===================================== -->
-    <!-- MEGAMENU FUNCTIONALITY -->
-    <!-- ===================================== -->
     <script>
         (function () {
             const megamenu = document.getElementById('categoryMegamenu');

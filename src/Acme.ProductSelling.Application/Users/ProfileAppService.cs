@@ -16,13 +16,13 @@ namespace Acme.ProductSelling.Users
 {
     public class ProfileAppService : ApplicationService, Acme.ProductSelling.Users.IProfileAppService, ITransientDependency
     {
-        private readonly IAppUserRepository _userRepository;
+        private readonly IRepository<IdentityUser, Guid> _identityUserRepository;
         private readonly ICurrentUser _currentUser; 
         private readonly IdentityUserManager _userManager;
 
-        public ProfileAppService(IAppUserRepository userRepository, ICurrentUser currentUser, IdentityUserManager userManager)
+        public ProfileAppService(IRepository<IdentityUser, Guid> identityUserRepository, ICurrentUser currentUser, IdentityUserManager userManager)
         {
-            _userRepository = userRepository;
+            _identityUserRepository = identityUserRepository;
             _currentUser = currentUser;
             _userManager = userManager;
         }
@@ -47,25 +47,46 @@ namespace Acme.ProductSelling.Users
 
         public async Task<UpdateProfileDto> GetAsync()
         {
-            var user = await _userRepository.GetAsync(_currentUser.Id.Value);
-            return ObjectMapper.Map<AppUser, UpdateProfileDto>(user);
+            var user = await _identityUserRepository.GetAsync(_currentUser.Id.Value);
+            
+            return new UpdateProfileDto
+            {
+                UserName = user.UserName,
+                Email = user.Email,
+                Name = user.Name,
+                Surname = user.Surname,
+                PhoneNumber = user.PhoneNumber,
+                ShippingAddress = user.GetProperty<string>("ShippingAddress"),
+                DateOfBirth = user.GetProperty<DateTime?>("DateOfBirth"),
+                Gender = user.GetProperty<UserGender>("Gender")
+            };
         }
 
         public async Task<UpdateProfileDto> UpdateAsync(UpdateProfileDto input)
         {
-            var user = await _userRepository.GetAsync(_currentUser.Id.Value);
+            var user = await _identityUserRepository.GetAsync(_currentUser.Id.Value);
 
-            user.SetProperty(user.UserName, input.UserName);
-            user.SetProperty(user.Email, input.Email);
-            user.SetProperty(user.PhoneNumber, input.PhoneNumber);
             user.Name = input.Name;
             user.Surname = input.Surname;
-            user.ShippingAddress = input.ShippingAddress;
-            user.DateOfBirth = input.DateOfBirth;
-            user.Gender = input.Gender;
-            await _userRepository.UpdateAsync(user);
+            if (user.UserName != input.UserName)
+            {
+                await _userManager.SetUserNameAsync(user, input.UserName);
+            }
+            if (user.Email != input.Email)
+            {
+                await _userManager.SetEmailAsync(user, input.Email);
+            }
 
-            return ObjectMapper.Map<AppUser, UpdateProfileDto>(user);
+            // Use the provided method to set phone number, since the setter is protected internal
+            user.SetPhoneNumber(input.PhoneNumber, user.PhoneNumberConfirmed);
+
+            user.SetProperty("ShippingAddress", input.ShippingAddress);
+            user.SetProperty("DateOfBirth", input.DateOfBirth);
+            user.SetProperty("Gender", input.Gender);
+
+            await _userManager.UpdateAsync(user);
+
+            return input;
         }
     }
 }

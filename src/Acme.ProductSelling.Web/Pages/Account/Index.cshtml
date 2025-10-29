@@ -1,19 +1,21 @@
 ﻿@page "/account"
 @model Acme.ProductSelling.Web.Pages.Account.IndexModel
 @{
-    Layout = "/Views/Shared/_Layout.cshtml"; 
-    ViewData["Title"] = L["ManageAccount"];
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = L["Account:ManageAccount"];
 }
 
 @section styles {
     <link href="~/css/global/user/account.css" rel="stylesheet" />
 }
-
+@section scripts {
+    <script src="~/js/global/user/account.js"></script>
+}
 <div class="account-management-container">
     <!-- Header -->
     <div class="account-header">
-        <h1><i class="fas fa-user-circle"></i> @L["ManageAccount"]</h1>
-        <p>@L["ManageAccountDescription"]</p>
+        <h1><i class="fas fa-user-circle"></i> @L["Account:ManageAccount"]</h1>
+        <p>@L["Account:ManageAccountDescription"]</p>
     </div>
 
     <!-- Tabs Navigation -->
@@ -22,19 +24,19 @@
             <li>
                 <button type="button" class="tab-button active" data-tab="profile">
                     <i class="fas fa-user"></i>
-                    <span>@L["ProfileInformation"]</span>
+                    <span>@L["Account:ProfileInformation"]</span>
                 </button>
             </li>
             <li>
                 <button type="button" class="tab-button" data-tab="security">
                     <i class="fas fa-lock"></i>
-                    <span>@L["Security"]</span>
+                    <span>@L["Account:Security"]</span>
                 </button>
             </li>
             <li>
                 <button type="button" class="tab-button" data-tab="addresses">
                     <i class="fas fa-map-marker-alt"></i>
-                    <span>@L["Addresses"]</span>
+                    <span>@L["Account:Addresses"]</span>
                 </button>
             </li>
         </ul>
@@ -46,13 +48,13 @@
                 <form method="post" asp-page-handler="UpdateProfile" id="profile-form">
                     <div class="info-card">
                         <i class="fas fa-info-circle"></i>
-                        <span>@L["ProfileInfoDescription"]</span>
+                        <span>@L["Account:ProfileInfoDescription"]</span>
                     </div>
 
                     <div class="form-section">
                         <h3 class="form-section-title">
                             <i class="fas fa-id-card"></i>
-                            @L["BasicInformation"]
+                            @L["Account:BasicInformation"]
                         </h3>
                         <div class="form-grid">
                             <abp-input asp-for="ProfileInput.UserName" />
@@ -64,13 +66,12 @@
                         </div>
                     </div>
 
-
                     <div class="form-actions">
                         <abp-button button-type="Secondary" type="button" onclick="resetForm('profile-form')">
-                            <i class="fas fa-undo"></i> @L["Reset"]
+                            <i class="fas fa-undo"></i> @L["Account:Reset"]
                         </abp-button>
-                        <abp-button button-type="Primary" type="submit" busy-text="@L["Saving"]">
-                            <i class="fas fa-save"></i> @L["SaveChanges"]
+                        <abp-button button-type="Primary" type="submit" busy-text="@L["Account:Saving"]">
+                            <i class="fas fa-save"></i> @L["Account:SaveChanges"]
                         </abp-button>
                     </div>
                 </form>
@@ -81,13 +82,13 @@
                 <form method="post" asp-page-handler="ChangePassword" id="password-form">
                     <div class="info-card">
                         <i class="fas fa-shield-alt"></i>
-                        <span>@L["SecurityDescription"]</span>
+                        <span>@L["Account:SecurityDescription"]</span>
                     </div>
 
                     <div class="form-section">
                         <h3 class="form-section-title">
                             <i class="fas fa-key"></i>
-                            @L["ChangePassword"]
+                            @L["Account:ChangePassword"]
                         </h3>
                         <div class="form-grid">
                             <div>
@@ -110,10 +111,10 @@
 
                     <div class="form-actions">
                         <abp-button button-type="Secondary" type="button" onclick="resetForm('password-form')">
-                            <i class="fas fa-undo"></i> @L["Reset"]
+                            <i class="fas fa-undo"></i> @L["Account:Reset"]
                         </abp-button>
-                        <abp-button button-type="Primary" type="submit" busy-text="@L["Changing"]">
-                            <i class="fas fa-lock"></i> @L["ChangePassword"]
+                        <abp-button button-type="Primary" type="submit" busy-text="@L["Account:Changing"]">
+                            <i class="fas fa-lock"></i> @L["Account:ChangePassword"]
                         </abp-button>
                     </div>
                 </form>
@@ -124,25 +125,23 @@
                 <form method="post" asp-page-handler="UpdateProfile" id="address-form">
                     <div class="info-card">
                         <i class="fas fa-truck"></i>
-                        <span>@L["AddressInfoDescription"]</span>
+                        <span>@L["Account:AddressInfoDescription"]</span>
                     </div>
 
                     <div class="form-section">
                         <h3 class="form-section-title">
                             <i class="fas fa-shipping-fast"></i>
-                            @L["ShippingAddress"]
+                            @L["Account:ShippingAddress"]
                         </h3>
                         <abp-input asp-for="ProfileInput.ShippingAddress" />
                     </div>
 
-                   
-
                     <div class="form-actions">
                         <abp-button button-type="Secondary" type="button" onclick="resetForm('address-form')">
-                            <i class="fas fa-undo"></i> @L["Reset"]
+                            <i class="fas fa-undo"></i> @L["Account:Reset"]
                         </abp-button>
-                        <abp-button button-type="Primary" type="submit" busy-text="@L["Saving"]">
-                            <i class="fas fa-save"></i> @L["SaveChanges"]
+                        <abp-button button-type="Primary" type="submit" busy-text="@L["Account:Saving"]">
+                            <i class="fas fa-save"></i> @L["Account:SaveChanges"]
                         </abp-button>
                     </div>
                 </form>
@@ -151,80 +150,3 @@
     </div>
 </div>
 
-@section scripts {
-    <script>
-        $(document).ready(function() {
-            // Tab switching functionality
-            $('.tab-button').on('click', function() {
-                const tabName = $(this).data('tab');
-
-                // Update active states
-                $('.tab-button').removeClass('active');
-                $(this).addClass('active');
-
-                $('.tab-content').removeClass('active');
-                $(`#${tabName}-tab`).addClass('active');
-
-                // Update URL hash without reload
-                history.pushState(null, null, `#${tabName}`);
-            });
-
-            // Handle initial hash
-            const hash = window.location.hash.substring(1);
-            if (hash) {
-                $(`.tab-button[data-tab="${hash}"]`).click();
-            }
-
-            // Password strength indicator
-            $('input[name="PasswordInput.NewPassword"]').on('input', function() {
-                const password = $(this).val();
-                const strength = calculatePasswordStrength(password);
-                updatePasswordStrength(strength);
-            });
-
-            // Same as shipping checkbox
-            $('#sameAsShipping').on('change', function() {
-                if ($(this).is(':checked')) {
-                    const shippingAddress = $('textarea[name="ProfileInput.ShippingAddress"]').val();
-                    $('textarea[name="ProfileInput.BillingAddress"]').val(shippingAddress);
-                }
-            });
-        });
-
-        function calculatePasswordStrength(password) {
-            let strength = 0;
-
-            if (password.length >= 8) strength++;
-            if (password.length >= 12) strength++;
-            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
-            if (/\d/.test(password)) strength++;
-            if (/[^a-zA-Z0-9]/.test(password)) strength++;
-
-            return strength;
-        }
-
-        function updatePasswordStrength(strength) {
-            const bar = $('#password-strength-bar');
-            const text = $('#password-strength-text');
-
-            bar.removeClass('strength-weak strength-medium strength-strong');
-
-            if (strength <= 2) {
-                bar.css('width', '33%').addClass('strength-weak');
-                text.text('@L["PasswordStrengthWeak"]').css('color', '#dc3545');
-            } else if (strength <= 4) {
-                bar.css('width', '66%').addClass('strength-medium');
-                text.text('@L["PasswordStrengthMedium"]').css('color', '#ffc107');
-            } else {
-                bar.css('width', '100%').addClass('strength-strong');
-                text.text('@L["PasswordStrengthStrong"]').css('color', '#28a745');
-            }
-        }
-
-        function resetForm(formId) {
-            $(`#${formId}`)[0].reset();
-            $('#password-strength-bar').css('width', '0');
-            $('#password-strength-text').text('');
-        }
-    </script>
-}
