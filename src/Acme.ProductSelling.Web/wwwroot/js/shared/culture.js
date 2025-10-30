@@ -165,7 +165,7 @@ CultureHelper.initializeCultureHandling();
 
 
 const pathSegments = window.location.pathname.split('/').filter(s => s);
-console.log('Path segments:', pathSegments);
+//console.log('Path segments:', pathSegments);
 
 const urlCulture = CultureHelper.getCultureFromUrl();
 const cookieCulture = CultureHelper.getCookie('culture');

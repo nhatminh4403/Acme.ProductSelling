@@ -206,104 +206,70 @@
             }
         }
     }
-
     function updateCartWidgetCount() {
         try {
-            var cartService = null;
-
-            if (typeof acme !== 'undefined' &&
-                acme.productSelling &&
-                acme.productSelling.carts &&
-                acme.productSelling.carts.cart) {
-                cartService = acme.productSelling.carts.cart;
-            }
-
-            // FIXED: Target both desktop and mobile cart buttons
-            var $cartButtons = $('#shopping-cart-widget, #shopping-cart-widget-mobile');
-
-            if ($cartButtons.length === 0) {
-                console.warn('Cart buttons not found');
-                return;
-            }
-
-            console.log('Found', $cartButtons.length, 'cart button(s)');
-
+            // Step 1: Define an authentication check function locally.
             function isUserAuthenticated() {
                 try {
-                    if (typeof abp !== 'undefined' &&
-                        abp.currentUser &&
-                        abp.currentUser.isAuthenticated) {
+                    // Use the most reliable check first.
+                    if (typeof abp !== 'undefined' && abp.currentUser && abp.currentUser.isAuthenticated) {
                         return true;
                     }
-
+                    // Fallback checks for UI elements.
                     if ($('#logoutButton').length > 0 || $('a[href="/Account/Logout"]').length > 0) {
                         return true;
                     }
                 } catch (error) {
                     console.error('Error checking authentication in updateCartWidgetCount:', error);
                 }
-
                 return false;
             }
 
+            // Step 2: Check for authentication FIRST. If not authenticated, do nothing.
             if (!isUserAuthenticated()) {
-                console.log('User not authenticated, hiding badges');
-                $cartButtons.each(function () {
-                    var $badge = $(this).find('.cart-item-count');
-                    if ($badge.length > 0) {
-                        $badge.text('0').addClass('d-none');
-                    }
-                });
+                // User is not logged in, so there are no cart buttons to update. Exit silently.
+                return;
+            }
+
+            // --- The rest of the code will now only run for authenticated users ---
+
+            var cartService = acme.productSelling.carts.cart;
+
+            // Step 3: Now, find the cart buttons. A warning here is valid because they SHOULD exist for logged-in users.
+            var $cartButtons = $('#shopping-cart-widget, #shopping-cart-widget-mobile');
+            var $cartBadges = $('#cartBadge, #cartBadgeMobile'); // Also target badges directly
+
+            if ($cartButtons.length === 0) {
+                console.warn('Cart buttons were not found for an authenticated user. Check header HTML.');
                 return;
             }
 
             if (!cartService || typeof cartService.getItemCount !== 'function') {
                 console.warn('Cart service not available');
-                $cartButtons.each(function () {
-                    var $badge = $(this).find('.cart-item-count');
-                    if ($badge.length > 0) {
-                        $badge.addClass('d-none');
-                    }
-                });
+                $cartBadges.addClass('d-none'); // Hide badge if service fails
                 return;
             }
 
+            // Step 4: Fetch and update the cart count.
             cartService.getItemCount().then(function (count) {
-                console.log('Cart count retrieved:', count);
+                var itemCount = count || 0;
 
                 // Update both desktop and mobile badges
-                $cartButtons.each(function () {
-                    var $cartButton = $(this);
-                    var $badge = $cartButton.find('.cart-item-count');
+                $cartBadges.text(itemCount);
 
-                    // If badge doesn't exist, create it
-                    if ($badge.length === 0) {
-                        console.log('Creating badge for', $cartButton.attr('id'));
-                        $badge = $('<span class="cart-item-count position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>');
-                        $cartButton.append($badge);
-                    }
+                if (itemCount > 0) {
+                    $cartBadges.removeClass('d-none');
+                } else {
+                    $cartBadges.addClass('d-none');
+                }
 
-                    // Update badge
-                    $badge.text(count || 0);
-                    if (count && count > 0) {
-                        $badge.removeClass('d-none');
-                    } else {
-                        $badge.addClass('d-none');
-                    }
-                });
             }).catch(function (error) {
                 console.error("Get cart count error:", error);
-                $cartButtons.each(function () {
-                    var $badge = $(this).find('.cart-item-count');
-                    if ($badge.length > 0) {
-                        $badge.addClass('d-none');
-                    }
-                });
+                $cartBadges.addClass('d-none'); // Hide badges on error
             });
         } catch (error) {
-            console.error('Error in updateCartWidgetCount:', error);
+            console.error('An unexpected error occurred in updateCartWidgetCount:', error);
         }
     }
-
     window.updateCartWidgetCount = updateCartWidgetCount;
 });

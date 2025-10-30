@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Acme.ProductSelling.Users;
+using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,9 +14,9 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Identity;
 using Volo.Abp.Users;
 
-namespace Acme.ProductSelling.Users
+namespace Acme.ProductSelling.Account
 {
-    public class ProfileAppService : ApplicationService, Acme.ProductSelling.Users.IProfileAppService, ITransientDependency
+    public class ProfileAppService : ApplicationService, IProfileAppService, ITransientDependency
     {
         private readonly IRepository<IdentityUser, Guid> _identityUserRepository;
         private readonly ICurrentUser _currentUser; 

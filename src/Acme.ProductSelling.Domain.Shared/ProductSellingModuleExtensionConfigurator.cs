@@ -68,5 +68,35 @@ public static class ProductSellingModuleExtensionConfigurator
          * See the documentation for more:
          * https://docs.abp.io/en/abp/latest/Module-Entity-Extensions
          */
+
+        ObjectExtensionManager.Instance.Modules()
+        .ConfigureIdentity(identity =>
+        {
+            identity.ConfigureUser(user =>
+            {
+                user.AddOrUpdateProperty<DateTime>(
+                    UserExtraProperties.DateOfBirth,
+                    property =>
+                    {
+                        // You can add validation attributes or other configurations here
+                    }
+                );
+                user.AddOrUpdateProperty<string>(
+                    UserExtraProperties.ShippingAddress,
+                    property =>
+                    {
+                        property.Attributes.Add(new System.ComponentModel.DataAnnotations.StringLengthAttribute(256));
+                    }
+                );
+                user.AddOrUpdateProperty<UserGender>(
+                    UserExtraProperties.Gender,
+                    propertyName =>
+                    {
+                        // You can add validation attributes or other configurations here
+                    }
+                    );
+            });
+        });
+
     }
 }

@@ -80,6 +80,7 @@ public class ProductSellingApplicationModule : AbpModule
         //{
         //    context.Services.AddHostedService<ChatbotModelTrainingService>();
         //}
+        //context.Services.AddTransient<Volo.Abp.Account.IAccountAppService, Account.AccountAppService>();
 
     }
 

@@ -5,5 +5,6 @@
         public const string Admin = "admin";
         public const string Manager = "manager";
         public const string Blogger = "blogger";
+        public const string Customer = "customer";
     }
 }

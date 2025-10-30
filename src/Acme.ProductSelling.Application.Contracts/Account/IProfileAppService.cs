@@ -7,7 +7,7 @@ using Volo.Abp.Account;
 using Volo.Abp.Application.Services;
 using Volo.Abp.DependencyInjection;
 
-namespace Acme.ProductSelling.Users
+namespace Acme.ProductSelling.Account
 {
     public interface IProfileAppService : IApplicationService
     {

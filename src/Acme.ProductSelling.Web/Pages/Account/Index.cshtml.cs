@@ -1,4 +1,4 @@
-using Acme.ProductSelling.Users;
+using Acme.ProductSelling.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -18,9 +18,9 @@ namespace Acme.ProductSelling.Web.Pages.Account
     public class IndexModel : ProductSellingPageModel
     {
         private readonly IdentityUserManager _userManager;
-        private readonly Users.IProfileAppService _profileAppService;
+        private readonly ProductSelling.Account.IProfileAppService _profileAppService;
         [BindProperty]
-        public Acme.ProductSelling.Users.UpdateProfileDto ProfileInput { get; set; }
+        public ProductSelling.Account.UpdateProfileDto ProfileInput { get; set; }
 
         [BindProperty]
         public ChangePasswordDto PasswordInput { get; set; }
@@ -32,7 +32,7 @@ namespace Acme.ProductSelling.Web.Pages.Account
         public string ErrorMessage { get; set; }
 
 
-        public IndexModel(IdentityUserManager userManager,Users.IProfileAppService iProfileAppService)
+        public IndexModel(IdentityUserManager userManager, ProductSelling.Account.IProfileAppService iProfileAppService)
         {
             _userManager = userManager;
             _profileAppService = iProfileAppService;

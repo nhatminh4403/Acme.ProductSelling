@@ -34,7 +34,7 @@ namespace Acme.ProductSelling
             var adminRole = await CreateRoleIfNotExistsAsync(Acme.ProductSelling.Identity.IdentityRoleConsts.Admin);
             var managerRole = await CreateRoleIfNotExistsAsync(Acme.ProductSelling.Identity.IdentityRoleConsts.Manager);
             var editorRole = await CreateRoleIfNotExistsAsync(Acme.ProductSelling.Identity.IdentityRoleConsts.Blogger);
-
+            var customerRole = await CreateRoleIfNotExistsAsync(Acme.ProductSelling.Identity.IdentityRoleConsts.Customer, isDefault: true);
             await CreateUserIfNotExistsAsync(
                 username: "manager",
                 email: "manager@abp.io",

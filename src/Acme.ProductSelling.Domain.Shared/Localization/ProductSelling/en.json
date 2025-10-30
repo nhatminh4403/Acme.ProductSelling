@@ -121,7 +121,7 @@
     "Register:PasswordsDoNotMatch": "Passwords do not match.",
     "Register:SuccessAndLoggingIn": "Registration successful! Attempting to log you in...",
     "Register:ErrorDefault": "Registration failed. Please check your input.",
-    "Register:ButtonDefault": "Register",
+    "Register:Button": "Register",
     "Register:Password": "Password",
     "Register:Email": "Email",
     "Register:FullName": "Full Name",

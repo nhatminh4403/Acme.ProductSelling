@@ -12,6 +12,7 @@ using Acme.ProductSelling.Specifications.Lookups.DTOs;
 using AutoMapper;
 using System;
 using System.Linq;
+using Volo.Abp.Identity;
 namespace Acme.ProductSelling;
 public class ProductSellingApplicationAutoMapperProfile : Profile
 {
@@ -202,6 +203,9 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
             });
 
         CreateMap<Comment, CommentDto>();
+
+        CreateMap<IdentityUser, IdentityUserDto>();
+
 
     }
 }

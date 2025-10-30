@@ -25,7 +25,6 @@
         </button>
 
         <!-- Desktop Category Button -->
-
         <button class="category-btn d-none d-lg-flex ms-3" type="button" id="categoryMenuBtn" aria-label="Categories">
             <i class="bi bi-grid-3x3-gap-fill"></i>
             <span>@L["Categories"]</span>
@@ -63,7 +62,7 @@
                         <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
                     </button>
                     <div class="user-dropdown-menu">
-                        <a class="dropdown-item" asp-page="/Account/Index">
+                        <a class="dropdown-item" asp-page="/Account/Index" data-no-culture="true">
                             <i class="bi bi-person"></i>
                             @L["Account:ManageYourProfile"]
                         </a>

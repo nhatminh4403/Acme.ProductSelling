@@ -351,8 +351,6 @@ $(function () {
     }
 
     function handleLoginSuccess(result) {
-        console.log("Processing login success:", result);
-
         // Hide modal if it exists
         if ($loginModalElement.length > 0) {
             try {
@@ -457,11 +455,12 @@ $(function () {
             }
 
             const name = $('#registerName').val().trim();
+            const surname = $('#registerSurname').val().trim();
             const email = $('#registerEmail').val().trim();
             const password = $('#registerPassword').val();
             const confirmPassword = $('#registerConfirmPassword').val();
 
-            if (!name || !email || !password || !confirmPassword) {
+            if (!name || !surname || !email || !password || !confirmPassword) {
                 showNotification('Vui lòng điền đầy đủ thông tin bắt buộc.', 'Lỗi xác thực', 'error');
                 return;
             }
@@ -480,25 +479,30 @@ $(function () {
             registerButton = $(this).find('button[type="submit"]');
             originalRegisterButtonText = registerButton.html();
             registerButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Đang xử lý...');
-
+            const appNameToBeUsed = "ProductSelling";
             var currentRegisterData = {
-                userName: name,
+                userName: email,
                 emailAddress: email,
                 password: password,
-                appName: "ProductSelling"
+                surname: surname,
+                name: name,
+                appName: appNameToBeUsed
             };
 
             console.log("Attempting registration with data:", {
-                userName: name,
+                userName: email,
                 emailAddress: email,
-                appName: currentRegisterData.appName
+                password: password,
+                surname: surname,
+                name: name,
+                appName: appNameToBeUsed
             });
 
             showNotification(L('Register:Processing'), L('Register:Initiated'), 'info', { timeOut: 1000 });
 
             setTimeout(() => {
                 $.ajax({
-                    url: '/api/account/register',
+                    url: '/api/app/account/register',
                     type: 'POST',
                     data: JSON.stringify(currentRegisterData),
                     headers: getABPHeaders(),

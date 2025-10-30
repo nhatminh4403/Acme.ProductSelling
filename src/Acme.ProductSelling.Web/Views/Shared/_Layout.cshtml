@@ -27,7 +27,15 @@
     <abp-style-bundle name="@LeptonXLiteThemeBundles.Styles.Global" />
     <abp-style-bundle name="Main.Global" />
     <link href="~/css/shared/header.css" rel="stylesheet" />
-
+    <script>
+        // Detect if we're on homepage by checking for hero section
+        document.addEventListener('DOMContentLoaded', function() {
+            const heroSection = document.querySelector('section.container.mt-2');
+            if (heroSection) {
+                document.body.classList.add('homepage');
+            }
+        });
+    </script>
     @await RenderSectionAsync("styles", required: false)
 
     <style>
@@ -39,6 +47,39 @@
         .input-group .form-control:focus {
             box-shadow: none;
             border-color: transparent;
+        }
+
+        .modal {
+            z-index: 10000 !important;
+            overflow-y: auto !important;
+        }
+
+        .modal-backdrop {
+            z-index: 9999 !important;
+        }
+
+        body.modal-open {
+            overflow: auto !important;
+            padding-right: 0 !important;
+        }
+
+        .modal-dialog {
+            margin: 1.75rem auto;
+        }
+
+        .modal-body {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        @@media (max-width: 576px) {
+            .modal-dialog {
+                margin: 1rem 0.5rem;
+            }
+
+            .modal-body {
+                max-height: 50vh;
+            }
         }
     </style>
 </head>
@@ -74,7 +115,7 @@
     @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Views.Shared.Components.Modal.ModalViewComponent))
 
 
-    
+
     <script src="~/libs/abp/core/abp.js"></script>
     <abp-script-bundle name="@LeptonXLiteThemeBundles.Scripts.Global" />
     <!-- The line above contains JQuery that has already been configured in Web Module. NO CHANGES NEEDED -->
@@ -85,63 +126,98 @@
 
     <abp-script-bundle name="Main.Global" />
     <script>
-        const header = document.getElementById('mainHeader');
-        let lastScroll = 0;
+        document.addEventListener('DOMContentLoaded', function () {
 
-        window.addEventListener('scroll', () => {
-            const currentScroll = window.pageYOffset || window.scrollY;
-            if (currentScroll > 10) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
+            //=========================================
+            // 1. HEADER BEHAVIOR
+            //=========================================
+            const header = document.getElementById('mainHeader');
+            if (header) {
+                let lastScroll = 0;
+                window.addEventListener('scroll', () => {
+                    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+                    if (currentScroll > 10) {
+                        header.classList.add('scrolled');
+                    } else {
+                        header.classList.remove('scrolled');
+                    }
+                    lastScroll = currentScroll;
+                }, { passive: true });
             }
-            lastScroll = currentScroll;
-        });
 
-        // Dropdown toggles
-        const userDropdown = document.getElementById('userDropdown');
-        const loginDropdown = document.getElementById('loginDropdown');
+            //=========================================
+            // 2. DESKTOP DROPDOWNS (USER & LOGIN)
+            //=========================================
+            const userDropdown = document.getElementById('userDropdown');
+            const loginDropdown = document.getElementById('loginDropdown');
 
-        if (userDropdown) {
-            userDropdown.addEventListener('click', (e) => {
-                e.stopPropagation();
-                userDropdown.classList.toggle('active');
+            if (userDropdown) {
+                userDropdown.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('active');
+                    if (loginDropdown) loginDropdown.classList.remove('active');
+                });
+            }
+
+            if (loginDropdown) {
+                loginDropdown.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    loginDropdown.classList.toggle('active');
+                    if (userDropdown) userDropdown.classList.remove('active');
+                });
+            }
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', () => {
+                if (userDropdown) userDropdown.classList.remove('active');
                 if (loginDropdown) loginDropdown.classList.remove('active');
             });
-        }
 
-        if (loginDropdown) {
-            loginDropdown.addEventListener('click', (e) => {
-                e.stopPropagation();
-                loginDropdown.classList.toggle('active');
-            });
-        }
 
-        document.addEventListener('click', () => {
-            if (userDropdown) userDropdown.classList.remove('active');
-            if (loginDropdown) loginDropdown.classList.remove('active');
-        });
-    </script>
-    <script>
-        (function () {
+            //=========================================
+            // 3. CATEGORY MEGAMENU
+            //=========================================
             const megamenu = document.getElementById('categoryMegamenu');
             const overlay = document.getElementById('categoryMegamenuOverlay');
             const closeBtn = document.getElementById('megamenuCloseBtn');
+            const desktopOpenBtn = document.getElementById('categoryMenuBtn');
+            const mobileOpenBtn = document.getElementById('mobileCategoryBtn');
             const categoryLinks = document.querySelectorAll('.category-item-link');
             const contentPanels = document.querySelectorAll('.category-content-panel');
 
-            function closeMegamenu() {
-                megamenu?.classList.remove('active');
-                overlay?.classList.remove('active');
-                document.body.style.overflow = '';
+            function openMegamenu() {
+                if (megamenu && overlay) {
+                    megamenu.classList.add('active');
+                    overlay.classList.add('active');
+                    document.body.style.overflow = 'hidden'; // Prevent page scroll
+                }
             }
 
+            function closeMegamenu() {
+                if (megamenu && overlay) {
+                    megamenu.classList.remove('active');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = ''; // Restore page scroll
+                }
+            }
+
+            // Event listeners for opening
+            desktopOpenBtn?.addEventListener('click', openMegamenu);
+            mobileOpenBtn?.addEventListener('click', openMegamenu);
+
+            // Event listeners for closing
             closeBtn?.addEventListener('click', closeMegamenu);
             overlay?.addEventListener('click', closeMegamenu);
-            document.addEventListener('keydown', (e) => e.key === 'Escape' && closeMegamenu());
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeMegamenu();
+                    closeMobileAccountMenu(); // Also close mobile account menu
+                }
+            });
 
+            // Logic for switching category content panels
             categoryLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
+                link.addEventListener('mouseenter', (e) => { // Using mouseenter for better desktop UX
                     e.preventDefault();
                     const categoryId = link.dataset.categoryId;
 
@@ -149,107 +225,116 @@
                     link.classList.add('active');
 
                     contentPanels.forEach(panel => {
-                        panel.style.display =
-                            panel.dataset.categoryId === categoryId ? 'block' : 'none';
+                        panel.style.display = panel.dataset.categoryId === categoryId ? 'block' : 'none';
                     });
                 });
             });
 
+            // Activate the first category by default
             if (categoryLinks.length > 0) categoryLinks[0].classList.add('active');
-        })();
-    </script>
 
-    <!-- ===================================== -->
-    <!-- MOBILE MENU & RESPONSIVE BEHAVIOR -->
-    <!-- ===================================== -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
+
+            //=========================================
+            // 4. MOBILE MENU & RESPONSIVE BEHAVIOR
+            //=========================================
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const mobileCategoryBtn = document.getElementById('mobileCategoryBtn');
             const mobileAccountMenu = document.querySelector('.mobile-account-menu');
             const mobileAccountOverlay = document.querySelector('.mobile-account-overlay');
             const mobileAccountClose = document.querySelector('.mobile-account-close');
-            const mobileSearch = document.querySelector('.mobile-search');
+            const mobileSearchContainer = document.querySelector('.mobile-search');
             const searchToggleBtn = document.getElementById('searchToggleBtn');
 
             // Mobile Search Toggle
-            if (searchToggleBtn && mobileSearch) {
+            if (searchToggleBtn && mobileSearchContainer) {
                 searchToggleBtn.addEventListener('click', function () {
-                    mobileSearch.classList.toggle('d-none');
+                    mobileSearchContainer.classList.toggle('d-none');
                     const icon = this.querySelector('i');
-                    icon.className = mobileSearch.classList.contains('d-none')
-                        ? 'bi bi-search' : 'bi bi-x-lg';
-                    if (!mobileSearch.classList.contains('d-none')) {
-                        setTimeout(() => mobileSearch.querySelector('.search-input').focus(), 100);
+                    const isHidden = mobileSearchContainer.classList.contains('d-none');
+                    icon.className = isHidden ? 'bi bi-search' : 'bi bi-x-lg';
+
+                    if (!isHidden) {
+                        setTimeout(() => mobileSearchContainer.querySelector('.search-input').focus(), 100);
                     }
                 });
             }
 
             // Mobile Account Menu
             function closeMobileAccountMenu() {
-                mobileAccountMenu?.classList.remove('active');
-                mobileAccountOverlay?.classList.remove('active');
-                document.body.style.overflow = '';
+                if (mobileAccountMenu && mobileAccountOverlay) {
+                    mobileAccountMenu.classList.remove('active');
+                    mobileAccountOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
             }
 
             mobileMenuBtn?.addEventListener('click', (e) => {
                 e.stopPropagation();
-                mobileAccountMenu?.classList.add('active');
-                mobileAccountOverlay?.classList.add('active');
-                document.body.style.overflow = 'hidden';
+                if (mobileAccountMenu && mobileAccountOverlay) {
+                    mobileAccountMenu.classList.add('active');
+                    mobileAccountOverlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
             });
 
             mobileAccountClose?.addEventListener('click', closeMobileAccountMenu);
             mobileAccountOverlay?.addEventListener('click', closeMobileAccountMenu);
 
-            // ESC to close menus
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape') closeMobileAccountMenu();
-            });
-        });
-    </script>
 
-    <!-- ===================================== -->
-    <!-- SCROLL TOGGLE FOR CATEGORY BUTTON -->
-    <!-- ===================================== -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const categoryBtn = document.getElementById('categoryMenuBtn');
+            //=========================================
+            // 5. SCROLL TOGGLE FOR CATEGORY BUTTON ON HOMEPAGE
+            //=========================================
+            const categoryBtnHomepage = document.getElementById('categoryMenuBtn');
             const searchContainer = document.querySelector('.search-container');
-            const heroSection = document.querySelector('section.container.mt-2');
+            const heroSection = document.querySelector('section.container.mt-2'); // More specific selector if needed
 
-            if (!categoryBtn || window.innerWidth < 992) return;
+            if (categoryBtnHomepage && document.body.classList.contains('homepage') && heroSection) {
+                 function toggleCategoryButtonAndSearch() {
+                    const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+                    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+                    const buffer = 100;
 
-            categoryBtn.style.transition = 'all 0.3s ease';
-            searchContainer?.style.setProperty('transition', 'all 0.3s ease');
-
-            function toggleCategoryButtonAndSearch() {
-                const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
-                const scrollPosition = window.scrollY || document.documentElement.scrollTop;
-                const buffer = 100;
-
-                if (scrollPosition > heroBottom - buffer) {
-                    categoryBtn.classList.add('show-on-scroll');
-                    searchContainer?.classList.add('shrink');
-                } else {
-                    categoryBtn.classList.remove('show-on-scroll');
-                    searchContainer?.classList.remove('shrink');
+                    if (scrollPosition > heroBottom - buffer) {
+                        categoryBtnHomepage.classList.add('show-on-scroll');
+                        if (searchContainer) searchContainer.classList.add('shrink');
+                    } else {
+                        categoryBtnHomepage.classList.remove('show-on-scroll');
+                        if (searchContainer) searchContainer.classList.remove('shrink');
+                    }
                 }
+
+                let isScrolling = false;
+                window.addEventListener('scroll', function() {
+                    if (!isScrolling) {
+                        window.requestAnimationFrame(function() {
+                            toggleCategoryButtonAndSearch();
+                            isScrolling = false;
+                        });
+                        isScrolling = true;
+                    }
+                }, { passive: true });
+
+                toggleCategoryButtonAndSearch(); // Initial check on load
             }
 
-            toggleCategoryButtonAndSearch();
+            //=========================================
+            // 6. MODAL SCROLL BEHAVIOR OVERRIDE
+            //=========================================
+            // This ensures the page can still scroll even when a Bootstrap modal is open.
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.attributeName === 'class' && document.body.classList.contains('modal-open')) {
+                        document.body.style.overflow = 'auto';
+                        document.body.style.paddingRight = '0';
+                    }
+                });
+            });
 
-            let scrollTimeout;
-            window.addEventListener('scroll', () => {
-                cancelAnimationFrame(scrollTimeout);
-                scrollTimeout = requestAnimationFrame(toggleCategoryButtonAndSearch);
+            observer.observe(document.body, {
+                attributes: true,
+                attributeFilter: ['class']
             });
         });
     </script>
-
-    <!-- ===================================== -->
-    <!-- PAGE-SPECIFIC SCRIPTS -->
-    <!-- ===================================== -->
     @await RenderSectionAsync("scripts", required: false)
 </body>
 </html>

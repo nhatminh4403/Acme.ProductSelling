@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Acme.ProductSelling.Users
+namespace Acme.ProductSelling.Account
 {
     public class ChangePasswordDto
     {

@@ -59,5 +59,6 @@ public class ProductSellingDomainSharedModule : AbpModule
         {
             options.MapCodeNamespace("ProductSelling", typeof(ProductSellingResource));
         });
+
     }
 }

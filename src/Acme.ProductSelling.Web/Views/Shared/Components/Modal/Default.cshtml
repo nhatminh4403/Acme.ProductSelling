@@ -54,13 +54,16 @@
             <div class="modal-body">
                 <form id="registerForm">
                     <div class="mb-3">
-                        <label for="registerName" class="form-label">@L["Register:FullName"]</label>
+                        <label for="registerName" class="form-label">@L["Register:Surname"]</label>
+                        <input type="text" class="form-control" id="registerSurname" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerName" class="form-label">@L["Register:Name"]</label>
                         <input type="text" class="form-control" id="registerName" required>
                     </div>
                     <div class="mb-3">
                         <label for="registerEmail" class="form-label">@L["Register:Email"]</label>
-                        <input type="email"
-                               class="form-control" id="registerEmail" required>
+                        <input type="email" class="form-control" id="registerEmail" required>
                     </div>
                     <div class="mb-3">
                         <label for="registerPassword" class="form-label">@L["Register:Password"]</label>
@@ -70,8 +73,6 @@
                         <label for="registerConfirmPassword" class="form-label">
                             @L["Register:ConfirmPassword"]
                         </label>
-
-
                         <input type="password" class="form-control" id="registerConfirmPassword" required>
                     </div>
                     <p class="text-center small">
@@ -87,7 +88,7 @@
                     @L["CloseButton"]
                 </button><button type="submit" class="btn btn-primary"
                                  form="registerForm">
-                    @L["Register:RegisterButton"]
+                    @L["Register:Register"]
                 </button>
             </div>
         </div>
