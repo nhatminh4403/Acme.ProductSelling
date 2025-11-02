@@ -19,7 +19,6 @@ using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
@@ -241,6 +240,7 @@ public class ProductSellingWebModule : AbpModule
             options.Conventions.AddPageRoute("/Identity/Roles/Index", "/admin/Identity/Roles");
             options.Conventions.AddPageRoute("/TenantManagement/Tenants/Index", "/admin/TenantManagement/Tenants");
             options.Conventions.AddPageRoute("/SettingManagement/Index", "/admin/SettingManagement");
+            options.Conventions.AddPageRoute("/Account/Manage", "/admin/Account/Manage");
         });
 
         Configure<RazorPagesOptions>(options =>
@@ -402,6 +402,7 @@ public class ProductSellingWebModule : AbpModule
         });
         context.Services.ConfigureApplicationCookie(options =>
         {
+            options.LogoutPath = "/Account/Logout";
             options.Events.OnRedirectToLogin = context =>
             {
                 context.Response.Redirect($"/loi?statusCode=401");
@@ -493,10 +494,11 @@ public class ProductSellingWebModule : AbpModule
         {
             //app.UseErrorPage();
             app.UseExceptionHandler("/loi");
-            app.UseStatusCodePagesWithReExecute("/loi", "?statusCode={0}");
 
             app.UseHsts();
         }
+        app.UseStatusCodePagesWithReExecute("/loi", "?statusCode={0}");
+
         app.UseMiddleware<QueryStringFilterMiddleware>();
 
         app.UseCorrelationId();
@@ -550,7 +552,7 @@ public class ProductSellingWebModule : AbpModule
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
 
-        app.UseExceptionHandler("/Error");
+        //app.UseExceptionHandler("/Error");
 
     }
 }

@@ -287,7 +287,7 @@ public class ProductSellingDbContext :
         });
         builder.Entity<GpuSpecification>(b =>
         {
-            b.ToTable(tablePrefix + "AppGpuSpecifications");
+            b.ToTable(tablePrefix + "GpuSpecifications");
             b.Property(s => s.Length).HasColumnType("decimal(18,2)");
         });
         builder.Entity<RamSpecification>(b =>
@@ -427,7 +427,7 @@ public class ProductSellingDbContext :
 
         builder.Entity<AppUser>(b =>
         {
-            b.ToTable(AbpIdentityDbProperties.DbTablePrefix + "Users"); // Đảm bảo sử dụng cùng bảng với IdentityUser
+            b.ToTable(AbpIdentityDbProperties.DbTablePrefix + "Users");
             b.ConfigureByConvention();
             b.Property(u => u.DateOfBirth).IsRequired(false);
             b.Property(u => u.Gender).IsRequired();

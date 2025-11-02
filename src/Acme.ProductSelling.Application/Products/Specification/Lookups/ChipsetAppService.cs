@@ -2,6 +2,7 @@
 using Acme.ProductSelling.Specifications.Lookups.DTOs;
 using Acme.ProductSelling.Specifications.Lookups.InterfaceAppServices;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -15,9 +16,18 @@ namespace Acme.ProductSelling.Products.Specification.Lookups
         {
         }
 
-        public Task<ListResultDto<ProductLookupDto<Guid>>> GetLookupAsync()
+        public async Task<ListResultDto<ProductLookupDto<Guid>>> GetLookupAsync()
         {
-            throw new NotImplementedException();
+            var items = await Repository.GetListAsync();
+            var lookupDtos = items.Select(item => new ProductLookupDto<Guid>
+            {
+                Id = item.Id,
+                Name = item.Name
+            })
+                .OrderBy(dto => dto.Name)
+                .ToList();
+
+            return new ListResultDto<ProductLookupDto<Guid>>(lookupDtos);
         }
 
         protected override async Task MapToEntityAsync(ProductLookupDto<Guid> updateInput, Chipset entity)

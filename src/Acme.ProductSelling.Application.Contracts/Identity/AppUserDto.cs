@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Acme.ProductSelling.Users;
+using System;
 using Volo.Abp.Identity;
-using Volo.Abp.Users;
 
-namespace Acme.ProductSelling.Users
+namespace Acme.ProductSelling.Identity
 {
-    public class AppUser : IdentityUser, IUser
+    public class AppUserDto : IdentityUserDto
     {
         public string ShippingAddress { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public UserGender Gender { get; set; }
-        protected AppUser() { }
     }
 }

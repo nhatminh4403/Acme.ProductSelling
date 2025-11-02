@@ -4,7 +4,7 @@ using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Themes.LeptonXLite.Components.Menu;
 using Volo.Abp.UI.Navigation;
 
-namespace Acme.ProductSelling.Web.Themes.LeptonXLite.Components.Menu;
+namespace Acme.ProductSelling.Web.Pages.Admin.Shared.Components.Menu;
 
 public class MainNavbarMenuViewComponent : AbpViewComponent
 {
@@ -23,6 +23,6 @@ public class MainNavbarMenuViewComponent : AbpViewComponent
             Menu = menu
         };
 
-        return View("~/Themes/LeptonXLite/Components/Menu/Default.cshtml", model);
+        return View("/Pages/Admin/Shared/Components/Menu/Default.cshtml", model);
     }
 }

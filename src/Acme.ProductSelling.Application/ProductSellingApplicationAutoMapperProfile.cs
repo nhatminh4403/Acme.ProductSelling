@@ -9,9 +9,12 @@ using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Lookups;
 using Acme.ProductSelling.Specifications;
 using Acme.ProductSelling.Specifications.Lookups.DTOs;
+using Acme.ProductSelling.Users;
 using AutoMapper;
 using System;
 using System.Linq;
+using Volo.Abp.AutoMapper;
+using Volo.Abp.Data;
 using Volo.Abp.Identity;
 namespace Acme.ProductSelling;
 public class ProductSellingApplicationAutoMapperProfile : Profile
@@ -49,8 +52,24 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
         CreateMap<Product, ProductDto>()
             .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
             .ForMember(dest => dest.ManufacturerName, opt => opt.MapFrom(src => src.Manufacturer.Name));
+        CreateMap<ProductDto, CreateUpdateProductDto>();
 
+        CreateMap<CpuSpecificationDto, CreateUpdateCpuSpecificationDto>();
+        CreateMap<MotherboardSpecificationDto, CreateUpdateMotherboardSpecificationDto>();
+        CreateMap<GpuSpecificationDto, CreateUpdateGpuSpecificationDto>();
+        CreateMap<HeadsetSpecificationDto, CreateUpdateHeadsetSpecificationDto>();
+        CreateMap<KeyboardSpecificationDto, CreateUpdateKeyboardSpecificationDto>();
+        CreateMap<LaptopSpecificationDto, CreateUpdateLaptopSpecificationDto>();
+        CreateMap<MonitorSpecificationDto, CreateUpdateMonitorSpecificationDto>();
+        CreateMap<MouseSpecificationDto, CreateUpdateMouseSpecificationDto>();
+        CreateMap<PsuSpecificationDto, CreateUpdatePsuSpecificationDto>();
+        CreateMap<RamSpecificationDto, CreateUpdateRamSpecificationDto>();
+        CreateMap<StorageSpecificationDto, CreateUpdateStorageSpecificationDto>();
+        CreateMap<CaseSpecificationDto, CreateUpdateCaseSpecificationDto>()
+            .ForMember(dest => dest.MaterialIds, opt => opt.Ignore());
 
+        CreateMap<CpuCoolerSpecificationDto, CreateUpdateCpuCoolerSpecificationDto>()
+            .ForMember(dest => dest.SupportedSocketIds, opt => opt.Ignore());
         CreateMap<CreateUpdateProductDto, Product>()
             .ForMember(dest => dest.Category, opt => opt.Ignore())
             .ForMember(dest => dest.Manufacturer, opt => opt.Ignore())
@@ -204,8 +223,6 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
 
         CreateMap<Comment, CommentDto>();
 
-        CreateMap<IdentityUser, IdentityUserDto>();
-
-
+        
     }
 }

@@ -55,6 +55,7 @@
                     <i class="bi bi-cart3 fs-5"></i>
                     <span class="cart-badge d-none" id="cartBadge">0</span>
                 </a>
+               
                 <div class="user-dropdown" id="userDropdown">
                     <button class="action-btn" type="button">
                         <i class="bi bi-person-circle"></i>
@@ -62,7 +63,7 @@
                         <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
                     </button>
                     <div class="user-dropdown-menu">
-                        <a class="dropdown-item" asp-page="/Account/Index" data-no-culture="true">
+                        <a class="dropdown-item" asp-page="/Account/Index">
                             <i class="bi bi-person"></i>
                             @L["Account:ManageYourProfile"]
                         </a>

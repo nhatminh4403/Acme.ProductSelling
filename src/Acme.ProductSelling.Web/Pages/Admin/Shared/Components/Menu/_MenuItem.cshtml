@@ -57,7 +57,7 @@
                     var nextLevelViewData = new ViewDataDictionary(ViewData);
                     nextLevelViewData["Level"] = level + 1;
                 }
-                @await Html.PartialAsync("~/Themes/LeptonXLite/Components/Menu/_MenuItem.cshtml", menuItem.Items, nextLevelViewData)
+                @await Html.PartialAsync("~/Pages/Admin/Shared/Components/Menu/_MenuItem.cshtml", menuItem.Items, nextLevelViewData)
             </ul>
         }
     </li>

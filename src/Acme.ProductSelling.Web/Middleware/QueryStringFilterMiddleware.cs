@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace Acme.ProductSelling.Web.Middleware
 {
@@ -26,7 +25,7 @@ namespace Acme.ProductSelling.Web.Middleware
             if (hasInvalidChars)
             {
 
-                context.Response.StatusCode = 400; 
+                context.Response.StatusCode = 400;
 
                 return;
             }

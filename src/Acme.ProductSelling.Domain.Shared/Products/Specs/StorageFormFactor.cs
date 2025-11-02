@@ -16,7 +16,6 @@ namespace Acme.ProductSelling.Products.Specs
         [Description("mSATA SSD")]
         SsdMSata,
 
-        // SSD M.2
         [Description("M.2 2230")]
         SsdM2_2230,
         [Description("M.2 2242")]
@@ -26,13 +25,11 @@ namespace Acme.ProductSelling.Products.Specs
         [Description("M.2 22110")]
         SsdM2_22110,
 
-        // SSD Enterprise/Server
         [Description("U.2")]
         SsdU2,
         [Description("PCIe Add-in-Card (AIC)")]
         SsdPcieAic,
 
-        // Bạn có thể giữ nguyên tên hoặc thêm mô tả dễ hiểu hơn nếu muốn
         [Description("EDSFF E1.S")]
         SsdEdsffE1S,
         [Description("EDSFF E1.L")]

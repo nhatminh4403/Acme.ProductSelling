@@ -13,9 +13,6 @@ function initializeProductsPage() {
     var productService = acme.productSelling.products.product;
     var l = abp.localization.getResource('ProductSelling');
 
-    var createModal = new abp.ModalManager(abp.appPath + 'Admin/Products/CreateModal');
-    var editModal = new abp.ModalManager(abp.appPath + 'Admin/Products/EditModal');
-
     var dataTable = $('#ProductsTable').DataTable(
         abp.libs.datatables.normalizeConfiguration({
             serverSide: true,
@@ -35,7 +32,7 @@ function initializeProductsPage() {
                                 text: l('Product:Edit'),
                                 visible: abp.auth.isGranted('ProductSelling.Products.Edit'),
                                 action: function (data) {
-                                    editModal.open({ id: data.record.id });
+                                    window.location.href = '/admin/products/edit/' + data.record.id;
                                 }
                             },
                             {
@@ -115,16 +112,7 @@ function initializeProductsPage() {
         })
     );
 
-    $('#NewProductButton').click(function (e) {
-        e.preventDefault();
-        createModal.open();
-    });
-
-    createModal.onResult(function () {
-        dataTable.ajax.reload();
-    });
-
-    editModal.onResult(function () {
-        dataTable.ajax.reload();
+    $('#NewProductButton').on('click', function () {
+        window.location.href = '/admin/products/create';
     });
 };

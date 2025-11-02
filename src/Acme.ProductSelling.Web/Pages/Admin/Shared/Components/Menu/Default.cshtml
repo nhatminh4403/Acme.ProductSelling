@@ -24,7 +24,7 @@
     }
 
     <ul style="list-style: none; padding: 0;">
-        @await Html.PartialAsync("~/Themes/LeptonXLite/Components/Menu/_MenuItem.cshtml", Model.Menu.Items, new ViewDataDictionary(ViewData)
+        @await Html.PartialAsync("~/Pages/Admin/Shared/Components/Menu/_MenuItem.cshtml", Model.Menu.Items, new ViewDataDictionary(ViewData)
         {
             { "CurrentPath", currentPath },
                 { "Level", 1 },

@@ -1,23 +1,17 @@
-﻿@using System.Globalization
-@using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
+﻿@using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 @using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic.Bundling;
 @using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
 @using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
 @using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Languages;
 @using Acme.ProductSelling.Web.Themes.LeptonXLite.Components.Toolbar.LanguageSwitch
-@using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic.Themes.Basic.Components.Menu
-@using Acme.ProductSelling.Localization
-@using Microsoft.Extensions.Localization
-@using Microsoft.AspNetCore.Authorization
 @using Acme.ProductSelling.Permissions
 @using Volo.Abp.Users
 @using Volo.Abp.AspNetCore.Mvc.UI.RazorPages
 @using Volo.Abp.AspNetCore.Mvc.UI.Bundling
 @using Volo.Abp.UI.Navigation
 @using Acme.ProductSelling.Web.Pages.Admin.Shared.Components.Header
-@* @using Acme.ProductSelling.Web.Themes.LeptonXLite.Components.Menu *@
+@using Acme.ProductSelling.Web.Pages.Admin.Shared.Components.Menu
 @inject ICurrentUser CurrentUser
-@inject IStringLocalizer<ProductSellingResource> L
 @inject IAuthorizationService AuthorizationService
 @inject IMenuManager MenuManager
 
@@ -28,8 +22,10 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>@ViewBag.Title</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>@ViewBag.Title - Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" 
+                            integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" 
+                            crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="~/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
 
     <abp-style-bundle name="@LeptonXLiteThemeBundles.Styles.Global" />
@@ -40,11 +36,34 @@
 
 </head>
 <body class="preload">
-
+    <script>
+        (function() {
+            const savedState = localStorage.getItem('sidebarCollapsed');
+            if (savedState === 'true') {
+                const style = document.createElement('style');
+                style.id = 'sidebar-preload-style';
+                style.textContent = `
+                    .sidebar {
+                        left: -280px !important;
+                        transition: none !important;
+                    }
+                    .main-content {
+                        margin-left: 20px !important;
+                        transition: none !important;
+                    }
+                    @@media (max-width: 768px) {
+                        .sidebar { left: -280px !important; }
+                        .main-content { margin-left: 20px !important; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        })();
+    </script>
     <!-- Main Content -->
     @await Component.InvokeAsync(typeof(HeaderViewComponent))
     <!-- Sidebar -->
-    @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Themes.LeptonXLite.Components.Menu.MainNavbarMenuViewComponent))
+    @await Component.InvokeAsync(typeof(MainNavbarMenuViewComponent))
  
 
     <!-- Main Content Area -->

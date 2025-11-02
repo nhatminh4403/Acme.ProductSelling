@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Acme.ProductSelling.Migrations
 {
     /// <inheritdoc />
-    public partial class Reconfigured_Product_And_Specifications : Migration
+    public partial class UpdateDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -147,10 +147,6 @@ namespace Acme.ProductSelling.Migrations
                 name: "IX_Categories_UrlSlug",
                 table: "Categories");
 
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_AppGpuSpecifications",
-                table: "AppGpuSpecifications");
-
             migrationBuilder.DropColumn(
                 name: "FormFactor",
                 table: "AppStorageSpecifications");
@@ -267,9 +263,10 @@ namespace Acme.ProductSelling.Migrations
                 name: "Categories",
                 newName: "AppCategories");
 
-            migrationBuilder.RenameTable(
-                name: "AppGpuSpecifications",
-                newName: "AppAppGpuSpecifications");
+            migrationBuilder.RenameColumn(
+                name: "Status",
+                table: "AppOrders",
+                newName: "PaymentStatus");
 
             migrationBuilder.RenameIndex(
                 name: "IX_Products_ManufacturerId",
@@ -281,12 +278,13 @@ namespace Acme.ProductSelling.Migrations
                 table: "AppProducts",
                 newName: "IX_AppProducts_CategoryId");
 
-            migrationBuilder.AddColumn<Guid>(
-                name: "FormFactorId",
+            migrationBuilder.AlterColumn<int>(
+                name: "StorageType",
                 table: "AppStorageSpecifications",
-                type: "uniqueidentifier",
+                type: "int",
                 nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)");
 
             migrationBuilder.AddColumn<Guid>(
                 name: "ProductId",
@@ -294,6 +292,13 @@ namespace Acme.ProductSelling.Migrations
                 type: "uniqueidentifier",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
+            migrationBuilder.AddColumn<int>(
+                name: "StorageFormFactor",
+                table: "AppStorageSpecifications",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
 
             migrationBuilder.AddColumn<Guid>(
                 name: "ProductId",
@@ -301,6 +306,13 @@ namespace Acme.ProductSelling.Migrations
                 type: "uniqueidentifier",
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
+            migrationBuilder.AddColumn<int>(
+                name: "RamFormFactor",
+                table: "AppRamSpecifications",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
 
             migrationBuilder.AddColumn<Guid>(
                 name: "RamTypeId",
@@ -331,19 +343,19 @@ namespace Acme.ProductSelling.Migrations
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
+            migrationBuilder.AddColumn<int>(
+                name: "OrderStatus",
+                table: "AppOrders",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
+
             migrationBuilder.AddColumn<string>(
                 name: "PaymentMethod",
                 table: "AppOrders",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "");
-
-            migrationBuilder.AddColumn<int>(
-                name: "PaymentStatus",
-                table: "AppOrders",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
 
             migrationBuilder.AlterColumn<int>(
                 name: "Connectivity",
@@ -463,6 +475,13 @@ namespace Acme.ProductSelling.Migrations
 
             migrationBuilder.AddColumn<Guid>(
                 name: "ProductId",
+                table: "AppGpuSpecifications",
+                type: "uniqueidentifier",
+                nullable: false,
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "ProductId",
                 table: "AppCpuSpecifications",
                 type: "uniqueidentifier",
                 nullable: false,
@@ -521,19 +540,39 @@ namespace Acme.ProductSelling.Migrations
                 nullable: false,
                 defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
+            migrationBuilder.AddColumn<DateTime>(
+                name: "DateOfBirth",
+                table: "AbpUsers",
+                type: "datetime2",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "Discriminator",
+                table: "AbpUsers",
+                type: "nvarchar(13)",
+                maxLength: 13,
+                nullable: false,
+                defaultValue: "");
+
+            migrationBuilder.AddColumn<int>(
+                name: "Gender",
+                table: "AbpUsers",
+                type: "int",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "ShippingAddress",
+                table: "AbpUsers",
+                type: "nvarchar(256)",
+                maxLength: 256,
+                nullable: true);
+
             migrationBuilder.AddColumn<string>(
                 name: "ApplicationName",
                 table: "AbpBackgroundJobs",
                 type: "nvarchar(96)",
                 maxLength: 96,
                 nullable: true);
-
-            migrationBuilder.AddColumn<Guid>(
-                name: "ProductId",
-                table: "AppAppGpuSpecifications",
-                type: "uniqueidentifier",
-                nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_AppProducts",
@@ -548,11 +587,6 @@ namespace Acme.ProductSelling.Migrations
             migrationBuilder.AddPrimaryKey(
                 name: "PK_AppCategories",
                 table: "AppCategories",
-                column: "Id");
-
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_AppAppGpuSpecifications",
-                table: "AppAppGpuSpecifications",
                 column: "Id");
 
             migrationBuilder.CreateTable(
@@ -685,6 +719,32 @@ namespace Acme.ProductSelling.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AppOrderHistories",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OrderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OldStatus = table.Column<int>(type: "int", nullable: false),
+                    NewStatus = table.Column<int>(type: "int", nullable: false),
+                    OldPaymentStatus = table.Column<int>(type: "int", nullable: false),
+                    NewPaymentStatus = table.Column<int>(type: "int", nullable: false),
+                    ChangeDescription = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    ChangedBy = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppOrderHistories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AppOrderHistories_AppOrders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "AppOrders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AppPanelTypes",
                 columns: table => new
                 {
@@ -749,6 +809,44 @@ namespace Acme.ProductSelling.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ChatbotMessages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserMessage = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
+                    BotResponse = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: false),
+                    DetectedIntent = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IntentConfidence = table.Column<float>(type: "real", nullable: false),
+                    SessionId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    IsAdminChat = table.Column<bool>(type: "bit", nullable: false),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChatbotMessages", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ChatbotTrainingData",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Intent = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    IsVerified = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChatbotTrainingData", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AppCaseMaterials",
                 columns: table => new
                 {
@@ -795,11 +893,6 @@ namespace Acme.ProductSelling.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AppStorageSpecifications_FormFactorId",
-                table: "AppStorageSpecifications",
-                column: "FormFactorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppStorageSpecifications_ProductId",
@@ -896,6 +989,12 @@ namespace Acme.ProductSelling.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_AppGpuSpecifications_ProductId",
+                table: "AppGpuSpecifications",
+                column: "ProductId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AppCpuSpecifications_ProductId",
                 table: "AppCpuSpecifications",
                 column: "ProductId",
@@ -942,12 +1041,6 @@ namespace Acme.ProductSelling.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppAppGpuSpecifications_ProductId",
-                table: "AppAppGpuSpecifications",
-                column: "ProductId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AppCaseMaterials_MaterialId",
                 table: "AppCaseMaterials",
                 column: "MaterialId");
@@ -967,13 +1060,15 @@ namespace Acme.ProductSelling.Migrations
                 table: "AppLikes",
                 columns: new[] { "CommentId", "UserId" });
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_AppAppGpuSpecifications_AppProducts_ProductId",
-                table: "AppAppGpuSpecifications",
-                column: "ProductId",
-                principalTable: "AppProducts",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.CreateIndex(
+                name: "IX_AppOrderHistories_CreationTime",
+                table: "AppOrderHistories",
+                column: "CreationTime");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppOrderHistories_OrderId",
+                table: "AppOrderHistories",
+                column: "OrderId");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_AppCaseSpecifications_AppFormFactors_FormFactorId",
@@ -1012,6 +1107,14 @@ namespace Acme.ProductSelling.Migrations
                 table: "AppCpuSpecifications",
                 column: "SocketId",
                 principalTable: "AppSockets",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AppGpuSpecifications_AppProducts_ProductId",
+                table: "AppGpuSpecifications",
+                column: "ProductId",
+                principalTable: "AppProducts",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
 
@@ -1160,14 +1263,6 @@ namespace Acme.ProductSelling.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_AppStorageSpecifications_AppFormFactors_FormFactorId",
-                table: "AppStorageSpecifications",
-                column: "FormFactorId",
-                principalTable: "AppFormFactors",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
                 name: "FK_AppStorageSpecifications_AppProducts_ProductId",
                 table: "AppStorageSpecifications",
                 column: "ProductId",
@@ -1179,10 +1274,6 @@ namespace Acme.ProductSelling.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_AppAppGpuSpecifications_AppProducts_ProductId",
-                table: "AppAppGpuSpecifications");
-
             migrationBuilder.DropForeignKey(
                 name: "FK_AppCaseSpecifications_AppFormFactors_FormFactorId",
                 table: "AppCaseSpecifications");
@@ -1202,6 +1293,10 @@ namespace Acme.ProductSelling.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_AppCpuSpecifications_AppSockets_SocketId",
                 table: "AppCpuSpecifications");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_AppGpuSpecifications_AppProducts_ProductId",
+                table: "AppGpuSpecifications");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_AppHeadsetSpecifications_AppProducts_ProductId",
@@ -1276,10 +1371,6 @@ namespace Acme.ProductSelling.Migrations
                 table: "AppRamSpecifications");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_AppStorageSpecifications_AppFormFactors_FormFactorId",
-                table: "AppStorageSpecifications");
-
-            migrationBuilder.DropForeignKey(
                 name: "FK_AppStorageSpecifications_AppProducts_ProductId",
                 table: "AppStorageSpecifications");
 
@@ -1308,6 +1399,9 @@ namespace Acme.ProductSelling.Migrations
                 name: "AppLikes");
 
             migrationBuilder.DropTable(
+                name: "AppOrderHistories");
+
+            migrationBuilder.DropTable(
                 name: "AppPanelTypes");
 
             migrationBuilder.DropTable(
@@ -1317,14 +1411,16 @@ namespace Acme.ProductSelling.Migrations
                 name: "AppSwitchTypes");
 
             migrationBuilder.DropTable(
+                name: "ChatbotMessages");
+
+            migrationBuilder.DropTable(
+                name: "ChatbotTrainingData");
+
+            migrationBuilder.DropTable(
                 name: "AppMaterials");
 
             migrationBuilder.DropTable(
                 name: "AppSockets");
-
-            migrationBuilder.DropIndex(
-                name: "IX_AppStorageSpecifications_FormFactorId",
-                table: "AppStorageSpecifications");
 
             migrationBuilder.DropIndex(
                 name: "IX_AppStorageSpecifications_ProductId",
@@ -1395,6 +1491,10 @@ namespace Acme.ProductSelling.Migrations
                 table: "AppHeadsetSpecifications");
 
             migrationBuilder.DropIndex(
+                name: "IX_AppGpuSpecifications_ProductId",
+                table: "AppGpuSpecifications");
+
+            migrationBuilder.DropIndex(
                 name: "IX_AppCpuSpecifications_ProductId",
                 table: "AppCpuSpecifications");
 
@@ -1438,24 +1538,20 @@ namespace Acme.ProductSelling.Migrations
                 name: "IX_AppCategories_UrlSlug",
                 table: "AppCategories");
 
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_AppAppGpuSpecifications",
-                table: "AppAppGpuSpecifications");
-
-            migrationBuilder.DropIndex(
-                name: "IX_AppAppGpuSpecifications_ProductId",
-                table: "AppAppGpuSpecifications");
-
-            migrationBuilder.DropColumn(
-                name: "FormFactorId",
-                table: "AppStorageSpecifications");
-
             migrationBuilder.DropColumn(
                 name: "ProductId",
                 table: "AppStorageSpecifications");
 
             migrationBuilder.DropColumn(
+                name: "StorageFormFactor",
+                table: "AppStorageSpecifications");
+
+            migrationBuilder.DropColumn(
                 name: "ProductId",
+                table: "AppRamSpecifications");
+
+            migrationBuilder.DropColumn(
+                name: "RamFormFactor",
                 table: "AppRamSpecifications");
 
             migrationBuilder.DropColumn(
@@ -1471,11 +1567,11 @@ namespace Acme.ProductSelling.Migrations
                 table: "AppPsuSpecifications");
 
             migrationBuilder.DropColumn(
-                name: "PaymentMethod",
+                name: "OrderStatus",
                 table: "AppOrders");
 
             migrationBuilder.DropColumn(
-                name: "PaymentStatus",
+                name: "PaymentMethod",
                 table: "AppOrders");
 
             migrationBuilder.DropColumn(
@@ -1528,6 +1624,10 @@ namespace Acme.ProductSelling.Migrations
 
             migrationBuilder.DropColumn(
                 name: "ProductId",
+                table: "AppGpuSpecifications");
+
+            migrationBuilder.DropColumn(
+                name: "ProductId",
                 table: "AppCpuSpecifications");
 
             migrationBuilder.DropColumn(
@@ -1547,12 +1647,24 @@ namespace Acme.ProductSelling.Migrations
                 table: "AppCaseSpecifications");
 
             migrationBuilder.DropColumn(
-                name: "ApplicationName",
-                table: "AbpBackgroundJobs");
+                name: "DateOfBirth",
+                table: "AbpUsers");
 
             migrationBuilder.DropColumn(
-                name: "ProductId",
-                table: "AppAppGpuSpecifications");
+                name: "Discriminator",
+                table: "AbpUsers");
+
+            migrationBuilder.DropColumn(
+                name: "Gender",
+                table: "AbpUsers");
+
+            migrationBuilder.DropColumn(
+                name: "ShippingAddress",
+                table: "AbpUsers");
+
+            migrationBuilder.DropColumn(
+                name: "ApplicationName",
+                table: "AbpBackgroundJobs");
 
             migrationBuilder.RenameTable(
                 name: "AppProducts",
@@ -1566,9 +1678,10 @@ namespace Acme.ProductSelling.Migrations
                 name: "AppCategories",
                 newName: "Categories");
 
-            migrationBuilder.RenameTable(
-                name: "AppAppGpuSpecifications",
-                newName: "AppGpuSpecifications");
+            migrationBuilder.RenameColumn(
+                name: "PaymentStatus",
+                table: "AppOrders",
+                newName: "Status");
 
             migrationBuilder.RenameIndex(
                 name: "IX_AppProducts_ManufacturerId",
@@ -1579,6 +1692,14 @@ namespace Acme.ProductSelling.Migrations
                 name: "IX_AppProducts_CategoryId",
                 table: "Products",
                 newName: "IX_Products_CategoryId");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "StorageType",
+                table: "AppStorageSpecifications",
+                type: "nvarchar(max)",
+                nullable: false,
+                oldClrType: typeof(int),
+                oldType: "int");
 
             migrationBuilder.AddColumn<string>(
                 name: "FormFactor",
@@ -1827,11 +1948,6 @@ namespace Acme.ProductSelling.Migrations
             migrationBuilder.AddPrimaryKey(
                 name: "PK_Categories",
                 table: "Categories",
-                column: "Id");
-
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_AppGpuSpecifications",
-                table: "AppGpuSpecifications",
                 column: "Id");
 
             migrationBuilder.CreateIndex(

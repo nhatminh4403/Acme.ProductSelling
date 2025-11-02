@@ -93,6 +93,7 @@
     <None Include="wwwroot\js\admin\blogs\create.js" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Pages\Admin\Products\Components\" />
     <Folder Include="Pages\Components\Shared\" />
     <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\images\products\" />

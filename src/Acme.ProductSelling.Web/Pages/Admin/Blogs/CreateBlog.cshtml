@@ -50,7 +50,7 @@
             <div class="custom-card sidebar-sticky">
                 <div class="custom-card-header">
                     <i class="fas fa-edit"></i>
-                    <span>@L["Content"]</span>
+                    <span>@L["Blog:Content"]</span>
                 </div>
                 <div class="custom-card-body">
                     <div class="form-group">
@@ -71,14 +71,14 @@
                 <div class="custom-card">
                     <div class="custom-card-header">
                         <i class="fas fa-file-alt"></i>
-                        <span>@L["BasicInformation"]</span>
+                        <span>@L["Blog:BasicInformation"]</span>
                     </div>
                     <div class="custom-card-body">
                         <!-- Title -->
                         <div class="form-group">
                             <abp-label asp-for="Blog.Title" />
                             <abp-input asp-for="Blog.Title" class="form-control" readonly="true" />
-                            <small class="form-text">@L["LeaveBlankToAutoGenerate"]</small>
+                            <small class="form-text">@L["Blog:LeaveBlankToAutoGenerate"]</small>
                         </div>
 
                         <!-- URL Slug -->
@@ -94,7 +94,7 @@
                 <div class="custom-card">
                     <div class="custom-card-header">
                         <i class="fas fa-image"></i>
-                        <span>@L["MainImage"]</span>
+                        <span>@L["Blog:MainImage"]</span>
                     </div>
                     <div class="custom-card-body">
                         <abp-input asp-for="Blog.MainImageId" suppress-label="true" class="d-none" />
@@ -110,7 +110,7 @@
                             <div class="image-actions">
                                 <button type="button" class="btn-danger-gradient" id="removeMainImageBtn">
                                     <i class="fas fa-trash me-1"></i>
-                                    @L["Remove"]
+                                    @L["Blog:Remove"]
                                 </button>
                             </div>
                         </div>
@@ -120,19 +120,19 @@
                 <div class="custom-card">
                     <div class="custom-card-header">
                         <i class="fas fa-rocket"></i>
-                        <span>@L["Publishing"]</span>
+                        <span>@L["Blog:Publishing"]</span>
                     </div>
                     <div class="custom-card-body">
                         <div class="form-group">
-                            <abp-input asp-for="Blog.PublishedDate" label="@L["PublishedDate"]" required="true" />
+                            <abp-input asp-for="Blog.PublishedDate" label="@L["Blog:PublishedDate"]" required="true" />
                         </div>
                         <div class="form-group">
-                            <abp-input asp-for="Blog.Author" label="@L["Author"]" required="true" placeholder="@L["AuthorName"]" />
+                            <abp-input asp-for="Blog.Author" label="@L["Blog:Author"]" required="true" placeholder="@L["Blog:AuthorName"]" />
                         </div>
                         <div class="form-group mt-4">
                             <button type="submit" class="btn-primary-gradient">
                                 <i class="fas fa-paper-plane me-2"></i>
-                                @L["CreateBlogPost"]
+                                @L["Blog:CreateBlogPost"]
                             </button>
                         </div>
                     </div>
@@ -144,13 +144,13 @@
                 <div class="custom-card">
                     <div class="custom-card-header">
                         <i class="fas fa-chart-line"></i>
-                        <span>@L["Statistics"]</span>
+                        <span>@L["Blog:Statistics"]</span>
                     </div>
                     <div class="custom-card-body">
                         <div class="stats-container">
                             <div class="stat-card">
                                 <div class="value" id="wordCount">0</div>
-                                <div class="label">@L["Words"]</div>
+                                <div class="label">@L["Blog:Words"]</div>
                             </div>
                             <div class="stat-card">
                                 <div class="value" id="readingTime">0</div>

@@ -31,11 +31,8 @@
                     <div class="dropdown-user-name">John Doe</div>
                     <div class="dropdown-user-email">john.doe@example.com</div>
                 </div>
-                <a href="#" class="dropdown-item-custom">
-                    <i class="fas fa-user"></i>
-                    <span>My Profile</span>
-                </a>
-                <a href="#" class="dropdown-item-custom">
+
+                <a asp-page="/Account/Manage" class="dropdown-item-custom">
                     <i class="fas fa-cog"></i>
                     <span>Account Settings</span>
                 </a>
@@ -48,9 +45,12 @@
                     <span>Help & Support</span>
                 </a>
                 <div class="dropdown-divider-custom"></div>
-                <a href="#" class="dropdown-item-custom danger">
+
+                <a href="#"   class="dropdown-item-custom danger">
                     <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
+                    <span>
+                        @L["Logout"]
+                    </span>
                 </a>
             </div>
         </div>

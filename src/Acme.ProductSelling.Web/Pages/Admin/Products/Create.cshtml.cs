@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Folder;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Manufacturers;
@@ -20,12 +20,12 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp;
-using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Admin.Products
 {
     [Authorize(ProductSellingPermissions.Products.Create)]
-    public class CreateModalModel : AbpPageModel
+
+    public class CreateModel : ProductSellingPageModel
     {
         [BindProperty]
         public CreateUpdateProductDto Product { get; set; }
@@ -57,8 +57,8 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
         public List<SelectListItem> Materials { get; set; }
         public List<SelectListItem> StorageFormFactors { get; set; }
 
-
-        public CreateModalModel(
+        public List<SelectListItem> StorageTypes { get; set; }
+        public CreateModel(
            IProductAppService productAppService,
            ICategoryAppService categoryAppService,
            IManufacturerAppService manufacturerAppService,
@@ -141,6 +141,13 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
             SwitchTypes = switchTypes.Items.Select(m => new SelectListItem(m.Name, m.Id.ToString())).ToList();
 
             StorageFormFactors = Enum.GetValues(typeof(StorageFormFactor))
+                .Cast<StorageFormFactor>()
+                .Select(e => new SelectListItem
+                {
+                    Text = e.GetEnumDescriptions(),
+                    Value = e.ToString()
+                }).ToList();
+            StorageTypes = Enum.GetValues(typeof(StorageType))
                 .Cast<StorageFormFactor>()
                 .Select(e => new SelectListItem
                 {
@@ -257,19 +264,26 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
             {
 
                 await _productAppService.CreateAsync(Product);
-
-                return NoContent();
+                TempData["UserMessage"] = _localizer["Product:CreateSuccessMessage", Product.ProductName];
+                TempData["MessageType"] = "success";
+                return Redirect("/admin/products");
             }
             catch (UserFriendlyException ex)
             {
                 Logger.LogWarning(ex, "User-friendly error creating product.");
+                TempData["UserMessage"] = _localizer["Product:CreateFailureMessageWithReason", Product.ProductName, ex.Message];
+                TempData["MessageType"] = "danger";
                 ModelState.AddModelError(string.Empty, ex.Message);
+
                 await LoadDropdownDataAsync();
                 return Page();
             }
             catch (Exception ex) // Catch any other exceptions
             {
                 Logger.LogError(ex, "Generic error creating product.");
+                TempData["UserMessage"] = _localizer["Product:CreateFailureMessageGeneral", Product.ProductName];
+                TempData["MessageType"] = "danger";
+
                 ModelState.AddModelError(string.Empty, _localizer["Product:CreationErrorGeneral"]); // Generic error message
                 await LoadDropdownDataAsync();
                 return Page();
@@ -294,4 +308,3 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
         }
     }
 }
-

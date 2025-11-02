@@ -1,15 +1,19 @@
-﻿/* Your Global Scripts - Fixed for ABP API */
+﻿/* Global Scripts - Cleaned and Organized */
+
+// =============================================================================
+// UTILITY FUNCTIONS
+// =============================================================================
+
+/**
+ * Safely initialize a Bootstrap modal
+ */
 function safeInitModal(modalElementId) {
     const modalElement = document.getElementById(modalElementId);
     if (!modalElement) return null;
 
-    let modalInstance = null;
-
-    // Try Bootstrap 5 approach
     if (typeof bootstrap !== 'undefined') {
         try {
-            modalInstance = new bootstrap.Modal(modalElement);
-            return modalInstance;
+            return new bootstrap.Modal(modalElement);
         } catch (e) {
             console.log(`Could not initialize ${modalElementId} with Bootstrap 5:`, e);
         }
@@ -19,155 +23,102 @@ function safeInitModal(modalElementId) {
     return null;
 }
 
-$(function () {
-    // Wait for ABP to be ready
-    if (typeof abp !== 'undefined' && abp.event) {
-        abp.event.on('abp.setupComplete', function () {
-            setupLogoutHandlers();
-        });
-    } else {
-        // Fallback if ABP is not available
-        $(document).ready(function () {
-            setupLogoutHandlers();
-        });
-    }
+/**
+ * Get CSRF token from various sources
+ */
+function getCSRFToken() {
+    return $('input[name="__RequestVerificationToken"]').val() ||
+        $('meta[name="__RequestVerificationToken"]').attr('content') ||
+        document.querySelector('input[name="__RequestVerificationToken"]')?.value ||
+        (typeof abp !== 'undefined' && abp.security ? abp.security.antiForgery.getToken() : null);
+}
 
-    function setupLogoutHandlers() {
-        document.querySelectorAll('a[href^="/Account/Logout"]').forEach(function (link) {
-            link.addEventListener('click', function (e) {
-                e.preventDefault();
-
-                let href = link.getAttribute('href');
-
-                if (href.indexOf('returnUrl') === -1) {
-                    href += (href.indexOf('?') === -1 ? '?' : '&') + 'returnUrl=/';
-                }
-
-                // Show immediate feedback
-                if (typeof abp !== 'undefined' && abp.notify) {
-                    abp.notify.info('Logging out...', 'Please wait');
-                }
-
-                setTimeout(function () {
-                    if (typeof abp !== 'undefined' && abp.ajax) {
-                        abp.ajax({
-                            url: href,
-                            type: 'GET',
-                            dataType: 'json',
-                            success: function () {
-                                if (abp.notify) {
-                                    abp.notify.success('You have been logged out successfully.', 'Logout Complete');
-                                }
-                                window.location.href = '/';
-                            },
-                            error: function (xhr, status, error) {
-                                console.error('Logout error:', error);
-                                // Still redirect even if there's an error
-                                window.location.href = '/';
-                            }
-                        });
-                    } else {
-                        // Fallback using standard fetch
-                        fetch(href, {
-                            method: 'GET',
-                            credentials: 'same-origin'
-                        })
-                            .then(() => {
-                                window.location.href = '/';
-                            })
-                            .catch((error) => {
-                                console.error('Logout error:', error);
-                                window.location.href = '/';
-                            });
-                    }
-                }, 500);
-            });
-        });
-    }
-});
-
-$(function () {
-    // Function to get CSRF token
-    function getCSRFToken() {
-        var token = $('input[name="__RequestVerificationToken"]').val() ||
-            $('meta[name="__RequestVerificationToken"]').attr('content') ||
-            document.querySelector('input[name="__RequestVerificationToken"]')?.value ||
-            (typeof abp !== 'undefined' && abp.security ? abp.security.antiForgery.getToken() : null);
-        return token;
-    }
-
-    // Function to get proper headers for ABP API
-    function getABPHeaders() {
-        var headers = {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        };
-
-        var csrfToken = getCSRFToken();
-        if (csrfToken) {
-            headers['RequestVerificationToken'] = csrfToken;
-            headers['X-CSRF-TOKEN'] = csrfToken;
-        }
-
-        if (typeof abp !== 'undefined' && abp.multiTenancy && abp.multiTenancy.getTenantIdCookie) {
-            var tenantId = abp.multiTenancy.getTenantIdCookie();
-            if (tenantId) {
-                headers['__tenant'] = tenantId;
-            }
-        }
-
-        return headers;
-    }
-
-    // Localization helper function
-    const L = function (key, resourceName) {
-        const defaultResourceName = 'ProductSelling';
-        resourceName = resourceName || defaultResourceName;
-
-        if (typeof abp !== 'undefined' && abp.localization && abp.localization.localize) {
-            try {
-                return abp.localization.localize(key, resourceName);
-            } catch (e) {
-                console.warn("Error with localization for key: " + key, e);
-            }
-        }
-
-        const fallbackTranslations = {
-            'Login:Processing': 'Đang xử lý đăng nhập...',
-            'Login:Initiated': 'Bắt đầu đăng nhập',
-            'Login:Success': 'Đăng nhập thành công!',
-            'Login:ErrorDefault': 'Đăng nhập thất bại. Vui lòng kiểm tra thông tin và thử lại.',
-            'Login:ErrorTitle': 'Lỗi đăng nhập',
-            'Login:ButtonDefault': 'Đăng nhập',
-            'Register:Processing': 'Đang xử lý đăng ký...',
-            'Register:Initiated': 'Bắt đầu đăng ký',
-            'Register:SuccessAndLoggingIn': 'Đăng ký thành công! Đang đăng nhập...',
-            'Register:ErrorDefault': 'Đăng ký thất bại. Vui lòng kiểm tra thông tin và thử lại.',
-            'Register:ButtonDefault': 'Đăng ký',
-            'Register:PasswordsDoNotMatch': 'Mật khẩu không khớp.',
-            'Validation:ErrorTitle': 'Lỗi xác thực',
-            'AutoLogin:ErrorDefault': 'Đăng ký thành công nhưng tự động đăng nhập thất bại. Vui lòng đăng nhập thủ công.',
-            'AutoLogin:WarnTitle': 'Cảnh báo tự động đăng nhập'
-        };
-
-        return fallbackTranslations[key] || key;
+/**
+ * Get proper headers for ABP API calls
+ */
+function getABPHeaders() {
+    const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
     };
 
-    // FIXED: Enhanced notification system - prevent duplicates
-    var activeNotifications = new Set();
+    const csrfToken = getCSRFToken();
+    if (csrfToken) {
+        headers['RequestVerificationToken'] = csrfToken;
+        headers['X-CSRF-TOKEN'] = csrfToken;
+    }
+
+    if (typeof abp !== 'undefined' && abp.multiTenancy && abp.multiTenancy.getTenantIdCookie) {
+        const tenantId = abp.multiTenancy.getTenantIdCookie();
+        if (tenantId) {
+            headers['__tenant'] = tenantId;
+        }
+    }
+
+    return headers;
+}
+
+/**
+ * Localization helper function
+ */
+const L = function (key, resourceName) {
+    const defaultResourceName = 'ProductSelling';
+    resourceName = resourceName || defaultResourceName;
+
+    if (typeof abp !== 'undefined' && abp.localization && abp.localization.localize) {
+        try {
+            return abp.localization.localize(key, resourceName);
+        } catch (e) {
+            console.warn("Error with localization for key: " + key, e);
+        }
+    }
+
+    const fallbackTranslations = {
+        // Login
+        'Login:Processing': 'Đang xử lý đăng nhập...',
+        'Login:Initiated': 'Bắt đầu đăng nhập',
+        'Login:Success': 'Đăng nhập thành công!',
+        'Login:ErrorDefault': 'Đăng nhập thất bại. Vui lòng kiểm tra thông tin và thử lại.',
+        'Login:ErrorTitle': 'Lỗi đăng nhập',
+        'Login:ButtonDefault': 'Đăng nhập',
+        // Register
+        'Register:Processing': 'Đang xử lý đăng ký...',
+        'Register:Initiated': 'Bắt đầu đăng ký',
+        'Register:SuccessAndLoggingIn': 'Đăng ký thành công! Đang đăng nhập...',
+        'Register:ErrorDefault': 'Đăng ký thất bại. Vui lòng kiểm tra thông tin và thử lại.',
+        'Register:ButtonDefault': 'Đăng ký',
+        'Register:PasswordsDoNotMatch': 'Mật khẩu không khớp.',
+        // Logout
+        'Logout:Processing': 'Đang đăng xuất...',
+        'Logout:PleaseWait': 'Vui lòng đợi',
+        'Logout:Success': 'Bạn đã đăng xuất thành công!',
+        'Logout:Complete': 'Đăng xuất hoàn tất',
+        // Validation
+        'Validation:ErrorTitle': 'Lỗi xác thực',
+        // Auto Login
+        'AutoLogin:ErrorDefault': 'Đăng ký thành công nhưng tự động đăng nhập thất bại. Vui lòng đăng nhập thủ công.',
+        'AutoLogin:WarnTitle': 'Cảnh báo tự động đăng nhập'
+    };
+
+    return fallbackTranslations[key] || key;
+};
+
+// =============================================================================
+// NOTIFICATION SYSTEM
+// =============================================================================
+
+$(function () {
+    const activeNotifications = new Set();
 
     function showUniqueNotification(message, title, type = 'info', options = {}) {
-        // Create unique key for notification
         const notificationKey = `${type}-${title}-${message}`;
 
-        // Prevent duplicate notifications
         if (activeNotifications.has(notificationKey)) {
             return;
         }
 
         activeNotifications.add(notificationKey);
 
-        // Remove from active set after delay
         setTimeout(() => {
             activeNotifications.delete(notificationKey);
         }, options.timeOut || 5000);
@@ -179,17 +130,15 @@ $(function () {
         }
     }
 
-    // FIXED: Simplified notification function without auto-proceed
     function showNotification(message, title, type = 'info', options = {}) {
         showUniqueNotification(message, title, type, options);
     }
 
-    // Initialize ABP notify system with fallbacks and duplicate prevention
+    // Initialize ABP notify system with duplicate prevention
     window.abp = window.abp || {};
     abp.notify = abp.notify || {};
     abp.message = abp.message || {};
 
-    // Override ABP notify functions to prevent duplicates
     const originalNotify = {
         success: abp.notify.success,
         error: abp.notify.error,
@@ -197,207 +146,219 @@ $(function () {
         warn: abp.notify.warn
     };
 
-    if (typeof abp.notify.success !== 'function') {
-        abp.notify.success = function (message, title, options) {
-            showUniqueNotification(message, title, 'success', options);
-        };
-    } else {
-        abp.notify.success = function (message, title, options) {
-            const notificationKey = `success-${title}-${message}`;
-            if (!activeNotifications.has(notificationKey)) {
-                activeNotifications.add(notificationKey);
-                setTimeout(() => activeNotifications.delete(notificationKey), 5000);
-                originalNotify.success.call(this, message, title, options);
-            }
-        };
-    }
-
-    if (typeof abp.notify.error !== 'function') {
-        abp.notify.error = function (message, title, options) {
-            showUniqueNotification(message, title, 'error', options);
-        };
-    } else {
-        abp.notify.error = function (message, title, options) {
-            const notificationKey = `error-${title}-${message}`;
-            if (!activeNotifications.has(notificationKey)) {
-                activeNotifications.add(notificationKey);
-                setTimeout(() => activeNotifications.delete(notificationKey), 5000);
-                originalNotify.error.call(this, message, title, options);
-            }
-        };
-    }
-
-    if (typeof abp.notify.info !== 'function') {
-        abp.notify.info = function (message, title, options) {
-            showUniqueNotification(message, title, 'info', options);
-        };
-    } else {
-        abp.notify.info = function (message, title, options) {
-            const notificationKey = `info-${title}-${message}`;
-            if (!activeNotifications.has(notificationKey)) {
-                activeNotifications.add(notificationKey);
-                setTimeout(() => activeNotifications.delete(notificationKey), 5000);
-                originalNotify.info.call(this, message, title, options);
-            }
-        };
-    }
-
-    if (typeof abp.notify.warn !== 'function') {
-        abp.notify.warn = function (message, title, options) {
-            showUniqueNotification(message, title, 'warn', options);
-        };
-    } else {
-        abp.notify.warn = function (message, title, options) {
-            const notificationKey = `warn-${title}-${message}`;
-            if (!activeNotifications.has(notificationKey)) {
-                activeNotifications.add(notificationKey);
-                setTimeout(() => activeNotifications.delete(notificationKey), 5000);
-                originalNotify.warn.call(this, message, title, options);
-            }
-        };
-    }
-
-    // --- ENHANCED LOGIN LOGIC ---
-    var $loginModalElement = $('#loginModal');
-    var loginForm = $('#loginForm');
-    var loginButton, originalLoginButtonText;
-    var isLoginInProgress = false; // Prevent multiple submissions
-
-    if (loginForm.length) {
-        loginForm.on('submit', function (e) {
-            e.preventDefault();
-
-            // Prevent multiple submissions
-            if (isLoginInProgress) {
-                return;
-            }
-
-            // Enhanced validation
-            if (typeof $.fn.validate === 'function' && !loginForm.valid()) {
-                return;
-            }
-
-            // Basic client-side validation
-            const email = $('#loginEmail').val().trim();
-            const password = $('#loginPassword').val();
-
-            if (!email || !password) {
-                showNotification('Vui lòng điền đầy đủ thông tin bắt buộc.', 'Lỗi xác thực', 'error');
-                return;
-            }
-
-            isLoginInProgress = true;
-            loginButton = $(this).find('button[type="submit"]');
-            originalLoginButtonText = loginButton.html();
-            loginButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Đang xử lý...');
-
-            var loginData = {
-                userNameOrEmailAddress: email,
-                password: password,
-                rememberMe: $('#rememberMeCheck').is(':checked')
+    ['success', 'error', 'info', 'warn'].forEach(type => {
+        if (typeof abp.notify[type] !== 'function') {
+            abp.notify[type] = function (message, title, options) {
+                showUniqueNotification(message, title, type, options);
             };
+        } else {
+            const originalMethod = originalNotify[type];
+            abp.notify[type] = function (message, title, options) {
+                const notificationKey = `${type}-${title}-${message}`;
+                if (!activeNotifications.has(notificationKey)) {
+                    activeNotifications.add(notificationKey);
+                    setTimeout(() => activeNotifications.delete(notificationKey), 5000);
+                    originalMethod.call(this, message, title, options);
+                }
+            };
+        }
+    });
 
-            console.log("Attempting login with data:", {
-                userNameOrEmailAddress: email,
-                rememberMe: loginData.rememberMe
-            });
+    // Make showNotification globally available
+    window.showNotification = showNotification;
+});
 
-            // Show processing notification
-            showNotification(L('Login:Processing'), L('Login:Initiated'), 'info', { timeOut: 1000 });
+// =============================================================================
+// LOGOUT HANDLER
+// =============================================================================
 
-            // Perform login after short delay
-            setTimeout(() => {
-                $.ajax({
-                    url: '/api/account/login',
-                    type: 'POST',
-                    data: JSON.stringify(loginData),
-                    headers: getABPHeaders(),
-                    dataType: 'json',
-                    timeout: 15000,
-                    success: function (result) {
-                        console.log("Login successful:", result);
-                        handleLoginSuccess(result);
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Login failed:", {
-                            status: xhr.status,
-                            statusText: xhr.statusText,
-                            responseText: xhr.responseText,
-                            error: error
-                        });
+$(function () {
+    function setupLogoutHandlers() {
+        document.querySelectorAll('a[href^="/Account/Logout"], form[action*="/Account/Logout"] button[type="submit"]').forEach(function (element) {
+            element.addEventListener('click', function (e) {
+                e.preventDefault();
 
-                        let errorData;
-                        try {
-                            errorData = JSON.parse(xhr.responseText);
-                        } catch (e) {
-                            errorData = {
-                                error: {
-                                    message: `Lỗi server (${xhr.status}): ${xhr.statusText || error}`,
-                                    details: xhr.responseText
-                                }
-                            };
-                        }
-                        handleLoginError(errorData);
-                    },
-                    complete: function () {
-                        isLoginInProgress = false;
-                        if (loginButton) {
-                            loginButton.prop('disabled', false).html(originalLoginButtonText || 'Đăng nhập');
-                        }
+                let href;
+                if (element.tagName === 'A') {
+                    href = element.getAttribute('href');
+                } else if (element.tagName === 'BUTTON') {
+                    const form = element.closest('form');
+                    href = form.getAttribute('action') || '/Account/Logout';
+                    const returnUrlInput = form.querySelector('input[name="returnUrl"]');
+                    if (returnUrlInput) {
+                        href += '?returnUrl=' + encodeURIComponent(returnUrlInput.value);
                     }
-                });
-            }, 800);
+                }
+
+                if (href.indexOf('returnUrl') === -1) {
+                    href += (href.indexOf('?') === -1 ? '?' : '&') + 'returnUrl=/';
+                }
+
+                if (typeof abp !== 'undefined' && abp.notify) {
+                    abp.notify.info(L('Logout:Processing'), L('Logout:PleaseWait'));
+                }
+
+                try {
+                    sessionStorage.setItem('justLoggedOut', 'true');
+                } catch (e) {
+                    console.warn('Could not set sessionStorage:', e);
+                }
+
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = href;
+
+                const token = getCSRFToken();
+                if (token) {
+                    const tokenInput = document.createElement('input');
+                    tokenInput.type = 'hidden';
+                    tokenInput.name = '__RequestVerificationToken';
+                    tokenInput.value = token;
+                    form.appendChild(tokenInput);
+                }
+
+                document.body.appendChild(form);
+                form.submit();
+            });
         });
     }
 
-    function handleLoginSuccess(result) {
-        // Hide modal if it exists
+    // Setup logout handlers after ABP is ready
+    if (typeof abp !== 'undefined' && abp.event) {
+        abp.event.on('abp.setupComplete', setupLogoutHandlers);
+    } else {
+        $(document).ready(setupLogoutHandlers);
+    }
+
+    // Show logout success message
+    try {
+        if (sessionStorage.getItem('justLoggedOut') === 'true') {
+            sessionStorage.removeItem('justLoggedOut');
+
+            setTimeout(function () {
+                if (typeof abp !== 'undefined' && abp.notify) {
+                    abp.notify.success(L('Logout:Success'), L('Logout:Complete'), {
+                        timeOut: 3000
+                    });
+                }
+            }, 500);
+        }
+    } catch (e) {
+        console.warn('Could not check logout status:', e);
+    }
+});
+
+// =============================================================================
+// LOGIN HANDLER
+// =============================================================================
+
+$(function () {
+    const $loginModalElement = $('#loginModal');
+    const loginForm = $('#loginForm');
+    let loginButton, originalLoginButtonText;
+    let isLoginInProgress = false;
+
+    if (!loginForm.length) return;
+
+    loginForm.on('submit', function (e) {
+        e.preventDefault();
+
+        if (isLoginInProgress) return;
+
+        if (typeof $.fn.validate === 'function' && !loginForm.valid()) {
+            return;
+        }
+
+        const email = $('#loginEmail').val().trim();
+        const password = $('#loginPassword').val();
+
+        if (!email || !password) {
+            showNotification('Vui lòng điền đầy đủ thông tin bắt buộc.', 'Lỗi xác thực', 'error');
+            return;
+        }
+
+        isLoginInProgress = true;
+        loginButton = $(this).find('button[type="submit"]');
+        originalLoginButtonText = loginButton.html();
+        loginButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Đang xử lý...');
+
+        const loginData = {
+            userNameOrEmailAddress: email,
+            password: password,
+            rememberMe: $('#rememberMeCheck').is(':checked')
+        };
+
+        showNotification(L('Login:Processing'), L('Login:Initiated'), 'info', { timeOut: 1000 });
+
+        setTimeout(() => {
+            $.ajax({
+                url: '/api/account/login',
+                type: 'POST',
+                data: JSON.stringify(loginData),
+                headers: getABPHeaders(),
+                dataType: 'json',
+                timeout: 15000,
+                success: handleLoginSuccess,
+                error: function (xhr) {
+                    let errorData;
+                    try {
+                        errorData = JSON.parse(xhr.responseText);
+                    } catch (e) {
+                        errorData = {
+                            error: {
+                                message: `Lỗi server (${xhr.status}): ${xhr.statusText}`,
+                                details: xhr.responseText
+                            }
+                        };
+                    }
+                    handleLoginError(errorData);
+                },
+                complete: function () {
+                    isLoginInProgress = false;
+                    if (loginButton) {
+                        loginButton.prop('disabled', false).html(originalLoginButtonText || 'Đăng nhập');
+                    }
+                }
+            });
+        }, 800);
+    });
+
+    function handleLoginSuccess() {
         if ($loginModalElement.length > 0) {
             try {
-                var bsModal = bootstrap.Modal.getInstance($loginModalElement[0]);
-                if (bsModal) {
-                    bsModal.hide();
-                }
+                const bsModal = bootstrap.Modal.getInstance($loginModalElement[0]);
+                if (bsModal) bsModal.hide();
             } catch (e) {
                 console.warn("Could not hide login modal:", e);
             }
         }
-        abp.notify.success(L('Login:Success'));
+
         showNotification(L('Login:Success'), '', 'success', { timeOut: 2000 });
 
-        // Enhanced redirect logic
         setTimeout(() => {
-            var returnUrl = new URLSearchParams(window.location.search).get('ReturnUrl');
-            if (returnUrl) {
-                window.location.href = decodeURIComponent(returnUrl);
-            } else {
-                window.location.reload();
-            }
+            const returnUrl = new URLSearchParams(window.location.search).get('ReturnUrl');
+            window.location.href = returnUrl ? decodeURIComponent(returnUrl) : window.location.href;
         }, 1000);
     }
 
     function handleLoginError(error) {
-        console.error("Processing login error:", error);
+        let errorMessage;
 
-        var errorMessage;
-
-        if (error && error.error) {
-            if (error.error.message) {
-                errorMessage = error.error.message;
-            } else if (error.error.details) {
-                errorMessage = error.error.details;
-            } else if (typeof error.error === 'string') {
-                errorMessage = error.error;
-            }
-        } else if (error && error.message) {
+        if (error?.error?.message) {
+            errorMessage = error.error.message;
+        } else if (error?.error?.details) {
+            errorMessage = error.error.details;
+        } else if (typeof error?.error === 'string') {
+            errorMessage = error.error;
+        } else if (error?.message) {
             errorMessage = error.message;
         } else if (typeof error === 'string') {
             errorMessage = error;
         }
 
-        if (error && error.error && error.error.validationErrors) {
-            var validationMessages = [];
-            for (var key in error.error.validationErrors) {
+        if (error?.error?.validationErrors) {
+            const validationMessages = [];
+            for (const key in error.error.validationErrors) {
                 if (error.error.validationErrors[key]) {
                     validationMessages.push(error.error.validationErrors[key].join(', '));
                 }
@@ -407,16 +368,13 @@ $(function () {
             }
         }
 
-        if (!errorMessage) {
-            errorMessage = L('Login:ErrorDefault');
-        }
-
+        errorMessage = errorMessage || L('Login:ErrorDefault');
         showNotification(errorMessage, L('Login:ErrorTitle'), 'error');
     }
 
-    // Enhanced modal reset
+    // Reset modal on close
     if ($loginModalElement.length) {
-        $loginModalElement.on('hidden.bs.modal', function (event) {
+        $loginModalElement.on('hidden.bs.modal', function () {
             isLoginInProgress = false;
             if (loginForm.length && loginForm[0]) {
                 if (typeof loginForm.validate === 'function') {
@@ -435,125 +393,107 @@ $(function () {
             }
         });
     }
+});
 
-    // --- ENHANCED REGISTER LOGIC ---
-    var registerModalElement = document.getElementById('registerModal');
-    var registerForm = $('#registerForm');
-    var registerButton, originalRegisterButtonText;
-    var isRegisterInProgress = false;
+// =============================================================================
+// REGISTER HANDLER
+// =============================================================================
 
-    if (registerForm.length) {
-        registerForm.on('submit', function (e) {
-            e.preventDefault();
+$(function () {
+    const registerModalElement = document.getElementById('registerModal');
+    const registerForm = $('#registerForm');
+    let registerButton, originalRegisterButtonText;
+    let isRegisterInProgress = false;
 
-            if (isRegisterInProgress) {
-                return;
-            }
+    if (!registerForm.length) return;
 
-            if (typeof $.fn.validate === 'function' && !registerForm.valid()) {
-                return;
-            }
+    registerForm.on('submit', function (e) {
+        e.preventDefault();
 
-            const name = $('#registerName').val().trim();
-            const surname = $('#registerSurname').val().trim();
-            const email = $('#registerEmail').val().trim();
-            const password = $('#registerPassword').val();
-            const confirmPassword = $('#registerConfirmPassword').val();
+        if (isRegisterInProgress) return;
 
-            if (!name || !surname || !email || !password || !confirmPassword) {
-                showNotification('Vui lòng điền đầy đủ thông tin bắt buộc.', 'Lỗi xác thực', 'error');
-                return;
-            }
+        if (typeof $.fn.validate === 'function' && !registerForm.valid()) {
+            return;
+        }
 
-            if (password !== confirmPassword) {
-                showNotification(L('Register:PasswordsDoNotMatch'), L('Validation:ErrorTitle'), 'error');
-                return;
-            }
+        const name = $('#registerName').val().trim();
+        const surname = $('#registerSurname').val().trim();
+        const email = $('#registerEmail').val().trim();
+        const password = $('#registerPassword').val();
+        const confirmPassword = $('#registerConfirmPassword').val();
 
-            if (password.length < 6) {
-                showNotification('Mật khẩu phải có ít nhất 6 ký tự.', 'Lỗi xác thực', 'error');
-                return;
-            }
+        if (!name || !surname || !email || !password || !confirmPassword) {
+            showNotification('Vui lòng điền đầy đủ thông tin bắt buộc.', 'Lỗi xác thực', 'error');
+            return;
+        }
 
-            isRegisterInProgress = true;
-            registerButton = $(this).find('button[type="submit"]');
-            originalRegisterButtonText = registerButton.html();
-            registerButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Đang xử lý...');
-            const appNameToBeUsed = "ProductSelling";
-            var currentRegisterData = {
-                userName: email,
-                emailAddress: email,
-                password: password,
-                surname: surname,
-                name: name,
-                appName: appNameToBeUsed
-            };
+        if (password !== confirmPassword) {
+            showNotification(L('Register:PasswordsDoNotMatch'), L('Validation:ErrorTitle'), 'error');
+            return;
+        }
 
-            console.log("Attempting registration with data:", {
-                userName: email,
-                emailAddress: email,
-                password: password,
-                surname: surname,
-                name: name,
-                appName: appNameToBeUsed
-            });
+        if (password.length < 6) {
+            showNotification('Mật khẩu phải có ít nhất 6 ký tự.', 'Lỗi xác thực', 'error');
+            return;
+        }
 
-            showNotification(L('Register:Processing'), L('Register:Initiated'), 'info', { timeOut: 1000 });
+        isRegisterInProgress = true;
+        registerButton = $(this).find('button[type="submit"]');
+        originalRegisterButtonText = registerButton.html();
+        registerButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Đang xử lý...');
 
-            setTimeout(() => {
-                $.ajax({
-                    url: '/api/app/account/register',
-                    type: 'POST',
-                    data: JSON.stringify(currentRegisterData),
-                    headers: getABPHeaders(),
-                    dataType: 'json',
-                    timeout: 15000,
-                    success: function (result) {
-                        console.log("Registration successful:", result);
-                        handleRegisterSuccess(result, currentRegisterData);
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("Registration failed:", {
-                            status: xhr.status,
-                            statusText: xhr.statusText,
-                            responseText: xhr.responseText,
-                            error: error
-                        });
+        const registerData = {
+            userName: email,
+            emailAddress: email,
+            password: password,
+            surname: surname,
+            name: name,
+            appName: "ProductSelling"
+        };
 
-                        let errorData;
-                        try {
-                            errorData = JSON.parse(xhr.responseText);
-                        } catch (e) {
-                            errorData = {
-                                error: {
-                                    message: `Đăng ký thất bại (${xhr.status}): ${xhr.statusText || error}`,
-                                    details: xhr.responseText
-                                }
-                            };
-                        }
-                        handleRegisterError(errorData);
-                    },
-                    complete: function () {
-                        isRegisterInProgress = false;
-                        if (registerButton) {
-                            registerButton.prop('disabled', false).html(originalRegisterButtonText || 'Đăng ký');
-                        }
+        showNotification(L('Register:Processing'), L('Register:Initiated'), 'info', { timeOut: 1000 });
+
+        setTimeout(() => {
+            $.ajax({
+                url: '/api/app/account/register',
+                type: 'POST',
+                data: JSON.stringify(registerData),
+                headers: getABPHeaders(),
+                dataType: 'json',
+                timeout: 15000,
+                success: function (result) {
+                    handleRegisterSuccess(result, registerData);
+                },
+                error: function (xhr) {
+                    let errorData;
+                    try {
+                        errorData = JSON.parse(xhr.responseText);
+                    } catch (e) {
+                        errorData = {
+                            error: {
+                                message: `Đăng ký thất bại (${xhr.status}): ${xhr.statusText}`,
+                                details: xhr.responseText
+                            }
+                        };
                     }
-                });
-            }, 800);
-        });
-    }
+                    handleRegisterError(errorData);
+                },
+                complete: function () {
+                    isRegisterInProgress = false;
+                    if (registerButton) {
+                        registerButton.prop('disabled', false).html(originalRegisterButtonText || 'Đăng ký');
+                    }
+                }
+            });
+        }, 800);
+    });
 
     function handleRegisterSuccess(result, registeredUserData) {
-        console.log("Processing registration success:", result);
-
         showNotification(L('Register:SuccessAndLoggingIn'), '', 'success');
 
         if (registerModalElement) {
-            var modalInstance = bootstrap.Modal.getInstance(registerModalElement);
-            if (modalInstance) {
-                modalInstance.hide();
-            }
+            const modalInstance = bootstrap.Modal.getInstance(registerModalElement);
+            if (modalInstance) modalInstance.hide();
         }
 
         setTimeout(() => {
@@ -562,27 +502,23 @@ $(function () {
     }
 
     function handleRegisterError(error) {
-        console.error("Processing registration error:", error);
+        let errorMessage;
 
-        var errorMessage;
-
-        if (error && error.error) {
-            if (error.error.message) {
-                errorMessage = error.error.message;
-            } else if (error.error.details) {
-                errorMessage = error.error.details;
-            } else if (typeof error.error === 'string') {
-                errorMessage = error.error;
-            }
-        } else if (error && error.message) {
+        if (error?.error?.message) {
+            errorMessage = error.error.message;
+        } else if (error?.error?.details) {
+            errorMessage = error.error.details;
+        } else if (typeof error?.error === 'string') {
+            errorMessage = error.error;
+        } else if (error?.message) {
             errorMessage = error.message;
         } else if (typeof error === 'string') {
             errorMessage = error;
         }
 
-        if (error && error.error && error.error.validationErrors) {
-            var validationMessages = [];
-            for (var key in error.error.validationErrors) {
+        if (error?.error?.validationErrors) {
+            const validationMessages = [];
+            for (const key in error.error.validationErrors) {
                 if (error.error.validationErrors[key]) {
                     validationMessages.push(error.error.validationErrors[key].join(', '));
                 }
@@ -592,17 +528,12 @@ $(function () {
             }
         }
 
-        if (!errorMessage) {
-            errorMessage = L('Register:ErrorDefault');
-        }
-
+        errorMessage = errorMessage || L('Register:ErrorDefault');
         showNotification(errorMessage, 'Lỗi đăng ký', 'error');
     }
 
     function attemptAutoLogin(userNameOrEmail, password) {
-        console.log("Attempting auto-login for:", userNameOrEmail);
-
-        var loginData = {
+        const loginData = {
             userNameOrEmailAddress: userNameOrEmail,
             password: password,
             rememberMe: false
@@ -615,31 +546,19 @@ $(function () {
             headers: getABPHeaders(),
             dataType: 'json',
             timeout: 10000,
-            success: function (loginResult) {
-                console.log("Auto-login successful:", loginResult);
+            success: function () {
                 showNotification(L('Login:Success'), '', 'success');
 
                 setTimeout(() => {
-                    var returnUrl = new URLSearchParams(window.location.search).get('ReturnUrl');
-                    if (returnUrl) {
-                        window.location.href = decodeURIComponent(returnUrl);
-                    } else {
-                        window.location.reload();
-                    }
+                    const returnUrl = new URLSearchParams(window.location.search).get('ReturnUrl');
+                    window.location.href = returnUrl ? decodeURIComponent(returnUrl) : window.location.href;
                 }, 1000);
             },
-            error: function (xhr, status, error) {
-                console.error("Auto-login failed:", {
-                    status: xhr.status,
-                    statusText: xhr.statusText,
-                    responseText: xhr.responseText,
-                    error: error
-                });
-
-                var errorMessage = L('AutoLogin:ErrorDefault');
+            error: function (xhr) {
+                let errorMessage = L('AutoLogin:ErrorDefault');
                 try {
-                    var errorData = JSON.parse(xhr.responseText);
-                    if (errorData && errorData.error && errorData.error.message) {
+                    const errorData = JSON.parse(xhr.responseText);
+                    if (errorData?.error?.message) {
                         errorMessage = errorData.error.message;
                     }
                 } catch (e) {
@@ -651,9 +570,9 @@ $(function () {
         });
     }
 
-    // Enhanced register modal reset
+    // Reset modal on close
     if (registerModalElement) {
-        registerModalElement.addEventListener('hidden.bs.modal', function (event) {
+        registerModalElement.addEventListener('hidden.bs.modal', function () {
             isRegisterInProgress = false;
             if (registerForm.length && registerForm[0]) {
                 if (typeof registerForm.validate === 'function') {

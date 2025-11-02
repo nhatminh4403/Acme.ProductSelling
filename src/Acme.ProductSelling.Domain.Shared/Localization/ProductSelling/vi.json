@@ -130,6 +130,10 @@
     "Register:HaveAnAccount?": "Đã có tài khoản?",
 
     "Logout": "Đăng xuất",
+    "Logout:Processing": "Đang đăng xuất...",
+    "Logout:PleaseWait": "Vui lòng đợi",
+    "Logout:Success": "Bạn đã đăng xuất thành công!",
+    "Logout:Complete": "Đăng xuất hoàn tất",
 
     "AutoLogin:ErrorDefault": "Tự động đăng nhập thất bại. Vui lòng đăng nhập thủ công.",
     "AutoLogin:WarnTitle": "Đăng Ký Thành Công, Tự Động Đăng Nhập Thất Bại",
@@ -303,6 +307,7 @@
     "Admin:Menu:Home": "Trang chủ",
     "Admin:Menu:Products": "Sản phẩm",
     "Admin:Menu:Orders": "Đơn hàng",
+    "Admin:Menu:Orders:OrderList": "Danh sách",
     "Admin:Menu:Categories": "Danh mục",
     "Admin:Menu:Blogs": "Bài viết",
     "Admin:Menu:Manufacturers": "Nhà sản xuất",
@@ -502,7 +507,33 @@
     "Error:404:Title": "Không tìm thấy trang",
     "Error:404:Message": "Xin lỗi, trang bạn đang tìm kiếm không tồn tại.",
     "Error:500:Title": "Đã xảy ra lỗi!",
-    "Error:500:Message": "Xin lỗi, đã có lỗi xảy ra trong quá trình xử lý yêu cầu của bạn."
+    "Error:500:Message": "Xin lỗi, đã có lỗi xảy ra trong quá trình xử lý yêu cầu của bạn.",
+
+    "Blogs:Actions": "Hành động",
+
+    "Blog:Blogs": "Bài viết",
+    "Blog:CreateBlog": "Tạo bài viết",
+    "Blog:Content": "Nội dung",
+    "Blog:BasicInformation": "Thông tin cơ bản",
+    "Blog:LeaveBlankToAutoGenerate": "Để trống để tự động tạo",
+    "Blog:MainImage": "Ảnh chính",
+    "Blog:Remove": "Xóa",
+    "Blog:Publishing": "Xuất bản",
+    "Blog:PublishedDate": "Ngày xuất bản",
+    "Blog:Author": "Tác giả",
+    "Blog:AuthorName": "Tên tác giả",
+    "Blog:CreateBlogPost": "Tạo bài viết",
+    "Blog:Statistics": "Thống kê",
+    "Blog:Words": "Từ",
+    "Blog:Title": "Bài viết",
+    "Blog:Subtitle": "Tin tức và cập nhật mới nhất",
+    "Blog:ReadMore": "Đọc thêm",
+    "Blog:NoBlogPosts": "Không có bài viết nào.",
+    "Blog:Edit": "Sửa bài viết",
+    "Blog:Delete": "Xóa bài viết",
+    "Blog:BlogDeletionConfirmationMessage": "Bạn có chắc chắn muốn xóa bài viết {0} không?",
+    "Blog:SuccessfullyDeleted": "Bài viết đã được xóa thành công.",
+    "Blog:TitleColumn": "Tiêu đề"
   }
   
 }

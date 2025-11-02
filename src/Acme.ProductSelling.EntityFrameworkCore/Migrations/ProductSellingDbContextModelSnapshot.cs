@@ -1147,7 +1147,7 @@ namespace Acme.ProductSelling.Migrations
                     b.HasIndex("ProductId")
                         .IsUnique();
 
-                    b.ToTable("AppAppGpuSpecifications", (string)null);
+                    b.ToTable("AppGpuSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.HeadsetSpecification", b =>
@@ -1555,9 +1555,8 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<int>("StorageFormFactor")
                         .HasColumnType("int");
 
-                    b.Property<string>("StorageType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("StorageType")
+                        .HasColumnType("int");
 
                     b.Property<int>("WriteSpeed")
                         .HasColumnType("int");
@@ -3443,12 +3442,12 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
+
                     b.Property<string>("ShippingAddress")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
-
-                    b.Property<int>("UserGender")
-                        .HasColumnType("int");
 
                     b.ToTable("AbpUsers", (string)null);
 

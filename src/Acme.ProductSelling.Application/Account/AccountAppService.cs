@@ -1,11 +1,8 @@
 ﻿// Acme.ProductSelling.Application/Account/AccountAppService.cs
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Volo.Abp;
-using Volo.Abp.Account;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Identity;
 

@@ -4,13 +4,13 @@
 @using Acme.ProductSelling.Web.Helpers
 
 @{
-    ViewData["Title"] = L["BlogTitle"];
+    ViewData["Title"] = L["Blog:Title"];
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 
 <div class="blog-header text-center py-5 bg-primary text-white">
-    <h1>@L["BlogTitle"]</h1>
-    <p>@L["BlogSubtitle"]</p>
+    <h1>@L["Blog:Title"]</h1>
+    <p>@L["Blog:Subtitle"]</p>
 </div>
 
 <div class="container my-5">
@@ -34,7 +34,7 @@
                             • @blog.PublishedDate.ToString("dd/MM/yyyy")
                         </p>
                         <a asp-page="/Blogs/Details" asp-route-slug="@blog.UrlSlug"
-                           class="btn btn-primary btn-sm">@L["ReadMore"]</a>
+                           class="btn btn-primary btn-sm">@L["Blog:ReadMore"]</a>
                     </div>
                 </div>
             </div>
@@ -44,7 +44,7 @@
         else
         {
             <div class="col-12 text-center">
-                <p>@L["NoBlogPosts"]</p>
+                <p>@L["Blog:NoBlogPosts"]</p>
             </div>
         }
     </div>

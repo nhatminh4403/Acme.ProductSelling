@@ -50,17 +50,29 @@ public class ProductSellingMenuContributor : IMenuContributor
             icon: "fa-solid fa-list",
             url: "/admin/manufacturers"
         ));
-        context.Menu.AddItem(new ApplicationMenuItem(
+        var ordersMenu = new ApplicationMenuItem(
             ProductSellingMenus.Orders,
             l["Admin:Menu:Orders"],
             icon: "fa-solid fa-list",
-            url: "/admin/orders"
-        ))
-            .AddItem(new ApplicationMenuItem(
-                ProductSellingMenus.DeletedOrders,
-                l["Admin:Menu:Orders:DeletedOrders"],
-                icon:"fa-solid fa-dumpster-fire",
-                url: "/admin/orders/deleted"));
+            url: "#"
+        );
+
+        ordersMenu.AddItem(new ApplicationMenuItem(
+            name: "Admin.Orders.List",
+            displayName: l["Admin:Menu:Orders:OrderList"],
+            url: "/admin/orders",
+            icon: "fa-solid fa-list-ul"
+        ));
+
+        ordersMenu.AddItem(new ApplicationMenuItem(
+            ProductSellingMenus.DeletedOrders,
+            l["Admin:Menu:Orders:DeletedOrders"],
+            icon: "fa-solid fa-dumpster-fire",
+            url: "/admin/orders/deleted"
+        ));
+
+        // 5. Add the fully constructed menu item to the main menu
+        context.Menu.AddItem(ordersMenu);
 
         context.Menu.AddItem(new ApplicationMenuItem(
             ProductSellingMenus.Blogs,

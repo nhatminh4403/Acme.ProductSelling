@@ -1,7 +1,4 @@
-﻿using Acme.ProductSelling.Web.Pages;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
-using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Acme.ProductSelling.Web.Pages.Error
 {

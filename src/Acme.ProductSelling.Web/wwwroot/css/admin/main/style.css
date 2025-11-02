@@ -563,3 +563,16 @@ ul {
     }
 }
 
+/* Add this to your existing CSS file */
+
+/* Disable transitions when this class is present */
+.sidebar.no-transition,
+.main-content.no-transition {
+    transition: none !important;
+}
+
+    /* Also prevent child elements from animating on initial load */
+    .sidebar.no-transition *,
+    .main-content.no-transition * {
+        transition: none !important;
+    }

@@ -1,12 +1,9 @@
 ﻿using Acme.ProductSelling.Users;
-using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp;
-using Volo.Abp.Account;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
@@ -19,7 +16,7 @@ namespace Acme.ProductSelling.Account
     public class ProfileAppService : ApplicationService, IProfileAppService, ITransientDependency
     {
         private readonly IRepository<IdentityUser, Guid> _identityUserRepository;
-        private readonly ICurrentUser _currentUser; 
+        private readonly ICurrentUser _currentUser;
         private readonly IdentityUserManager _userManager;
 
         public ProfileAppService(IRepository<IdentityUser, Guid> identityUserRepository, ICurrentUser currentUser, IdentityUserManager userManager)
@@ -50,7 +47,7 @@ namespace Acme.ProductSelling.Account
         public async Task<UpdateProfileDto> GetAsync()
         {
             var user = await _identityUserRepository.GetAsync(_currentUser.Id.Value);
-            
+
             return new UpdateProfileDto
             {
                 UserName = user.UserName,

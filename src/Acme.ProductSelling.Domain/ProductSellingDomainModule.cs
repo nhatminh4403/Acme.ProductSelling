@@ -1,8 +1,7 @@
-using System;
-using System.ComponentModel.DataAnnotations; // Add this using directive for RequiredAttribute and PhoneAttribute
 using Acme.ProductSelling.MultiTenancy;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System;
 using Volo.Abp.AuditLogging;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.BlobStoring.Database;
@@ -13,7 +12,6 @@ using Volo.Abp.Identity;
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
 using Volo.Abp.MultiTenancy;
-using Volo.Abp.ObjectExtending;
 using Volo.Abp.OpenIddict;
 using Volo.Abp.PermissionManagement.Identity;
 using Volo.Abp.PermissionManagement.OpenIddict;
@@ -54,6 +52,7 @@ public class ProductSellingDomainModule : AbpModule
             options.Languages.Add(new LanguageInfo("en", "en", "English"));
             //options.Languages.Add(new LanguageInfo("en-GB", "en-GB", "English (UK)"));
         });
+
 #if DEBUG
         context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
 #endif

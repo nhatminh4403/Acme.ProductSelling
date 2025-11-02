@@ -74,14 +74,13 @@ public static class ProductSellingModuleExtensionConfigurator
         {
             identity.ConfigureUser(user =>
             {
-                user.AddOrUpdateProperty<DateTime>(
+                user.AddOrUpdateProperty<DateTime?>(
                     UserExtraProperties.DateOfBirth,
                     property =>
                     {
-                        // You can add validation attributes or other configurations here
                     }
                 );
-                user.AddOrUpdateProperty<string>(
+                user.AddOrUpdateProperty<string?>(
                     UserExtraProperties.ShippingAddress,
                     property =>
                     {
@@ -92,7 +91,6 @@ public static class ProductSellingModuleExtensionConfigurator
                     UserExtraProperties.Gender,
                     propertyName =>
                     {
-                        // You can add validation attributes or other configurations here
                     }
                     );
             });

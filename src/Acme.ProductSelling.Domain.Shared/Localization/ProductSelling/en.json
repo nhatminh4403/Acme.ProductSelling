@@ -21,6 +21,7 @@
     "Menu:Home": "Home",
     "Menu:AppName": "XComputer",
     "MinPrice": "Min Price",
+    "Register": "Processing",
     "MaxPrice": "Max Price",
     "CategoryName": "Category",
     "Expand": "Expand",
@@ -129,6 +130,10 @@
     "Register:HaveAnAccount?": "Already have an account?",
 
     "Logout": "Logout",
+    "Logout:Processing": "Logging out...",
+    "Logout:PleaseWait": "Please wait",
+    "Logout:Success": "You have been logged out successfully!",
+    "Logout:Complete": "Logout Complete",
 
     "AutoLogin:ErrorDefault": "Auto-login failed. Please log in manually.",
     "AutoLogin:WarnTitle": "Registration Succeeded, Auto-Login Failed",
@@ -310,6 +315,7 @@
     "Admin:Menu:Home": "Home",
     "Admin:Menu:Products": "Products",
     "Admin:Menu:Orders": "Orders",
+    "Admin:Menu:Orders:OrderList": "Order List",
     "Admin:Menu:Categories": "Categories",
     "Admin:Menu:Manufacturers": "Manufacturers",
     "Admin:Menu:Blogs": "Blogs",
@@ -510,5 +516,31 @@
     "Error:404:Message": "Sorry, the page you are looking for does not exist.",
     "Error:500:Title": "An Error Occurred!",
     "Error:500:Message": "Sorry, an error occurred while processing your request.",
+
+    "Blogs:Actions": "Actions",
+
+    "Blog:Blogs": "Blogs",
+    "Blog:CreateBlog": "Create Blog",
+    "Blog:Content": "Content",
+    "Blog:BasicInformation": "Basic Information",
+    "Blog:LeaveBlankToAutoGenerate": "Leave blank to auto generate",
+    "Blog:MainImage": "Main Image",
+    "Blog:Remove": "Remove",
+    "Blog:Publishing": "Publishing",
+    "Blog:PublishedDate": "Published Date",
+    "Blog:Author": "Author",
+    "Blog:AuthorName": "Author name",
+    "Blog:CreateBlogPost": "Create Blog Post",
+    "Blog:Statistics": "Statistics",
+    "Blog:Words": "Words",
+    "Blog:Title": "Blogs",
+    "Blog:Subtitle": "Latest news and updates",
+    "Blog:ReadMore": "Read more",
+    "Blog:NoBlogPosts": "No blog posts found.",
+    "Blog:Edit": "Edit Blog",
+    "Blog:Delete": "Delete Blog",
+    "Blog:BlogDeletionConfirmationMessage": "Are you sure you want to delete this blog {0}?",
+    "Blog:SuccessfullyDeleted": "Blog successfully deleted.",
+    "Blog:TitleColumn": "Title"
   }
 }

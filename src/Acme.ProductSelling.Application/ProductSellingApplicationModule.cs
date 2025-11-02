@@ -34,6 +34,8 @@ public class ProductSellingApplicationModule : AbpModule
         Configure<AbpAutoMapperOptions>(options =>
         {
             options.AddMaps<ProductSellingApplicationModule>();
+            options.AddProfile<ProductSellingApplicationAutoMapperProfile>();
+
         });
         context.Services.AddSingleton<IHtmlSanitizer>(provider =>
             {
@@ -75,7 +77,7 @@ public class ProductSellingApplicationModule : AbpModule
         );
 
         var configuration = context.Services.GetConfiguration();
-
+        // In YourApplicationModule.cs ConfigureServices method
         //if (configuration.GetValue<bool>("Chatbot:AutoTrainOnStartup"))
         //{
         //    context.Services.AddHostedService<ChatbotModelTrainingService>();

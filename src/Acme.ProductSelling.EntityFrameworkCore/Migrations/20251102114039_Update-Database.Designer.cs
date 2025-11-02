@@ -13,8 +13,8 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Acme.ProductSelling.Migrations
 {
     [DbContext(typeof(ProductSellingDbContext))]
-    [Migration("20251021115519_AddOrderHistory")]
-    partial class AddOrderHistory
+    [Migration("20251102114039_Update-Database")]
+    partial class UpdateDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,7 +22,7 @@ namespace Acme.ProductSelling.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("_Abp_DatabaseProvider", EfCoreDatabaseProvider.SqlServer)
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "9.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -1150,7 +1150,7 @@ namespace Acme.ProductSelling.Migrations
                     b.HasIndex("ProductId")
                         .IsUnique();
 
-                    b.ToTable("AppAppGpuSpecifications", (string)null);
+                    b.ToTable("AppGpuSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.HeadsetSpecification", b =>
@@ -1558,9 +1558,8 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<int>("StorageFormFactor")
                         .HasColumnType("int");
 
-                    b.Property<string>("StorageType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("StorageType")
+                        .HasColumnType("int");
 
                     b.Property<int>("WriteSpeed")
                         .HasColumnType("int");
@@ -2455,6 +2454,11 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletionTime");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -2585,6 +2589,10 @@ namespace Acme.ProductSelling.Migrations
                     b.HasIndex("UserName");
 
                     b.ToTable("AbpUsers", (string)null);
+
+                    b.HasDiscriminator().HasValue("IdentityUser");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUserClaim", b =>
@@ -3428,6 +3436,25 @@ namespace Acme.ProductSelling.Migrations
                     b.HasKey("TenantId", "Name");
 
                     b.ToTable("AbpTenantConnectionStrings", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Users.AppUser", b =>
+                {
+                    b.HasBaseType("Volo.Abp.Identity.IdentityUser");
+
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ShippingAddress")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.ToTable("AbpUsers", (string)null);
+
+                    b.HasDiscriminator().HasValue("AppUser");
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Carts.CartItem", b =>

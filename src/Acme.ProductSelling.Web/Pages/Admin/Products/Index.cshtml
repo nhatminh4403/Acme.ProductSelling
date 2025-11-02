@@ -1,21 +1,18 @@
 ﻿@page "/admin/products"
 @model Acme.ProductSelling.Web.Pages.Admin.Products.IndexModel
-@using Acme.ProductSelling.Localization
-@using Microsoft.Extensions.Localization
-@using Microsoft.AspNetCore.Authorization
+
 @using Acme.ProductSelling.Permissions
 @using Acme.ProductSelling.Categories
 @using Newtonsoft.Json
-@inject IStringLocalizer<ProductSellingResource> L
 @inject IAuthorizationService AuthorizationService
 @{
     ViewData["Title"] = L["UI:Title:Admin:Products"];
-    var categorySpecTypes = Json.Serialize(Model.CategorySpecTypesJson); 
     Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
 
 }
 @section scripts {
     <script src="/Pages/Admin/Products/Index.js"></script>
+
 }
 
 @section styles {
@@ -29,6 +26,12 @@
         </ol>
     </nav>
 </div>
+@if (TempData["UserMessage"] != null)
+{
+    <div class="alert alert-@TempData["MessageType"]" role="alert">
+        @TempData["UserMessage"]
+    </div>
+}
 <abp-card class="py-3 px-1">
     <abp-card-header>
         <abp-row>
@@ -50,3 +53,4 @@
         <abp-table striped-rows="true" hoverable-rows="true" class="pt-2" id="ProductsTable"></abp-table>
     </abp-card-body>
 </abp-card>
+

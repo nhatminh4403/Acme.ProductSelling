@@ -1,5 +1,4 @@
 ﻿using Acme.ProductSelling.Permissions;
-using Hangfire.Annotations;
 using Hangfire.Dashboard;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;

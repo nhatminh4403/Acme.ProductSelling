@@ -18,6 +18,7 @@ namespace Acme.ProductSelling
 {
     public class ProductSellingDataSeederContributor : IDataSeedContributor, ITransientDependency
     {
+        #region Fields
         private readonly IRepository<Product, Guid> _productRepository;
         private readonly IRepository<Category, Guid> _categoryRepository;
         private readonly CategoryManager _categoryManager;
@@ -46,6 +47,8 @@ namespace Acme.ProductSelling
         private readonly IRepository<CaseMaterial> _caseMaterialRepository;
         private readonly IRepository<RamType, Guid> _ramTypeRepository;
         private readonly IRepository<SwitchType, Guid> _switchTypeRepository;
+        #endregion
+        #region Constructor
         public ProductSellingDataSeederContributor(
             IRepository<Product, Guid> productRepository,
             IRepository<Category, Guid> categoryRepository, CategoryManager categoryManager,
@@ -103,6 +106,7 @@ namespace Acme.ProductSelling
             _ramTypeRepository = ramTypeRepository;
             _switchTypeRepository = switchTypeRepository;
         }
+        #endregion
         public async Task SeedAsync(DataSeedContext context)
         {
             #region Categories
@@ -360,7 +364,6 @@ namespace Acme.ProductSelling
             };
             asrock.UrlSlug = UrlHelperMethod.RemoveDiacritics(asrock.Name);
             Manufacturers.Add(asrock);
-            Console.WriteLine(Manufacturers);
             await _manufacturerRepository.InsertManyAsync(Manufacturers, autoSave: true);
             #endregion
 
@@ -552,7 +555,7 @@ namespace Acme.ProductSelling
             await _storageSpecRepository.InsertAsync(new StorageSpecification
             {
                 ProductId = productStorage1.Id,
-                StorageType = "NVMe SSD",
+                StorageType = StorageType.NvmeSsd,
                 Interface = "PCIe 3.0 x4",
                 Capacity = 1000,
                 ReadSpeed = 3500,
@@ -571,7 +574,7 @@ namespace Acme.ProductSelling
             await _storageSpecRepository.InsertAsync(new StorageSpecification
             {
                 ProductId = productStorage2.Id,
-                StorageType = "NVMe SSD",
+                StorageType = StorageType.NvmeSsd,
                 Interface = "PCIe 4.0 x4",
                 Capacity = 1000,
                 ReadSpeed = 5150,

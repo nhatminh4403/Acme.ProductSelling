@@ -150,7 +150,7 @@ namespace Acme.ProductSelling.Web.Middleware
             {
                 "/api", "/_framework", "/css", "/js", "/lib", "/images",
                 "/swagger", "/signalr", "/favicon.ico", "/_vs/","/health-status",
-                "/signalr-hubs","/admin", "/identity", "/account", "/TenantManagement",
+                "/signalr-hubs","/admin", "/identity", "/account/manage","/account", "/TenantManagement",
                 "/SettingManagement","/abp","/abp-web-resources", "/swagger-ui", "/swagger/v1/swagger.json",
                 "/Abp","/libs","/.well-known", "/connect","/hangfire"
             };

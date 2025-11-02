@@ -5,7 +5,7 @@ namespace Acme.ProductSelling.Specifications
 {
     public class StorageSpecificationDto : EntityDto<Guid>
     {
-        public string StorageType { get; set; } // "NVMe SSD", "SATA SSD", "HDD"
+        public StorageType StorageType { get; set; } // "NVMe SSD", "SATA SSD", "HDD"
         public string Interface { get; set; } // "PCIe 4.0 x4", "SATA III"
         public int Capacity { get; set; } // GB hoặc TB (ghi rõ đơn vị khi hiển thị)
         public int ReadSpeed { get; set; } // MB/s (có thể null cho HDD)
