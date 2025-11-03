@@ -1,4 +1,5 @@
-﻿using Acme.ProductSelling.Specifications;
+﻿using Acme.ProductSelling.Products.Dtos;
+using Acme.ProductSelling.Specifications;
 using System;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories;

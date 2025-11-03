@@ -1,15 +1,14 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Permissions;
-using Acme.ProductSelling.Specifications;
+using Acme.ProductSelling.Products.Dtos;
+using Acme.ProductSelling.Products.Services;
 using Acme.ProductSelling.Specifications.Junctions;
+using Acme.ProductSelling.Specifications.Models;
 using Acme.ProductSelling.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -105,6 +104,7 @@ namespace Acme.ProductSelling.Products
                 throw;
             }
         }
+
         [Authorize(ProductSellingPermissions.Products.Edit)]
         public override async Task<ProductDto> UpdateAsync(Guid id, CreateUpdateProductDto input)
         {
@@ -133,85 +133,7 @@ namespace Acme.ProductSelling.Products
             return await GetAsync(product.Id);
         }
 
-        public virtual async Task<PagedResultDto<ProductDto>> GetListByCategoryAsync(GetProductsByCategoryInput input)
-        {
-            var queryable = await BuildCategoryQueryAsync(input.CategoryId);
-            return await ExecutePagedQueryAsync(queryable, input);
-        }
 
-        public virtual async Task<PagedResultDto<ProductDto>> GetListByProductPrice(GetProductsByPrice input)
-        {
-            var queryable = await BuildPriceRangeQueryAsync(input);
-            return await ExecutePagedQueryAsync(queryable, input);
-        }
-
-        public virtual async Task<PagedResultDto<ProductDto>> GetProductsByName(GetProductByName input)
-        {
-            var queryable = await BuildNameSearchQueryAsync(input.Filter);
-            return await ExecutePagedQueryAsync(queryable, input);
-        }
-
-        public virtual async Task<PagedResultDto<ProductDto>> GetProductByManufacturer(GetProductsByManufacturer input)
-        {
-            var queryable = await BuildManufacturerQueryAsync(input);
-            return await ExecutePagedQueryAsync(queryable, input);
-        }
-
-        private async Task<IQueryable<Product>> BuildCategoryQueryAsync(Guid categoryId)
-        {
-            var queryable = await Repository.GetQueryableAsync();
-            return queryable
-                .Include(p => p.Category)
-                .Where(p => p.CategoryId == categoryId);
-        }
-
-        private async Task<IQueryable<Product>> BuildPriceRangeQueryAsync(GetProductsByPrice input)
-        {
-            var queryable = await Repository.GetQueryableAsync();
-            return queryable
-                .Include(p => p.Category)
-                .Include(p => p.Manufacturer)
-                .AsNoTracking()
-                .Where(p => p.CategoryId == input.CategoryId)
-                .Where(p => (p.DiscountedPrice ?? p.OriginalPrice) >= input.MinPrice &&
-                           (p.DiscountedPrice ?? p.OriginalPrice) <= input.MaxPrice);
-        }
-
-        private async Task<IQueryable<Product>> BuildNameSearchQueryAsync(string searchTerm)
-        {
-            var queryable = await Repository.GetQueryableAsync();
-            return queryable
-                .Include(p => p.Category)
-                .Include(p => p.Manufacturer)
-                .AsNoTracking()
-                .Where(p => p.ProductName.Contains(searchTerm));
-        }
-
-        private async Task<IQueryable<Product>> BuildManufacturerQueryAsync(GetProductsByManufacturer input)
-        {
-            var queryable = await Repository.GetQueryableAsync();
-            return queryable
-                .Include(p => p.Category)
-                .Include(p => p.Manufacturer)
-                .Where(p => p.CategoryId == input.CategoryId && p.ManufacturerId == input.ManufacturerId);
-        }
-
-        private async Task<PagedResultDto<ProductDto>> ExecutePagedQueryAsync<TInput>(
-            IQueryable<Product> queryable,
-            TInput input)
-            where TInput : PagedAndSortedResultRequestDto
-        {
-            var totalCount = await AsyncExecuter.CountAsync(queryable);
-
-            var products = await AsyncExecuter.ToListAsync(
-                queryable
-                    .OrderBy(input.Sorting ?? nameof(Product.ProductName))
-                    .PageBy(input));
-
-            var productDtos = ObjectMapper.Map<List<Product>, List<ProductDto>>(products);
-
-            return new PagedResultDto<ProductDto>(totalCount, productDtos);
-        }
         private async Task HandleManyToManys(Guid productId, CreateUpdateProductDto input)
         {
             if (input.CaseSpecification != null)

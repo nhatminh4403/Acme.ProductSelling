@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Products;
+﻿using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Specifications.Lookups.DTOs;
 using System;
 using System.Threading.Tasks;

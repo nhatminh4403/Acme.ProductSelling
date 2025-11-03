@@ -1,6 +1,7 @@
 using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Manufacturers;
-using Acme.ProductSelling.Products;
+using Acme.ProductSelling.Products.Dtos;
+using Acme.ProductSelling.Products.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -11,9 +12,9 @@ namespace Acme.ProductSelling.Web.Pages.Products
 {
     public class ProductsByManufacturerModel : ProductSellingPageModel
     {
-        private readonly IProductAppService _productAppService;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IManufacturerRepository _manufacturerRepository;
+        private readonly IProductLookupAppService _productLookupAppService;
         public PagedResultDto<ProductDto> Products { get; set; }
 
         public string Filter { get; set; }
@@ -28,11 +29,14 @@ namespace Acme.ProductSelling.Web.Pages.Products
         public string CategoryName { get; set; }
         public PagerModel PagerModel { get; set; }
         //
-        public ProductsByManufacturerModel(IProductAppService productAppService, ICategoryRepository categoryRepository, IManufacturerRepository manufacturerRepository)
+        public ProductsByManufacturerModel(
+            ICategoryRepository categoryRepository,
+            IManufacturerRepository manufacturerRepository,
+            IProductLookupAppService productLookupAppService)
         {
-            _productAppService = productAppService;
             _categoryRepository = categoryRepository;
             _manufacturerRepository = manufacturerRepository;
+            _productLookupAppService = productLookupAppService;
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -41,7 +45,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
             {
                 var category = await _categoryRepository.GetBySlugAsync(CategoryUrlSlug);
                 var manufacturer = await _manufacturerRepository.GetBySlugAsync(ManufacturerUrlSlug);
-                var result = await _productAppService.GetProductByManufacturer(new GetProductsByManufacturer
+                var result = await _productLookupAppService.GetProductByManufacturer(new GetProductsByManufacturerDto
                 {
                     ManufacturerId = manufacturer.Id,
                     CategoryId = category.Id,

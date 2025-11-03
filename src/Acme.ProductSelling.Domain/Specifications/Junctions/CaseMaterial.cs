@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Products.Lookups;
+using Acme.ProductSelling.Specifications.Models;
 using System;
 using Volo.Abp.Domain.Entities;
 

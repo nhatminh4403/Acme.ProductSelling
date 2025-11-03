@@ -3,7 +3,7 @@ using Acme.ProductSelling.Specifications;
 using System;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Application.Dtos;
-namespace Acme.ProductSelling.Products
+namespace Acme.ProductSelling.Products.Dtos
 {
     public class ProductDto : AuditedEntityDto<Guid>
     {

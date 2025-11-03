@@ -1,4 +1,5 @@
-﻿using Acme.ProductSelling.Products.Lookups;
+﻿using Acme.ProductSelling.Products.Dtos;
+using Acme.ProductSelling.Products.Lookups;
 using Acme.ProductSelling.Specifications.Lookups.DTOs;
 using Acme.ProductSelling.Specifications.Lookups.InterfaceAppServices;
 using System;

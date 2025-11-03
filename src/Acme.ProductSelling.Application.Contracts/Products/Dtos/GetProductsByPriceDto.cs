@@ -1,8 +1,8 @@
 ﻿using System;
 using Volo.Abp.Application.Dtos;
-namespace Acme.ProductSelling.Products
+namespace Acme.ProductSelling.Products.Dtos
 {
-    public class GetProductsByPrice : PagedAndSortedResultRequestDto
+    public class GetProductsByPriceDto : PagedAndSortedResultRequestDto
     {
         public Guid CategoryId { get; set; }
         public decimal MinPrice { get; set; }

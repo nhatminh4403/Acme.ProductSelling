@@ -1,5 +1,6 @@
 ﻿using Acme.ProductSelling.Categories;
-using Acme.ProductSelling.Products;
+using Acme.ProductSelling.Products.Dtos;
+using Acme.ProductSelling.Products.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -11,31 +12,26 @@ namespace Acme.ProductSelling.Web.Pages.Products
     [AllowAnonymous]
     public class ProductsByCategoryModel : ProductSellingPageModel
     {
-        private readonly IProductAppService _productAppService;
-        private readonly ICategoryAppService _categoryAppService;
+
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IProductLookupAppService _productLookupAppService;
         // Nhận CategoryId từ route
         [BindProperty(SupportsGet = true)]
         public string Slug { get; set; }
-
-        // Nhận tham số phân trang từ query string
         [BindProperty(SupportsGet = true)]
         public int CurrentPage { get; set; } = 1;
-
-        // Giữ kết quả sản phẩm
         public PagedResultDto<ProductDto> ProductList { get; set; }
         public PagerModel PagerModel { get; set; }
-
-        // (Optional) Giữ tên Category để hiển thị
         public string CategoryName { get; set; }
         public int PageSize = 12;
-        public ProductsByCategoryModel(IProductAppService productAppService,
-            ICategoryAppService categoryAppService, ICategoryRepository categoryRepository)
+        public ProductsByCategoryModel(
+            ICategoryRepository categoryRepository,
+            IProductLookupAppService productLookupAppService)
         {
-            _productAppService = productAppService;
-            _categoryAppService = categoryAppService;
+
             ProductList = new PagedResultDto<ProductDto>();
             _categoryRepository = categoryRepository;
+            _productLookupAppService = productLookupAppService;
         }
         public async Task<IActionResult> OnGetAsync()
         {
@@ -44,7 +40,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
             {
 
                 CategoryName = category.Name;
-                ViewData["Title"] = CategoryName; // Đặt tiêu đề trang
+                ViewData["Title"] = CategoryName;
             }
             catch (Volo.Abp.Domain.Entities.EntityNotFoundException)
             {
@@ -61,8 +57,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
                 Sorting = "ProductName"
             };
 
-            // Gọi service để lấy danh sách sản phẩm theo category
-            ProductList = await _productAppService.GetListByCategoryAsync(input);
+            ProductList = await _productLookupAppService.GetListByCategoryAsync(input);
             PagerModel = new PagerModel(ProductList.TotalCount, 3, CurrentPage, PageSize, "/");
             return Page();
         }

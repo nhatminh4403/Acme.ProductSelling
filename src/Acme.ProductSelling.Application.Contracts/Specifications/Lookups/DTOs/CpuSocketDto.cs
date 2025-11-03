@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Products;
+﻿using Acme.ProductSelling.Products.Dtos;
 using System;
 namespace Acme.ProductSelling.Specifications.Lookups.DTOs
 {

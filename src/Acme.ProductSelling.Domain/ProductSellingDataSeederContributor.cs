@@ -3,8 +3,8 @@ using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Lookups;
 using Acme.ProductSelling.Products.Specs;
-using Acme.ProductSelling.Specifications;
 using Acme.ProductSelling.Specifications.Junctions;
+using Acme.ProductSelling.Specifications.Models;
 using Acme.ProductSelling.Utils;
 using System;
 using System.Collections.Generic;
@@ -48,10 +48,30 @@ namespace Acme.ProductSelling
         private readonly IRepository<RamType, Guid> _ramTypeRepository;
         private readonly IRepository<SwitchType, Guid> _switchTypeRepository;
         #endregion
+
+        #region Additional Fields
+        private readonly IRepository<CaseFanSpecification, Guid> _caseFanSpecRepository;
+        private readonly IRepository<MemoryCardSpecification, Guid> _memoryCardSpecRepository;
+        private readonly IRepository<SpeakerSpecification, Guid> _speakerSpecRepository;
+        private readonly IRepository<MicrophoneSpecification, Guid> _microphoneSpecRepository;
+        private readonly IRepository<WebcamSpecification, Guid> _webcamSpecRepository;
+        private readonly IRepository<MousePadSpecification, Guid> _mousePadSpecRepository;
+        private readonly IRepository<ChairSpecification, Guid> _chairSpecRepository;
+        private readonly IRepository<DeskSpecification, Guid> _deskSpecRepository;
+        private readonly IRepository<SoftwareSpecification, Guid> _softwareSpecRepository;
+        private readonly IRepository<NetworkHardwareSpecification, Guid> _networkHardwareSpecRepository;
+        private readonly IRepository<HandheldSpecification, Guid> _handheldSpecRepository;
+        private readonly IRepository<ConsoleSpecification, Guid> _consoleSpecRepository;
+        private readonly IRepository<HubSpecification, Guid> _hubSpecRepository;
+        private readonly IRepository<CableSpecification, Guid> _cableSpecRepository;
+        private readonly IRepository<ChargerSpecification, Guid> _chargerSpecRepository;
+        private readonly IRepository<PowerBankSpecification, Guid> _powerBankSpecRepository;
+        #endregion
         #region Constructor
         public ProductSellingDataSeederContributor(
             IRepository<Product, Guid> productRepository,
-            IRepository<Category, Guid> categoryRepository, CategoryManager categoryManager,
+            IRepository<Category, Guid> categoryRepository,
+            CategoryManager categoryManager,
             IRepository<MonitorSpecification, Guid> monitorSpecRepository,
             IRepository<MouseSpecification, Guid> mouseSpecRepository,
             IRepository<CpuSpecification, Guid> cpuSpecRepository,
@@ -65,7 +85,8 @@ namespace Acme.ProductSelling
             IRepository<KeyboardSpecification, Guid> keyboardSpecRepository,
             IRepository<HeadsetSpecification, Guid> headsetSpecRepository,
             IRepository<LaptopSpecification, Guid> laptopSpecRepository,
-            IGuidGenerator guidGenerator, IdentityUserManager identityUserManager,
+            IGuidGenerator guidGenerator,
+            IdentityUserManager identityUserManager,
             IRepository<Manufacturer, Guid> manufacturerRepository,
             IRepository<CpuSocket, Guid> socketRepository,
             IRepository<Chipset, Guid> chipsetRepository,
@@ -75,7 +96,23 @@ namespace Acme.ProductSelling
             IRepository<CpuCoolerSocketSupport> cpuCoolerSocketSupportRepository,
             IRepository<CaseMaterial> caseMaterialRepository,
             IRepository<RamType, Guid> ramTypeRepository,
-            IRepository<SwitchType, Guid> switchTypeRepository)
+            IRepository<SwitchType, Guid> switchTypeRepository,
+            IRepository<CaseFanSpecification, Guid> caseFanSpecRepository,
+            IRepository<MemoryCardSpecification, Guid> memoryCardSpecRepository,
+            IRepository<SpeakerSpecification, Guid> speakerSpecRepository,
+            IRepository<MicrophoneSpecification, Guid> microphoneSpecRepository,
+            IRepository<WebcamSpecification, Guid> webcamSpecRepository,
+            IRepository<MousePadSpecification, Guid> mousePadSpecRepository,
+            IRepository<ChairSpecification, Guid> chairSpecRepository,
+            IRepository<DeskSpecification, Guid> deskSpecRepository,
+            IRepository<SoftwareSpecification, Guid> softwareSpecRepository,
+            IRepository<NetworkHardwareSpecification, Guid> networkHardwareSpecRepository,
+            IRepository<HandheldSpecification, Guid> handheldSpecRepository,
+            IRepository<ConsoleSpecification, Guid> consoleSpecRepository,
+            IRepository<HubSpecification, Guid> hubSpecRepository,
+            IRepository<CableSpecification, Guid> cableSpecRepository,
+            IRepository<ChargerSpecification, Guid> chargerSpecRepository,
+            IRepository<PowerBankSpecification, Guid> powerBankSpecRepository)
 
         {
             _productRepository = productRepository;
@@ -105,6 +142,22 @@ namespace Acme.ProductSelling
             _caseMaterialRepository = caseMaterialRepository;
             _ramTypeRepository = ramTypeRepository;
             _switchTypeRepository = switchTypeRepository;
+            _caseFanSpecRepository = caseFanSpecRepository;
+            _memoryCardSpecRepository = memoryCardSpecRepository;
+            _speakerSpecRepository = speakerSpecRepository;
+            _microphoneSpecRepository = microphoneSpecRepository;
+            _webcamSpecRepository = webcamSpecRepository;
+            _mousePadSpecRepository = mousePadSpecRepository;
+            _chairSpecRepository = chairSpecRepository;
+            _deskSpecRepository = deskSpecRepository;
+            _softwareSpecRepository = softwareSpecRepository;
+            _networkHardwareSpecRepository = networkHardwareSpecRepository;
+            _handheldSpecRepository = handheldSpecRepository;
+            _consoleSpecRepository = consoleSpecRepository;
+            _hubSpecRepository = hubSpecRepository;
+            _cableSpecRepository = cableSpecRepository;
+            _chargerSpecRepository = chargerSpecRepository;
+            _powerBankSpecRepository = powerBankSpecRepository;
         }
         #endregion
         public async Task SeedAsync(DataSeedContext context)
@@ -114,33 +167,353 @@ namespace Acme.ProductSelling
             {
                 return;
             }
-            var monitors = await _categoryRepository.InsertAsync(
-                                                     await _categoryManager.CreateAsync("Monitor", "Displays", SpecificationType.Monitor));
-            var mice = await _categoryRepository.InsertAsync(
-                                                     await _categoryManager.CreateAsync("Mouse", "Pointing devices", SpecificationType.Mouse));
-            var keyboards = await _categoryRepository.InsertAsync(
-                                                        await _categoryManager.CreateAsync("Keyboard", "Input devices", SpecificationType.Keyboard));
+
+            // 1. Laptop (Individual)
             var laptops = await _categoryRepository.InsertAsync(
-                                                        await _categoryManager.CreateAsync("Laptop", "Portable computers", SpecificationType.Laptop));
+                await _categoryManager.CreateAsync(
+                    "Laptop",
+                    "Laptop cho công việc và giải trí",
+                    SpecificationType.Laptop,
+                    CategoryGroup.Individual,
+                    1,
+                    "fas fa-laptop"
+                )
+            );
+
+            // 2. Main, CPU, VGA Group
             var cpus = await _categoryRepository.InsertAsync(
-                                                        await _categoryManager.CreateAsync("CPU", "Central Processing Units", SpecificationType.CPU));
+                await _categoryManager.CreateAsync(
+                    "CPU",
+                    "Bộ vi xử lý",
+                    SpecificationType.CPU,
+                    CategoryGroup.MainCpuVga,
+                    2,
+                    "fas fa-microchip"
+                )
+            );
+
             var gpus = await _categoryRepository.InsertAsync(
-                                                        await _categoryManager.CreateAsync("GPU", "Graphics Cards", SpecificationType.GPU));
-            var rams = await _categoryRepository.InsertAsync(
-                                                        await _categoryManager.CreateAsync("RAM", "Memory Modules", SpecificationType.RAM));
+                await _categoryManager.CreateAsync(
+                    "VGA (GPU)",
+                    "Card màn hình",
+                    SpecificationType.GPU,
+                    CategoryGroup.MainCpuVga,
+                    2,
+                    "fas fa-microchip"
+                )
+            );
+
             var motherboards = await _categoryRepository.InsertAsync(
-                                                        await _categoryManager.CreateAsync("Motherboard", "Mainboards", SpecificationType.Motherboard));
-            var storage = await _categoryRepository.InsertAsync(
-                                                        await _categoryManager.CreateAsync("Storage", "SSDs and HDDs", SpecificationType.Storage));
-            var psus = await _categoryRepository.InsertAsync(
-                                                        await _categoryManager.CreateAsync("PSU", "Power Supply Units", SpecificationType.PSU));
+                await _categoryManager.CreateAsync(
+                    "Mainboard",
+                    "Bo mạch chủ",
+                    SpecificationType.Motherboard,
+                    CategoryGroup.MainCpuVga,
+                    2,
+                    "fas fa-microchip"
+                )
+            );
+
+            // 3. Case, Nguồn, Tản Group
             var cases = await _categoryRepository.InsertAsync(
-                                                        await _categoryManager.CreateAsync("Case", "Computer Chassis", SpecificationType.Case));
+                await _categoryManager.CreateAsync(
+                    "Case",
+                    "Vỏ máy tính",
+                    SpecificationType.Case,
+                    CategoryGroup.CaseAndCooling,
+                    3,
+                    "fas fa-box"
+                )
+            );
+
+            var psus = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Nguồn (PSU)",
+                    "Nguồn máy tính",
+                    SpecificationType.PSU,
+                    CategoryGroup.CaseAndCooling,
+                    3,
+                    "fas fa-box"
+                )
+            );
+
             var coolers = await _categoryRepository.InsertAsync(
-                                                        await _categoryManager.CreateAsync("CPU Cooler", "Cooling Solutions", SpecificationType.CPUCooler));
+                await _categoryManager.CreateAsync(
+                    "Tản CPU",
+                    "Tản nhiệt CPU",
+                    SpecificationType.CPUCooler,
+                    CategoryGroup.CaseAndCooling,
+                    3,
+                    "fas fa-box"
+                )
+            );
+
+            var caseFans = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Quạt Case",
+                    "Quạt tản nhiệt case",
+                    SpecificationType.CaseFan,
+                    CategoryGroup.CaseAndCooling,
+                    3,
+                    "fas fa-box"
+                )
+            );
+
+            // 4. Storage, RAM, Memory Group
+            var storage = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Ổ cứng (SSD/HDD)",
+                    "Ổ cứng lưu trữ",
+                    SpecificationType.Storage,
+                    CategoryGroup.StorageRamMemory,
+                    4,
+                    "fas fa-memory"
+                )
+            );
+
+            var rams = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "RAM",
+                    "Bộ nhớ RAM",
+                    SpecificationType.RAM,
+                    CategoryGroup.StorageRamMemory,
+                    4,
+                    "fas fa-memory"
+                )
+            );
+
+            var memoryCards = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Thẻ nhớ",
+                    "Thẻ nhớ SD, MicroSD",
+                    SpecificationType.MemoryCard,
+                    CategoryGroup.StorageRamMemory,
+                    4,
+                    "fas fa-memory"
+                )
+            );
+
+            // 5. Audio/Video Group
+            var speakers = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Loa (Speaker)",
+                    "Loa máy tính",
+                    SpecificationType.Speaker,
+                    CategoryGroup.AudioVideo,
+                    5,
+                    "fas fa-microphone-alt"
+                )
+            );
+
+            var microphones = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Micro",
+                    "Microphone",
+                    SpecificationType.Microphone,
+                    CategoryGroup.AudioVideo,
+                    5,
+                    "fas fa-microphone-alt"
+                )
+            );
+
+            var webcams = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Webcam",
+                    "Camera web",
+                    SpecificationType.Webcam,
+                    CategoryGroup.AudioVideo,
+                    5,
+                    "fas fa-microphone-alt"
+                )
+            );
+
+            // 6. Monitor (Individual)
+            var monitors = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Màn hình",
+                    "Màn hình máy tính",
+                    SpecificationType.Monitor,
+                    CategoryGroup.Individual,
+                    6,
+                    "fas fa-tv"
+                )
+            );
+
+            // 7. Keyboard (Individual)
+            var keyboards = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Bàn phím",
+                    "Bàn phím cơ, màng",
+                    SpecificationType.Keyboard,
+                    CategoryGroup.Individual,
+                    7,
+                    "fas fa-keyboard"
+                )
+            );
+
+            // 8. Mouse & Pad Group
+            var mice = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Chuột",
+                    "Chuột máy tính",
+                    SpecificationType.Mouse,
+                    CategoryGroup.MouseAndPad,
+                    8,
+                    "fas fa-mouse"
+                )
+            );
+
+            var mousePads = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Lót chuột",
+                    "Mousepad",
+                    SpecificationType.MousePad,
+                    CategoryGroup.MouseAndPad,
+                    8,
+                    "fas fa-mouse"
+                )
+            );
+
+            // 9. Headset (Individual)
             var headsets = await _categoryRepository.InsertAsync(
-                                                        await _categoryManager.CreateAsync("Headset", "Audio Devices", SpecificationType.Headset));
+                await _categoryManager.CreateAsync(
+                    "Tai Nghe",
+                    "Tai nghe gaming, văn phòng",
+                    SpecificationType.Headset,
+                    CategoryGroup.Individual,
+                    9,
+                    "fas fa-headphones"
+                )
+            );
+
+            // 10. Furniture Group
+            var chairs = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Ghế",
+                    "Ghế gaming, văn phòng",
+                    SpecificationType.Chair,
+                    CategoryGroup.Furniture,
+                    10,
+                    "fas fa-chair"
+                )
+            );
+
+            var desks = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Bàn",
+                    "Bàn làm việc, gaming",
+                    SpecificationType.Desk,
+                    CategoryGroup.Furniture,
+                    10,
+                    "fas fa-chair"
+                )
+            );
+
+            // 11. Software & Network Group
+            var software = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Phần mềm",
+                    "Software, licenses",
+                    SpecificationType.Software,
+                    CategoryGroup.SoftwareNetwork,
+                    11,
+                    "fas fa-network-wired"
+                )
+            );
+
+            var networkHardware = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Thiết bị mạng",
+                    "Router, switch, adapter",
+                    SpecificationType.NetworkHardware,
+                    CategoryGroup.SoftwareNetwork,
+                    11,
+                    "fas fa-network-wired"
+                )
+            );
+
+            // 12. Handheld & Console Group
+            var handhelds = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Handheld",
+                    "Máy chơi game cầm tay",
+                    SpecificationType.Handheld,
+                    CategoryGroup.HandheldConsole,
+                    12,
+                    "fas fa-gamepad"
+                )
+            );
+
+            var consoles = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Console",
+                    "Máy chơi game console",
+                    SpecificationType.Console,
+                    CategoryGroup.HandheldConsole,
+                    12,
+                    "fas fa-gamepad"
+                )
+            );
+
+            // 13. Accessories Group
+            var hubs = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Hub (Docking Station)",
+                    "USB Hub, Docking Station",
+                    SpecificationType.Hub,
+                    CategoryGroup.Accessories,
+                    13,
+                    "fas fa-plug"
+                )
+            );
+
+            var cables = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Cáp",
+                    "Cáp HDMI, USB, Display",
+                    SpecificationType.Cable,
+                    CategoryGroup.Accessories,
+                    13,
+                    "fas fa-plug"
+                )
+            );
+
+            var chargers = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Sạc",
+                    "Adapter, charger",
+                    SpecificationType.Charger,
+                    CategoryGroup.Accessories,
+                    13,
+                    "fas fa-plug"
+                )
+            );
+
+            var powerBanks = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Sạc dự phòng",
+                    "Power bank",
+                    SpecificationType.PowerBank,
+                    CategoryGroup.Accessories,
+                    13,
+                    "fas fa-plug"
+                )
+            );
+
+            // 14. Services (Individual)
+            var services = await _categoryRepository.InsertAsync(
+                await _categoryManager.CreateAsync(
+                    "Dịch vụ và thông tin khác",
+                    "Services and information",
+                    SpecificationType.Services,
+                    CategoryGroup.Individual,
+                    14,
+                    "fas fa-info-circle"
+                )
+            );
+
             #endregion
+
             #region Manufacturers
             List<Manufacturer> Manufacturers = new List<Manufacturer>();
             var asus = new Manufacturer
@@ -364,6 +737,77 @@ namespace Acme.ProductSelling
             };
             asrock.UrlSlug = UrlHelperMethod.RemoveDiacritics(asrock.Name);
             Manufacturers.Add(asrock);
+
+            // Add to your Manufacturers list
+            var ikea = new Manufacturer
+            {
+                ContactInfo = "https://www.ikea.com/",
+                Name = "IKEA",
+                Description = "Swedish multinational conglomerate that designs and sells ready-to-assemble furniture, kitchen appliances and home accessories.",
+                ManufacturerImage = "/images/manufacturers/ikea-logo.png"
+            };
+            ikea.UrlSlug = UrlHelperMethod.RemoveDiacritics(ikea.Name);
+            Manufacturers.Add(ikea);
+
+            var microsoft = new Manufacturer
+            {
+                ContactInfo = "https://www.microsoft.com/",
+                Name = "Microsoft",
+                Description = "American multinational technology corporation known for Windows, Office, Xbox and Azure cloud services.",
+                ManufacturerImage = "/images/manufacturers/microsoft-logo.png"
+            };
+            microsoft.UrlSlug = UrlHelperMethod.RemoveDiacritics(microsoft.Name);
+            Manufacturers.Add(microsoft);
+
+            var tplink = new Manufacturer
+            {
+                ContactInfo = "https://www.tp-link.com/",
+                Name = "TP-Link",
+                Description = "Chinese manufacturer of computer networking products including routers, switches, and smart home devices.",
+                ManufacturerImage = "/images/manufacturers/tplink-logo.png"
+            };
+            tplink.UrlSlug = UrlHelperMethod.RemoveDiacritics(tplink.Name);
+            Manufacturers.Add(tplink);
+
+            var valve = new Manufacturer
+            {
+                ContactInfo = "https://www.valvesoftware.com/",
+                Name = "Valve",
+                Description = "American video game developer and digital distribution company, creator of Steam and Steam Deck.",
+                ManufacturerImage = "/images/manufacturers/valve-logo.png"
+            };
+            valve.UrlSlug = UrlHelperMethod.RemoveDiacritics(valve.Name);
+            Manufacturers.Add(valve);
+
+            var sony = new Manufacturer
+            {
+                ContactInfo = "https://www.sony.com/",
+                Name = "Sony",
+                Description = "Japanese multinational conglomerate known for electronics, gaming (PlayStation), entertainment and imaging products.",
+                ManufacturerImage = "/images/manufacturers/sony-logo.png"
+            };
+            sony.UrlSlug = UrlHelperMethod.RemoveDiacritics(sony.Name);
+            Manufacturers.Add(sony);
+
+            var anker = new Manufacturer
+            {
+                ContactInfo = "https://www.anker.com/",
+                Name = "Anker",
+                Description = "Chinese electronics company known for charging accessories, power banks, cables and hubs.",
+                ManufacturerImage = "/images/manufacturers/anker-logo.png"
+            };
+            anker.UrlSlug = UrlHelperMethod.RemoveDiacritics(anker.Name);
+            Manufacturers.Add(anker);
+
+            var ugreen = new Manufacturer
+            {
+                ContactInfo = "https://www.ugreen.com/",
+                Name = "UGREEN",
+                Description = "Chinese manufacturer of computer and mobile accessories including cables, chargers and adapters.",
+                ManufacturerImage = "/images/manufacturers/ugreen-logo.png"
+            };
+            ugreen.UrlSlug = UrlHelperMethod.RemoveDiacritics(ugreen.Name);
+            Manufacturers.Add(ugreen);
             await _manufacturerRepository.InsertManyAsync(Manufacturers, autoSave: true);
             #endregion
 
@@ -1248,6 +1692,377 @@ namespace Acme.ProductSelling
                 Color = "Black"
             }, autoSave: true);
             #endregion
+            #endregion
+
+
+
+            #region New Category Products
+
+            // CaseFan Product
+            var productCaseFan1 = await CreateProductAsync(
+                caseFans.Id, noctua.Id, 450000, 5,
+                "Noctua NF-A12x25 PWM",
+                "Quạt tản nhiệt case 120mm cao cấp, êm ái",
+                100,
+                "https://noctua.at/pub/media/catalog/product/cache/74c1057f7991b4edb2bc7bdaa94de933/n/f/nf_a12x25_pwm_1.jpg"
+            );
+            await _caseFanSpecRepository.InsertAsync(new CaseFanSpecification
+            {
+                ProductId = productCaseFan1.Id,
+                FanSize = 120,
+                MaxRpm = 2000,
+                NoiseLevel = 22.6f,
+                Airflow = 102.1f,
+                StaticPressure = 2.34f,
+                Connector = "4-pin PWM",
+                BearingType = "SSO2",
+                HasRgb = false,
+                Color = "Brown/Beige"
+            }, autoSave: true);
+
+            // MemoryCard Product
+            var productMemoryCard1 = await CreateProductAsync(
+                memoryCards.Id, samsung.Id, 350000, 8,
+                "Samsung EVO Plus microSD 128GB",
+                "Thẻ nhớ tốc độ cao, chống nước, chống sốc",
+                200,
+                "https://images.samsung.com/is/image/samsung/p6pim/vn/mb-mc128ka-apc/gallery/vn-microsdxc-evo-plus-mb-mc128ka-535234-mb-mc128ka-apc-538392334"
+            );
+            await _memoryCardSpecRepository.InsertAsync(new MemoryCardSpecification
+            {
+                ProductId = productMemoryCard1.Id,
+                Capacity = 128,
+                CardType = "microSDXC",
+                SpeedClass = "U3, V30, A2",
+                ReadSpeed = 130,
+                WriteSpeed = 90,
+                Warranty = "10 năm",
+                Waterproof = true,
+                Shockproof = true
+            }, autoSave: true);
+
+            // Speaker Product
+            var productSpeaker1 = await CreateProductAsync(
+                speakers.Id, logitech.Id, 1500000, 10,
+                "Logitech Z623 2.1",
+                "Loa 2.1 THX công suất 200W, bass mạnh mẽ",
+                45,
+                "https://resource.logitech.com/w_800,c_lpad,ar_1:1,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/speakers/z623/gallery/z623-gallery-1.png"
+            );
+            await _speakerSpecRepository.InsertAsync(new SpeakerSpecification
+            {
+                ProductId = productSpeaker1.Id,
+                SpeakerType = "2.1 (Stereo with Subwoofer)",
+                TotalWattage = 200,
+                Frequency = "35Hz - 20kHz",
+                Connectivity = ConnectivityType.Wired,
+                InputPorts = "3.5mm, RCA",
+                HasBluetooth = false,
+                HasRemote = true,
+                Color = "Black"
+            }, autoSave: true);
+
+            // Microphone Product
+            var productMicrophone1 = await CreateProductAsync(
+                microphones.Id, hyperx.Id, 1800000, 5,
+                "HyperX QuadCast S",
+                "Micro USB chống rung, RGB, 4 polar pattern",
+                60,
+                "https://row.hyperx.com/cdn/shop/files/hyperx_quadcast_s_mic_1_top_down_zm_lg.jpg"
+            );
+            await _microphoneSpecRepository.InsertAsync(new MicrophoneSpecification
+            {
+                ProductId = productMicrophone1.Id,
+                MicrophoneType = "Condenser",
+                PolarPattern = "Cardioid, Bidirectional, Omnidirectional, Stereo",
+                Frequency = "20Hz - 20kHz",
+                SampleRate = "48kHz/16-bit",
+                Sensitivity = "-36dB",
+                Connectivity = ConnectivityType.Wired,
+                Connection = "USB Type-C",
+                HasShockMount = true,
+                HasPopFilter = true,
+                HasRgb = true,
+                Color = "Black/Red"
+            }, autoSave: true);
+
+            // Webcam Product
+            var productWebcam1 = await CreateProductAsync(
+                webcams.Id, logitech.Id, 2500000, 12,
+                "Logitech StreamCam",
+                "Webcam 1080p 60fps cho streaming, USB-C",
+                50,
+                "https://resource.logitech.com/w_800,c_lpad,ar_1:1,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/webcams/streamcam/gallery/streamcam-gallery-1-graphite.png"
+            );
+            await _webcamSpecRepository.InsertAsync(new WebcamSpecification
+            {
+                ProductId = productWebcam1.Id,
+                Resolution = "1920x1080",
+                FrameRate = 60,
+                FocusType = "Auto Focus",
+                FieldOfView = 78,
+                Connectivity = ConnectivityType.Wired,
+                Connection = "USB Type-C",
+                HasMicrophone = true,
+                HasPrivacyShutter = false,
+                MountType = "Monitor Clip, Tripod",
+                Color = "Graphite"
+            }, autoSave: true);
+
+            // MousePad Product
+            var productMousePad1 = await CreateProductAsync(
+                mousePads.Id, steelseries.Id, 800000, 15,
+                "SteelSeries QcK Heavy XXL",
+                "Lót chuột vải lớn 900x400mm, dày 6mm",
+                120,
+                "https://media.steelseriescdn.com/thumbs/catalogue/products/00431-qck-heavy-xxl/c0eb6b6563984f2fab338c58e37b0ee1.png.500x400_q100_crop-fit_optimize.png"
+            );
+            await _mousePadSpecRepository.InsertAsync(new MousePadSpecification
+            {
+                ProductId = productMousePad1.Id,
+                Width = 900,
+                Height = 400,
+                Thickness = 6,
+                Material = "Cloth",
+                SurfaceType = "Smooth fabric",
+                BaseType = "Non-slip rubber",
+                HasRgb = false,
+                IsWashable = true,
+                Color = "Black"
+            }, autoSave: true);
+
+            // Chair Product
+            var productChair1 = await CreateProductAsync(
+                chairs.Id, corsair.Id, 8500000, 10,
+                "Corsair TC100 Relaxed",
+                "Ghế gaming vải thoáng khí, êm ái",
+                25,
+                "https://assets.corsair.com/image/upload/f_auto,q_auto/content/TC100-RELAXED-BLACK-Gallery-Hero-01.png"
+            );
+            await _chairSpecRepository.InsertAsync(new ChairSpecification
+            {
+                ProductId = productChair1.Id,
+                ChairType = "Gaming/Office",
+                Material = "Fabric",
+                MaxWeight = 120,
+                ArmrestType = "3D Adjustable",
+                BackrestAdjustment = "Recline 90°-160°",
+                SeatHeight = "42-52cm",
+                HasLumbarSupport = true,
+                HasHeadrest = true,
+                BaseType = "Nylon 5-star",
+                WheelType = "60mm PU caster",
+                Color = "Black"
+            }, autoSave: true);
+
+            // Desk Product
+            var productDesk1 = await CreateProductAsync(
+                desks.Id, ikea.Id, 3500000, 5,
+                "IKEA UPPSPEL Gaming Desk",
+                "Bàn gaming 140x80cm, có hệ thống quản lý dây",
+                15,
+                "https://www.ikea.com/us/en/images/products/uppspel-gaming-desk-black__0981784_pe815503_s5.jpg"
+            );
+            await _deskSpecRepository.InsertAsync(new DeskSpecification
+            {
+                ProductId = productDesk1.Id,
+                Width = 140,
+                Depth = 80,
+                Height = 73,
+                Material = "Particle board, Steel",
+                MaxWeight = 50,
+                IsHeightAdjustable = false,
+                HasCableManagement = true,
+                HasCupHolder = false,
+                HasHeadphoneHook = true,
+                SurfaceType = "Smooth laminate",
+                Color = "Black"
+            }, autoSave: true);
+
+            // Software Product
+            var productSoftware1 = await CreateProductAsync(
+                software.Id, microsoft.Id, 3200000, 0,
+                "Windows 11 Pro",
+                "Hệ điều hành Windows 11 Pro bản quyền",
+                500,
+                "https://cdn-dynmedia-1.microsoft.com/is/image/microsoftcorp/RWZQBF_Hero_960x540_2x_RE4VnJV"
+            );
+            await _softwareSpecRepository.InsertAsync(new SoftwareSpecification
+            {
+                ProductId = productSoftware1.Id,
+                SoftwareType = "Operating System",
+                LicenseType = "Retail",
+                Platform = "Windows",
+                Version = "22H2",
+                Language = "Multi-language",
+                DeliveryMethod = "Digital Download/USB",
+                SystemRequirements = "64-bit processor, 4GB RAM, 64GB storage",
+                IsSubscription = false
+            }, autoSave: true);
+
+            // NetworkHardware Product
+            var productNetwork1 = await CreateProductAsync(
+                networkHardware.Id, tplink.Id, 1200000, 8,
+                "TP-Link Archer AX55 AX3000",
+                "Router WiFi 6 dual-band, tốc độ 3Gbps",
+                40,
+                "https://static.tp-link.com/upload/product-overview/2021/202106/20210625155708974.png"
+            );
+            await _networkHardwareSpecRepository.InsertAsync(new NetworkHardwareSpecification
+            {
+                ProductId = productNetwork1.Id,
+                DeviceType = "WiFi Router",
+                WifiStandard = "WiFi 6 (802.11ax)",
+                MaxSpeed = "3000 Mbps",
+                Frequency = "2.4GHz & 5GHz",
+                EthernetPorts = "4x Gigabit LAN, 1x Gigabit WAN",
+                AntennaCount = 4,
+                HasUsb = false,
+                SecurityProtocol = "WPA3",
+                Coverage = "Up to 2500 sq ft"
+            }, autoSave: true);
+
+            // Handheld Product
+            var productHandheld1 = await CreateProductAsync(
+                handhelds.Id, valve.Id, 12000000, 5,
+                "Steam Deck 512GB",
+                "Máy chơi game cầm tay, chạy SteamOS",
+                20,
+                "https://cdn.cloudflare.steamstatic.com/steamdeck/images/hero/hero_deck_fullbleed.jpg"
+            );
+            await _handheldSpecRepository.InsertAsync(new HandheldSpecification
+            {
+                ProductId = productHandheld1.Id,
+                Processor = "AMD Zen 2 4c/8t",
+                Graphics = "AMD RDNA 2 8 CUs",
+                RAM = "16GB LPDDR5",
+                Storage = "512GB NVMe SSD",
+                Display = "7-inch 1280x800 LCD 60Hz",
+                BatteryLife = "2-8 hours",
+                Weight = "669g",
+                OperatingSystem = "SteamOS 3.0",
+                Connectivity = "WiFi 5, Bluetooth 5.0"
+            }, autoSave: true);
+
+            // Console Product
+            var productConsole1 = await CreateProductAsync(
+                consoles.Id, sony.Id, 13000000, 8,
+                "PlayStation 5 Digital Edition",
+                "Máy chơi game thế hệ mới, bản kỹ thuật số",
+                30,
+                "https://gmedia.playstation.com/is/image/SIEPDC/ps5-digital-edition-console-image-block-01-en-25jun20"
+            );
+            await _consoleSpecRepository.InsertAsync(new ConsoleSpecification
+            {
+                ProductId = productConsole1.Id,
+                Processor = "AMD Zen 2 8-core",
+                Graphics = "AMD RDNA 2 10.28 TFLOPS",
+                RAM = "16GB GDDR6",
+                Storage = "825GB SSD",
+                OpticalDrive = "None (Digital)",
+                MaxResolution = "4K UHD",
+                MaxFrameRate = "120fps",
+                HDRSupport = true,
+                Connectivity = "WiFi 6, Bluetooth 5.1, Gigabit Ethernet"
+            }, autoSave: true);
+
+            // Hub (Docking Station) Product
+            var productHub1 = await CreateProductAsync(
+                hubs.Id, anker.Id, 2500000, 12,
+                "Anker PowerExpand Elite 13-in-1",
+                "Docking station USB-C 13 cổng, 85W PD",
+                35,
+                "https://d2j6dbq0eux0bg.cloudfront.net/images/66203968/2624850885.jpg"
+            );
+            await _hubSpecRepository.InsertAsync(new HubSpecification
+            {
+                ProductId = productHub1.Id,
+                HubType = "Thunderbolt 3 / USB-C Dock",
+                PortCount = 13,
+                UsbAPorts = "3x USB-A 3.0",
+                UsbCPorts = "2x USB-C (1x with 85W PD)",
+                HdmiPorts = 1,
+                DisplayPorts = 0,
+                EthernetPort = true,
+                SdCardReader = true,
+                AudioJack = true,
+                MaxDisplays = 2,
+                MaxResolution = "4K@60Hz",
+                PowerDelivery = "85W",
+                Color = "Gray"
+            }, autoSave: true);
+
+            // Cable Product
+            var productCable1 = await CreateProductAsync(
+                cables.Id, ugreen.Id, 250000, 5,
+                "UGREEN USB-C to USB-C 100W Cable 2m",
+                "Cáp USB-C hỗ trợ sạc nhanh 100W, truyền dữ liệu",
+                200,
+                "https://i5.walmartimages.com/asr/c6f8f7c8-c0f5-4c8e-9d0e-1f7e0e0e0e0e.jpg"
+            );
+            await _cableSpecRepository.InsertAsync(new CableSpecification
+            {
+                ProductId = productCable1.Id,
+                CableType = "USB-C to USB-C",
+                Length = 2.0f,
+                MaxPower = "100W",
+                DataTransferSpeed = "480 Mbps (USB 2.0)",
+                Connector1 = "USB Type-C",
+                Connector2 = "USB Type-C",
+                IsBraided = true,
+                Color = "Black",
+                Warranty = "2 năm"
+            }, autoSave: true);
+
+            // Charger Product
+            var productCharger1 = await CreateProductAsync(
+                chargers.Id, anker.Id, 1200000, 15,
+                "Anker 737 Charger GaNPrime 120W",
+                "Sạc nhanh 3 cổng USB-C + USB-A, GaN công nghệ mới",
+                80,
+                "https://m.media-amazon.com/images/I/61Zfh+vkVoL._AC_SL1500_.jpg"
+            );
+            await _chargerSpecRepository.InsertAsync(new ChargerSpecification
+            {
+                ProductId = productCharger1.Id,
+                ChargerType = "Wall Charger",
+                TotalWattage = 120,
+                PortCount = 3,
+                UsbCPorts = 2,
+                UsbAPorts = 1,
+                MaxOutputPerPort = "100W (USB-C1), 100W (USB-C2), 22.5W (USB-A)",
+                FastChargingProtocols = "PD 3.0, QC 3.0, PPS",
+                CableIncluded = false,
+                HasFoldablePlug = true,
+                Technology = "GaN (Gallium Nitride)",
+                Color = "Black"
+            }, autoSave: true);
+
+            // PowerBank Product
+            var productPowerBank1 = await CreateProductAsync(
+                powerBanks.Id, anker.Id, 2800000, 10,
+                "Anker 737 Power Bank 24000mAh",
+                "Sạc dự phòng 140W, màn hình LED hiển thị",
+                50,
+                "https://m.media-amazon.com/images/I/61SfU5bj9uL._AC_SL1500_.jpg"
+            );
+            await _powerBankSpecRepository.InsertAsync(new PowerBankSpecification
+            {
+                ProductId = productPowerBank1.Id,
+                Capacity = 24000,
+                TotalWattage = 140,
+                PortCount = 3,
+                UsbCPorts = 2,
+                UsbAPorts = 1,
+                InputPorts = "USB-C 140W",
+                MaxOutputPerPort = "140W (USB-C1), 100W (USB-C2), 18W (USB-A)",
+                FastChargingProtocols = "PD 3.1, QC 3.0, PPS",
+                RechargingTime = "About 1 hour (with 140W charger)",
+                HasDisplay = true,
+                Weight = 640,
+                Color = "Black"
+            }, autoSave: true);
+
             #endregion
         }
 

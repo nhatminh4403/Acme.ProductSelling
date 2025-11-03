@@ -1,7 +1,7 @@
 using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Permissions;
-using Acme.ProductSelling.Products;
+using Acme.ProductSelling.Products.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;

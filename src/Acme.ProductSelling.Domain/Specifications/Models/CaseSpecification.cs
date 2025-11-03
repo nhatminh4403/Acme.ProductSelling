@@ -3,7 +3,7 @@ using Acme.ProductSelling.Specifications.Junctions;
 using System;
 using System.Collections.Generic;
 
-namespace Acme.ProductSelling.Specifications
+namespace Acme.ProductSelling.Specifications.Models
 {
     public class CaseSpecification : SpecificationBase
     {

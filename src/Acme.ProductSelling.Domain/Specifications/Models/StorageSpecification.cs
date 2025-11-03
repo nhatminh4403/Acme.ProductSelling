@@ -1,6 +1,6 @@
 ﻿using Acme.ProductSelling.Products.Specs;
 
-namespace Acme.ProductSelling.Specifications
+namespace Acme.ProductSelling.Specifications.Models
 {
     public class StorageSpecification : SpecificationBase
     {

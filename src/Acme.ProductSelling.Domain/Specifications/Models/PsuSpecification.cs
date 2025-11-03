@@ -2,7 +2,7 @@
 using Acme.ProductSelling.Products.Specs;
 using System;
 
-namespace Acme.ProductSelling.Specifications
+namespace Acme.ProductSelling.Specifications.Models
 {
     public class PsuSpecification : SpecificationBase
     {

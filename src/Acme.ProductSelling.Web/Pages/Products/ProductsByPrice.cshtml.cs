@@ -1,6 +1,7 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Localization;
-using Acme.ProductSelling.Products;
+using Acme.ProductSelling.Products.Dtos;
+using Acme.ProductSelling.Products.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -15,17 +16,17 @@ namespace Acme.ProductSelling.Web.Pages.Products
 
     public class ProductByPriceModel : ProductSellingPageModel
     {
-        private readonly IProductAppService _productAppService;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IStringLocalizer<ProductSellingResource> _localizer;
-        private readonly IStringLocalizerFactory _localizerFactory;
-        public ProductByPriceModel(IProductAppService productAppService,
-            ICategoryRepository categoryRepository, IStringLocalizer<ProductSellingResource> localizer, IStringLocalizerFactory localizerFactory)
+        private readonly IProductLookupAppService _productLookupAppService;
+        public ProductByPriceModel(
+            ICategoryRepository categoryRepository,
+            IStringLocalizer<ProductSellingResource> localizer,
+            IProductLookupAppService productLookupAppService)
         {
-            _productAppService = productAppService;
             _categoryRepository = categoryRepository;
             _localizer = localizer;
-            _localizerFactory = localizerFactory;
+            _productLookupAppService = productLookupAppService;
         }
         public PagedResultDto<ProductDto> Products { get; set; }
         public decimal MinPrice { get; set; }
@@ -103,7 +104,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
 
                 var category = await _categoryRepository.GetBySlugAsync(Slug);
                 CategoryName = category.Name;
-                var input = new GetProductsByPrice
+                var input = new GetProductsByPriceDto
                 {
                     MinPrice = MinPrice,
                     MaxPrice = MaxPrice,
@@ -119,7 +120,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
                     { "priceRangeAlias", PriceRangeAlias }
                 };
 
-                Products = await _productAppService.GetListByProductPrice(input);
+                Products = await _productLookupAppService.GetListByProductPrice(input);
 
                 PagerModel = new PagerModel(Products.TotalCount, 3, CurrentPage, PageSize, Url.Page("./ProductByPrice", routeValues), Sorting);
 

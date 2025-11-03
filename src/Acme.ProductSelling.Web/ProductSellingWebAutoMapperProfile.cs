@@ -1,5 +1,5 @@
 using Acme.ProductSelling.Categories;
-using Acme.ProductSelling.Products;
+using Acme.ProductSelling.Products.Dtos;
 using AutoMapper;
 
 namespace Acme.ProductSelling.Web;

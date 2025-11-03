@@ -1,5 +1,7 @@
 ﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Specifications;
+using Acme.ProductSelling.Specifications.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

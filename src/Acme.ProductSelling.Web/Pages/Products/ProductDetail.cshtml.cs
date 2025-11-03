@@ -1,4 +1,5 @@
-﻿using Acme.ProductSelling.Products;
+﻿using Acme.ProductSelling.Products.Dtos;
+using Acme.ProductSelling.Products.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Entities;
@@ -15,12 +16,13 @@ namespace Acme.ProductSelling.Web.Pages.Products
 
         public ProductDto Product { get; private set; }
 
-        private readonly IProductAppService _productAppService;
+        private readonly IProductLookupAppService _productAppService;
 
-        public ProductDetailModel(IProductAppService productAppService)
+        public ProductDetailModel(IProductLookupAppService productAppService)
         {
             _productAppService = productAppService;
         }
+
 
         public async Task<IActionResult> OnGetAsync()
         {

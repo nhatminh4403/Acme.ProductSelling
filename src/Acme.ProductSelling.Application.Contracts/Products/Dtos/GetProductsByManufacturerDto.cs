@@ -1,8 +1,8 @@
 ﻿using System;
 using Volo.Abp.Application.Dtos;
-namespace Acme.ProductSelling.Products
+namespace Acme.ProductSelling.Products.Dtos
 {
-    public class GetProductsByManufacturer : PagedAndSortedResultRequestDto
+    public class GetProductsByManufacturerDto : PagedAndSortedResultRequestDto
     {
         public Guid ManufacturerId { get; set; }
         public string Filter { get; set; }

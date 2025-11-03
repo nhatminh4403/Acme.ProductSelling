@@ -1,5 +1,6 @@
 using Acme.ProductSelling.Permissions;
-using Acme.ProductSelling.Products;
+using Acme.ProductSelling.Products.Dtos;
+using Acme.ProductSelling.Products.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

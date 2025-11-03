@@ -1,4 +1,4 @@
-﻿namespace Acme.ProductSelling.Specifications
+﻿namespace Acme.ProductSelling.Specifications.Models
 {
     public class LaptopSpecification : SpecificationBase
     {

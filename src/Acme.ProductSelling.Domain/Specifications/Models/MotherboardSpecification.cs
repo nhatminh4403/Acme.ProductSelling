@@ -2,7 +2,7 @@
 using System;
 
 
-namespace Acme.ProductSelling.Specifications
+namespace Acme.ProductSelling.Specifications.Models
 {
     public class MotherboardSpecification : SpecificationBase
     {

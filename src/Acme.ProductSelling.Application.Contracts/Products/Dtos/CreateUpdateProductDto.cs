@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System;
 using System.ComponentModel.DataAnnotations;
-namespace Acme.ProductSelling.Products
+namespace Acme.ProductSelling.Products.Dtos
 {
     public class CreateUpdateProductDto
     {

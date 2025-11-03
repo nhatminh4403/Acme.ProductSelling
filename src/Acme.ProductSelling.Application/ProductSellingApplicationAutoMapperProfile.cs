@@ -6,16 +6,14 @@ using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Orders;
 using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Products;
+using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Lookups;
 using Acme.ProductSelling.Specifications;
 using Acme.ProductSelling.Specifications.Lookups.DTOs;
-using Acme.ProductSelling.Users;
+using Acme.ProductSelling.Specifications.Models;
 using AutoMapper;
 using System;
 using System.Linq;
-using Volo.Abp.AutoMapper;
-using Volo.Abp.Data;
-using Volo.Abp.Identity;
 namespace Acme.ProductSelling;
 public class ProductSellingApplicationAutoMapperProfile : Profile
 {
@@ -223,6 +221,6 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
 
         CreateMap<Comment, CommentDto>();
 
-        
+
     }
 }

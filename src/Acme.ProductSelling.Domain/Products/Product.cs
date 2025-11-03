@@ -1,6 +1,6 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Manufacturers;
-using Acme.ProductSelling.Specifications;
+using Acme.ProductSelling.Specifications.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;

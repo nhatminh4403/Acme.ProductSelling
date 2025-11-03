@@ -9,18 +9,31 @@ namespace Acme.ProductSelling.Categories
         public string Name { get; set; }
         public string Description { get; set; }
         public SpecificationType SpecificationType { get; set; } = SpecificationType.None;
+        public CategoryGroup CategoryGroup { get; set; } = CategoryGroup.Individual; // NEW
+        public int DisplayOrder { get; set; } // NEW - for ordering in sidebar
+        public string IconCssClass { get; set; } // NEW - for Font Awesome icons
         public string UrlSlug { get; set; }
         public ICollection<Product> Products { get; set; }
         private Category()
         {
         }
-        public Category(Guid id, string name, string description, string urlSlug, SpecificationType specType = SpecificationType.None) : base(id)
+        public Category(Guid id,
+                        string name,
+                        string description,
+                        string urlSlug,
+                        SpecificationType specType = SpecificationType.None,
+                        CategoryGroup categoryGroup = CategoryGroup.Individual,
+                        int displayOrder = 0,
+                        string iconCssClass = "fas fa-box") : base(id)
         {
             Name = name;
             Description = description;
             SpecificationType = specType; // Gán loại spec khi tạo
             Products = new HashSet<Product>();
             UrlSlug = urlSlug;
+            CategoryGroup = categoryGroup;
+            DisplayOrder = displayOrder;
+            IconCssClass = iconCssClass;
         }
     }
 }
