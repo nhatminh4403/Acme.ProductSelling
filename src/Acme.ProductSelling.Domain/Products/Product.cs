@@ -62,6 +62,22 @@ namespace Acme.ProductSelling.Products
         public virtual CpuCoolerSpecification CpuCoolerSpecification { get; set; }
         public virtual KeyboardSpecification KeyboardSpecification { get; set; }
         public virtual HeadsetSpecification HeadsetSpecification { get; set; }
+        public virtual SpeakerSpecification SpeakerSpecification { get; set; }
+        public virtual WebcamSpecification WebcamSpecification { get; set; }
+        public virtual CableSpecification CableSpecification { get; set; }
+        public virtual SoftwareSpecification SoftwareSpecification { get; set; }
+        public virtual CaseFanSpecification CaseFanSpecification { get; set; }
+        public virtual ChairSpecification ChairSpecification { get; set; }
+        public virtual DeskSpecification DeskSpecification { get; set; }
+        public virtual ChargerSpecification ChargerSpecification { get; set; }
+        public virtual ConsoleSpecification ConsoleSpecification { get; set; }
+        public virtual HandheldSpecification HandheldSpecification { get; set; }
+        public virtual HubSpecification HubSpecification { get; set; }
+        public virtual MemoryCardSpecification MemoryCardSpecification { get; set; }
+        public virtual MicrophoneSpecification MicrophoneSpecification { get; set; }
+        public virtual MousePadSpecification mousepadSpecification { get; set; }
+        public virtual NetworkHardwareSpecification NetworkHardwareSpecification { get; set; }
+        public virtual PowerBankSpecification PowerBankSpecification { get; set; }
 
         private void CalculateDiscountedPrice()
         {

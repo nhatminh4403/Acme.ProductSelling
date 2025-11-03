@@ -9,8 +9,24 @@ using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Lookups;
 using Acme.ProductSelling.Specifications;
+using Acme.ProductSelling.Specifications.Cable;
+using Acme.ProductSelling.Specifications.CaseFan;
+using Acme.ProductSelling.Specifications.Chair;
+using Acme.ProductSelling.Specifications.Charger;
+using Acme.ProductSelling.Specifications.Console;
+using Acme.ProductSelling.Specifications.Desk;
+using Acme.ProductSelling.Specifications.Handheld;
+using Acme.ProductSelling.Specifications.Hub;
 using Acme.ProductSelling.Specifications.Lookups.DTOs;
+using Acme.ProductSelling.Specifications.MemoryCard;
+using Acme.ProductSelling.Specifications.Microphone;
 using Acme.ProductSelling.Specifications.Models;
+using Acme.ProductSelling.Specifications.MousePad;
+using Acme.ProductSelling.Specifications.NetworkHardware;
+using Acme.ProductSelling.Specifications.PowerBank;
+using Acme.ProductSelling.Specifications.Software;
+using Acme.ProductSelling.Specifications.Speaker;
+using Acme.ProductSelling.Specifications.Webcam;
 using AutoMapper;
 using System;
 using System.Linq;
@@ -68,6 +84,7 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
 
         CreateMap<CpuCoolerSpecificationDto, CreateUpdateCpuCoolerSpecificationDto>()
             .ForMember(dest => dest.SupportedSocketIds, opt => opt.Ignore());
+
         CreateMap<CreateUpdateProductDto, Product>()
             .ForMember(dest => dest.Category, opt => opt.Ignore())
             .ForMember(dest => dest.Manufacturer, opt => opt.Ignore())
@@ -84,11 +101,73 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
             .ForMember(dest => dest.CpuCoolerSpecification, opt => opt.Ignore())
             .ForMember(dest => dest.KeyboardSpecification, opt => opt.Ignore())
             .ForMember(dest => dest.HeadsetSpecification, opt => opt.Ignore());
+        CreateMap<CaseFanSpecification, CaseFanSpecificationDto>();
+        CreateMap<CreateUpdateCaseFanSpecificationDto, CaseFanSpecification>();
 
+        // MemoryCard
+        CreateMap<MemoryCardSpecification, MemoryCardSpecificationDto>();
+        CreateMap<CreateUpdateMemoryCardSpecificationDto, MemoryCardSpecification>();
 
-        // Spec Mappings ---
+        // Speaker
+        CreateMap<SpeakerSpecification, SpeakerSpecificationDto>();
+        CreateMap<CreateUpdateSpeakerSpecificationDto, SpeakerSpecification>();
 
-        CreateMap<CpuSpecification, CpuSpecificationDto>()
+        // Microphone
+        CreateMap<MicrophoneSpecification, MicrophoneSpecificationDto>();
+        CreateMap<CreateUpdateMicrophoneSpecificationDto, MicrophoneSpecification>();
+
+        // Webcam
+        CreateMap<WebcamSpecification, WebcamSpecificationDto>();
+        CreateMap<CreateUpdateWebcamSpecificationDto, WebcamSpecification>();
+
+        // MousePad
+        CreateMap<MousePadSpecification, MousePadSpecificationDto>();
+        CreateMap<CreateUpdateMousePadSpecificationDto, MousePadSpecification>();
+
+        // Chair
+        CreateMap<ChairSpecification, ChairSpecificationDto>();
+        CreateMap<CreateUpdateChairSpecificationDto, ChairSpecification>();
+
+        // Desk
+        CreateMap<DeskSpecification, DeskSpecificationDto>();
+        CreateMap<CreateUpdateDeskSpecificationDto, DeskSpecification>();
+
+        // Software
+        CreateMap<SoftwareSpecification, SoftwareSpecificationDto>();
+        CreateMap<CreateUpdateSoftwareSpecificationDto, SoftwareSpecification>();
+
+        // NetworkHardware
+        CreateMap<NetworkHardwareSpecification, NetworkHardwareSpecificationDto>();
+        CreateMap<CreateUpdateNetworkHardwareSpecificationDto, NetworkHardwareSpecification>();
+
+        // Handheld
+        CreateMap<HandheldSpecification, HandheldSpecificationDto>();
+        CreateMap<CreateUpdateHandheldSpecificationDto, HandheldSpecification>();
+
+        // Console
+        CreateMap<ConsoleSpecification, ConsoleSpecificationDto>();
+        CreateMap<CreateUpdateConsoleSpecificationDto, ConsoleSpecification>();
+
+        // Hub
+        CreateMap<HubSpecification, HubSpecificationDto>();
+        CreateMap<CreateUpdateHubSpecificationDto, HubSpecification>();
+
+        // Cable
+        CreateMap<CableSpecification, CableSpecificationDto>();
+        CreateMap<CreateUpdateCableSpecificationDto, CableSpecification>();
+
+        // Charger
+        CreateMap<ChargerSpecification, ChargerSpecificationDto>();
+        CreateMap<CreateUpdateChargerSpecificationDto, ChargerSpecification>();
+
+        // PowerBank
+        CreateMap<PowerBankSpecification, PowerBankSpecificationDto>();
+        CreateMap<CreateUpdatePowerBankSpecificationDto, PowerBankSpecification>();
+    }
+
+    // Spec Mappings ---
+
+    CreateMap<CpuSpecification, CpuSpecificationDto>()
             .ForMember(dest => dest.SocketName, opt => opt.MapFrom(src => src.Socket.Name));
 
         CreateMap<MotherboardSpecification, MotherboardSpecificationDto>()
