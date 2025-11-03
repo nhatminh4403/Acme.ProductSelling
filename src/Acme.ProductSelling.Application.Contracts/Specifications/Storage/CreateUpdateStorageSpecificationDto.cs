@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Products.Specs;
+﻿using Acme.ProductSelling.Categories;
 namespace Acme.ProductSelling.Specifications
 {
     public class CreateUpdateStorageSpecificationDto

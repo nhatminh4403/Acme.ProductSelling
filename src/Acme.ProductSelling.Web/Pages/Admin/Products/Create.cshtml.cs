@@ -5,7 +5,6 @@ using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
-using Acme.ProductSelling.Products.Specs;
 using Acme.ProductSelling.Specifications;
 using Acme.ProductSelling.Specifications.Lookups.InterfaceAppServices;
 using Acme.ProductSelling.Web.Extensions;
@@ -13,14 +12,17 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using NuGet.Packaging;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp;
+using Volo.Abp.Internal.Telemetry.Constants.Enums;
 
 namespace Acme.ProductSelling.Web.Pages.Admin.Products
 {
@@ -56,8 +58,32 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
         public List<SelectListItem> PanelTypes { get; set; }
         public List<SelectListItem> SwitchTypes { get; set; }
         public List<SelectListItem> Materials { get; set; }
+        public List<SelectListItem> BearingTypes { get; set; }
+        public List<SelectListItem> CardTypes { get; set; }
+        public List<SelectListItem> SpeakerTypes { get; set; }
+        public List<SelectListItem> MicrophoneTypes { get; set; }
+        public List<SelectListItem> PolarPatterns { get; set; }
+        public List<SelectListItem> FocusTypes { get; set; }
+        public List<SelectListItem> MousePadMaterials { get; set; }
+        public List<SelectListItem> SurfaceTypes { get; set; }
+        public List<SelectListItem> ChairMaterials { get; set; }
+        public List<SelectListItem> ArmrestTypes { get; set; }
+        public List<SelectListItem> DeskMaterials { get; set; }
+        public List<SelectListItem> SoftwareTypes { get; set; }
+        public List<SelectListItem> LicenseTypes { get; set; }
+        public List<SelectListItem> Platforms { get; set; }
+        public List<SelectListItem> NetworkDeviceTypes { get; set; }
+        public List<SelectListItem> WifiStandards { get; set; }
+        public List<SelectListItem> HubTypes { get; set; }
+        public List<SelectListItem> CableTypes { get; set; }
+        public List<SelectListItem> ChargerTypes { get; set; }
+        public List<SelectListItem> ChargingProtocols { get; set; }
+        public List<SelectListItem> OpticalDriveTypes { get; set; }
+        public List<SelectListItem> ConnectivityTypes { get; set; }
+        public List<SelectListItem> KeyboardLayouts { get; set; }
+        public List<SelectListItem> PsuModularities { get; set; }
+        public List<SelectListItem> RamFormFactors { get; set; }
         public List<SelectListItem> StorageFormFactors { get; set; }
-
         public List<SelectListItem> StorageTypes { get; set; }
         public CreateModel(
            IProductAppService productAppService,
@@ -141,20 +167,35 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
             var switchTypes = await _switchTypeAppService.GetLookupAsync();
             SwitchTypes = switchTypes.Items.Select(m => new SelectListItem(m.Name, m.Id.ToString())).ToList();
 
-            StorageFormFactors = Enum.GetValues(typeof(StorageFormFactor))
-                .Cast<StorageFormFactor>()
-                .Select(e => new SelectListItem
-                {
-                    Text = e.GetEnumDescriptions(),
-                    Value = e.ToString()
-                }).ToList();
-            StorageTypes = Enum.GetValues(typeof(StorageType))
-                .Cast<StorageFormFactor>()
-                .Select(e => new SelectListItem
-                {
-                    Text = e.GetEnumDescriptions(),
-                    Value = e.ToString()
-                }).ToList();
+
+            BearingTypes = _localizer.ToLocalizedSelectList<BearingType>();
+            CardTypes = _localizer.ToLocalizedSelectList<CardType>();
+            SpeakerTypes = _localizer.ToLocalizedSelectList<SpeakerType>();
+            MicrophoneTypes = _localizer.ToLocalizedSelectList<MicrophoneType>();
+            PolarPatterns = _localizer.ToLocalizedSelectList<PolarPattern>();
+            FocusTypes = _localizer.ToLocalizedSelectList<FocusType>();
+            MousePadMaterials = _localizer.ToLocalizedSelectList<MousePadMaterial>();
+            SurfaceTypes = _localizer.ToLocalizedSelectList<SurfaceType>();
+            ChairMaterials = _localizer.ToLocalizedSelectList<ChairMaterial>();
+            ArmrestTypes = _localizer.ToLocalizedSelectList<ArmrestType>();
+            DeskMaterials = _localizer.ToLocalizedSelectList<DeskMaterial>();
+            SoftwareTypes = _localizer.ToLocalizedSelectList<ProductSelling.Categories.SoftwareType>();
+            LicenseTypes = _localizer.ToLocalizedSelectList<ProductSelling.Categories.LicenseType>();
+            Platforms = _localizer.ToLocalizedSelectList<ProductSelling.Categories.Platform>();
+            NetworkDeviceTypes = _localizer.ToLocalizedSelectList<NetworkDeviceType>();
+            WifiStandards = _localizer.ToLocalizedSelectList<WifiStandard>();
+            HubTypes = _localizer.ToLocalizedSelectList<HubType>();
+            CableTypes = _localizer.ToLocalizedSelectList<CableType>();
+            ChargerTypes = _localizer.ToLocalizedSelectList<ChargerType>();
+            ChargingProtocols = _localizer.ToLocalizedSelectList<ChargingProtocol>();
+            OpticalDriveTypes = _localizer.ToLocalizedSelectList<OpticalDriveType>();
+            ConnectivityTypes = _localizer.ToLocalizedSelectList<ConnectivityType>();
+            KeyboardLayouts = _localizer.ToLocalizedSelectList<KeyboardLayout>();
+            PsuModularities = _localizer.ToLocalizedSelectList<PsuModularity>();
+            RamFormFactors = _localizer.ToLocalizedSelectList<RamFormFactor>();
+            StorageFormFactors = _localizer.ToLocalizedSelectList<StorageFormFactor>();
+            StorageTypes = _localizer.ToLocalizedSelectList<StorageType>();
+
         }
 
         private void InitializeProductDto()

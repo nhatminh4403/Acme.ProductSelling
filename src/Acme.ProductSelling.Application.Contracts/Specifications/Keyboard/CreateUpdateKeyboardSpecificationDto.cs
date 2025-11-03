@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Products.Specs;
+﻿using Acme.ProductSelling.Categories;
 using System;
 using System.ComponentModel.DataAnnotations;
 namespace Acme.ProductSelling.Specifications

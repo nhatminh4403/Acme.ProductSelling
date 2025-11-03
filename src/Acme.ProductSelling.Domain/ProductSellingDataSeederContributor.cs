@@ -2,7 +2,6 @@
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Lookups;
-using Acme.ProductSelling.Products.Specs;
 using Acme.ProductSelling.Specifications.Junctions;
 using Acme.ProductSelling.Specifications.Models;
 using Acme.ProductSelling.Utils;
@@ -808,6 +807,15 @@ namespace Acme.ProductSelling
             };
             ugreen.UrlSlug = UrlHelperMethod.RemoveDiacritics(ugreen.Name);
             Manufacturers.Add(ugreen);
+
+
+            var jbl = new Manufacturer
+            {
+                ContactInfo = "https://www.jbl.com/",
+                Name = "JBL",
+                Description = "American audio electronics company known for speakers, headphones and sound systems.",
+                ManufacturerImage = "/images/manufacturers/jbl-logo.png"
+            };
             await _manufacturerRepository.InsertManyAsync(Manufacturers, autoSave: true);
             #endregion
 
@@ -1715,7 +1723,7 @@ namespace Acme.ProductSelling
                 Airflow = 102.1f,
                 StaticPressure = 2.34f,
                 Connector = "4-pin PWM",
-                BearingType = "SSO2",
+                BearingType = BearingType.SSO2,
                 HasRgb = false,
                 Color = "Brown/Beige"
             }, autoSave: true);
@@ -1732,7 +1740,7 @@ namespace Acme.ProductSelling
             {
                 ProductId = productMemoryCard1.Id,
                 Capacity = 128,
-                CardType = "microSDXC",
+                CardType = CardType.MicroSDHC,
                 SpeedClass = "U3, V30, A2",
                 ReadSpeed = 130,
                 WriteSpeed = 90,
@@ -1752,13 +1760,11 @@ namespace Acme.ProductSelling
             await _speakerSpecRepository.InsertAsync(new SpeakerSpecification
             {
                 ProductId = productSpeaker1.Id,
-                SpeakerType = "2.1 (Stereo with Subwoofer)",
+                SpeakerType = SpeakerType.Stereo_2_1_WithSubwoofer,
                 TotalWattage = 200,
                 Frequency = "35Hz - 20kHz",
-                Connectivity = ConnectivityType.Wired,
+                Connectivity = ConnectivityType.Wired, // CHANGED
                 InputPorts = "3.5mm, RCA",
-                HasBluetooth = false,
-                HasRemote = true,
                 Color = "Black"
             }, autoSave: true);
 
@@ -1773,7 +1779,7 @@ namespace Acme.ProductSelling
             await _microphoneSpecRepository.InsertAsync(new MicrophoneSpecification
             {
                 ProductId = productMicrophone1.Id,
-                MicrophoneType = "Condenser",
+                MicrophoneType = MicrophoneType.Condenser,
                 PolarPattern = "Cardioid, Bidirectional, Omnidirectional, Stereo",
                 Frequency = "20Hz - 20kHz",
                 SampleRate = "48kHz/16-bit",
@@ -1799,7 +1805,7 @@ namespace Acme.ProductSelling
                 ProductId = productWebcam1.Id,
                 Resolution = "1920x1080",
                 FrameRate = 60,
-                FocusType = "Auto Focus",
+                FocusType = FocusType.AutoFocus,
                 FieldOfView = 78,
                 Connectivity = ConnectivityType.Wired,
                 Connection = "USB Type-C",
@@ -1823,8 +1829,8 @@ namespace Acme.ProductSelling
                 Width = 900,
                 Height = 400,
                 Thickness = 6,
-                Material = "Cloth",
-                SurfaceType = "Smooth fabric",
+                Material = MousePadMaterial.Cloth,
+                SurfaceType = SurfaceType.Smooth,
                 BaseType = "Non-slip rubber",
                 HasRgb = false,
                 IsWashable = true,
@@ -1843,9 +1849,9 @@ namespace Acme.ProductSelling
             {
                 ProductId = productChair1.Id,
                 ChairType = "Gaming/Office",
-                Material = "Fabric",
+                Material = ChairMaterial.Fabric,
                 MaxWeight = 120,
-                ArmrestType = "3D Adjustable",
+                ArmrestType = ArmrestType.Adjustable_3D,
                 BackrestAdjustment = "Recline 90°-160°",
                 SeatHeight = "42-52cm",
                 HasLumbarSupport = true,
@@ -1869,7 +1875,7 @@ namespace Acme.ProductSelling
                 Width = 140,
                 Depth = 80,
                 Height = 73,
-                Material = "Particle board, Steel",
+                Material = DeskMaterial.ParticleBoard,
                 MaxWeight = 50,
                 IsHeightAdjustable = false,
                 HasCableManagement = true,
@@ -1890,9 +1896,9 @@ namespace Acme.ProductSelling
             await _softwareSpecRepository.InsertAsync(new SoftwareSpecification
             {
                 ProductId = productSoftware1.Id,
-                SoftwareType = "Operating System",
-                LicenseType = "Retail",
-                Platform = "Windows",
+                SoftwareType = SoftwareType.OperatingSystem,
+                LicenseType = LicenseType.Retail,
+                Platform = Platform.Windows,
                 Version = "22H2",
                 Language = "Multi-language",
                 DeliveryMethod = "Digital Download/USB",
@@ -1911,8 +1917,8 @@ namespace Acme.ProductSelling
             await _networkHardwareSpecRepository.InsertAsync(new NetworkHardwareSpecification
             {
                 ProductId = productNetwork1.Id,
-                DeviceType = "WiFi Router",
-                WifiStandard = "WiFi 6 (802.11ax)",
+                DeviceType = NetworkDeviceType.Router,
+                WifiStandard = WifiStandard.WiFi6_802_11ax,
                 MaxSpeed = "3000 Mbps",
                 Frequency = "2.4GHz & 5GHz",
                 EthernetPorts = "4x Gigabit LAN, 1x Gigabit WAN",
@@ -1941,7 +1947,9 @@ namespace Acme.ProductSelling
                 BatteryLife = "2-8 hours",
                 Weight = "669g",
                 OperatingSystem = "SteamOS 3.0",
-                Connectivity = "WiFi 5, Bluetooth 5.0"
+                Connectivity = ConnectivityType.WirelessAndBluetooth, // CHANGED
+                WifiVersion = "WiFi 5 (802.11ac)",
+                BluetoothVersion = "5.0"
             }, autoSave: true);
 
             // Console Product
@@ -1959,11 +1967,14 @@ namespace Acme.ProductSelling
                 Graphics = "AMD RDNA 2 10.28 TFLOPS",
                 RAM = "16GB GDDR6",
                 Storage = "825GB SSD",
-                OpticalDrive = "None (Digital)",
+                OpticalDrive = OpticalDriveType.None,
                 MaxResolution = "4K UHD",
                 MaxFrameRate = "120fps",
                 HDRSupport = true,
-                Connectivity = "WiFi 6, Bluetooth 5.1, Gigabit Ethernet"
+                Connectivity = ConnectivityType.WiredWirelessAndBluetooth, // CHANGED
+                HasEthernet = true,
+                WifiVersion = "WiFi 6 (802.11ax)",
+                BluetoothVersion = "5.1"
             }, autoSave: true);
 
             // Hub (Docking Station) Product
@@ -1977,7 +1988,7 @@ namespace Acme.ProductSelling
             await _hubSpecRepository.InsertAsync(new HubSpecification
             {
                 ProductId = productHub1.Id,
-                HubType = "Thunderbolt 3 / USB-C Dock",
+                HubType = HubType.Thunderbolt_3_Dock,
                 PortCount = 13,
                 UsbAPorts = "3x USB-A 3.0",
                 UsbCPorts = "2x USB-C (1x with 85W PD)",
@@ -2003,7 +2014,7 @@ namespace Acme.ProductSelling
             await _cableSpecRepository.InsertAsync(new CableSpecification
             {
                 ProductId = productCable1.Id,
-                CableType = "USB-C to USB-C",
+                CableType = CableType.USB_C_to_USB_C,
                 Length = 2.0f,
                 MaxPower = "100W",
                 DataTransferSpeed = "480 Mbps (USB 2.0)",
@@ -2011,7 +2022,7 @@ namespace Acme.ProductSelling
                 Connector2 = "USB Type-C",
                 IsBraided = true,
                 Color = "Black",
-                Warranty = "2 năm"
+                Warranty = "24"
             }, autoSave: true);
 
             // Charger Product
@@ -2025,7 +2036,7 @@ namespace Acme.ProductSelling
             await _chargerSpecRepository.InsertAsync(new ChargerSpecification
             {
                 ProductId = productCharger1.Id,
-                ChargerType = "Wall Charger",
+                ChargerType = ChargerType.WallCharger,
                 TotalWattage = 120,
                 PortCount = 3,
                 UsbCPorts = 2,
@@ -2062,7 +2073,68 @@ namespace Acme.ProductSelling
                 Weight = 640,
                 Color = "Black"
             }, autoSave: true);
+            // Example: Bluetooth Speaker
+            var productSpeaker2 = await CreateProductAsync(
+                speakers.Id, jbl.Id, 2200000, 15,
+                "JBL Charge 5",
+                "Loa Bluetooth chống nước IP67, pin 20 giờ",
+                70,
+                "https://example.com/jbl-charge-5.jpg"
+            );
+            await _speakerSpecRepository.InsertAsync(new SpeakerSpecification
+            {
+                ProductId = productSpeaker2.Id,
+                SpeakerType = SpeakerType.Stereo_2_0,
+                TotalWattage = 40,
+                Frequency = "60Hz - 20kHz",
+                Connectivity = ConnectivityType.WirelessAndBluetooth, // Bluetooth speaker
+                InputPorts = "USB-C (charging only)",
+                Color = "Black"
+            }, autoSave: true);
 
+            // Example: Wireless Gaming Headset with Bluetooth
+            var productHeadset3 = await CreateProductAsync(
+                headsets.Id, steelseries.Id, 4500000, 10,
+                "SteelSeries Arctis Nova Pro Wireless",
+                "Tai nghe gaming đa kết nối, DAC riêng",
+                30,
+                "https://example.com/arctis-nova-pro.jpg"
+            );
+            await _headsetSpecRepository.InsertAsync(new HeadsetSpecification
+            {
+                ProductId = productHeadset3.Id,
+                Connectivity = ConnectivityType.WiredWirelessAndBluetooth, // Multi-mode
+                DriverSize = 40,
+                HasMicrophone = true,
+                IsNoiseCancelling = true,
+                IsSurroundSound = true,
+                Frequency = "10Hz - 40kHz",
+                MicrophoneType = "Retractable bidirectional",
+                Impedance = 38,
+                Sensitivity = 93,
+                Color = "Black"
+            }, autoSave: true);
+
+            // Example: Wireless Mouse (2.4GHz + Bluetooth)
+            var productMouse_MultiMode2 = await CreateProductAsync(
+                mice.Id, logitech.Id, 2500000, 8,
+                "Logitech MX Master 3S",
+                "Chuột không dây cao cấp, kết nối đa thiết bị",
+                80,
+                "https://resource.logitech.com/w_800,c_lpad,ar_1:1,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/mice/mx-master-3s/gallery/mx-master-3s-mouse-top-view-graphite.png"
+            );
+            await _mouseSpecRepository.InsertAsync(new MouseSpecification
+            {
+                ProductId = productMouse_MultiMode2.Id,
+                Dpi = 8000,
+                PollingRate = 125, // Wireless mice typically lower
+                SensorType = "Darkfield Laser",
+                Weight = 141,
+                Connectivity = ConnectivityType.WirelessAndBluetooth, // Can connect via USB receiver or Bluetooth
+                ButtonCount = 7,
+                BacklightColor = "No",
+                Color = "Graphite"
+            }, autoSave: true);
             #endregion
         }
 
