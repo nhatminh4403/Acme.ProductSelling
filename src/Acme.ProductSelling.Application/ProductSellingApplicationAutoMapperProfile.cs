@@ -30,6 +30,7 @@ using Acme.ProductSelling.Specifications.Webcam;
 using AutoMapper;
 using System;
 using System.Linq;
+
 namespace Acme.ProductSelling;
 public class ProductSellingApplicationAutoMapperProfile : Profile
 {
@@ -163,7 +164,7 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
         // PowerBank
         CreateMap<PowerBankSpecification, PowerBankSpecificationDto>();
         CreateMap<CreateUpdatePowerBankSpecificationDto, PowerBankSpecification>();
-    }
+    
 
     // Spec Mappings ---
 
