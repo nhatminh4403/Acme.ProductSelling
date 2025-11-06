@@ -1,14 +1,9 @@
-﻿using Acme.ProductSelling.Categories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Volo.Abp.Application.Dtos;
+
+using Acme.ProductSelling.Categories;
 
 namespace Acme.ProductSelling.Specifications.NetworkHardware
 {
-    public class NetworkHardwareSpecificationDto : EntityDto<Guid>
+    public class CreateUpdateNetworkHardwareSpecificationDto
     {
         public NetworkDeviceType DeviceType { get; set; }
         public WifiStandard WifiStandard { get; set; }
@@ -20,6 +15,4 @@ namespace Acme.ProductSelling.Specifications.NetworkHardware
         public string SecurityProtocol { get; set; }
         public string Coverage { get; set; }
     }
-
-
 }

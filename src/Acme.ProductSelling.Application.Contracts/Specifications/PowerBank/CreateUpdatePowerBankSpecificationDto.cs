@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Volo.Abp.Application.Dtos;
-
 namespace Acme.ProductSelling.Specifications.PowerBank
 {
-    public class PowerBankSpecificationDto : EntityDto<Guid>
+     public class CreateUpdatePowerBankSpecificationDto
     {
         public int Capacity { get; set; }
         public int TotalWattage { get; set; }
@@ -22,6 +15,4 @@ namespace Acme.ProductSelling.Specifications.PowerBank
         public int Weight { get; set; }
         public string Color { get; set; }
     }
-
-   
 }

@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications.Desk
 {
-    public class DeskSpecificationDto : EntityDto<Guid>
+    public class CreateUpdateDeskSpecificationDto 
     {
         public int Width { get; set; }
         public int Depth { get; set; }
@@ -22,6 +22,4 @@ namespace Acme.ProductSelling.Specifications.Desk
         public string SurfaceType { get; set; }
         public string Color { get; set; }
     }
-
-
 }

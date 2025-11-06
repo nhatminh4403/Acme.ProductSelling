@@ -1,14 +1,9 @@
-﻿using Acme.ProductSelling.Categories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Volo.Abp.Application.Dtos;
+using Acme.ProductSelling.Categories;
 
 namespace Acme.ProductSelling.Specifications.Webcam
 {
-    public class WebcamSpecificationDto : EntityDto<Guid>
+
+    public class CreateUpdateWebcamSpecificationDto
     {
         public string Resolution { get; set; }
         public int FrameRate { get; set; }
@@ -21,5 +16,4 @@ namespace Acme.ProductSelling.Specifications.Webcam
         public string MountType { get; set; }
         public string Color { get; set; }
     }
-
 }

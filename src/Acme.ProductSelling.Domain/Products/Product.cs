@@ -62,6 +62,8 @@ namespace Acme.ProductSelling.Products
         public virtual CpuCoolerSpecification CpuCoolerSpecification { get; set; }
         public virtual KeyboardSpecification KeyboardSpecification { get; set; }
         public virtual HeadsetSpecification HeadsetSpecification { get; set; }
+
+        //new specs for more diversity
         public virtual SpeakerSpecification SpeakerSpecification { get; set; }
         public virtual WebcamSpecification WebcamSpecification { get; set; }
         public virtual CableSpecification CableSpecification { get; set; }
@@ -75,7 +77,7 @@ namespace Acme.ProductSelling.Products
         public virtual HubSpecification HubSpecification { get; set; }
         public virtual MemoryCardSpecification MemoryCardSpecification { get; set; }
         public virtual MicrophoneSpecification MicrophoneSpecification { get; set; }
-        public virtual MousePadSpecification mousepadSpecification { get; set; }
+        public virtual MousePadSpecification MousepadSpecification { get; set; }
         public virtual NetworkHardwareSpecification NetworkHardwareSpecification { get; set; }
         public virtual PowerBankSpecification PowerBankSpecification { get; set; }
 

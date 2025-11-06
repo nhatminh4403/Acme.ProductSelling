@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using Volo.Abp.Domain.Entities;
 
 namespace Acme.ProductSelling.Specifications.MemoryCard
 {
-    public class MemoryCardSpecificationDto : EntityDto<Guid>
+    public class CreateUpdateMemoryCardSpecificationDto 
     {
         public int Capacity { get; set; }
         public CardType CardType { get; set; }

@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications.Charger
 {
-    public class ChargerSpecificationDto : EntityDto<Guid>
+    public class CreateUpdateChargerSpecificationDto 
     {
         public ChargerType ChargerType { get; set; }
         public int TotalWattage { get; set; }

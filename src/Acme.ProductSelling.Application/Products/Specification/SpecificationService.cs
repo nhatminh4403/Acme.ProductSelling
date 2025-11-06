@@ -8,7 +8,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
-
+using Acme.ProductSelling.Specifications.Cable;
+using Acme.ProductSelling.Specifications.CaseFan;
+using Acme.ProductSelling.Specifications.Chair;
+using Acme.ProductSelling.Specifications.Charger;
+using Acme.ProductSelling.Specifications.Console;
+using Acme.ProductSelling.Specifications.Desk;
+using Acme.ProductSelling.Specifications.Handheld;
+using Acme.ProductSelling.Specifications.Hub;
+using Acme.ProductSelling.Specifications.MemoryCard;
+using Acme.ProductSelling.Specifications.Microphone;
+using Acme.ProductSelling.Specifications.MousePad;
+using Acme.ProductSelling.Specifications.NetworkHardware;
+using Acme.ProductSelling.Specifications.PowerBank;
+using Acme.ProductSelling.Specifications.Software;
+using Acme.ProductSelling.Specifications.Speaker;
+using Acme.ProductSelling.Specifications.Webcam;
 namespace Acme.ProductSelling.Products
 {
     public class SpecificationService : ISpecificationService
@@ -16,6 +31,7 @@ namespace Acme.ProductSelling.Products
         private readonly Dictionary<SpecificationType, ISpecificationHandler> _handlers;
 
         public SpecificationService(
+            // Existing repositories
             IRepository<MonitorSpecification, Guid> monitorSpecRepository,
             IRepository<MouseSpecification, Guid> mouseSpecRepository,
             IRepository<LaptopSpecification, Guid> laptopSpecRepository,
@@ -29,6 +45,23 @@ namespace Acme.ProductSelling.Products
             IRepository<CpuCoolerSpecification, Guid> cpuCoolerSpecRepository,
             IRepository<KeyboardSpecification, Guid> keyboardSpecRepository,
             IRepository<HeadsetSpecification, Guid> headsetSpecRepository,
+            // New repositories
+            IRepository<SpeakerSpecification, Guid> speakerSpecRepository,
+            IRepository<WebcamSpecification, Guid> webcamSpecRepository,
+            IRepository<CableSpecification, Guid> cableSpecRepository,
+            IRepository<SoftwareSpecification, Guid> softwareSpecRepository,
+            IRepository<CaseFanSpecification, Guid> caseFanSpecRepository,
+            IRepository<ChairSpecification, Guid> chairSpecRepository,
+            IRepository<DeskSpecification, Guid> deskSpecRepository,
+            IRepository<ChargerSpecification, Guid> chargerSpecRepository,
+            IRepository<ConsoleSpecification, Guid> consoleSpecRepository,
+            IRepository<HandheldSpecification, Guid> handheldSpecRepository,
+            IRepository<HubSpecification, Guid> hubSpecRepository,
+            IRepository<MemoryCardSpecification, Guid> memoryCardSpecRepository,
+            IRepository<MicrophoneSpecification, Guid> microphoneSpecRepository,
+            IRepository<MousePadSpecification, Guid> mousepadSpecRepository,
+            IRepository<NetworkHardwareSpecification, Guid> networkHardwareSpecRepository,
+            IRepository<PowerBankSpecification, Guid> powerBankSpecRepository,
             IObjectMapper objectMapper)
         {
             _handlers = InitializeHandlers(
@@ -36,7 +69,12 @@ namespace Acme.ProductSelling.Products
                 cpuSpecRepository, gpuSpecRepository, ramSpecRepository,
                 motherboardSpecRepository, storageSpecRepository, psuSpecRepository,
                 caseSpecRepository, cpuCoolerSpecRepository, keyboardSpecRepository,
-                headsetSpecRepository, objectMapper);
+                headsetSpecRepository, speakerSpecRepository, webcamSpecRepository,
+                cableSpecRepository, softwareSpecRepository, caseFanSpecRepository,
+                chairSpecRepository, deskSpecRepository, chargerSpecRepository,
+                consoleSpecRepository, handheldSpecRepository, hubSpecRepository,
+                memoryCardSpecRepository, microphoneSpecRepository, mousepadSpecRepository,
+                networkHardwareSpecRepository, powerBankSpecRepository, objectMapper);
         }
 
         public async Task CreateSpecificationAsync(Guid productId, CreateUpdateProductDto dto, SpecificationType specType)
@@ -70,6 +108,7 @@ namespace Acme.ProductSelling.Products
         }
 
         private Dictionary<SpecificationType, ISpecificationHandler> InitializeHandlers(
+            // Existing repositories
             IRepository<MonitorSpecification, Guid> monitorRepo,
             IRepository<MouseSpecification, Guid> mouseRepo,
             IRepository<LaptopSpecification, Guid> laptopRepo,
@@ -83,10 +122,28 @@ namespace Acme.ProductSelling.Products
             IRepository<CpuCoolerSpecification, Guid> cpuCoolerRepo,
             IRepository<KeyboardSpecification, Guid> keyboardRepo,
             IRepository<HeadsetSpecification, Guid> headsetRepo,
+            // New repositories
+            IRepository<SpeakerSpecification, Guid> speakerRepo,
+            IRepository<WebcamSpecification, Guid> webcamRepo,
+            IRepository<CableSpecification, Guid> cableRepo,
+            IRepository<SoftwareSpecification, Guid> softwareRepo,
+            IRepository<CaseFanSpecification, Guid> caseFanRepo,
+            IRepository<ChairSpecification, Guid> chairRepo,
+            IRepository<DeskSpecification, Guid> deskRepo,
+            IRepository<ChargerSpecification, Guid> chargerRepo,
+            IRepository<ConsoleSpecification, Guid> consoleRepo,
+            IRepository<HandheldSpecification, Guid> handheldRepo,
+            IRepository<HubSpecification, Guid> hubRepo,
+            IRepository<MemoryCardSpecification, Guid> memoryCardRepo,
+            IRepository<MicrophoneSpecification, Guid> microphoneRepo,
+            IRepository<MousePadSpecification, Guid> mousepadRepo,
+            IRepository<NetworkHardwareSpecification, Guid> networkHardwareRepo,
+            IRepository<PowerBankSpecification, Guid> powerBankRepo,
             IObjectMapper objectMapper)
         {
             return new Dictionary<SpecificationType, ISpecificationHandler>
             {
+                // Existing handlers
                 {
                     SpecificationType.Monitor, new SpecificationHandler<MonitorSpecification, CreateUpdateMonitorSpecificationDto>(
                     monitorRepo, objectMapper, dto => dto.MonitorSpecification)
@@ -121,11 +178,11 @@ namespace Acme.ProductSelling.Products
                 },
                 {
                     SpecificationType.PSU, new SpecificationHandler<PsuSpecification, CreateUpdatePsuSpecificationDto>(
-                    psuRepo, objectMapper,dto => dto.PsuSpecification)
+                    psuRepo, objectMapper, dto => dto.PsuSpecification)
                 },
                 {
                     SpecificationType.Case, new SpecificationHandler<CaseSpecification, CreateUpdateCaseSpecificationDto>(
-                    caseRepo, objectMapper,dto => dto.CaseSpecification)
+                    caseRepo, objectMapper, dto => dto.CaseSpecification)
                 },
                 {
                     SpecificationType.CPUCooler, new SpecificationHandler<CpuCoolerSpecification, CreateUpdateCpuCoolerSpecificationDto>(
@@ -137,7 +194,72 @@ namespace Acme.ProductSelling.Products
                 },
                 {
                     SpecificationType.Headset, new SpecificationHandler<HeadsetSpecification, CreateUpdateHeadsetSpecificationDto>(
-                    headsetRepo, objectMapper,dto => dto.HeadsetSpecification)
+                    headsetRepo, objectMapper, dto => dto.HeadsetSpecification)
+                },
+                // New handlers
+                {
+                    SpecificationType.Speaker, new SpecificationHandler<SpeakerSpecification, CreateUpdateSpeakerSpecificationDto>(
+                    speakerRepo, objectMapper, dto => dto.SpeakerSpecification)
+                },
+                {
+                    SpecificationType.Webcam, new SpecificationHandler<WebcamSpecification, CreateUpdateWebcamSpecificationDto>(
+                    webcamRepo, objectMapper, dto => dto.WebcamSpecification)
+                },
+                {
+                    SpecificationType.Cable, new SpecificationHandler<CableSpecification, CreateUpdateCableSpecificationDto>(
+                    cableRepo, objectMapper, dto => dto.CableSpecification)
+                },
+                {
+                    SpecificationType.Software, new SpecificationHandler<SoftwareSpecification, CreateUpdateSoftwareSpecificationDto>(
+                    softwareRepo, objectMapper, dto => dto.SoftwareSpecification)
+                },
+                {
+                    SpecificationType.CaseFan, new SpecificationHandler<CaseFanSpecification, CreateUpdateCaseFanSpecificationDto>(
+                    caseFanRepo, objectMapper, dto => dto.CaseFanSpecification)
+                },
+                {
+                    SpecificationType.Chair, new SpecificationHandler<ChairSpecification, CreateUpdateChairSpecificationDto>(
+                    chairRepo, objectMapper, dto => dto.ChairSpecification)
+                },
+                {
+                    SpecificationType.Desk, new SpecificationHandler<DeskSpecification, CreateUpdateDeskSpecificationDto>(
+                    deskRepo, objectMapper, dto => dto.DeskSpecification)
+                },
+                {
+                    SpecificationType.Charger, new SpecificationHandler<ChargerSpecification, CreateUpdateChargerSpecificationDto>(
+                    chargerRepo, objectMapper, dto => dto.ChargerSpecification)
+                },
+                {
+                    SpecificationType.Console, new SpecificationHandler<ConsoleSpecification, CreateUpdateConsoleSpecificationDto>(
+                    consoleRepo, objectMapper, dto => dto.ConsoleSpecification)
+                },
+                {
+                    SpecificationType.Handheld, new SpecificationHandler<HandheldSpecification, CreateUpdateHandheldSpecificationDto>(
+                    handheldRepo, objectMapper, dto => dto.HandheldSpecification)
+                },
+                {
+                    SpecificationType.Hub, new SpecificationHandler<HubSpecification, CreateUpdateHubSpecificationDto>(
+                    hubRepo, objectMapper, dto => dto.HubSpecification)
+                },
+                {
+                    SpecificationType.MemoryCard, new SpecificationHandler<MemoryCardSpecification, CreateUpdateMemoryCardSpecificationDto>(
+                    memoryCardRepo, objectMapper, dto => dto.MemoryCardSpecification)
+                },
+                {
+                    SpecificationType.Microphone, new SpecificationHandler<MicrophoneSpecification, CreateUpdateMicrophoneSpecificationDto>(
+                    microphoneRepo, objectMapper, dto => dto.MicrophoneSpecification)
+                },
+                {
+                    SpecificationType.MousePad, new SpecificationHandler<MousePadSpecification, CreateUpdateMousePadSpecificationDto>(
+                    mousepadRepo, objectMapper, dto => dto.MousepadSpecification)
+                },
+                {
+                    SpecificationType.NetworkHardware, new SpecificationHandler<NetworkHardwareSpecification, CreateUpdateNetworkHardwareSpecificationDto>(
+                    networkHardwareRepo, objectMapper, dto => dto.NetworkHardwareSpecification)
+                },
+                {
+                    SpecificationType.PowerBank, new SpecificationHandler<PowerBankSpecification, CreateUpdatePowerBankSpecificationDto>(
+                    powerBankRepo, objectMapper, dto => dto.PowerBankSpecification)
                 }
             };
         }

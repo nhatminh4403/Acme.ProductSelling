@@ -28,6 +28,24 @@ namespace Acme.ProductSelling.Products
                 .Include(p => p.CpuCoolerSpecification).ThenInclude(ccs => ccs.SupportedSockets).ThenInclude(css => css.Socket)
                 .Include(p => p.KeyboardSpecification)
                 .Include(p => p.HeadsetSpecification)
+
+                .Include(p => p.CableSpecification)
+                .Include(p => p.SpeakerSpecification)
+                .Include(p => p.WebcamSpecification)
+                .Include(p => p.SoftwareSpecification)
+                .Include(p => p.CaseFanSpecification)
+                .Include(p => p.ChairSpecification)
+                .Include(p => p.DeskSpecification)
+                .Include(p => p.ChargerSpecification)
+                .Include(p => p.ConsoleSpecification)
+                .Include(p => p.HandheldSpecification)
+                .Include(p => p.MemoryCardSpecification)
+                .Include(p => p.MicrophoneSpecification)
+                .Include(p => p.MousepadSpecification)
+                .Include(p => p.NetworkHardwareSpecification)
+                .Include(p => p.PowerBankSpecification)
+
+
                 .Include(p => p.Manufacturer);
         }
     }

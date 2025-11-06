@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications.CaseFan
 {
-    public class CaseFanSpecificationDto : EntityDto<Guid>
+    public class CreateUpdateCaseFanSpecificationDto
     {
         public int FanSize { get; set; }
         public int MaxRpm { get; set; }
@@ -20,5 +20,4 @@ namespace Acme.ProductSelling.Specifications.CaseFan
         public bool HasRgb { get; set; }
         public string Color { get; set; }
     }
-
 }

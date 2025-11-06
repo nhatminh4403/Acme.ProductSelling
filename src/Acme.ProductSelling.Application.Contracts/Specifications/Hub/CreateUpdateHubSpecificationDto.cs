@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,8 @@ using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications.Hub
 {
-    public class HubSpecificationDto : EntityDto<Guid>
+
+    public class CreateUpdateHubSpecificationDto 
     {
         public HubType HubType { get; set; }
         public int PortCount { get; set; }

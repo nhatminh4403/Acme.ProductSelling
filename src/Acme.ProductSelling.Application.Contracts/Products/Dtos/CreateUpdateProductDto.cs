@@ -1,7 +1,24 @@
 ﻿using Acme.ProductSelling.Specifications;
+using Acme.ProductSelling.Specifications.Cable;
+using Acme.ProductSelling.Specifications.CaseFan;
+using Acme.ProductSelling.Specifications.Chair;
+using Acme.ProductSelling.Specifications.Charger;
+using Acme.ProductSelling.Specifications.Console;
+using Acme.ProductSelling.Specifications.Desk;
+using Acme.ProductSelling.Specifications.Handheld;
+using Acme.ProductSelling.Specifications.Hub;
+using Acme.ProductSelling.Specifications.MemoryCard;
+using Acme.ProductSelling.Specifications.Microphone;
+using Acme.ProductSelling.Specifications.MousePad;
+using Acme.ProductSelling.Specifications.NetworkHardware;
+using Acme.ProductSelling.Specifications.PowerBank;
+using Acme.ProductSelling.Specifications.Software;
+using Acme.ProductSelling.Specifications.Speaker;
+using Acme.ProductSelling.Specifications.Webcam;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.ComponentModel.DataAnnotations;
+
 namespace Acme.ProductSelling.Products.Dtos
 {
     public class CreateUpdateProductDto
@@ -26,6 +43,8 @@ namespace Acme.ProductSelling.Products.Dtos
         public Guid CategoryId { get; set; }
         [Required]
         public Guid ManufacturerId { get; set; }
+
+        // Existing specifications
         public CreateUpdateMonitorSpecificationDto? MonitorSpecification { get; set; }
         public CreateUpdateMouseSpecificationDto? MouseSpecification { get; set; }
         public CreateUpdateLaptopSpecificationDto? LaptopSpecification { get; set; }
@@ -39,5 +58,23 @@ namespace Acme.ProductSelling.Products.Dtos
         public CreateUpdateCpuCoolerSpecificationDto? CpuCoolerSpecification { get; set; }
         public CreateUpdateKeyboardSpecificationDto? KeyboardSpecification { get; set; }
         public CreateUpdateHeadsetSpecificationDto? HeadsetSpecification { get; set; }
+
+        // New specifications
+        public CreateUpdateSpeakerSpecificationDto? SpeakerSpecification { get; set; }
+        public CreateUpdateWebcamSpecificationDto? WebcamSpecification { get; set; }
+        public CreateUpdateCableSpecificationDto? CableSpecification { get; set; }
+        public CreateUpdateSoftwareSpecificationDto? SoftwareSpecification { get; set; }
+        public CreateUpdateCaseFanSpecificationDto? CaseFanSpecification { get; set; }
+        public CreateUpdateChairSpecificationDto? ChairSpecification { get; set; }
+        public CreateUpdateDeskSpecificationDto? DeskSpecification { get; set; }
+        public CreateUpdateChargerSpecificationDto? ChargerSpecification { get; set; }
+        public CreateUpdateConsoleSpecificationDto? ConsoleSpecification { get; set; }
+        public CreateUpdateHandheldSpecificationDto? HandheldSpecification { get; set; }
+        public CreateUpdateHubSpecificationDto? HubSpecification { get; set; }
+        public CreateUpdateMemoryCardSpecificationDto? MemoryCardSpecification { get; set; }
+        public CreateUpdateMicrophoneSpecificationDto? MicrophoneSpecification { get; set; }
+        public CreateUpdateMousePadSpecificationDto? MousepadSpecification { get; set; }
+        public CreateUpdateNetworkHardwareSpecificationDto? NetworkHardwareSpecification { get; set; }
+        public CreateUpdatePowerBankSpecificationDto? PowerBankSpecification { get; set; }
     }
 }

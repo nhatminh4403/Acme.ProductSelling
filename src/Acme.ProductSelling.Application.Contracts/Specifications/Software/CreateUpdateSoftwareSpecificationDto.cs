@@ -1,14 +1,8 @@
-﻿using Acme.ProductSelling.Categories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Volo.Abp.Application.Dtos;
+using Acme.ProductSelling.Categories;
 
 namespace Acme.ProductSelling.Specifications.Software
 {
-    public class SoftwareSpecificationDto : EntityDto<Guid>
+    public class CreateUpdateSoftwareSpecificationDto
     {
         public SoftwareType SoftwareType { get; set; }
         public LicenseType LicenseType { get; set; }
@@ -19,6 +13,4 @@ namespace Acme.ProductSelling.Specifications.Software
         public string SystemRequirements { get; set; }
         public bool IsSubscription { get; set; }
     }
-
-
 }

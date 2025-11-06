@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,8 @@ using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications.Console
 {
-    public class ConsoleSpecificationDto : EntityDto<Guid>
+
+    public class CreateUpdateConsoleSpecificationDto 
     {
         public string Processor { get; set; }
         public string Graphics { get; set; }
