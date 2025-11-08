@@ -15,10 +15,10 @@ namespace Acme.ProductSelling.Web.Pages.Components.Home.HeroSection
         }
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var brandsWithAssociatedCategory = await _categoryAppService.GetListWithManufacturersAsync();
+            var groupedCategories = await _categoryAppService.GetGroupedCategoriesAsync();
 
 
-            return View("/Pages/Components/Home/HeroSection/Default.cshtml", brandsWithAssociatedCategory);
+            return View("/Pages/Components/Home/HeroSection/Default.cshtml", groupedCategories);
         }
     }
 }

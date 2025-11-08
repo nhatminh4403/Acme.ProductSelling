@@ -170,8 +170,8 @@ namespace Acme.ProductSelling
             // 1. Laptop (Individual)
             var laptops = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Laptop",
-                    "Laptop cho công việc và giải trí",
+                    "Laptops",
+                    "Laptops for work and entertainment",
                     SpecificationType.Laptop,
                     CategoryGroup.Individual,
                     1,
@@ -182,8 +182,8 @@ namespace Acme.ProductSelling
             // 2. Main, CPU, VGA Group
             var cpus = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "CPU",
-                    "Bộ vi xử lý",
+                    "CPUs (Processors)",
+                    "Central Processing Units",
                     SpecificationType.CPU,
                     CategoryGroup.MainCpuVga,
                     2,
@@ -193,8 +193,8 @@ namespace Acme.ProductSelling
 
             var gpus = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "VGA (GPU)",
-                    "Card màn hình",
+                    "Graphics Cards (GPUs)",
+                    "Video Graphics Cards",
                     SpecificationType.GPU,
                     CategoryGroup.MainCpuVga,
                     2,
@@ -204,8 +204,8 @@ namespace Acme.ProductSelling
 
             var motherboards = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Mainboard",
-                    "Bo mạch chủ",
+                    "Motherboards",
+                    "Main system boards",
                     SpecificationType.Motherboard,
                     CategoryGroup.MainCpuVga,
                     2,
@@ -216,8 +216,8 @@ namespace Acme.ProductSelling
             // 3. Case, Nguồn, Tản Group
             var cases = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Case",
-                    "Vỏ máy tính",
+                    "Cases",
+                    "Computer Chassis",
                     SpecificationType.Case,
                     CategoryGroup.CaseAndCooling,
                     3,
@@ -227,8 +227,8 @@ namespace Acme.ProductSelling
 
             var psus = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Nguồn (PSU)",
-                    "Nguồn máy tính",
+                    "Power Supplies (PSUs)",
+                    "Power Supply Units",
                     SpecificationType.PSU,
                     CategoryGroup.CaseAndCooling,
                     3,
@@ -238,8 +238,8 @@ namespace Acme.ProductSelling
 
             var coolers = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Tản CPU",
-                    "Tản nhiệt CPU",
+                    "CPU Coolers",
+                    "CPU Cooling Solutions",
                     SpecificationType.CPUCooler,
                     CategoryGroup.CaseAndCooling,
                     3,
@@ -249,8 +249,8 @@ namespace Acme.ProductSelling
 
             var caseFans = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Quạt Case",
-                    "Quạt tản nhiệt case",
+                    "Case Fans",
+                    "Case Cooling Fans",
                     SpecificationType.CaseFan,
                     CategoryGroup.CaseAndCooling,
                     3,
@@ -261,8 +261,8 @@ namespace Acme.ProductSelling
             // 4. Storage, RAM, Memory Group
             var storage = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Ổ cứng (SSD/HDD)",
-                    "Ổ cứng lưu trữ",
+                    "Storage (SSD/HDD)",
+                    "Storage Drives",
                     SpecificationType.Storage,
                     CategoryGroup.StorageRamMemory,
                     4,
@@ -272,8 +272,8 @@ namespace Acme.ProductSelling
 
             var rams = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "RAM",
-                    "Bộ nhớ RAM",
+                    "RAM (Memory)",
+                    "Random Access Memory",
                     SpecificationType.RAM,
                     CategoryGroup.StorageRamMemory,
                     4,
@@ -283,8 +283,8 @@ namespace Acme.ProductSelling
 
             var memoryCards = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Thẻ nhớ",
-                    "Thẻ nhớ SD, MicroSD",
+                    "Memory Cards",
+                    "SD and MicroSD Cards",
                     SpecificationType.MemoryCard,
                     CategoryGroup.StorageRamMemory,
                     4,
@@ -295,8 +295,8 @@ namespace Acme.ProductSelling
             // 5. Audio/Video Group
             var speakers = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Loa (Speaker)",
-                    "Loa máy tính",
+                    "Speakers",
+                    "Computer Speakers",
                     SpecificationType.Speaker,
                     CategoryGroup.AudioVideo,
                     5,
@@ -306,8 +306,8 @@ namespace Acme.ProductSelling
 
             var microphones = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Micro",
-                    "Microphone",
+                    "Microphones",
+                    "Audio Microphones",
                     SpecificationType.Microphone,
                     CategoryGroup.AudioVideo,
                     5,
@@ -317,8 +317,8 @@ namespace Acme.ProductSelling
 
             var webcams = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Webcam",
-                    "Camera web",
+                    "Webcams",
+                    "Web Cameras",
                     SpecificationType.Webcam,
                     CategoryGroup.AudioVideo,
                     5,
@@ -329,8 +329,8 @@ namespace Acme.ProductSelling
             // 6. Monitor (Individual)
             var monitors = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Màn hình",
-                    "Màn hình máy tính",
+                    "Monitors",
+                    "Computer Displays",
                     SpecificationType.Monitor,
                     CategoryGroup.Individual,
                     6,
@@ -341,8 +341,8 @@ namespace Acme.ProductSelling
             // 7. Keyboard (Individual)
             var keyboards = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Bàn phím",
-                    "Bàn phím cơ, màng",
+                    "Keyboards",
+                    "Mechanical and Membrane Keyboards",
                     SpecificationType.Keyboard,
                     CategoryGroup.Individual,
                     7,
@@ -353,8 +353,8 @@ namespace Acme.ProductSelling
             // 8. Mouse & Pad Group
             var mice = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Chuột",
-                    "Chuột máy tính",
+                    "Mice",
+                    "Computer Mice",
                     SpecificationType.Mouse,
                     CategoryGroup.MouseAndPad,
                     8,
@@ -364,8 +364,8 @@ namespace Acme.ProductSelling
 
             var mousePads = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Lót chuột",
-                    "Mousepad",
+                    "Mouse Pads",
+                    "Gaming and Office Mouse Pads",
                     SpecificationType.MousePad,
                     CategoryGroup.MouseAndPad,
                     8,
@@ -376,8 +376,8 @@ namespace Acme.ProductSelling
             // 9. Headset (Individual)
             var headsets = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Tai Nghe",
-                    "Tai nghe gaming, văn phòng",
+                    "Headsets",
+                    "Gaming and Office Headsets",
                     SpecificationType.Headset,
                     CategoryGroup.Individual,
                     9,
@@ -388,8 +388,8 @@ namespace Acme.ProductSelling
             // 10. Furniture Group
             var chairs = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Ghế",
-                    "Ghế gaming, văn phòng",
+                    "Chairs",
+                    "Gaming and Office Chairs",
                     SpecificationType.Chair,
                     CategoryGroup.Furniture,
                     10,
@@ -399,8 +399,8 @@ namespace Acme.ProductSelling
 
             var desks = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Bàn",
-                    "Bàn làm việc, gaming",
+                    "Desks",
+                    "Work and Gaming Desks",
                     SpecificationType.Desk,
                     CategoryGroup.Furniture,
                     10,
@@ -411,8 +411,8 @@ namespace Acme.ProductSelling
             // 11. Software & Network Group
             var software = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Phần mềm",
-                    "Software, licenses",
+                    "Software",
+                    "Software and Licenses",
                     SpecificationType.Software,
                     CategoryGroup.SoftwareNetwork,
                     11,
@@ -422,8 +422,8 @@ namespace Acme.ProductSelling
 
             var networkHardware = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Thiết bị mạng",
-                    "Router, switch, adapter",
+                    "Networking",
+                    "Routers, Switches, Adapters",
                     SpecificationType.NetworkHardware,
                     CategoryGroup.SoftwareNetwork,
                     11,
@@ -434,8 +434,8 @@ namespace Acme.ProductSelling
             // 12. Handheld & Console Group
             var handhelds = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Handheld",
-                    "Máy chơi game cầm tay",
+                    "Handhelds",
+                    "Handheld Gaming Consoles",
                     SpecificationType.Handheld,
                     CategoryGroup.HandheldConsole,
                     12,
@@ -445,8 +445,8 @@ namespace Acme.ProductSelling
 
             var consoles = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Console",
-                    "Máy chơi game console",
+                    "Consoles",
+                    "Gaming Consoles",
                     SpecificationType.Console,
                     CategoryGroup.HandheldConsole,
                     12,
@@ -457,8 +457,8 @@ namespace Acme.ProductSelling
             // 13. Accessories Group
             var hubs = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Hub (Docking Station)",
-                    "USB Hub, Docking Station",
+                    "Hubs & Docks",
+                    "USB Hubs and Docking Stations",
                     SpecificationType.Hub,
                     CategoryGroup.Accessories,
                     13,
@@ -468,8 +468,8 @@ namespace Acme.ProductSelling
 
             var cables = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Cáp",
-                    "Cáp HDMI, USB, Display",
+                    "Cables",
+                    "HDMI, USB, and Display Cables",
                     SpecificationType.Cable,
                     CategoryGroup.Accessories,
                     13,
@@ -479,8 +479,8 @@ namespace Acme.ProductSelling
 
             var chargers = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Sạc",
-                    "Adapter, charger",
+                    "Chargers",
+                    "Adapters and Chargers",
                     SpecificationType.Charger,
                     CategoryGroup.Accessories,
                     13,
@@ -490,8 +490,8 @@ namespace Acme.ProductSelling
 
             var powerBanks = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Sạc dự phòng",
-                    "Power bank",
+                    "Power Banks",
+                    "Portable Power Banks",
                     SpecificationType.PowerBank,
                     CategoryGroup.Accessories,
                     13,
@@ -502,323 +502,309 @@ namespace Acme.ProductSelling
             // 14. Services (Individual)
             var services = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Dịch vụ và thông tin khác",
-                    "Services and information",
+                    "Services",
+                    "Other Services and Information",
                     SpecificationType.Services,
                     CategoryGroup.Individual,
                     14,
                     "fas fa-info-circle"
                 )
             );
-
             #endregion
 
+            // (Inside your SeedAsync method)
+            // REPLACE this entire region in your file
+
             #region Manufacturers
-            List<Manufacturer> Manufacturers = new List<Manufacturer>();
-            var asus = new Manufacturer
+            // We must insert each manufacturer and get the returned entity to ensure we have the correct DB-generated ID.
+            var asus = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.asus.com/",
                 Name = "ASUS",
+                UrlSlug = "asus",
                 ManufacturerImage = "/images/manufacturers/asus-logo.png",
-                Description = "ASUS is a multinational computer hardware and electronics company headquartered in Taipei, Taiwan. It is known for its innovative products, including motherboards, graphics cards, laptops, desktops, and peripherals. ASUS is recognized for its commitment to quality and performance.",
-            };
-            asus.UrlSlug = UrlHelperMethod.RemoveDiacritics(asus.Name);
-            Manufacturers.Add(asus);
-            var acer = new Manufacturer
+                Description = "ASUS is a multinational computer hardware and electronics company headquartered in Taipei, Taiwan..."
+            }, autoSave: true);
+
+            var acer = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.acer.com/",
                 Name = "Acer",
-                Description = "Acer is a Taiwanese multinational hardware and electronics corporation specializing in advanced electronics technology. It is known for its laptops, desktops, monitors, and other computer peripherals. Acer focuses on providing innovative solutions for consumers and businesses.",
+                UrlSlug = "acer",
                 ManufacturerImage = "/images/manufacturers/acer-logo.png",
-            };
-            acer.UrlSlug = UrlHelperMethod.RemoveDiacritics(acer.Name);
-            Manufacturers.Add(acer);
-            var amd = new Manufacturer
+                Description = "Acer is a Taiwanese multinational hardware and electronics corporation..."
+            }, autoSave: true);
+
+            var amd = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.amd.com/",
                 Name = "AMD",
-                Description = "AMD (Advanced Micro Devices) is an American multinational semiconductor company that develops computer processors and related technologies. It is known for its Ryzen CPUs and Radeon GPUs, which compete with Intel and NVIDIA products. AMD focuses on high-performance computing and graphics solutions.",
-                ManufacturerImage = "/images/manufacturers/amd-logo.png"
-            };
-            amd.UrlSlug = UrlHelperMethod.RemoveDiacritics(amd.Name);
-            Manufacturers.Add(amd);
-            var intel = new Manufacturer
+                UrlSlug = "amd",
+                ManufacturerImage = "/images/manufacturers/amd-logo.png",
+                Description = "AMD (Advanced Micro Devices) is an American multinational semiconductor company..."
+            }, autoSave: true);
+
+            var intel = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.intel.com/",
                 Name = "Intel",
-                Description = "Intel Corporation is an American multinational corporation and technology company headquartered in Santa Clara, California. It is known for its semiconductor products, including microprocessors, integrated circuits, and memory modules. Intel is a leader in computing innovation and technology.",
-                ManufacturerImage = "/images/manufacturers/intel-logo.png"
-            };
-            intel.UrlSlug = UrlHelperMethod.RemoveDiacritics(intel.Name);
-            Manufacturers.Add(intel);
-            var logitech = new Manufacturer
+                UrlSlug = "intel",
+                ManufacturerImage = "/images/manufacturers/intel-logo.png",
+                Description = "Intel Corporation is an American multinational corporation and technology company..."
+            }, autoSave: true);
+
+            var logitech = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.logitech.com/",
                 Name = "Logitech",
-                Description = "Logitech is a Swiss company that designs and manufactures computer peripherals and software. It is known for its mice, keyboards, webcams, and gaming accessories. Logitech focuses on creating innovative products that enhance the user experience.",
-                ManufacturerImage = "/images/manufacturers/logitech-logo.png"
-            };
-            logitech.UrlSlug = UrlHelperMethod.RemoveDiacritics(logitech.Name);
-            Manufacturers.Add(logitech);
-            var corsair = new Manufacturer
+                UrlSlug = "logitech",
+                ManufacturerImage = "/images/manufacturers/logitech-logo.png",
+                Description = "Logitech is a Swiss company that designs and manufactures computer peripherals and software."
+            }, autoSave: true);
+
+            var corsair = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.corsair.com/",
                 Name = "Corsair",
-                Description = "Corsair is an American computer peripherals and hardware company known for its high-performance gaming products, including memory modules, power supplies, cooling solutions, and gaming peripherals. Corsair focuses on delivering quality and performance to gamers and PC enthusiasts.",
-                ManufacturerImage = "/images/manufacturers/corsair-logo.png"
-            };
-            corsair.UrlSlug = UrlHelperMethod.RemoveDiacritics(corsair.Name);
-            Manufacturers.Add(corsair);
-            var coolerMaster = new Manufacturer
+                UrlSlug = "corsair",
+                ManufacturerImage = "/images/manufacturers/corsair-logo.png",
+                Description = "Corsair is an American computer peripherals and hardware company..."
+            }, autoSave: true);
+
+            var coolerMaster = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.coolermaster.com/",
                 Name = "Cooler Master",
-                Description = "Cooler Master is a Taiwanese computer hardware manufacturer known for its cooling solutions, power supplies, and computer cases. It focuses on providing innovative products for gamers and PC builders, including CPU coolers, cases, and peripherals.",
+                UrlSlug = "cooler-master",
                 ManufacturerImage = "/images/manufacturers/cooler-master-logo.png",
-            };
-            coolerMaster.UrlSlug = UrlHelperMethod.RemoveDiacritics(coolerMaster.Name);
-            Manufacturers.Add(coolerMaster);
-            var msi = new Manufacturer
+                Description = "Cooler Master is a Taiwanese computer hardware manufacturer..."
+            }, autoSave: true);
+
+            var msi = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.msi.com/",
                 Name = "MSI",
-                Description = "MSI (Micro-Star International) is a Taiwanese multinational information technology corporation known for its computer hardware products, including motherboards, graphics cards, laptops, and gaming peripherals. MSI focuses on high-performance gaming and computing solutions.",
-                ManufacturerImage = "/images/manufacturers/MSI-Logo.png"
-            };
-            msi.UrlSlug = UrlHelperMethod.RemoveDiacritics(msi.Name);
-            Manufacturers.Add(msi);
-            var gigabyte = new Manufacturer
+                UrlSlug = "msi",
+                ManufacturerImage = "/images/manufacturers/MSI-Logo.png",
+                Description = "MSI (Micro-Star International) is a Taiwanese multinational information technology corporation..."
+            }, autoSave: true);
+
+            var gigabyte = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.gigabyte.com/",
                 Name = "Gigabyte",
-                Description = "Gigabyte Technology is a Taiwanese manufacturer of computer hardware products, including motherboards, graphics cards, laptops, and gaming peripherals. It is known for its high-performance components and innovative technology solutions.",
-                ManufacturerImage = "/images/manufacturers/gigabyte-logo.png"
-            };
-            gigabyte.UrlSlug = UrlHelperMethod.RemoveDiacritics(gigabyte.Name);
-            Manufacturers.Add(gigabyte);
-            var razer = new Manufacturer
+                UrlSlug = "gigabyte",
+                ManufacturerImage = "/images/manufacturers/gigabyte-logo.png",
+                Description = "Gigabyte Technology is a Taiwanese manufacturer of computer hardware products..."
+            }, autoSave: true);
+
+            var razer = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.razer.com/",
                 Name = "Razer",
-                Description = "Razer Inc. is a global gaming hardware manufacturing company known for its high-performance gaming peripherals, laptops, and software. It focuses on creating innovative products for gamers, including mice, keyboards, headsets, and gaming laptops.",
-                ManufacturerImage = "/images/manufacturers/Razer-logo.png"
-            };
-            razer.UrlSlug = UrlHelperMethod.RemoveDiacritics(razer.Name);
-            Manufacturers.Add(razer);
-            var samsung = new Manufacturer
+                UrlSlug = "razer",
+                ManufacturerImage = "/images/manufacturers/Razer-logo.png",
+                Description = "Razer Inc. is a global gaming hardware manufacturing company..."
+            }, autoSave: true);
+
+            var samsung = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.samsung.com/",
                 Name = "Samsung",
-                Description = "Samsung Electronics is a South Korean multinational electronics company known for its consumer electronics, semiconductors, and telecommunications products. It is one of the largest manufacturers of smartphones, TVs, and memory chips in the world.",
-                ManufacturerImage = "/images/manufacturers/Samsung-Logo.png"
-            };
-            samsung.UrlSlug = UrlHelperMethod.RemoveDiacritics(samsung.Name);
-            Manufacturers.Add(samsung);
-            var nvidia = new Manufacturer
+                UrlSlug = "samsung",
+                ManufacturerImage = "/images/manufacturers/Samsung-Logo.png",
+                Description = "Samsung Electronics is a South Korean multinational electronics company..."
+            }, autoSave: true);
+
+            var nvidia = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.nvidia.com/",
                 Name = "NVIDIA",
-                Description = "NVIDIA Corporation is an American multinational technology company known for its graphics processing units (GPUs) and AI computing technology." +
-                " It is a leader in the gaming, professional visualization, data center, and automotive markets.",
-                ManufacturerImage = "/images/manufacturers/nvidia-logo.png"
-            };
-            nvidia.UrlSlug = UrlHelperMethod.RemoveDiacritics(nvidia.Name);
-            Manufacturers.Add(nvidia);
-            var lg = new Manufacturer
+                UrlSlug = "nvidia",
+                ManufacturerImage = "/images/manufacturers/nvidia-logo.png",
+                Description = "NVIDIA Corporation is an American multinational technology company..."
+            }, autoSave: true);
+
+            var lg = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.lg.com/",
                 Name = "LG",
-                Description = "LG Electronics is a South Korean multinational electronics company known for its consumer electronics," +
-                " home appliances, and mobile communications" +
-                ". It is one of the largest manufacturers of TVs, refrigerators, and washing machines in the world.",
-                ManufacturerImage = "/images/manufacturers/lg-logo.png"
-            };
-            lg.UrlSlug = UrlHelperMethod.RemoveDiacritics(lg.Name);
-            Manufacturers.Add(lg);
-            var nzxt = new Manufacturer
+                UrlSlug = "lg",
+                ManufacturerImage = "/images/manufacturers/lg-logo.png",
+                Description = "LG Electronics is a South Korean multinational electronics company..."
+            }, autoSave: true);
+
+            var nzxt = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.nzxt.com/",
                 Name = "NZXT",
-                Description = "NZXT is an American computer hardware company known for its PC cases, cooling solutions," +
-                " and gaming peripherals. It focuses on providing innovative products for gamers and PC builders, including cases," +
-                " power supplies, and cooling solutions.",
-                ManufacturerImage = "/images/manufacturers/nzxt-logo.png"
-            };
-            nzxt.UrlSlug = UrlHelperMethod.RemoveDiacritics(nzxt.Name);
-            Manufacturers.Add(nzxt);
-            var gskill = new Manufacturer
+                UrlSlug = "nzxt",
+                ManufacturerImage = "/images/manufacturers/nzxt-logo.png",
+                Description = "NZXT is an American computer hardware company..."
+            }, autoSave: true);
+
+            var gskill = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.gskill.com/",
                 Name = "G.Skill",
-                Description = "G.Skill is a Taiwanese manufacturer of computer memory modules and storage solutions. It is known for its high-performance RAM and SSD products, catering to gamers and PC enthusiasts. G.Skill focuses on delivering quality and performance in its products.",
-                ManufacturerImage = "/images/manufacturers/gskill-logo.png"
-            };
-            gskill.UrlSlug = UrlHelperMethod.RemoveDiacritics(gskill.Name);
-            Manufacturers.Add(gskill);
-            var hyperx = new Manufacturer
+                UrlSlug = "g-skill",
+                ManufacturerImage = "/images/manufacturers/gskill-logo.png",
+                Description = "G.Skill is a Taiwanese manufacturer of computer memory modules..."
+            }, autoSave: true);
+
+            var hyperx = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.hyperxgaming.com/",
                 Name = "HyperX",
-                Description = "HyperX is a gaming division of Kingston Technology Company, Inc. It is known for its high-performance gaming peripherals, memory modules, and storage solutions. HyperX focuses on delivering quality and performance for gamers and PC enthusiasts.",
-                ManufacturerImage = "/images/manufacturers/hyperx-logo.png"
-            };
-            hyperx.UrlSlug = UrlHelperMethod.RemoveDiacritics(hyperx.Name);
-            Manufacturers.Add(hyperx);
-            var steelseries = new Manufacturer
+                UrlSlug = "hyperx",
+                ManufacturerImage = "/images/manufacturers/hyperx-logo.png",
+                Description = "HyperX is a gaming division of Kingston Technology Company, Inc."
+            }, autoSave: true);
+
+            var steelseries = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://steelseries.com/",
                 Name = "SteelSeries",
-                Description = "SteelSeries is a Danish manufacturer of gaming peripherals and accessories. It is known for its high-performance gaming mice, keyboards, headsets, and mousepads. SteelSeries focuses on creating innovative products for gamers.",
-                ManufacturerImage = "/images/manufacturers/SteelSeries-logo.png"
-            };
-            steelseries.UrlSlug = UrlHelperMethod.RemoveDiacritics(steelseries.Name);
-            Manufacturers.Add(steelseries);
-            var dell = new Manufacturer
+                UrlSlug = "steelseries",
+                ManufacturerImage = "/images/manufacturers/SteelSeries-logo.png",
+                Description = "SteelSeries is a Danish manufacturer of gaming peripherals and accessories."
+            }, autoSave: true);
+
+            var dell = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.dell.com/",
                 Name = "Dell",
-                Description = "Dell Technologies is an American multinational technology company known for its computer hardware, software, and services. It is one of the largest manufacturers of PCs, servers, and storage solutions in the world.",
-                ManufacturerImage = "/images/manufacturers/Dell-Logo.png"
-            };
-            dell.UrlSlug = UrlHelperMethod.RemoveDiacritics(dell.Name);
-            Manufacturers.Add(dell);
-            var hp = new Manufacturer
+                UrlSlug = "dell",
+                ManufacturerImage = "/images/manufacturers/Dell-Logo.png",
+                Description = "Dell Technologies is an American multinational technology company..."
+            }, autoSave: true);
+
+            var hp = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.hp.com/",
                 Name = "HP",
-                Description = "HP Inc. is an American multinational information technology company known for its printers, PCs, and related products. It is one of the largest manufacturers of printers and computers in the world.",
-                ManufacturerImage = "/images/manufacturers/hp-logo.png"
-            };
-            hp.UrlSlug = UrlHelperMethod.RemoveDiacritics(hp.Name);
-            Manufacturers.Add(hp);
-            var phanteks = new Manufacturer
+                UrlSlug = "hp",
+                ManufacturerImage = "/images/manufacturers/hp-logo.png",
+                Description = "HP Inc. is an American multinational information technology company..."
+            }, autoSave: true);
+
+            var phanteks = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.phanteks.com/",
                 Name = "Phanteks",
-                Description = "Phanteks is a manufacturer of computer hardware products, including cases, cooling solutions, and power supplies. It focuses on providing innovative products for gamers and PC builders.",
-                ManufacturerImage = "/images/manufacturers/phanteks-logo.png"
-            };
-            phanteks.UrlSlug = UrlHelperMethod.RemoveDiacritics(phanteks.Name);
-            Manufacturers.Add(phanteks);
-            var evga = new Manufacturer
+                UrlSlug = "phanteks",
+                ManufacturerImage = "/images/manufacturers/phanteks-logo.png",
+                Description = "Phanteks is a manufacturer of computer hardware products..."
+            }, autoSave: true);
+
+            var evga = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.evga.com/",
                 Name = "EVGA",
-                Description = "EVGA Corporation is an American computer hardware company known for its graphics cards, motherboards, and power supplies. It focuses on providing high-performance products for gamers and PC enthusiasts.",
-                ManufacturerImage = "/images/manufacturers/evga-logo.png"
-            };
-            evga.UrlSlug = UrlHelperMethod.RemoveDiacritics(evga.Name);
-            Manufacturers.Add(evga);
-            var wd = new Manufacturer
+                UrlSlug = "evga",
+                ManufacturerImage = "/images/manufacturers/evga-logo.png",
+                Description = "EVGA Corporation is an American computer hardware company..."
+            }, autoSave: true);
+
+            var wd = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.westerndigital.com/",
                 Name = "WD",
-                Description = "Western Digital Corporation is an American computer data storage company known for its hard drives and solid-state drives. It is one of the largest manufacturers of storage devices in the world.",
-                ManufacturerImage = "/images/manufacturers/wd-logo.png"
-            };
-            wd.UrlSlug = UrlHelperMethod.RemoveDiacritics(wd.Name);
-            Manufacturers.Add(wd);
-            var noctua = new Manufacturer
+                UrlSlug = "wd",
+                ManufacturerImage = "images/manufacturers/wd-logo.png",
+                Description = "Western Digital Corporation is an American computer data storage company..."
+            }, autoSave: true);
+
+            var noctua = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://noctua.at/en/",
                 Name = "Noctua",
-                Description = "Noctua is an Austrian manufacturer of computer cooling solutions, including CPU coolers and fans. It is known for its high-performance and quiet cooling products.",
-                ManufacturerImage = "/images/manufacturers/noctua-logo.png"
-            };
-            noctua.UrlSlug = UrlHelperMethod.RemoveDiacritics(noctua.Name);
-            Manufacturers.Add(noctua);
-            var asrock = new Manufacturer
+                UrlSlug = "noctua",
+                ManufacturerImage = "/images/manufacturers/noctua-logo.png",
+                Description = "Noctua is an Austrian manufacturer of computer cooling solutions..."
+            }, autoSave: true);
+
+            var asrock = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.asrock.com/",
                 Name = "ASRock",
-                Description = "ASRock Inc. is a Taiwanese manufacturer of motherboards, graphics cards, and other computer hardware. It is known for its innovative products and focuses on providing quality and performance.",
-                ManufacturerImage = "/images/manufacturers/ASRock-logo.png"
-            };
-            asrock.UrlSlug = UrlHelperMethod.RemoveDiacritics(asrock.Name);
-            Manufacturers.Add(asrock);
+                UrlSlug = "asrock",
+                ManufacturerImage = "/images/manufacturers/ASRock-logo.png",
+                Description = "ASRock Inc. is a Taiwanese manufacturer of motherboards, graphics cards..."
+            }, autoSave: true);
 
-            // Add to your Manufacturers list
-            var ikea = new Manufacturer
+            var ikea = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.ikea.com/",
                 Name = "IKEA",
-                Description = "Swedish multinational conglomerate that designs and sells ready-to-assemble furniture, kitchen appliances and home accessories.",
-                ManufacturerImage = "/images/manufacturers/ikea-logo.png"
-            };
-            ikea.UrlSlug = UrlHelperMethod.RemoveDiacritics(ikea.Name);
-            Manufacturers.Add(ikea);
+                UrlSlug = "ikea",
+                ManufacturerImage = "/images/manufacturers/ikea-logo.png",
+                Description = "Swedish multinational conglomerate that designs and sells ready-to-assemble furniture..."
+            }, autoSave: true);
 
-            var microsoft = new Manufacturer
+            var microsoft = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.microsoft.com/",
                 Name = "Microsoft",
-                Description = "American multinational technology corporation known for Windows, Office, Xbox and Azure cloud services.",
-                ManufacturerImage = "/images/manufacturers/microsoft-logo.png"
-            };
-            microsoft.UrlSlug = UrlHelperMethod.RemoveDiacritics(microsoft.Name);
-            Manufacturers.Add(microsoft);
+                UrlSlug = "microsoft",
+                ManufacturerImage = "/images/manufacturers/microsoft-logo.png",
+                Description = "American multinational technology corporation known for Windows, Office, Xbox..."
+            }, autoSave: true);
 
-            var tplink = new Manufacturer
+            var tplink = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.tp-link.com/",
                 Name = "TP-Link",
-                Description = "Chinese manufacturer of computer networking products including routers, switches, and smart home devices.",
-                ManufacturerImage = "/images/manufacturers/tplink-logo.png"
-            };
-            tplink.UrlSlug = UrlHelperMethod.RemoveDiacritics(tplink.Name);
-            Manufacturers.Add(tplink);
+                UrlSlug = "tp-link",
+                ManufacturerImage = "/images/manufacturers/tplink-logo.png",
+                Description = "Chinese manufacturer of computer networking products..."
+            }, autoSave: true);
 
-            var valve = new Manufacturer
+            var valve = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.valvesoftware.com/",
                 Name = "Valve",
-                Description = "American video game developer and digital distribution company, creator of Steam and Steam Deck.",
-                ManufacturerImage = "/images/manufacturers/valve-logo.png"
-            };
-            valve.UrlSlug = UrlHelperMethod.RemoveDiacritics(valve.Name);
-            Manufacturers.Add(valve);
+                UrlSlug = "valve",
+                ManufacturerImage = "/images/manufacturers/valve-logo.png",
+                Description = "American video game developer and digital distribution company..."
+            }, autoSave: true);
 
-            var sony = new Manufacturer
+            var sony = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.sony.com/",
                 Name = "Sony",
-                Description = "Japanese multinational conglomerate known for electronics, gaming (PlayStation), entertainment and imaging products.",
-                ManufacturerImage = "/images/manufacturers/sony-logo.png"
-            };
-            sony.UrlSlug = UrlHelperMethod.RemoveDiacritics(sony.Name);
-            Manufacturers.Add(sony);
+                UrlSlug = "sony",
+                ManufacturerImage = "/images/manufacturers/sony-logo.png",
+                Description = "Japanese multinational conglomerate known for electronics, gaming (PlayStation)..."
+            }, autoSave: true);
 
-            var anker = new Manufacturer
+            var anker = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.anker.com/",
                 Name = "Anker",
-                Description = "Chinese electronics company known for charging accessories, power banks, cables and hubs.",
-                ManufacturerImage = "/images/manufacturers/anker-logo.png"
-            };
-            anker.UrlSlug = UrlHelperMethod.RemoveDiacritics(anker.Name);
-            Manufacturers.Add(anker);
+                UrlSlug = "anker",
+                ManufacturerImage = "/images/manufacturers/anker-logo.png",
+                Description = "Chinese electronics company known for charging accessories..."
+            }, autoSave: true);
 
-            var ugreen = new Manufacturer
+            var ugreen = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.ugreen.com/",
                 Name = "UGREEN",
-                Description = "Chinese manufacturer of computer and mobile accessories including cables, chargers and adapters.",
-                ManufacturerImage = "/images/manufacturers/ugreen-logo.png"
-            };
-            ugreen.UrlSlug = UrlHelperMethod.RemoveDiacritics(ugreen.Name);
-            Manufacturers.Add(ugreen);
+                UrlSlug = "ugreen",
+                ManufacturerImage = "/images/manufacturers/ugreen-logo.png",
+                Description = "Chinese manufacturer of computer and mobile accessories..."
+            }, autoSave: true);
 
-
-            var jbl = new Manufacturer
+            var jbl = await _manufacturerRepository.InsertAsync(new Manufacturer
             {
                 ContactInfo = "https://www.jbl.com/",
                 Name = "JBL",
-                Description = "American audio electronics company known for speakers, headphones and sound systems.",
-                ManufacturerImage = "/images/manufacturers/jbl-logo.png"
-            };
-            await _manufacturerRepository.InsertManyAsync(Manufacturers, autoSave: true);
+                UrlSlug = "jbl",
+                ManufacturerImage = "/images/manufacturers/jbl-logo.png",
+                Description = "American audio electronics company known for speakers, headphones and sound systems."
+            }, autoSave: true);
             #endregion
-
             #region Seed Lookup Tables
 
             var am4 = await _socketRepository.InsertAsync(new CpuSocket { Name = "AM4" });

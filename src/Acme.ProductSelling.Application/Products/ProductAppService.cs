@@ -159,6 +159,4 @@ namespace Acme.ProductSelling.Products
             }
         }
     }
-
-
 }

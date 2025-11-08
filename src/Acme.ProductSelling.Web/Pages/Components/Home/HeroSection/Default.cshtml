@@ -1,4 +1,4 @@
-﻿
+﻿@* 
 @using Acme.ProductSelling.Categories;
 @using Volo.Abp.Application.Dtos;
 @using Acme.ProductSelling.Web.Pages.Components.Home.Carousel;
@@ -199,4 +199,237 @@
         @await Component.InvokeAsync(typeof(CarouselViewComponent))
     </div>
 </section>
+ *@
+@* Web/Pages/Components/Home/HeroSection/Default.cshtml *@
+@using Acme.ProductSelling.Categories
+@using Acme.ProductSelling.Web.Pages.Components.Home.Carousel
+@model GroupedCategoriesResultDto
 
+<section class="container mt-2">
+    <div class="row d-flex align-items-stretch pt-2 h-100">
+
+        @* Category Sidebar *@
+        <div class="col-lg-3 p-0 d-none d-lg-block bg-light rounded h-100">
+            <ul class="list-group category-sidebar-menu border">
+
+                @* Individual Categories First *@
+                @if (Model.IndividualCategories != null && Model.IndividualCategories.Any())
+                {
+                    foreach (var category in Model.IndividualCategories)
+                    {
+                        <li class="list-group-item list-group-item-action category-menu-item has-megamenu" style="padding:0">
+                            <a asp-page="/Products/ProductsByCategory"
+                               asp-route-slug="@category.UrlSlug"
+                               class="d-flex justify-content-between align-items-center text-decoration-none text-dark px-3 py-2">
+                                <span>
+                                    <i class="bi bi-laptop me-2" style="font-size: 1.1rem;"></i>
+                                    @category.Name
+                                </span>
+                                <i class="bi bi-chevron-right small"></i>
+                            </a>
+
+                            @* Individual Category Megamenu *@
+                            <div class="megamenu-data-source d-none">
+                                <div class="megamenu-content-wrapper p-3 bg-white border rounded shadow-sm">
+                                    <div class="row">
+                                        @* Manufacturers Column *@
+                                        <div class="col-md-3">
+                                            <div class="subcategory">
+                                                <h5 class="subcategory-title">@L["UI:Brands"]</h5>
+                                                <div class="subcategory-links">
+                                                    @foreach (var manufacturer in category.Manufacturers)
+                                                    {
+                                                        <a asp-page="/Products/ProductsByManufacturer"
+                                                           asp-route-categoryUrlSlug="@category.UrlSlug"
+                                                           asp-route-manufacturerUrlSlug="@manufacturer.UrlSlug">
+                                                            @manufacturer.Name
+                                                        </a>
+                                                    }
+                                                    <a asp-page="/Products/ProductsByCategory"
+                                                       class="fw-bold text-primary"
+                                                       asp-route-slug="@category.UrlSlug">
+                                                        <span>@L["SeeAll"]</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        @* Popular/Featured Column *@
+                                        <div class="col-md-3">
+                                            <div class="subcategory">
+                                                <h5 class="subcategory-title">@L["UI:Featured"]</h5>
+                                                <div class="subcategory-links">
+                                                    <a asp-page="/Products/ProductsByCategory"
+                                                       asp-route-slug="@category.UrlSlug"
+                                                       asp-route-sortBy="popularity">
+                                                        <i class="bi bi-star me-1"></i>@L["UI:MostPopular"]
+                                                    </a>
+                                                    <a asp-page="/Products/ProductsByCategory"
+                                                       asp-route-slug="@category.UrlSlug"
+                                                       asp-route-sortBy="newest">
+                                                        <i class="bi bi-lightning me-1"></i>@L["UI:NewArrivals"]
+                                                    </a>
+                                                    <a asp-page="/Products/ProductsByCategory"
+                                                       asp-route-slug="@category.UrlSlug"
+                                                       asp-route-sortBy="discount">
+                                                        <i class="bi bi-percent me-1"></i>@L["UI:BestDeals"]
+                                                    </a>
+                                                    <a asp-page="/Products/ProductsByCategory"
+                                                       asp-route-slug="@category.UrlSlug"
+                                                       asp-route-sortBy="rating">
+                                                        <i class="bi bi-star-fill me-1"></i>@L["UI:TopRated"]
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        @* Specifications/Features Column *@
+                                        <div class="col-md-3">
+                                            <div class="subcategory">
+                                                <h5 class="subcategory-title">@L["UI:ShopBy"]</h5>
+                                                <div class="subcategory-links">
+                                                    <a asp-page="/Products/ProductsByCategory"
+                                                       asp-route-slug="@category.UrlSlug"
+                                                       asp-route-filter="inStock">
+                                                        <i class="bi bi-check-circle me-1"></i>@L["UI:InStock"]
+                                                    </a>
+                                                    <a asp-page="/Products/ProductsByCategory"
+                                                       asp-route-slug="@category.UrlSlug"
+                                                       asp-route-filter="freeShipping">
+                                                        <i class="bi bi-truck me-1"></i>@L["UI:FreeShipping"]
+                                                    </a>
+                                                    <a asp-page="/Products/ProductsByCategory"
+                                                       asp-route-slug="@category.UrlSlug">
+                                                        <i class="bi bi-filter me-1"></i>@L["UI:AllProducts"]
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        @* Price Ranges Column *@
+                                        @if (category.SpecificationType != SpecificationType.Services)
+                                        {
+                                         <div class="col-md-3">
+                                            <div class="subcategory">
+                                                <h5 class="subcategory-title">@L["UI:ByPrice"]</h5>
+                                                <div class="subcategory-links">
+                                                    <a asp-page="/Products/ProductsByPrice"
+                                                       asp-route-slug="@category.UrlSlug"
+                                                       asp-route-PriceRangeAlias="@L["PriceRange:Under1Million"].Value">
+                                                        @L["PriceRange:Under1Million"]
+                                                    </a>
+                                                    <a asp-page="/Products/ProductsByPrice"
+                                                       asp-route-slug="@category.UrlSlug"
+                                                       asp-route-PriceRangeAlias="@L["PriceRange:From1MillionTo5Million"].Value">
+                                                        @L["PriceRange:From1MillionTo5Million"]
+                                                    </a>
+                                                    <a asp-page="/Products/ProductsByPrice"
+                                                       asp-route-slug="@category.UrlSlug"
+                                                       asp-route-PriceRangeAlias="@L["PriceRange:From5MillionTo20Million"].Value">
+                                                        @L["PriceRange:From5MillionTo20Million"]
+                                                    </a>
+                                                    <a asp-page="/Products/ProductsByPrice"
+                                                       asp-route-slug="@category.UrlSlug"
+                                                       asp-route-PriceRangeAlias="@L["PriceRange:Over20Million"].Value">
+                                                        @L["PriceRange:Over20Million"]
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                }
+
+                @* Grouped Categories *@
+                @if (Model.Groups != null && Model.Groups.Any())
+                {
+                    foreach (var group in Model.Groups)
+                    {
+                        <li class="list-group-item list-group-item-action category-menu-item has-megamenu" style="padding:0">
+                            <div class="d-flex justify-content-between align-items-center text-decoration-none text-dark px-3 py-2">
+                                <span>
+                                    <i class="@group.GroupIcon me-2" style="font-size: 1.1rem;"></i>
+                                    @group.GroupName
+                                </span>
+                                <i class="bi bi-chevron-right small"></i>
+                            </div>
+
+                            @* Group Megamenu *@
+                            <div class="megamenu-data-source d-none">
+                                <div class="megamenu-content-wrapper p-3 bg-white border rounded shadow-sm" style="min-width: 900px;">
+                                    <div class="row g-3">
+                                        @foreach (var category in group.Categories)
+                                        {
+                                            <div class="col-md-3">
+                                                <div class="subcategory">
+                                                    <h5 class="subcategory-title">
+                                                        <a asp-page="/Products/ProductsByCategory"
+                                                           asp-route-slug="@category.UrlSlug"
+                                                           class="text-decoration-none text-dark">
+                                                            @category.Name
+                                                        </a>
+                                                    </h5>
+                                                    <div class="subcategory-links">
+                                                        @if (category.Manufacturers != null && category.Manufacturers.Any())
+                                                        {
+                                                            @foreach (var manufacturer in category.Manufacturers.Take(5))
+                                                            {
+                                                                <a asp-page="/Products/ProductsByManufacturer"
+                                                                   asp-route-categoryUrlSlug="@category.UrlSlug"
+                                                                   asp-route-manufacturerUrlSlug="@manufacturer.UrlSlug">
+                                                                    @manufacturer.Name
+                                                                </a>
+                                                            }
+                                                        }
+                                                        <a asp-page="/Products/ProductsByCategory"
+                                                           class="fw-bold text-primary"
+                                                           asp-route-slug="@category.UrlSlug">
+                                                            <span>@L["SeeAll"]</span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        @* Add price column for the entire group *@
+                                        <div class="col-md-3">
+                                            <div class="subcategory">
+                                                <h5 class="subcategory-title">@L["UI:ByPrice"]</h5>
+                                                <div class="subcategory-links">
+                                                    <a asp-page="/Products/ProductsByPrice"
+                                                       asp-route-PriceRangeAlias="@L["PriceRange:Under1Million"].Value">
+                                                        @L["PriceRange:Under1Million"]
+                                                    </a>
+                                                    <a asp-page="/Products/ProductsByPrice"
+                                                       asp-route-PriceRangeAlias="@L["PriceRange:From1MillionTo5Million"].Value">
+                                                        @L["PriceRange:From1MillionTo5Million"]
+                                                    </a>
+                                                    <a asp-page="/Products/ProductsByPrice"
+                                                       asp-route-PriceRangeAlias="@L["PriceRange:From5MillionTo20Million"].Value">
+                                                        @L["PriceRange:From5MillionTo20Million"]
+                                                    </a>
+                                                    <a asp-page="/Products/ProductsByPrice"
+                                                       asp-route-PriceRangeAlias="@L["PriceRange:Over20Million"].Value">
+                                                        @L["PriceRange:Over20Million"]
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+
+        @* Carousel Section *@
+        @await Component.InvokeAsync(typeof(CarouselViewComponent))
+    </div>
+</section>

@@ -46,6 +46,8 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
         CreateMap<CategoryDto, CreateUpdateCategoryDto>().ForMember(dest => dest.UrlSlug, opt => opt.MapFrom(src => src.UrlSlug));
         CreateMap<CreateUpdateCategoryDto, Category>().ForMember(dest => dest.UrlSlug, opt => opt.MapFrom(src => src.UrlSlug));
         CreateMap<Category, CategoryLookupDto>();
+        CreateMap<Category, CategoryInGroupDto>().ForMember(dest => dest.Manufacturers, opt => opt.Ignore());
+
         //lookup
 
         CreateMap<CpuSocket, CpuSocketDto>();

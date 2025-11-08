@@ -10,6 +10,8 @@ namespace Acme.ProductSelling.Categories
         public string CategoryUrlSlug { get; set; }
         public SpecificationType SpecificationType { get; set; }
         public int ManufacturerCount { get; set; }
+        public CategoryGroup CategoryGroup { get; set; } // NEW
+        public string IconCssClass { get; set; } // NEW
         public List<ManufacturerDto> Manufacturers { get; set; } = new List<ManufacturerDto>();
     }
 }
