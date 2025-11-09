@@ -230,20 +230,21 @@ public class ProductSellingDbContext :
             b.ToTable(tablePrefix + "CpuSpecifications");
             b.HasOne(s => s.Product).WithOne(p => p.CpuSpecification).HasForeignKey<CpuSpecification>(s => s.ProductId);
             b.HasOne(s => s.Socket).WithMany().HasForeignKey(s => s.SocketId);
+            b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<GpuSpecification>(b =>
         {
             b.ToTable(tablePrefix + "GpuSpecifications");
             b.HasOne(s => s.Product).WithOne(s => s.GpuSpecification).HasForeignKey<GpuSpecification>(s => s.ProductId);
-            b.Property(s => s.Length).HasColumnType("decimal(18,2)");
+            b.Property(s => s.Length).HasColumnType("decimal(18,2)"); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<RamSpecification>(b =>
         {
             b.ToTable(tablePrefix + "RamSpecifications");
             b.HasOne(s => s.Product).WithOne(p => p.RamSpecification).HasForeignKey<RamSpecification>(s => s.ProductId);
-            b.HasOne(s => s.RamType).WithMany().HasForeignKey(s => s.RamTypeId);
+            b.HasOne(s => s.RamType).WithMany().HasForeignKey(s => s.RamTypeId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<MotherboardSpecification>(b =>
@@ -253,20 +254,20 @@ public class ProductSellingDbContext :
             b.HasOne(s => s.Socket).WithMany().HasForeignKey(s => s.SocketId);
             b.HasOne(s => s.Chipset).WithMany().HasForeignKey(s => s.ChipsetId);
             b.HasOne(s => s.FormFactor).WithMany().HasForeignKey(s => s.FormFactorId);
-            b.HasOne(s => s.SupportedRamTypes).WithMany().HasForeignKey(s => s.RamTypeId);
+            b.HasOne(s => s.SupportedRamTypes).WithMany().HasForeignKey(s => s.RamTypeId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<StorageSpecification>(b =>
         {
             b.ToTable(tablePrefix + "StorageSpecifications");
-            b.HasOne(s => s.Product).WithOne(p => p.StorageSpecification).HasForeignKey<StorageSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Product).WithOne(p => p.StorageSpecification).HasForeignKey<StorageSpecification>(s => s.ProductId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<PsuSpecification>(b =>
         {
             b.ToTable(tablePrefix + "PsuSpecifications");
             b.HasOne(s => s.Product).WithOne(p => p.PsuSpecification).HasForeignKey<PsuSpecification>(s => s.ProductId);
-            b.HasOne(s => s.FormFactor).WithMany().HasForeignKey(s => s.FormFactorId);
+            b.HasOne(s => s.FormFactor).WithMany().HasForeignKey(s => s.FormFactorId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<CaseSpecification>(b =>
@@ -279,6 +280,7 @@ public class ProductSellingDbContext :
                .WithOne(cm => cm.CaseSpecification)
                .HasForeignKey(cm => cm.CaseSpecificationId)
                .IsRequired();
+            b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<CaseMaterial>(b =>
@@ -286,6 +288,8 @@ public class ProductSellingDbContext :
             b.ToTable(tablePrefix + "CaseMaterials");
             b.HasKey(cm => new { cm.CaseSpecificationId, cm.MaterialId });
             b.HasOne(cm => cm.Material).WithMany().HasForeignKey(cm => cm.MaterialId);
+            b.HasQueryFilter(cm => !cm.CaseSpecification.Product.IsDeleted);
+
         });
 
         builder.Entity<CpuCoolerSpecification>(b =>
@@ -297,6 +301,7 @@ public class ProductSellingDbContext :
                .WithOne(css => css.CpuCoolerSpecification)
                .HasForeignKey(css => css.CpuCoolerSpecificationId)
                .IsRequired();
+            b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<CpuCoolerSocketSupport>(b =>
@@ -304,38 +309,40 @@ public class ProductSellingDbContext :
             b.ToTable(tablePrefix + "CpuCoolerSocketSupports");
             b.HasKey(css => new { css.CpuCoolerSpecificationId, css.SocketId });
             b.HasOne(css => css.Socket).WithMany().HasForeignKey(css => css.SocketId);
+            b.HasQueryFilter(css => !css.CpuCoolerSpecification.Product.IsDeleted);
+
         });
 
         builder.Entity<KeyboardSpecification>(b =>
         {
             b.ToTable(tablePrefix + "KeyboardSpecifications");
             b.HasOne(s => s.Product).WithOne(p => p.KeyboardSpecification).HasForeignKey<KeyboardSpecification>(s => s.ProductId);
-            b.HasOne(s => s.SwitchType).WithMany().HasForeignKey(s => s.SwitchTypeId);
+            b.HasOne(s => s.SwitchType).WithMany().HasForeignKey(s => s.SwitchTypeId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<MonitorSpecification>(b =>
         {
             b.ToTable(tablePrefix + "MonitorSpecifications");
             b.HasOne(s => s.Product).WithOne(p => p.MonitorSpecification).HasForeignKey<MonitorSpecification>(s => s.ProductId);
-            b.HasOne(s => s.PanelType).WithMany().HasForeignKey(s => s.PanelTypeId);
+            b.HasOne(s => s.PanelType).WithMany().HasForeignKey(s => s.PanelTypeId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<MouseSpecification>(b =>
         {
             b.ToTable(tablePrefix + "MouseSpecifications");
-            b.HasOne(s => s.Product).WithOne(p => p.MouseSpecification).HasForeignKey<MouseSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Product).WithOne(p => p.MouseSpecification).HasForeignKey<MouseSpecification>(s => s.ProductId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<LaptopSpecification>(b =>
         {
             b.ToTable(tablePrefix + "LaptopSpecifications");
-            b.HasOne(s => s.Product).WithOne(p => p.LaptopSpecification).HasForeignKey<LaptopSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Product).WithOne(p => p.LaptopSpecification).HasForeignKey<LaptopSpecification>(s => s.ProductId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<HeadsetSpecification>(b =>
         {
             b.ToTable(tablePrefix + "HeadsetSpecifications");
-            b.HasOne(s => s.Product).WithOne(p => p.HeadsetSpecification).HasForeignKey<HeadsetSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Product).WithOne(p => p.HeadsetSpecification).HasForeignKey<HeadsetSpecification>(s => s.ProductId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
         #endregion
 
@@ -343,97 +350,97 @@ public class ProductSellingDbContext :
         builder.Entity<CaseFanSpecification>(b =>
         {
             b.ToTable(tablePrefix + "CaseFanSpecifications");
-            b.HasOne(s => s.Product).WithOne(p => p.CaseFanSpecification).HasForeignKey<CaseFanSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Product).WithOne(p => p.CaseFanSpecification).HasForeignKey<CaseFanSpecification>(s => s.ProductId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<MemoryCardSpecification>(b =>
         {
             b.ToTable(tablePrefix + "MemoryCardSpecifications");
-            b.HasOne(s => s.Product).WithOne(p => p.MemoryCardSpecification).HasForeignKey<MemoryCardSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Product).WithOne(p => p.MemoryCardSpecification).HasForeignKey<MemoryCardSpecification>(s => s.ProductId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<SpeakerSpecification>(b =>
         {
             b.ToTable(tablePrefix + "SpeakerSpecifications");
-            b.HasOne(s => s.Product).WithOne(p => p.SpeakerSpecification).HasForeignKey<SpeakerSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Product).WithOne(p => p.SpeakerSpecification).HasForeignKey<SpeakerSpecification>(s => s.ProductId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<MicrophoneSpecification>(b =>
         {
             b.ToTable(tablePrefix + "MicrophoneSpecifications");
-            b.HasOne(s => s.Product).WithOne(p => p.MicrophoneSpecification).HasForeignKey<MicrophoneSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Product).WithOne(p => p.MicrophoneSpecification).HasForeignKey<MicrophoneSpecification>(s => s.ProductId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<WebcamSpecification>(b =>
         {
             b.ToTable(tablePrefix + "WebcamSpecifications");
-            b.HasOne(s => s.Product).WithOne(p => p.WebcamSpecification).HasForeignKey<WebcamSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Product).WithOne(p => p.WebcamSpecification).HasForeignKey<WebcamSpecification>(s => s.ProductId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<MousePadSpecification>(b =>
         {
             b.ToTable(tablePrefix + "MousePadSpecifications");
-            b.HasOne(s => s.Product).WithOne(p => p.MousepadSpecification).HasForeignKey<MousePadSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Product).WithOne(p => p.MousepadSpecification).HasForeignKey<MousePadSpecification>(s => s.ProductId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<ChairSpecification>(b =>
         {
             b.ToTable(tablePrefix + "ChairSpecifications");
-            b.HasOne(s => s.Product).WithOne(p => p.ChairSpecification).HasForeignKey<ChairSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Product).WithOne(p => p.ChairSpecification).HasForeignKey<ChairSpecification>(s => s.ProductId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<DeskSpecification>(b =>
         {
             b.ToTable(tablePrefix + "DeskSpecifications");
-            b.HasOne(s => s.Product).WithOne(p => p.DeskSpecification).HasForeignKey<DeskSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Product).WithOne(p => p.DeskSpecification).HasForeignKey<DeskSpecification>(s => s.ProductId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<SoftwareSpecification>(b =>
         {
             b.ToTable(tablePrefix + "SoftwareSpecifications");
-            b.HasOne(s => s.Product).WithOne(p => p.SoftwareSpecification).HasForeignKey<SoftwareSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Product).WithOne(p => p.SoftwareSpecification).HasForeignKey<SoftwareSpecification>(s => s.ProductId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<NetworkHardwareSpecification>(b =>
         {
             b.ToTable(tablePrefix + "NetworkHardwareSpecifications");
-            b.HasOne(s => s.Product).WithOne(p => p.NetworkHardwareSpecification).HasForeignKey<NetworkHardwareSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Product).WithOne(p => p.NetworkHardwareSpecification).HasForeignKey<NetworkHardwareSpecification>(s => s.ProductId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<HandheldSpecification>(b =>
         {
             b.ToTable(tablePrefix + "HandheldSpecifications");
-            b.HasOne(s => s.Product).WithOne(p => p.HandheldSpecification).HasForeignKey<HandheldSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Product).WithOne(p => p.HandheldSpecification).HasForeignKey<HandheldSpecification>(s => s.ProductId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<ConsoleSpecification>(b =>
         {
             b.ToTable(tablePrefix + "ConsoleSpecifications");
-            b.HasOne(s => s.Product).WithOne(p => p.ConsoleSpecification).HasForeignKey<ConsoleSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Product).WithOne(p => p.ConsoleSpecification).HasForeignKey<ConsoleSpecification>(s => s.ProductId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<HubSpecification>(b =>
         {
             b.ToTable(tablePrefix + "HubSpecifications");
-            b.HasOne(s => s.Product).WithOne(p => p.HubSpecification).HasForeignKey<HubSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Product).WithOne(p => p.HubSpecification).HasForeignKey<HubSpecification>(s => s.ProductId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<CableSpecification>(b =>
         {
             b.ToTable(tablePrefix + "CableSpecifications");
-            b.HasOne(s => s.Product).WithOne(p => p.CableSpecification).HasForeignKey<CableSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Product).WithOne(p => p.CableSpecification).HasForeignKey<CableSpecification>(s => s.ProductId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<ChargerSpecification>(b =>
         {
             b.ToTable(tablePrefix + "ChargerSpecifications");
-            b.HasOne(s => s.Product).WithOne(p => p.ChargerSpecification).HasForeignKey<ChargerSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Product).WithOne(p => p.ChargerSpecification).HasForeignKey<ChargerSpecification>(s => s.ProductId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
 
         builder.Entity<PowerBankSpecification>(b =>
         {
             b.ToTable(tablePrefix + "PowerBankSpecifications");
-            b.HasOne(s => s.Product).WithOne(p => p.PowerBankSpecification).HasForeignKey<PowerBankSpecification>(s => s.ProductId);
+            b.HasOne(s => s.Product).WithOne(p => p.PowerBankSpecification).HasForeignKey<PowerBankSpecification>(s => s.ProductId); b.HasQueryFilter(s => !s.Product.IsDeleted);
         });
         #endregion
 

@@ -37,17 +37,20 @@ namespace Acme.ProductSelling.Categories
         {
             _categoryRepository = categoryRepository;
             _productRepository = productRepository;
-            GetPolicyName = ProductSellingPermissions.Categories.Default;
-            CreatePolicyName = ProductSellingPermissions.Categories.Create;
-            UpdatePolicyName = ProductSellingPermissions.Categories.Edit;
-            DeletePolicyName = ProductSellingPermissions.Categories.Delete;
+
             _guidGenerator = guidGenerator;
             _logger = logger;
             _manufacturerRepository = manufacturerRepository;
             _localizer = localizer;
+            ConfigurePolicies();
         }
-
-        // Override CreateAsync to add comprehensive debugging
+        private void ConfigurePolicies()
+        {
+            GetPolicyName = ProductSellingPermissions.Categories.Default;
+            CreatePolicyName = ProductSellingPermissions.Categories.Create;
+            UpdatePolicyName = ProductSellingPermissions.Categories.Edit;
+            DeletePolicyName = ProductSellingPermissions.Categories.Delete;
+        }
 
         [Authorize(ProductSellingPermissions.Categories.Create)]
         public override async Task<CategoryDto> CreateAsync(CreateUpdateCategoryDto input)
@@ -108,41 +111,15 @@ namespace Acme.ProductSelling.Categories
             );
         }
 
-        public async Task<ListResultDto<CategoryWithManufacturersDto>> GetListWithManufacturersAsync()
-        {
-            var categories = await Repository.GetListAsync();
-            var categoryWithManufacturersDtos = new List<CategoryWithManufacturersDto>();
-            var manufacturers = (await _productRepository.GetQueryableAsync()).Include(p => p.Manufacturer);
-
-            foreach (var category in categories)
-            {
-                var manufacturersInCategory = manufacturers
-                    .Where(item => item.CategoryId == category.Id && item.Manufacturer != null)
-                    .Select(item => item.Manufacturer).Distinct().OrderBy(item => item.Name);
-                var manufacturersInCategoryList = await AsyncExecuter.ToListAsync(manufacturersInCategory);
-
-                var categoryWithManufacturersDto = new CategoryWithManufacturersDto
-                {
-                    Id = category.Id,
-                    CategoryName = category.Name,
-                    ManufacturerCount = manufacturersInCategoryList.Count(),
-                    CategoryUrlSlug = category.UrlSlug,
-                    Manufacturers = ObjectMapper.Map<List<Manufacturer>, List<ManufacturerDto>>(manufacturersInCategoryList)
-                };
-
-                categoryWithManufacturersDtos.Add(categoryWithManufacturersDto);
-            }
-            return new ListResultDto<CategoryWithManufacturersDto>(categoryWithManufacturersDtos);
-        }
         [AllowAnonymous]
         public async Task<GroupedCategoriesResultDto> GetGroupedCategoriesAsync()
         {
             var categories = await _categoryRepository.GetListAsync();
 
-            // Step 1: Efficiently create a lookup that maps CategoryId to a list of its Manufacturers
+            // Single optimized query to get manufacturer lookup
             var manufacturersByCategory = await GetCategoryManufacturerLookupAsync();
 
-            // Step 2: Group categories by CategoryGroup
+            // Group categories efficiently
             var groupedCategories = categories
                 .Where(c => c.CategoryGroup != CategoryGroup.Individual)
                 .GroupBy(c => c.CategoryGroup)
@@ -152,35 +129,15 @@ namespace Acme.ProductSelling.Categories
                     GroupName = _localizer[GetGroupLocalizationKey(g.Key)],
                     GroupIcon = g.First().IconCssClass,
                     DisplayOrder = g.First().DisplayOrder,
-                    Categories = g.Select(c => new CategoryInGroupDto
-                    {
-                        Id = c.Id,
-                        Name = c.Name,
-                        UrlSlug = c.UrlSlug,
-                        SpecificationType = c.SpecificationType,
-                        // Step 3: Use the lookup to get manufacturers
-                        Manufacturers = manufacturersByCategory.TryGetValue(c.Id, out var manufs)
-                            ? ObjectMapper.Map<List<Manufacturer>, List<ManufacturerDto>>(manufs)
-                            : new List<ManufacturerDto>()
-                    }).ToList()
+                    Categories = g.Select(c => MapToCategoryInGroup(c, manufacturersByCategory)).ToList()
                 })
                 .OrderBy(g => g.DisplayOrder)
                 .ToList();
 
-            // Step 4: Get individual categories (not in groups)
+            // Get individual categories
             var individualCategories = categories
                 .Where(c => c.CategoryGroup == CategoryGroup.Individual)
-                .Select(c => new CategoryInGroupDto
-                {
-                    Id = c.Id,
-                    Name = c.Name,
-                    UrlSlug = c.UrlSlug,
-                    SpecificationType = c.SpecificationType,
-                    // Step 5: Use the same lookup for individual categories
-                    Manufacturers = manufacturersByCategory.TryGetValue(c.Id, out var manufs)
-                        ? ObjectMapper.Map<List<Manufacturer>, List<ManufacturerDto>>(manufs)
-                        : new List<ManufacturerDto>()
-                })
+                .Select(c => MapToCategoryInGroup(c, manufacturersByCategory))
                 .OrderBy(c => c.Name)
                 .ToList();
 
@@ -194,30 +151,12 @@ namespace Acme.ProductSelling.Categories
         public async Task<ListResultDto<CategoryWithManufacturersDto>> GetCategoriesWithManufacturersAsync()
         {
             var categories = await _categoryRepository.GetListAsync();
-
-            // Step 1: Efficiently create a lookup that maps CategoryId to a list of its Manufacturers
             var manufacturersByCategory = await GetCategoryManufacturerLookupAsync();
 
-            // Step 2: Map categories to DTOs, populating manufacturers from the lookup
-            var categoryDtos = categories.Select(c =>
-            {
-                manufacturersByCategory.TryGetValue(c.Id, out var manufacturers);
-                var manufacturerList = manufacturers ?? new List<Manufacturer>();
-
-                return new CategoryWithManufacturersDto
-                {
-                    Id = c.Id,
-                    CategoryName = c.Name,
-                    CategoryUrlSlug = c.UrlSlug,
-                    CategoryGroup = c.CategoryGroup,
-                    IconCssClass = c.IconCssClass,
-                    // Use the retrieved list to populate Manufacturers and their count
-                    Manufacturers = ObjectMapper.Map<List<Manufacturer>, List<ManufacturerDto>>(manufacturerList),
-                    ManufacturerCount = manufacturerList.Count
-                };
-            })
-            .OrderBy(c => c.CategoryName)
-            .ToList();
+            var categoryDtos = categories
+                .Select(c => MapToCategoryWithManufacturers(c, manufacturersByCategory))
+                .OrderBy(c => c.CategoryName)
+                .ToList();
 
             return new ListResultDto<CategoryWithManufacturersDto>(categoryDtos);
         }
@@ -229,8 +168,8 @@ namespace Acme.ProductSelling.Categories
             var productsWithManufacturers = await AsyncExecuter.ToListAsync(
                 productQueryable
                    .Include(p => p.Manufacturer)
-                   .Where(p => p.ManufacturerId != null) // Ensure there's a manufacturer
-                   .Select(p => new { p.CategoryId, p.Manufacturer })
+                   .Where(p => p.ManufacturerId != null)
+                   .Select(p => new { p.CategoryId, p.Manufacturer }).AsNoTracking()
             );
 
             return productsWithManufacturers
@@ -239,10 +178,47 @@ namespace Acme.ProductSelling.Categories
                        g => g.Key,
                        g => g.Select(x => x.Manufacturer)
                              .Where(m => m != null)
-                             .DistinctBy(m => m.Id) // Ensure each manufacturer is listed only once per category
+                             .DistinctBy(m => m.Id)
                              .OrderBy(m => m.Name)
                              .ToList()
                    );
+        }
+
+
+        private CategoryInGroupDto MapToCategoryInGroup(
+            Category category,
+            Dictionary<Guid, List<Manufacturer>> manufacturersByCategory)
+        {
+            return new CategoryInGroupDto
+            {
+                Id = category.Id,
+                Name = category.Name,
+                UrlSlug = category.UrlSlug,
+                SpecificationType = category.SpecificationType,
+                Manufacturers = manufacturersByCategory.TryGetValue(category.Id, out var manufs)
+                    ? ObjectMapper.Map<List<Manufacturer>, List<ManufacturerDto>>(manufs)
+                    : new List<ManufacturerDto>()
+            };
+        }
+
+        private CategoryWithManufacturersDto MapToCategoryWithManufacturers(
+            Category category,
+            Dictionary<Guid, List<Manufacturer>> manufacturersByCategory)
+        {
+            var manufacturers = manufacturersByCategory.TryGetValue(category.Id, out var manufs)
+                ? manufs
+                : new List<Manufacturer>();
+
+            return new CategoryWithManufacturersDto
+            {
+                Id = category.Id,
+                CategoryName = category.Name,
+                CategoryUrlSlug = category.UrlSlug,
+                CategoryGroup = category.CategoryGroup,
+                IconCssClass = category.IconCssClass,
+                Manufacturers = ObjectMapper.Map<List<Manufacturer>, List<ManufacturerDto>>(manufacturers),
+                ManufacturerCount = manufacturers.Count
+            };
         }
         private string GetGroupLocalizationKey(CategoryGroup group)
         {

@@ -6,8 +6,7 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 namespace Acme.ProductSelling.Specifications.Lookups.InterfaceAppServices
 {
-    public interface IChipsetAppService : ICrudAppService<ChipsetDto, Guid, PagedAndSortedResultRequestDto, ProductLookupDto<Guid>>
+    public interface IChipsetAppService : ILookupAppService<Guid>
     {
-        Task<ListResultDto<ProductLookupDto<Guid>>> GetLookupAsync();
     }
 }

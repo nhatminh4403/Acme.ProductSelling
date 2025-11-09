@@ -16,16 +16,16 @@ using Volo.Abp.Guids;
 using Volo.Abp.Users;
 namespace Acme.ProductSelling.Carts
 {
-    [Authorize] // Chỉ cho phép người dùng đã đăng nhập truy cập
+    [Authorize] 
     public class CartAppService : ApplicationService, ICartAppService
     {
-        private readonly IRepository<Cart, Guid> _cartRepository; // Repository cho Cart
+        private readonly IRepository<Cart, Guid> _cartRepository; 
         private readonly IRepository<Product, Guid> _productRepository;
         private readonly ICurrentUser _currentUser;
         private readonly IGuidGenerator _guidGenerator;
 
         public CartAppService(
-                    IRepository<Cart, Guid> cartRepository, // Inject Cart repo
+                    IRepository<Cart, Guid> cartRepository, 
                     IRepository<Product, Guid> productRepository,
                     ICurrentUser currentUser,
                     IGuidGenerator guidGenerator)
@@ -75,36 +75,33 @@ namespace Acme.ProductSelling.Carts
             try
             {
                 var cart = await GetOrCreateCurrentUserCartAsync();
+                var cartDto = ObjectMapper.Map<Cart, CartDto>(cart);
 
-                // Lấy thông tin Product cho các item
-                var cartDto = ObjectMapper.Map<Cart, CartDto>(cart); // Map Cart -> CartDto
-                var productIds = cart.Items.Select(i => i.ProductId).Distinct().ToList();
-
-                if (productIds.Any())
+                if (!cart.Items.Any())
                 {
-                    var products = (await _productRepository.GetListAsync(p => productIds.Contains(p.Id)))
-                                    .ToDictionary(p => p.Id);
-
-                    foreach (var itemDto in cartDto.CartItems)
-                    {
-                        if (products.TryGetValue(itemDto.ProductId, out var product))
-                        {
-                            itemDto.ProductName = product.ProductName;
-
-                            if (product.DiscountedPrice.HasValue)
-                            {
-                                itemDto.ProductPrice = product.DiscountedPrice.Value;
-                            }
-                            else
-                            {
-                                itemDto.ProductPrice = product.OriginalPrice;
-                            }
-                            itemDto.ProductUrlSlug = product.UrlSlug;
-                        }
-                    }
-                    // Xóa item khỏi DTO nếu SP không tìm thấy
-                    cartDto.CartItems.RemoveAll(item => !products.ContainsKey(item.ProductId));
+                    return cartDto;
                 }
+
+                // Single query to get all products
+                var productIds = cart.Items.Select(i => i.ProductId).Distinct().ToList();
+                var products = await _productRepository
+                    .GetListAsync(p => productIds.Contains(p.Id));
+
+                var productDict = products.ToDictionary(p => p.Id);
+
+                // Enrich cart items with product information
+                foreach (var itemDto in cartDto.CartItems)
+                {
+                    if (productDict.TryGetValue(itemDto.ProductId, out var product))
+                    {
+                        itemDto.ProductName = product.ProductName;
+                        itemDto.ProductPrice = product.DiscountedPrice ?? product.OriginalPrice;
+                        itemDto.ProductUrlSlug = product.UrlSlug;
+                    }
+                }
+
+                // Remove items for non-existent products
+                cartDto.CartItems.RemoveAll(item => !productDict.ContainsKey(item.ProductId));
 
                 return cartDto;
             }
@@ -114,32 +111,16 @@ namespace Acme.ProductSelling.Carts
                 throw new UserFriendlyException(L["Cart:CartFailedToRetrieve.TryAgain"]);
             }//"Failed to retrieve shopping cart. Please try again."
         }
-        [IgnoreAntiforgeryToken]
 
+        [IgnoreAntiforgeryToken]
         [Authorize(ProductSellingPermissions.Carts.Create)]
         public async Task AddItemAsync(AddToCartInput input)
         {
             try
             {
                 // Kiểm tra input
-                if (input == null)
-                {
-                    throw new ArgumentNullException(nameof(input));
-                }
+                ValidateAddToCartInput(input);
 
-                if (input.ProductId == Guid.Empty)
-                {
-                    throw new UserFriendlyException(L["Product:ID:Invalid"]);
-                    //"Invalid product ID."
-                    // "Mã sản phẩm không hợp lệ."
-                }
-
-                if (input.Quantity <= 0)
-                {
-                    throw new UserFriendlyException(L["Product:Quantity:GreaterThanZero"]);
-                    // "Số lượng phải lớn hơn 0."
-                    //"Quantity must be greater than zero."
-                }
 
                 // Kiểm tra sản phẩm tồn tại
                 var product = await _productRepository.GetAsync(input.ProductId);
@@ -148,20 +129,7 @@ namespace Acme.ProductSelling.Carts
                 // Kiểm tra tồn kho
                 var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == input.ProductId);
                 int requestedQuantity = input.Quantity + (existingItem?.Quantity ?? 0); // Tổng số lượng yêu cầu
-
-                if (product.StockCount < requestedQuantity)
-                {
-                    // Nếu tồn kho không đủ, ném ngoại lệ
-                    var errorMessage = L["Product:Stock:NotEnough", product.ProductName, product.StockCount, requestedQuantity];
-
-                    throw new UserFriendlyException(errorMessage);
-                    /*  en   {
-                        "NotEnoughStock": "Not enough stock for '{0}'. Available: {1}, Requested: {2}"
-                    }
-                   vi  "NotEnoughStock": "Không đủ hàng cho '{0}'. Có sẵn: {1}, Yêu cầu: {2}"*/
-
-
-                }
+                ValidateStockAvailability(product, input.Quantity);
                 var priceToUse = product.DiscountedPrice ?? product.OriginalPrice;
                 cart.AddOrUpdateItem(
                       input.ProductId,
@@ -209,16 +177,7 @@ namespace Acme.ProductSelling.Carts
                 }
 
                 var product = await _productRepository.GetAsync(itemToUpdate.ProductId);
-                if (product.StockCount < input.Quantity)
-                {
-                    throw new UserFriendlyException(
-                        L["Product:Stock:NotEnoughStock", product.ProductName, product.StockCount, input.Quantity]
-                    );
-                    /*  en   {
-                             "NotEnoughStock": "Not enough stock for '{0}'. Available: {1}, Requested: {2}"
-                         }
-                        vi  "NotEnoughStock": "Không đủ hàng cho '{0}'. Có sẵn: {1}, Yêu cầu: {2}"*/
-                }
+                ValidateStockAvailability(product, input.Quantity);
 
                 // Cập nhật số lượng qua phương thức của CartItem (hoặc Cart nếu logic phức tạp hơn)
                 itemToUpdate.SetQuantity(input.Quantity);
@@ -294,9 +253,37 @@ namespace Acme.ProductSelling.Carts
             {
                 Logger.LogError($"Error in ClearAsync: {ex.Message}");
                 throw new UserFriendlyException(L["Cart:UnableToClear.TryAgain"]);
-                // "Không thể xóa giỏ hàng của bạn. Vui lòng thử lại sau."
-                // "Could not clear your cart. Please try again later."
 
+            }
+        }
+        private void ValidateAddToCartInput(AddToCartInput input)
+        {
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
+            if (input.ProductId == Guid.Empty)
+            {
+                throw new UserFriendlyException(L["Product:ID:Invalid"]);
+            }
+
+            if (input.Quantity <= 0)
+            {
+                throw new UserFriendlyException(L["Product:Quantity:GreaterThanZero"]);
+            }
+        }
+        private void ValidateStockAvailability(Product product, int requestedQuantity)
+        {
+            if (product.StockCount < requestedQuantity)
+            {
+                var errorMessage = L[
+                    "Product:Stock:NotEnough",
+                    product.ProductName,
+                    product.StockCount,
+                    requestedQuantity
+                ];
+                throw new UserFriendlyException(errorMessage);
             }
         }
     }

@@ -6,8 +6,7 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 namespace Acme.ProductSelling.Specifications.Lookups.InterfaceAppServices
 {
-    public interface IRamTypeAppService : ICrudAppService<RamTypeDto, Guid, PagedAndSortedResultRequestDto, ProductLookupDto<Guid>>
+    public interface IRamTypeAppService : ILookupAppService<Guid>
     {
-        Task<ListResultDto<ProductLookupDto<Guid>>> GetLookupAsync();
     }
 }

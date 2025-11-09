@@ -12,7 +12,6 @@ namespace Acme.ProductSelling.Categories
     {
         //Task<ListResultDto<CategoryDto>> GetAllAsync();
         Task<ListResultDto<CategoryLookupDto>> GetCategoryLookupAsync();
-        Task<ListResultDto<CategoryWithManufacturersDto>> GetListWithManufacturersAsync();
         Task<GroupedCategoriesResultDto> GetGroupedCategoriesAsync();
         Task<ListResultDto<CategoryWithManufacturersDto>> GetCategoriesWithManufacturersAsync();
     }

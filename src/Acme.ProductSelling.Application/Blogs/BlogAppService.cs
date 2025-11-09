@@ -16,22 +16,27 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
 namespace Acme.ProductSelling.Blogs
 {
-    public class BlogAppService : CrudAppService<Blog, BlogDto, Guid, PagedAndSortedResultRequestDto, CreateAndUpdateBlogDto>,
-                                    IBlogAppService
+    public class BlogAppService : 
+        CrudAppService<Blog, BlogDto, Guid, PagedAndSortedResultRequestDto, CreateAndUpdateBlogDto>,
+        IBlogAppService
     {
         private readonly IRepository<Blog, Guid> _repository;
         private readonly IGuidGenerator _guidGenerator;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IHtmlSanitizer _HtmlSanitizer;
-        public BlogAppService(IRepository<Blog, Guid> repository, IGuidGenerator guidGenerator,
-            IWebHostEnvironment webHostEnvironment, IHtmlSanitizer htmlSanitizer) : base(repository)
+        public BlogAppService(
+            IRepository<Blog, Guid> repository,
+            IGuidGenerator guidGenerator,
+            IWebHostEnvironment webHostEnvironment,
+            IHtmlSanitizer htmlSanitizer) : base(repository)
         {
             _repository = repository;
             _guidGenerator = guidGenerator;
-            ConfigurePolicies();
             _webHostEnvironment = webHostEnvironment;
             _HtmlSanitizer = htmlSanitizer;
 
+
+            ConfigurePolicies();
             ConfigureHtmlSanitizer();
         }
 
@@ -77,6 +82,7 @@ namespace Acme.ProductSelling.Blogs
             var authorName = !string.IsNullOrWhiteSpace(input.Author)
                 ? input.Author
                 : CurrentUser.Name ?? CurrentUser.UserName ?? "Unknown";
+
             var blog = new Blog(
                 _guidGenerator.Create(),
                 input.Title,
@@ -97,22 +103,14 @@ namespace Acme.ProductSelling.Blogs
 
         public override async Task DeleteAsync(Guid id)
         {
-            var blogNeededToBeDeleted = await _repository.GetAsync(id);
-            if (blogNeededToBeDeleted == null)
-            {
-                throw new Exception("Blog not found");
-            }
-            if (!string.IsNullOrEmpty(blogNeededToBeDeleted.MainImageUrl))
-            {
+            var blog = await _repository.GetAsync(id);
 
-                var relativePath = blogNeededToBeDeleted.MainImageUrl.TrimStart('/');
-                var filePath = Path.Combine(_webHostEnvironment.WebRootPath, relativePath);
-
-                if (File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
+            // Delete associated image file if exists
+            if (!string.IsNullOrEmpty(blog.MainImageUrl))
+            {
+                DeleteImageFile(blog.MainImageUrl);
             }
+
             await Repository.DeleteAsync(id, autoSave: true);
         }
 
@@ -229,6 +227,23 @@ namespace Acme.ProductSelling.Blogs
         {
             return System.Net.WebUtility.HtmlDecode(text?.Trim() ?? string.Empty);
         }
+        private void DeleteImageFile(string imageUrl)
+        {
+            try
+            {
+                var relativePath = imageUrl.TrimStart('/');
+                var filePath = Path.Combine(_webHostEnvironment.WebRootPath, relativePath);
 
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                    Logger.LogInformation("Deleted blog image: {FilePath}", filePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning(ex, "Failed to delete blog image: {ImageUrl}", imageUrl);
+            }
+        }
     }
 }

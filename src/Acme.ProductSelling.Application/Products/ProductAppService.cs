@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -45,6 +46,8 @@ namespace Acme.ProductSelling.Products
             _caseSpecificationRepository = caseSpecificationRepository;
             _cpuCoolerSpecificationRepository = cpuCoolerSpecificationRepository;
             _specificationService = specificationService;
+
+
             ConfigurePolicies();
         }
         private void ConfigurePolicies()
@@ -58,6 +61,7 @@ namespace Acme.ProductSelling.Products
         {
             var query = await Repository.GetQueryableAsync();
             var product = await query
+                .AsNoTracking()
                 .IncludeAllRelations()
                 .FirstOrDefaultAsync(p => p.Id == id);
 
@@ -75,7 +79,7 @@ namespace Acme.ProductSelling.Products
 
             if (product == null)
             {
-                throw new Volo.Abp.Domain.Entities.EntityNotFoundException(typeof(Product), slug);
+                throw new EntityNotFoundException(typeof(Product), slug);
             }
             return ObjectMapper.Map<Product, ProductDto>(product);
         }
@@ -91,10 +95,12 @@ namespace Acme.ProductSelling.Products
                 //var product = await CreateProductEntityAsync(input);
                 //await Repository.InsertAsync(product, autoSave: true);
                 var product = ObjectMapper.Map<CreateUpdateProductDto, Product>(input);
+
                 product.UrlSlug = UrlHelperMethod.RemoveDiacritics(product.ProductName);
                 await Repository.InsertAsync(product, autoSave: true);
-                await _specificationService.CreateSpecificationAsync(product.Id, input, category.SpecificationType);
-                await HandleManyToManys(product.Id, input);
+                await Task.WhenAll(
+                    _specificationService.CreateSpecificationAsync(product.Id, input, category.SpecificationType),
+                    HandleManyToManyAsync(product.Id, input));
 
                 return await GetAsync(product.Id);
             }
@@ -126,7 +132,7 @@ namespace Acme.ProductSelling.Products
             }
             await _specificationService.UpdateSpecificationAsync(product.Id, input, newCategory.SpecificationType);
 
-            await HandleManyToManys(product.Id, input);
+            await HandleManyToManyAsync(product.Id, input);
 
             await Repository.UpdateAsync(product, autoSave: true);
 
@@ -134,29 +140,63 @@ namespace Acme.ProductSelling.Products
         }
 
 
-        private async Task HandleManyToManys(Guid productId, CreateUpdateProductDto input)
+        private async Task HandleManyToManyAsync(Guid productId, CreateUpdateProductDto input)
         {
-            if (input.CaseSpecification != null)
+            var tasks = new List<Task>();
+
+            // Handle Case materials
+            if (input.CaseSpecification?.MaterialIds?.Count > 0)
             {
-                var spec = await _caseSpecificationRepository.GetAsync(s => s.ProductId == productId, includeDetails: true);
-                spec.Materials.Clear();
-                foreach (var materialId in input.CaseSpecification.MaterialIds)
-                {
-                    spec.Materials.Add(new CaseMaterial { CaseSpecificationId = spec.Id, MaterialId = materialId });
-                }
-                await _caseSpecificationRepository.UpdateAsync(spec, autoSave: true);
+                tasks.Add(UpdateCaseMaterialsAsync(productId, input.CaseSpecification.MaterialIds));
             }
 
-            if (input.CpuCoolerSpecification != null)
+            // Handle CPU Cooler sockets
+            if (input.CpuCoolerSpecification?.SupportedSocketIds?.Count > 0)
             {
-                var spec = await _cpuCoolerSpecificationRepository.GetAsync(s => s.ProductId == productId, includeDetails: true);
-                spec.SupportedSockets.Clear();
-                foreach (var socketId in input.CpuCoolerSpecification.SupportedSocketIds)
-                {
-                    spec.SupportedSockets.Add(new CpuCoolerSocketSupport { CpuCoolerSpecificationId = spec.Id, SocketId = socketId });
-                }
-                await _cpuCoolerSpecificationRepository.UpdateAsync(spec, autoSave: true);
+                tasks.Add(UpdateCpuCoolerSocketsAsync(productId, input.CpuCoolerSpecification.SupportedSocketIds));
             }
+
+            if (tasks.Count > 0)
+            {
+                await Task.WhenAll(tasks);
+            }
+        }
+        private async Task UpdateCaseMaterialsAsync(Guid productId, List<Guid> materialIds)
+        {
+            var spec = await _caseSpecificationRepository
+                .GetAsync(s => s.ProductId == productId, includeDetails: true);
+
+            spec.Materials.Clear();
+
+            foreach (var materialId in materialIds)
+            {
+                spec.Materials.Add(new CaseMaterial
+                {
+                    CaseSpecificationId = spec.Id,
+                    MaterialId = materialId
+                });
+            }
+
+            await _caseSpecificationRepository.UpdateAsync(spec, autoSave: false);
+        }
+
+        private async Task UpdateCpuCoolerSocketsAsync(Guid productId, List<Guid> socketIds)
+        {
+            var spec = await _cpuCoolerSpecificationRepository
+                .GetAsync(s => s.ProductId == productId, includeDetails: true);
+
+            spec.SupportedSockets.Clear();
+
+            foreach (var socketId in socketIds)
+            {
+                spec.SupportedSockets.Add(new CpuCoolerSocketSupport
+                {
+                    CpuCoolerSpecificationId = spec.Id,
+                    SocketId = socketId
+                });
+            }
+
+            await _cpuCoolerSpecificationRepository.UpdateAsync(spec, autoSave: false);
         }
     }
 }

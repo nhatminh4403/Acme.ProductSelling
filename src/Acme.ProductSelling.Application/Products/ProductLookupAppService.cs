@@ -5,8 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 
 namespace Acme.ProductSelling.Products
@@ -20,67 +22,41 @@ namespace Acme.ProductSelling.Products
         }
         public virtual async Task<PagedResultDto<ProductDto>> GetListByCategoryAsync(GetProductsByCategoryInput input)
         {
-            var queryable = await BuildCategoryQueryAsync(input.CategoryId);
-            return await ExecutePagedQueryAsync(queryable, input);
+            return await ExecutePagedQueryAsync(
+                 query => query.Where(p => p.CategoryId == input.CategoryId),
+                 input
+             );
         }
 
         public virtual async Task<PagedResultDto<ProductDto>> GetListByProductPrice(GetProductsByPriceDto input)
         {
-            var queryable = await BuildPriceRangeQueryAsync(input);
-            return await ExecutePagedQueryAsync(queryable, input);
+            return await ExecutePagedQueryAsync(
+                query => query
+                    .Where(p => p.CategoryId == input.CategoryId)
+                    .Where(p => (p.DiscountedPrice ?? p.OriginalPrice) >= input.MinPrice &&
+                               (p.DiscountedPrice ?? p.OriginalPrice) <= input.MaxPrice),
+                input
+            );
         }
 
         public virtual async Task<PagedResultDto<ProductDto>> GetProductsByName(GetProductByNameDto input)
         {
-            var queryable = await BuildNameSearchQueryAsync(input.Filter);
-            return await ExecutePagedQueryAsync(queryable, input);
+            return await ExecutePagedQueryAsync(
+                query => query.Where(p => p.ProductName.Contains(input.Filter)),
+                input
+            );
+
         }
 
         public virtual async Task<PagedResultDto<ProductDto>> GetProductByManufacturer(GetProductsByManufacturerDto input)
         {
-            var queryable = await BuildManufacturerQueryAsync(input);
-            return await ExecutePagedQueryAsync(queryable, input);
+            return await ExecutePagedQueryAsync(
+                 query => query
+                     .Where(p => p.CategoryId == input.CategoryId &&
+                                p.ManufacturerId == input.ManufacturerId),
+                 input
+             );
         }
-
-        private async Task<IQueryable<Product>> BuildCategoryQueryAsync(Guid categoryId)
-        {
-            var queryable = await _productRepository.GetQueryableAsync();
-            return queryable
-                .Include(p => p.Category)
-                .Where(p => p.CategoryId == categoryId);
-        }
-
-        private async Task<IQueryable<Product>> BuildPriceRangeQueryAsync(GetProductsByPriceDto input)
-        {
-            var queryable = await _productRepository.GetQueryableAsync();
-            return queryable
-                .Include(p => p.Category)
-                .Include(p => p.Manufacturer)
-                .AsNoTracking()
-                .Where(p => p.CategoryId == input.CategoryId)
-                .Where(p => (p.DiscountedPrice ?? p.OriginalPrice) >= input.MinPrice &&
-                           (p.DiscountedPrice ?? p.OriginalPrice) <= input.MaxPrice);
-        }
-
-        private async Task<IQueryable<Product>> BuildNameSearchQueryAsync(string searchTerm)
-        {
-            var queryable = await _productRepository.GetQueryableAsync();
-            return queryable
-                .Include(p => p.Category)
-                .Include(p => p.Manufacturer)
-                .AsNoTracking()
-                .Where(p => p.ProductName.Contains(searchTerm));
-        }
-
-        private async Task<IQueryable<Product>> BuildManufacturerQueryAsync(GetProductsByManufacturerDto input)
-        {
-            var queryable = await _productRepository.GetQueryableAsync();
-            return queryable
-                .Include(p => p.Category)
-                .Include(p => p.Manufacturer)
-                .Where(p => p.CategoryId == input.CategoryId && p.ManufacturerId == input.ManufacturerId);
-        }
-
 
         public async Task<ProductDto> GetProductBySlug(string slug)
         {
@@ -92,23 +68,39 @@ namespace Acme.ProductSelling.Products
 
             if (product == null)
             {
-                throw new Volo.Abp.Domain.Entities.EntityNotFoundException(typeof(Product), slug);
+                throw new EntityNotFoundException(typeof(Product), slug);
             }
+
             return ObjectMapper.Map<Product, ProductDto>(product);
         }
 
         private async Task<PagedResultDto<ProductDto>> ExecutePagedQueryAsync<TInput>(
-            IQueryable<Product> queryable,
+            Expression<Func<IQueryable<Product>,
+            IQueryable<Product>>> filterExpression,
             TInput input)
             where TInput : PagedAndSortedResultRequestDto
         {
+            var queryable = await _productRepository.GetQueryableAsync();
+
+            // Apply standard includes
+            queryable = queryable
+                .Include(p => p.Category)
+                .Include(p => p.Manufacturer)
+                .AsNoTracking();
+
+            // Apply custom filter
+            queryable = filterExpression.Compile()(queryable);
+
+            // Get total count
             var totalCount = await AsyncExecuter.CountAsync(queryable);
 
+            // Apply sorting and paging
+            var sortProperty = input.Sorting ?? nameof(Product.ProductName);
             var products = await AsyncExecuter.ToListAsync(
                 queryable
-                    .OrderBy(p => EF.Property<object>(p, input.Sorting ?? nameof(Product.ProductName)))
-                    //.OrderBy(input.Sorting ?? nameof(Product.ProductName))
-                    .PageBy(input));
+                    .OrderBy(p => EF.Property<object>(p, sortProperty))
+                    .PageBy(input)
+            );
 
             var productDtos = ObjectMapper.Map<List<Product>, List<ProductDto>>(products);
 
