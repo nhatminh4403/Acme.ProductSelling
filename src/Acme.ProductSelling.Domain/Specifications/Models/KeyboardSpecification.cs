@@ -1,5 +1,5 @@
-﻿using Acme.ProductSelling.Products.Lookups;
-using Acme.ProductSelling.Categories;
+﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Products.Lookups;
 using System;
 
 namespace Acme.ProductSelling.Specifications.Models

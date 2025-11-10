@@ -42,6 +42,24 @@ public static class ProductSellingPermissions
         public const string ConfirmCodPayment = Default + ".ConfirmCodPayment";
         public const string ShipOrder = Default + ".ShipOrder";
         public const string ViewProfitReport = Default + ".ViewProfitReport";
+
+        public const string ViewCompleted = Default + ".ViewCompleted";
+        public const string Fulfill = Default + ".Fulfill";
+        public const string Complete = Default + ".Complete";
+        public const string ViewAll = Default + ".ViewAll";
+    }
+
+    public static class Stores
+    {
+        public const string Default = GroupName + ".Stores";
+        public const string Create = Default + ".Create";
+        public const string Edit = Default + ".Edit";
+        public const string Delete = Default + ".Delete";
+    }
+    public static class Users
+    {
+        public const string Default = GroupName + ".Users";
+        public const string ManageStoreAssignment = Default + ".ManageStoreAssignment";
     }
     public static class Blogs
     {

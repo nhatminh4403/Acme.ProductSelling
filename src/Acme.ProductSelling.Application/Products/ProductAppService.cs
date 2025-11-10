@@ -25,20 +25,19 @@ namespace Acme.ProductSelling.Products
     CreateUpdateProductDto>, IProductAppService
     {
         private readonly IRepository<Category, Guid> _categoryRepository;
-        private readonly IRepository<Product, Guid> _productRepository;
+        private readonly IProductRepository _productRepository;
         private readonly ISpecificationService _specificationService;
         private readonly IRepository<CaseMaterial> _caseMaterialRepository;
         private readonly IRepository<CaseSpecification, Guid> _caseSpecificationRepository;
         private readonly IRepository<CpuCoolerSpecification, Guid> _cpuCoolerSpecificationRepository;
-
         public ProductAppService(
-            IRepository<Product, Guid> productRepository,
+            IRepository<Product, Guid> repository,
             IRepository<Category, Guid> categoryRepository,
             IRepository<CaseMaterial> caseMaterialRepository,
             IRepository<CaseSpecification, Guid> caseSpecificationRepository,
             IRepository<CpuCoolerSpecification, Guid> cpuCoolerSpecificationRepository,
-            ISpecificationService specificationService)
-            : base(productRepository)
+            ISpecificationService specificationService, IProductRepository productRepository)
+            : base(repository)
         {
             _categoryRepository = categoryRepository;
             _productRepository = productRepository;

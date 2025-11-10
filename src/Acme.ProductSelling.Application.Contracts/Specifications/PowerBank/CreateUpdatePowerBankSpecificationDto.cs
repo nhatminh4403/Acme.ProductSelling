@@ -1,6 +1,6 @@
 namespace Acme.ProductSelling.Specifications.PowerBank
 {
-     public class CreateUpdatePowerBankSpecificationDto
+    public class CreateUpdatePowerBankSpecificationDto
     {
         public int Capacity { get; set; }
         public int TotalWattage { get; set; }

@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Acme.ProductSelling.Permissions;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Guids;
 using Volo.Abp.Identity;
+using Volo.Abp.PermissionManagement;
 //using Acme.ProductSelling.;
 
 namespace Acme.ProductSelling
@@ -17,16 +20,22 @@ namespace Acme.ProductSelling
         private readonly IIdentityRoleRepository _identityRoleRepository;
         private readonly IIdentityUserRepository _identityUserRepository;
         private readonly IGuidGenerator _guidGenerator;
+        private readonly IPermissionDataSeeder _permissionDataSeeder;
 
-        public IdentityDataSeederContributor(IdentityUserManager identityUserManager,
-            ILookupNormalizer lookupNormalizer, IIdentityRoleRepository roleRepository,
-            IIdentityUserRepository userRepository, IGuidGenerator guidGenerator)
+        public IdentityDataSeederContributor(
+            IdentityUserManager identityUserManager,
+            ILookupNormalizer lookupNormalizer,
+            IIdentityRoleRepository roleRepository,
+            IIdentityUserRepository userRepository,
+            IGuidGenerator guidGenerator,
+            IPermissionDataSeeder permissionDataSeeder)
         {
             _identityUserManager = identityUserManager;
             _lookupNormalizer = lookupNormalizer;
             _identityRoleRepository = roleRepository;
             _identityUserRepository = userRepository;
             _guidGenerator = guidGenerator;
+            _permissionDataSeeder = permissionDataSeeder;
         }
 
         public async Task SeedAsync(DataSeedContext context)
@@ -34,7 +43,14 @@ namespace Acme.ProductSelling
             var adminRole = await CreateRoleIfNotExistsAsync(Acme.ProductSelling.Identity.IdentityRoleConsts.Admin);
             var managerRole = await CreateRoleIfNotExistsAsync(Acme.ProductSelling.Identity.IdentityRoleConsts.Manager);
             var editorRole = await CreateRoleIfNotExistsAsync(Acme.ProductSelling.Identity.IdentityRoleConsts.Blogger);
+            var sellerRole = await CreateRoleIfNotExistsAsync(Acme.ProductSelling.Identity.IdentityRoleConsts.Seller);
+            var cashierRole = await CreateRoleIfNotExistsAsync(Acme.ProductSelling.Identity.IdentityRoleConsts.Cashier);
+            var warehouseRole = await CreateRoleIfNotExistsAsync(Acme.ProductSelling.Identity.IdentityRoleConsts.WarehouseStaff);
+
             var customerRole = await CreateRoleIfNotExistsAsync(Acme.ProductSelling.Identity.IdentityRoleConsts.Customer, isDefault: true);
+
+
+
             await CreateUserIfNotExistsAsync(
                 username: "manager",
                 email: "manager@abp.io",
@@ -51,6 +67,67 @@ namespace Acme.ProductSelling
                 roleNameToAssign: editorRole.Name/*,
                 ProductSellingPermissions.Blogs.Default*/
             );
+
+            await CreateUserIfNotExistsAsync(
+                username: "seller",
+                email: "seller@abp.io",
+                password: "123456",
+                roleNameToAssign: sellerRole.Name
+            );
+
+            await CreateUserIfNotExistsAsync(
+                username: "cashier",
+                email: "cashier@abp.io",
+                password: "123456",
+                roleNameToAssign: cashierRole.Name
+            );
+
+            await CreateUserIfNotExistsAsync(
+                username: "warehouse",
+                email: "warehouse@abp.io",
+                password: "123456",
+                roleNameToAssign: warehouseRole.Name
+            );
+
+            await GrantPermissionsToRoleAsync(managerRole.Name, new[]
+{
+                ProductSellingPermissions.Blogs.Default,
+                ProductSellingPermissions.Blogs.Create,
+                ProductSellingPermissions.Blogs.Edit,
+                ProductSellingPermissions.Orders.Default,
+                ProductSellingPermissions.Orders.ViewAll,
+                ProductSellingPermissions.Products.Default,
+                ProductSellingPermissions.Products.Create,
+                ProductSellingPermissions.Products.Edit,
+            });
+            await GrantPermissionsToRoleAsync(editorRole.Name, new[]
+{
+                ProductSellingPermissions.Blogs.Default,
+                ProductSellingPermissions.Blogs.Edit,
+                ProductSellingPermissions.Blogs.Delete,
+                ProductSellingPermissions.Blogs.Create
+            });
+
+            await GrantPermissionsToRoleAsync(cashierRole.Name, new[]
+{
+                ProductSellingPermissions.Orders.Default,   // View orders
+                ProductSellingPermissions.Orders.Complete,  // Complete orders after payment
+                ProductSellingPermissions.Orders.Edit,      // Update order status
+            });
+            await GrantPermissionsToRoleAsync(warehouseRole.Name, new[]
+{
+                ProductSellingPermissions.Orders.Default,       // View orders
+                ProductSellingPermissions.Orders.ViewCompleted, // View completed orders
+                ProductSellingPermissions.Orders.Fulfill,       // Mark orders as fulfilled/delivered
+                ProductSellingPermissions.Products.Default,     // View products to pick items
+            });
+            await GrantPermissionsToRoleAsync(sellerRole.Name, new[]
+            {
+                ProductSellingPermissions.Products.Default, // View products
+                ProductSellingPermissions.Orders.Default,   // View orders
+                ProductSellingPermissions.Orders.Create,    // Create orders for customers
+                ProductSellingPermissions.Orders.Edit,      // Edit pending orders
+            });
         }
 
 
@@ -108,5 +185,14 @@ namespace Acme.ProductSelling
 
             return user;
         }
+        private async Task GrantPermissionsToRoleAsync(string roleName, string[] permissions)
+        {
+            await _permissionDataSeeder.SeedAsync(
+                RolePermissionValueProvider.ProviderName,
+                roleName,
+                permissions
+            );
+        }
     }
+
 }

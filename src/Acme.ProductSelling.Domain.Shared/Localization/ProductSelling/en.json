@@ -28,7 +28,7 @@
     "Collapse": "Collapse",
     "Checkout": "Checkout",
     "StartShopping": "Start Shopping",
-
+    "Dashboard" :  "Dashboard",
     "Enum:OrderStatus.Placed": "Placed",
     "Enum:OrderStatus.Pending": "Pending",
     "Enum:OrderStatus.Confirmed": "Confirmed",
@@ -214,6 +214,10 @@
     "Product:ProductDeletionConfirmationMessage": "Are you sure you want to delete this product {0}?",
     "Product:SuccessfullyDeleted": "Product successfully deleted.",
     "Product:ProductNotFound": "Product not found.",
+    "Product:UpdateSuccessMessage": "Product '{0}' updated successfully.",
+    "Product:UpdateFailureMessageWithReason": "Failed to update product '{0}'. Reason: {1}",
+    "Product:UpdateFailureMessageGeneral": "Failed to update product '{0}'.",
+    "Product:UpdateErrorGeneral": "An error occurred while updating the product.",
 
     "Order:Orders": "Orders",
     "Order:NotFound": "Order not found.",
@@ -820,7 +824,41 @@
     "CategoryGroup:Furniture": "Chair - Desk",
     "CategoryGroup:SoftwareNetwork": "Software, Network",
     "CategoryGroup:HandheldConsole": "Handheld, Console",
-    "CategoryGroup:Accessories": "Accessories"
+    "CategoryGroup:Accessories": "Accessories",
 
+
+
+    "Specification:CaseFan:FanSize": "Fan Size",
+    "Specification:CaseFan:MaxRpm": "Max RPM",
+    "Specification:CaseFan:NoiseLevel": "Noise Level",
+    "Specification:CaseFan:Airflow": "Airflow",
+    "Specification:CaseFan:StaticPressure": "Static Pressure",
+    "Specification:CaseFan:Connector": "Connector",
+    "Specification:CaseFan:BearingType": "Bearing Type",
+    "Specification:MemoryCard:Capacity": "Capacity",
+    "Specification:MemoryCard:CardType": "Card Type",
+    "Specification:MemoryCard:SpeedClass": "Speed Class",
+    "Specification:Speaker:SpeakerType": "Speaker Type",
+    "Specification:Speaker:TotalWattage": "Total Wattage",
+    "Specification:Speaker:Frequency": "Frequency",
+    "Specification:Microphone:MicrophoneType": "Microphone Type",
+    "Specification:Microphone:PolarPattern": "Polar Pattern",
+    "Specification:Webcam:Resolution": "Resolution",
+    "Specification:Webcam:FrameRate": "Frame Rate",
+    "Specification:Webcam:FocusType": "Focus Type",
+    "Specification:MousePad:Material": "Material",
+    "Specification:MousePad:SurfaceType": "Surface Type",
+    "Specification:Chair:ChairType": "Chair Type",
+    "Specification:Chair:Material": "Material",
+    "Specification:Chair:ArmrestType": "Armrest Type",
+    "Specification:Desk:Material": "Material",
+    "Specification:Software:SoftwareType": "Software Type",
+    "Specification:Software:LicenseType": "License Type",
+    "Specification:Software:Platform": "Platform",
+    "Specification:NetworkHardware:DeviceType": "Device Type",
+    "Specification:NetworkHardware:WifiStandard": "WiFi Standard",
+    "Specification:Hub:HubType": "Hub Type",
+    "Specification:Cable:CableType": "Cable Type",
+    "Specification:Charger:ChargerType": "Charger Type"
   }
 }

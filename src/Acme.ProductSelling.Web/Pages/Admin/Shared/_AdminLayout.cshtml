@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" 
                             integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" 
                             crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="~/favicon.svg" rel="icon" type="image/svg+xml" />
     <link href="~/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
 
     <abp-style-bundle name="@LeptonXLiteThemeBundles.Styles.Global" />
@@ -34,6 +35,52 @@
 
     @await RenderSectionAsync("styles", required: false)
 
+    <style>
+        .c-breadcrumb {
+            /* Set the font size to be slightly smaller than the main text. */
+            font-size: 14px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .c-breadcrumb__list {
+            list-style: none; /* [1] */
+            margin: 0; /* [1] */
+            padding: 0; /* [1] */
+            display: flex; /* [2] */
+            align-items: center; /* Vertically centers the items and separators */
+        }
+
+        /* Style each individual breadcrumb item */
+        .c-breadcrumb__item {
+            display: inline-flex;
+            align-items: center;
+        }
+
+            .c-breadcrumb__item:not(:first-child)::before {
+                content: '›'; 
+                margin: 0 0.6em;
+                color: #8894a4; 
+            }
+
+        /* Styling for the breadcrumb links */
+        .c-breadcrumb__link {
+            color: #ffeeff;
+            text-decoration: none;
+            transition: color 0.2s ease-in-out;
+        }
+
+            /* Add an underline on hover for better user feedback */
+            .c-breadcrumb__link:hover,
+            .c-breadcrumb__link:focus {
+                color: #eeffee;
+                text-decoration: underline;
+            }
+
+        .c-breadcrumb__text {
+            color: #7396e6;
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body class="preload">
     <script>

@@ -6,6 +6,8 @@
     const accountBtn = document.getElementById('accountBtn');
     const accountDropdown = document.getElementById('accountDropdown');
     const accountArrow = document.getElementById('accountArrow');
+    const loggoutBtn = document.getElementById('logout-btn');
+
 
     // Apply saved state to elements
     const savedState = localStorage.getItem('sidebarCollapsed');
@@ -74,6 +76,7 @@
             }
         }
     });
+    
 });
 
 // Make toggleSubmenu available globally
@@ -92,6 +95,16 @@ function toggleSubmenu(element) {
 
     if (parentMenuItem) {
         parentMenuItem.classList.toggle('open');
+    }
+}
+
+
+
+function handleLogout() {
+    // Add your logout logic here
+    if (confirm('Are you sure you want to logout?')) {
+        console.log('Logging out...');
+        window.location.href = '/Account/Logout?returnUrl=/';
     }
 }
 // In your layout or shared JS file

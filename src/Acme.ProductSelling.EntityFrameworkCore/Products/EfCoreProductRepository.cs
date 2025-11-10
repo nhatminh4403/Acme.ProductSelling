@@ -55,5 +55,11 @@ namespace Acme.ProductSelling.Products
             }
             return product;
         }
+
+        //public async Task<Product> FindByCodeAsync(string code)
+        //{
+        //    var dbSet = await GetDbSetAsync();
+        //    return await dbSet.FirstOrDefaultAsync(x => x.Code == code);
+        //}
     }
 }

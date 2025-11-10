@@ -1,14 +1,8 @@
 using Acme.ProductSelling.Categories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications.Desk
 {
-    public class CreateUpdateDeskSpecificationDto 
+    public class CreateUpdateDeskSpecificationDto
     {
         public int Width { get; set; }
         public int Depth { get; set; }

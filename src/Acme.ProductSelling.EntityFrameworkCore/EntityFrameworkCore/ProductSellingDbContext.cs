@@ -67,6 +67,7 @@ public class ProductSellingDbContext :
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Blog> Blogs { get; set; }
     public DbSet<Likes> Likes { get; set; }
+    public DbSet<Customer> Customers { get; set; }
     #endregion
 
     #region Specs
@@ -554,13 +555,21 @@ public class ProductSellingDbContext :
         #endregion
 
         #region Users
+        //staff
         builder.Entity<AppUser>(b =>
         {
             b.ToTable(AbpIdentityDbProperties.DbTablePrefix + "Users");
             b.ConfigureByConvention();
             b.Property(u => u.DateOfBirth).IsRequired(false);
-            b.Property(u => u.Gender).IsRequired();
-            b.Property(u => u.ShippingAddress).HasMaxLength(256).IsRequired(false);
+            b.Property(u => u.Gender).IsRequired(false).HasDefaultValue(UserGender.NONE);
+        });
+        //customer
+        builder.Entity<Customer>(b =>
+        {
+            b.ToTable(tablePrefix + "Customers");
+            b.ConfigureByConvention();
+            b.Property(u => u.DateOfBirth).IsRequired(false);
+            b.Property(u => u.Gender).IsRequired(false).HasDefaultValue(UserGender.NONE);
         });
         #endregion
     }

@@ -21,12 +21,16 @@
   <ItemGroup>
     <Compile Remove="Data\**" />
     <Compile Remove="Logs\**" />
+    <Compile Remove="wwwroot\images\products\**" />
     <Content Remove="Data\**" />
     <Content Remove="Logs\**" />
+    <Content Remove="wwwroot\images\products\**" />
     <EmbeddedResource Remove="Data\**" />
     <EmbeddedResource Remove="Logs\**" />
+    <EmbeddedResource Remove="wwwroot\images\products\**" />
     <None Remove="Data\**" />
     <None Remove="Logs\**" />
+    <None Remove="wwwroot\images\products\**" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Pages\**\*.js">
@@ -96,7 +100,6 @@
     <Folder Include="Pages\Admin\Products\Components\" />
     <Folder Include="Pages\Components\Shared\" />
     <Folder Include="wwwroot\images\" />
-    <Folder Include="wwwroot\images\products\" />
     <Folder Include="wwwroot\lib\bootstrap\" />
     <Folder Include="wwwroot\lib\bootstrap\dist\css\" />
     <Folder Include="wwwroot\lib\bootstrap\dist\js\" />

@@ -230,12 +230,10 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
 
         private async Task LoadDropdownDataAsync()
         {
-            var categoryTask = LoadCategoriesAsync();
-            var manufacturerTask = LoadManufacturersAsync();
-            var lookupTask = LoadLookupDataAsync();
-            var enumTask = Task.Run(() => LoadEnumBasedDropdowns());
-
-            await Task.WhenAll(categoryTask, manufacturerTask, lookupTask, enumTask);
+            await LoadCategoriesAsync();
+            await LoadManufacturersAsync();
+            await LoadLookupDataAsync();
+            LoadEnumBasedDropdowns();
         }
 
         private async Task LoadCategoriesAsync()
@@ -270,18 +268,13 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
 
         private async Task LoadLookupDataAsync()
         {
-            var tasks = new[]
-            {
-                LoadCpuSocketsAsync(),
-                LoadMaterialsAsync(),
-                LoadChipsetsAsync(),
-                LoadPanelTypesAsync(),
-                LoadRamTypesAsync(),
-                LoadFormFactorsAsync(),
-                LoadSwitchTypesAsync()
-            };
-
-            await Task.WhenAll(tasks);
+            await LoadCpuSocketsAsync();
+            await LoadMaterialsAsync();
+            await LoadChipsetsAsync();
+            await LoadPanelTypesAsync();
+            await LoadRamTypesAsync();
+            await LoadFormFactorsAsync();
+            await LoadSwitchTypesAsync();
         }
 
         private async Task LoadCpuSocketsAsync()

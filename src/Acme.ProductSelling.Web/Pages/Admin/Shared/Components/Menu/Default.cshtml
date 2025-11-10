@@ -2,7 +2,23 @@
 @using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Themes.LeptonXLite.Components.Menu
 @model MenuViewModel
 
+
+
 <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-logo">
+            <div class="logo-icon">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <div class="logo-text">
+                <div class="logo-title">@L["AppName"]</div>
+                <div class="logo-subtitle">@L["Dashboard"]</div>
+            </div>
+        </div>
+        <button class="sidebar-logout-btn" onclick="handleLogout()" id="logout-btn" title="Logout">
+            <i class="fas fa-sign-out-alt"></i>
+        </button>
+    </div>
     @{
         var currentPath = Context.Request.Path.Value?.TrimEnd('/') ?? "";
     }

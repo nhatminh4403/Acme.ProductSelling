@@ -1,14 +1,8 @@
 using Acme.ProductSelling.Categories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications.Handheld
 {
-    public class CreateUpdateHandheldSpecificationDto 
+    public class CreateUpdateHandheldSpecificationDto
     {
         public string Processor { get; set; }
         public string Graphics { get; set; }

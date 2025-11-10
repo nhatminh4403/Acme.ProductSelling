@@ -1,18 +1,13 @@
 ﻿using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Lookups;
-using Acme.ProductSelling.Specifications.Lookups.DTOs;
 using Acme.ProductSelling.Specifications.Lookups.InterfaceAppServices;
 using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Volo.Abp.Application.Dtos;
-using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
 namespace Acme.ProductSelling.Products.Specification.Lookups.Services
 {
     public class RamTypeAppService :
-        LookupAppServiceBase<RamType,Guid>,
+        LookupAppServiceBase<RamType, Guid>,
         IRamTypeAppService
     {
         public RamTypeAppService(IRepository<RamType, Guid> repository) : base(repository)

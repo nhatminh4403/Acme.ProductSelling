@@ -22,11 +22,10 @@ public static class ProductSellingDtoExtensions
              * See the documentation for more:
              * https://docs.abp.io/en/abp/latest/Object-Extensions
              */
-            ObjectExtensionManager.Instance.AddOrUpdateProperty<IdentityUserDto, string>(UserExtraProperties.ShippingAddress);
 
-            ObjectExtensionManager.Instance.AddOrUpdateProperty<IdentityUserDto, DateTime?>(UserExtraProperties.DateOfBirth);
+            ObjectExtensionManager.Instance.AddOrUpdateProperty<IdentityUserDto, DateTime?>(StaffExtraProperties.DateOfBirth);
 
-            ObjectExtensionManager.Instance.AddOrUpdateProperty<IdentityUserDto, UserGender>(UserExtraProperties.Gender);
+            ObjectExtensionManager.Instance.AddOrUpdateProperty<IdentityUserDto, UserGender>(StaffExtraProperties.Gender);
 
         });
     }

@@ -1,12 +1,7 @@
 ﻿using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Lookups;
-using Acme.ProductSelling.Specifications.Lookups.DTOs;
 using Acme.ProductSelling.Specifications.Lookups.InterfaceAppServices;
 using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Volo.Abp.Application.Dtos;
-using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
 namespace Acme.ProductSelling.Products.Specification.Lookups.Services
@@ -19,7 +14,7 @@ namespace Acme.ProductSelling.Products.Specification.Lookups.Services
         {
         }
 
-       
+
 
         protected override SwitchType CreateEntity(ProductLookupDto<Guid> createInput)
         {

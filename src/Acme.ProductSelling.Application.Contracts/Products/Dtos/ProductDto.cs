@@ -1,8 +1,5 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Specifications;
-using System;
-using System.ComponentModel.DataAnnotations;
-using Volo.Abp.Application.Dtos;
 using Acme.ProductSelling.Specifications.Cable;
 using Acme.ProductSelling.Specifications.CaseFan;
 using Acme.ProductSelling.Specifications.Chair;
@@ -19,6 +16,9 @@ using Acme.ProductSelling.Specifications.PowerBank;
 using Acme.ProductSelling.Specifications.Software;
 using Acme.ProductSelling.Specifications.Speaker;
 using Acme.ProductSelling.Specifications.Webcam;
+using System;
+using System.ComponentModel.DataAnnotations;
+using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Products.Dtos
 {

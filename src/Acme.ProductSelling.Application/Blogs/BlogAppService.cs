@@ -16,7 +16,7 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
 namespace Acme.ProductSelling.Blogs
 {
-    public class BlogAppService : 
+    public class BlogAppService :
         CrudAppService<Blog, BlogDto, Guid, PagedAndSortedResultRequestDto, CreateAndUpdateBlogDto>,
         IBlogAppService
     {

@@ -1,0 +1,23 @@
+﻿@using Acme.ProductSelling.Web.Models
+@model List<BreadcrumbItem>
+
+@if (Model != null && Model.Count > 1) // Only render if there's more than the "Home" link
+{
+    <nav class="c-breadcrumb" aria-label="breadcrumb">
+        <ol class="c-breadcrumb__list">
+            @foreach (var item in Model)
+            {
+                <li class="c-breadcrumb__item">
+                    @if (item.IsActive)
+                    {
+                        <span class="c-breadcrumb__text" aria-current="page">@item.Text</span>
+                    }
+                    else
+                    {
+                        <a class="c-breadcrumb__link" href="@item.Url">@item.Text</a>
+                    }
+                </li>
+            }
+        </ol>
+    </nav>
+}

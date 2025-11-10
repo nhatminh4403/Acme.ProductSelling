@@ -2,5 +2,8 @@
 
 public static class ProductSellingDomainErrorCodes
 {
-    /* You can add your business exception error codes here, as constants */
+    public const string UserNotAssignedToStore = "ProductSelling:UserNotAssignedToStore";
+    public const string NoStoreAccess = "ProductSelling:NoStoreAccess";
+    public const string ProductNotActive = "ProductSelling:ProductNotActive";
+    public const string InvalidOrderStatus = "ProductSelling:InvalidOrderStatus";
 }

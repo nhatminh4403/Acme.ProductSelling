@@ -1,6 +1,8 @@
 ﻿@using Acme.ProductSelling.Web.Themes.LeptonXLite.Components.Toolbar.LanguageSwitch
+@using Acme.ProductSelling.Web.Pages.Admin.Shared.Components.Breadcrumb
+@inject ICurrentUser CurrentUser
 @{
-
+    var fullName = @CurrentUser.SurName + " " + @CurrentUser.Name;
 }
 
 <header class="header">
@@ -8,10 +10,11 @@
         <button class="toggle-btn" id="toggleBtn">
             <i class="fas fa-bars"></i>
         </button>
-        <div class="header-title">Dashboard</div>
+        <div class="header-title">@L["Dashboard"]</div>
     </div>
     <div class="header-right">
-        <!-- Language Switcher - Placeholder for .NET Component -->
+        @await Component.InvokeAsync(typeof(BreadcrumbViewComponent))
+
         <div class="language-switcher" id="languageSwitcher">
             @await Component.InvokeAsync(typeof(LanguageSwitchViewComponent))
         </div>
@@ -21,15 +24,15 @@
             <div class="account-btn" id="accountBtn">
                 <div class="account-avatar">JD</div>
                 <div class="account-info">
-                    <div class="account-name">John Doe</div>
-                    <div class="account-role">Administrator</div>
+                    <div class="account-name">@fullName</div>
+                    <div class="account-role">@string.Join(", ", CurrentUser.Roles)</div>
                 </div>
                 <i class="fas fa-chevron-down account-arrow" id="accountArrow"></i>
             </div>
             <div class="dropdown-menu-custom" id="accountDropdown">
                 <div class="dropdown-header">
-                    <div class="dropdown-user-name">John Doe</div>
-                    <div class="dropdown-user-email">john.doe@example.com</div>
+                    <div class="dropdown-user-name">@CurrentUser.UserName</div>
+                    <div class="dropdown-user-email">@CurrentUser.Email</div>
                 </div>
 
                 <a asp-page="/Account/Manage" class="dropdown-item-custom">
@@ -46,7 +49,7 @@
                 </a>
                 <div class="dropdown-divider-custom"></div>
 
-                <a href="#"   class="dropdown-item-custom danger">
+                <a href="/Account/Logout?returnUrl=/" class="dropdown-item-custom danger">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>
                         @L["Logout"]

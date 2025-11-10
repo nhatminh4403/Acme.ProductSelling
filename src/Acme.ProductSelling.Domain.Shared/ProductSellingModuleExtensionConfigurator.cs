@@ -75,24 +75,19 @@ public static class ProductSellingModuleExtensionConfigurator
             identity.ConfigureUser(user =>
             {
                 user.AddOrUpdateProperty<DateTime?>(
-                    UserExtraProperties.DateOfBirth,
+                    StaffExtraProperties.DateOfBirth,
                     property =>
                     {
                     }
                 );
-                user.AddOrUpdateProperty<string?>(
-                    UserExtraProperties.ShippingAddress,
-                    property =>
-                    {
-                        property.Attributes.Add(new System.ComponentModel.DataAnnotations.StringLengthAttribute(256));
-                    }
-                );
+
                 user.AddOrUpdateProperty<UserGender>(
-                    UserExtraProperties.Gender,
+                    StaffExtraProperties.Gender,
                     propertyName =>
                     {
+
                     }
-                    );
+                );
             });
         });
 

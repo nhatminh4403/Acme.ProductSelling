@@ -13,6 +13,9 @@ namespace Acme.ProductSelling.Orders
         public int Quantity { get; set; }
         public decimal LineTotalAmount => Price * Quantity;
         public Guid OrderId { get; set; }
+        protected OrderItem()
+        {
+        }
         public OrderItem(Guid orderId, Guid productId, string productName, decimal price, int quantity)
         {
             Id = Guid.NewGuid();

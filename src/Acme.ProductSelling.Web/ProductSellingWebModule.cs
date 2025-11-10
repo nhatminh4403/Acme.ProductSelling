@@ -348,6 +348,7 @@ public class ProductSellingWebModule : AbpModule
                     bundle.AddFiles("/js/global/cart/cart.js");
                     bundle.AddFiles("/global-scripts.js");
                     bundle.AddFiles("/js/global/main.js");
+                    bundle.AddFiles("/js/global/header-sidebar.js");
                 }
             );
 
@@ -505,9 +506,9 @@ public class ProductSellingWebModule : AbpModule
         app.MapAbpStaticAssets();
         app.UseAbpStudioLink();
 
+        app.UseMiddleware<RequestCultureMiddleware>();
         app.UseRouting();
-        app.UseMiddleware<CultureRedirectMiddleware>();
-        app.UseMiddleware<CultureSyncMiddleware>();
+
         app.UseMiddleware<PaymentIPWhitelistMiddleware>();
 
 

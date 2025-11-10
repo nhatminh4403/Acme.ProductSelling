@@ -69,6 +69,8 @@
                 pathWithoutCulture.startsWith('/PermissionManagement/') ||
                 pathWithoutCulture.startsWith('/hangfire/') || 
                 pathWithoutCulture.startsWith('/swagger/') ||
+                pathWithoutCulture.startsWith('/Account/Logout') ||
+
                 pathWithoutCulture.startsWith('/Identity/') || 
                 href.includes('.')) {
                 return; // Skip this link

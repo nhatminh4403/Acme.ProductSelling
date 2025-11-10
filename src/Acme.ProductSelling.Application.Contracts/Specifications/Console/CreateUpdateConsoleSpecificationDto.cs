@@ -1,15 +1,9 @@
 using Acme.ProductSelling.Categories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications.Console
 {
 
-    public class CreateUpdateConsoleSpecificationDto 
+    public class CreateUpdateConsoleSpecificationDto
     {
         public string Processor { get; set; }
         public string Graphics { get; set; }

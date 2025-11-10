@@ -27,6 +27,7 @@
     "Collapse": "Thu gọn",
     "Checkout": "Thanh toán",
     "StartShopping": "Bắt đầu mua sắm",
+    "Dashboard": "Bảng quản trị",
 
     "Enum:OrderStatus.Placed": "Đã đặt hàng",
     "Enum:OrderStatus.Pending": "Chờ xác nhận",
@@ -214,6 +215,10 @@
     "Product:ProductDeletionConfirmationMessage": "Bạn có chắc chắn muốn xóa sản phẩm {0} không?",
     "Product:SuccessfullyDeleted": "Sản phẩm đã được xóa thành công.",
     "Product:ProductNotFound": "Không tìm thấy sản phẩm.",
+    "Product:UpdateSuccessMessage": "Cập nhật sản phẩm '{0}' thành công.",
+    "Product:UpdateFailureMessageWithReason": "Không thể cập nhật sản phẩm '{0}'. Lý do: {1}",
+    "Product:UpdateFailureMessageGeneral": "Không thể cập nhật sản phẩm '{0}'.",
+    "Product:UpdateErrorGeneral": "Đã xảy ra lỗi khi cập nhật sản phẩm.",
 
     "Order:Orders": "Đơn hàng",
     "Order:NotFound": "Không tìm thấy đơn hàng.",

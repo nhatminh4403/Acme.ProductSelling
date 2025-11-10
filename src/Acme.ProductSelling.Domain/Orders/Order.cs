@@ -37,7 +37,7 @@ namespace Acme.ProductSelling.Orders
 
         public virtual ICollection<OrderItem> OrderItems { get; protected set; } = new HashSet<OrderItem>();
         public virtual ICollection<OrderHistory> OrderHistories { get; protected set; } = new HashSet<OrderHistory>();
-        private Order() { /* Required by EF Core */ }
+        protected Order() { /* Required by EF Core */ }
 
         public Order(
             Guid id, string orderNumber, DateTime orderDate, Guid? customerId,

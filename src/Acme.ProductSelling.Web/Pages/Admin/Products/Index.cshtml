@@ -18,14 +18,7 @@
 @section styles {
     <link href="~/css/admin/products/styles.css" rel="stylesheet" />
 }
-<div class="container user-select-none">
-    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-        <ol class="breadcrumb border-0">
-            <li class="breadcrumb-item"><a href="/admin">@L["Admin:Menu:Home"]</a></li>
-            <li class="breadcrumb-item active " aria-current="page">@L["Admin:Menu:Products"]</li>
-        </ol>
-    </nav>
-</div>
+
 @if (TempData["UserMessage"] != null)
 {
     <div class="alert alert-@TempData["MessageType"]" role="alert">

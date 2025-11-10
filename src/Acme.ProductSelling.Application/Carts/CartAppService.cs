@@ -16,16 +16,16 @@ using Volo.Abp.Guids;
 using Volo.Abp.Users;
 namespace Acme.ProductSelling.Carts
 {
-    [Authorize] 
+    [Authorize]
     public class CartAppService : ApplicationService, ICartAppService
     {
-        private readonly IRepository<Cart, Guid> _cartRepository; 
+        private readonly IRepository<Cart, Guid> _cartRepository;
         private readonly IRepository<Product, Guid> _productRepository;
         private readonly ICurrentUser _currentUser;
         private readonly IGuidGenerator _guidGenerator;
 
         public CartAppService(
-                    IRepository<Cart, Guid> cartRepository, 
+                    IRepository<Cart, Guid> cartRepository,
                     IRepository<Product, Guid> productRepository,
                     ICurrentUser currentUser,
                     IGuidGenerator guidGenerator)
