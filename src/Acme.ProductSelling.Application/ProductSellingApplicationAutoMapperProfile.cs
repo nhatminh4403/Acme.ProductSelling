@@ -51,6 +51,20 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
         CreateMap<Store, StoreDto>();
         CreateMap<CreateUpdateStoreDto, Store>();
         #endregion
+        // Add to your existing ProductSellingApplicationAutoMapperProfile.cs
+
+        // StoreInventory mappings
+        CreateMap<StoreInventory, StoreInventoryDto>()
+            .ForMember(dest => dest.StoreName, opt => opt.Ignore())
+            .ForMember(dest => dest.ProductName, opt => opt.Ignore())
+            .ForMember(dest => dest.ProductImageUrl, opt => opt.Ignore())
+            .ForMember(dest => dest.NeedsReorder, opt => opt.Ignore());
+
+        CreateMap<CreateUpdateStoreInventoryDto, StoreInventory>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.Store, opt => opt.Ignore())
+            .ForMember(dest => dest.Product, opt => opt.Ignore());
+
 
         #region Category Mappings
         CreateMap<Category, CategoryDto>()
@@ -85,12 +99,13 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
         #region Product Mappings
         CreateMap<Product, ProductDto>()
             .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
-            .ForMember(dest => dest.ManufacturerName, opt => opt.MapFrom(src => src.Manufacturer.Name));
-
+            .ForMember(dest => dest.ManufacturerName, opt => opt.MapFrom(src => src.Manufacturer.Name))
+            .ForMember(dest => dest.IsAvailableForPurchase, opt => opt.MapFrom(src => src.StockCount > 0 && (!src.ReleaseDate.HasValue || src.ReleaseDate.Value <= DateTime.Now)))
+            .ForMember(dest => dest.StoreAvailability, opt => opt.Ignore());
         // For Edit page - Map ProductDto back to CreateUpdateProductDto
         CreateMap<ProductDto, CreateUpdateProductDto>()
-            .ForMember(dest => dest.ProductImageFile, opt => opt.Ignore());
-
+            .ForMember(dest => dest.ProductImageFile, opt => opt.Ignore())
+            .ForMember(dest => dest.ReleaseDate, opt => opt.Ignore());
         CreateMap<CreateUpdateProductDto, Product>()
             .ForMember(dest => dest.Category, opt => opt.Ignore())
             .ForMember(dest => dest.Manufacturer, opt => opt.Ignore())
@@ -123,7 +138,8 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
             .ForMember(dest => dest.HubSpecification, opt => opt.Ignore())
             .ForMember(dest => dest.CableSpecification, opt => opt.Ignore())
             .ForMember(dest => dest.ChargerSpecification, opt => opt.Ignore())
-            .ForMember(dest => dest.PowerBankSpecification, opt => opt.Ignore());
+            .ForMember(dest => dest.PowerBankSpecification, opt => opt.Ignore())
+            .ForMember(dest => dest.IsActive, opt => opt.Ignore());
         #endregion
 
         #region Existing Specifications - Entity to DTO
@@ -389,6 +405,7 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
             .ForMember(dest => dest.OrderStatusText, opt => opt.MapFrom(src => src.OrderStatus.ToString()))
             .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.PaymentStatus))
             .ForMember(dest => dest.PaymentStatusText, opt => opt.MapFrom(src => src.PaymentStatus.ToString()))
+            .ForMember(dest => dest.StoreName, opt => opt.Ignore())
             .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod));
 
         CreateMap<CreateOrderDto, Order>()
@@ -408,6 +425,9 @@ public class ProductSellingApplicationAutoMapperProfile : Profile
             .ForMember(dest => dest.CartItems, opt => opt.MapFrom(src => src.Items));
 
         CreateMap<CartItem, CartItemDto>();
+
+
+        CreateMap<OrderHistory, OrderHistoryDto>();
         #endregion
 
         #region Blog and Comment Mappings

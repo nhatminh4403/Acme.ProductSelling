@@ -17,6 +17,7 @@ using Acme.ProductSelling.Specifications.Software;
 using Acme.ProductSelling.Specifications.Speaker;
 using Acme.ProductSelling.Specifications.Webcam;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Application.Dtos;
 
@@ -38,8 +39,13 @@ namespace Acme.ProductSelling.Products.Dtos
         public Guid ManufacturerId { get; set; }
         public string ManufacturerName { get; set; }
         public SpecificationType CategorySpecificationType { get; set; }
+        public List<ProductStoreAvailabilityDto> StoreAvailability { get; set; }
+        public int TotalStockAcrossAllStores { get; set; }
+        public DateTime? ReleaseDate { get; set; }
+        public bool IsAvailableForPurchase { get; set; }
 
         // Existing specifications
+        #region Specifications
         public MonitorSpecificationDto MonitorSpecification { get; set; }
         public MouseSpecificationDto MouseSpecification { get; set; }
         public LaptopSpecificationDto LaptopSpecification { get; set; }
@@ -71,5 +77,6 @@ namespace Acme.ProductSelling.Products.Dtos
         public MousePadSpecificationDto MousepadSpecification { get; set; }
         public NetworkHardwareSpecificationDto NetworkHardwareSpecification { get; set; }
         public PowerBankSpecificationDto PowerBankSpecification { get; set; }
+        #endregion
     }
 }

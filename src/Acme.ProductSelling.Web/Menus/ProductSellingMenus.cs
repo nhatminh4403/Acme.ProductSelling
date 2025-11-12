@@ -13,5 +13,6 @@ public class ProductSellingMenus
     public const string DeletedOrders = Orders + ".DeletedOrders";
     public const string Blogs = Prefix + ".Blogs";
     public const string HangfireDashboard = Prefix + ".HangfireDashboard";
-
+    public const string Inventory = Prefix + ".Inventory";
+    public const string Stores = Prefix + ".Stores";
 }

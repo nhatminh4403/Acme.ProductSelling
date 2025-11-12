@@ -1,7 +1,3 @@
-using Acme.ProductSelling.Users;
-using System;
-using Volo.Abp.Identity;
-using Volo.Abp.ObjectExtending;
 using Volo.Abp.Threading;
 namespace Acme.ProductSelling;
 public static class ProductSellingDtoExtensions
@@ -23,9 +19,9 @@ public static class ProductSellingDtoExtensions
              * https://docs.abp.io/en/abp/latest/Object-Extensions
              */
 
-            ObjectExtensionManager.Instance.AddOrUpdateProperty<IdentityUserDto, DateTime?>(StaffExtraProperties.DateOfBirth);
+            //ObjectExtensionManager.Instance.AddOrUpdateProperty<IdentityUserDto, DateTime?>(StaffExtraProperties.DateOfBirth);
 
-            ObjectExtensionManager.Instance.AddOrUpdateProperty<IdentityUserDto, UserGender>(StaffExtraProperties.Gender);
+            //ObjectExtensionManager.Instance.AddOrUpdateProperty<IdentityUserDto, UserGender>(StaffExtraProperties.Gender);
 
         });
     }

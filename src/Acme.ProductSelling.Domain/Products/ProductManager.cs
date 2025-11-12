@@ -9,6 +9,5 @@ namespace Acme.ProductSelling.Products
         {
             _productRepository = productRepository;
         }
-
     }
 }

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Services;
-using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Identity;
@@ -18,12 +17,14 @@ namespace Acme.ProductSelling.Account
         private readonly IRepository<IdentityUser, Guid> _identityUserRepository;
         private readonly ICurrentUser _currentUser;
         private readonly IdentityUserManager _userManager;
+        private readonly IRepository<Customer, Guid> _customerRepository;
 
-        public ProfileAppService(IRepository<IdentityUser, Guid> identityUserRepository, ICurrentUser currentUser, IdentityUserManager userManager)
+        public ProfileAppService(IRepository<IdentityUser, Guid> identityUserRepository, ICurrentUser currentUser, IdentityUserManager userManager, IRepository<Customer, Guid> customerRepository)
         {
             _identityUserRepository = identityUserRepository;
             _currentUser = currentUser;
             _userManager = userManager;
+            _customerRepository = customerRepository;
         }
 
         public async Task ChangePasswordAsync(ChangePasswordDto input)
@@ -46,44 +47,69 @@ namespace Acme.ProductSelling.Account
 
         public async Task<UpdateProfileDto> GetAsync()
         {
-            var user = await _identityUserRepository.GetAsync(_currentUser.Id.Value);
+            var user = await _userManager.GetByIdAsync(_currentUser.GetId()) as AppUser;
+            if (user == null)
+            {
+                throw new UserFriendlyException("User not found.");
+            }
 
-            return new UpdateProfileDto
+            var profileDto = new UpdateProfileDto
             {
                 UserName = user.UserName,
                 Email = user.Email,
                 Name = user.Name,
                 Surname = user.Surname,
-                PhoneNumber = user.PhoneNumber,
-                ShippingAddress = user.GetProperty<string>("ShippingAddress"),
-                DateOfBirth = user.GetProperty<DateTime?>("DateOfBirth"),
-                Gender = user.GetProperty<UserGender>("Gender")
+                PhoneNumber = user.PhoneNumber
             };
+
+            if (user.IsCustomer())
+            {
+                var customer = await _customerRepository.FindAsync(user.Customer.Id);
+                if (customer != null)
+                {
+                    profileDto.ShippingAddress = customer.ShippingAddress;
+                    profileDto.DateOfBirth = customer.DateOfBirth;
+                    profileDto.Gender = customer.Gender;
+
+                    profileDto.Name = customer.Name;
+                    profileDto.Surname = customer.Surname;
+                }
+            }
+
+            return profileDto;
         }
 
         public async Task<UpdateProfileDto> UpdateAsync(UpdateProfileDto input)
         {
-            var user = await _identityUserRepository.GetAsync(_currentUser.Id.Value);
+            var user = await _userManager.GetByIdAsync(_currentUser.GetId()) as AppUser;
+            if (user == null)
+            {
+                throw new UserFriendlyException("User not found.");
+            }
 
             user.Name = input.Name;
             user.Surname = input.Surname;
-            if (user.UserName != input.UserName)
-            {
-                await _userManager.SetUserNameAsync(user, input.UserName);
-            }
-            if (user.Email != input.Email)
-            {
-                await _userManager.SetEmailAsync(user, input.Email);
-            }
-
-            // Use the provided method to set phone number, since the setter is protected internal
-            user.SetPhoneNumber(input.PhoneNumber, user.PhoneNumberConfirmed);
-
-            user.SetProperty("ShippingAddress", input.ShippingAddress);
-            user.SetProperty("DateOfBirth", input.DateOfBirth);
-            user.SetProperty("Gender", input.Gender);
+            if (user.UserName != input.UserName) await _userManager.SetUserNameAsync(user, input.UserName);
+            if (user.Email != input.Email) await _userManager.SetEmailAsync(user, input.Email);
+            if (user.PhoneNumber != input.PhoneNumber) await _userManager.SetPhoneNumberAsync(user, input.PhoneNumber);
 
             await _userManager.UpdateAsync(user);
+
+            if (user.IsCustomer())
+            {
+                var customer = await _customerRepository.GetAsync(user.Customer.Id);
+                customer.UpdateProfile(
+                    input.Name,
+                    input.Surname,
+                    input.PhoneNumber,
+                    input.ShippingAddress,
+                    input.DateOfBirth,
+                    input.Gender
+                );
+                customer.Email = input.Email; // Sync email
+
+                await _customerRepository.UpdateAsync(customer, autoSave: true);
+            }
 
             return input;
         }

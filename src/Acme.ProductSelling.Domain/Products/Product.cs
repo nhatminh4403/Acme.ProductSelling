@@ -2,8 +2,10 @@
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Specifications.Models;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using Volo.Abp.Domain.Entities.Auditing;
 namespace Acme.ProductSelling.Products
 {
@@ -38,17 +40,20 @@ namespace Acme.ProductSelling.Products
                 CalculateDiscountedPrice();
             }
         }
-
+        public DateTime? ReleaseDate { get; set; }
         public int StockCount { get; set; }
 
         [MaxLength(ProductConsts.MaxUrlSlugLength)]
         public string UrlSlug { get; set; }
-
         public string ImageUrl { get; set; }
         public Guid CategoryId { get; set; }
         public Category Category { get; set; }
         public Guid ManufacturerId { get; set; }
+        public bool IsActive { get; set; }
         public virtual Manufacturer Manufacturer { get; set; }
+        public virtual ICollection<StoreInventory> StoreInventories { get; set; } = new HashSet<StoreInventory>();
+
+        #region Specifications
         public virtual MonitorSpecification MonitorSpecification { get; set; }
         public virtual MouseSpecification MouseSpecification { get; set; }
         public virtual LaptopSpecification LaptopSpecification { get; set; }
@@ -80,18 +85,38 @@ namespace Acme.ProductSelling.Products
         public virtual MousePadSpecification MousepadSpecification { get; set; }
         public virtual NetworkHardwareSpecification NetworkHardwareSpecification { get; set; }
         public virtual PowerBankSpecification PowerBankSpecification { get; set; }
+        #endregion
 
         private void CalculateDiscountedPrice()
         {
-
             var rawPrice = OriginalPrice * (decimal)(1 - DiscountPercent / 100.0);
             DiscountedPrice = RoundToNearestTenThousand(rawPrice);
-
-
         }
         private decimal RoundToNearestTenThousand(decimal value)
         {
             return Math.Round(value / 10000m, 0, MidpointRounding.AwayFromZero) * 10000m;
+        }
+        public int GetStockForStore(Guid storeId)
+        {
+            var inventory = StoreInventories.FirstOrDefault(si => si.StoreId == storeId);
+            return inventory?.Quantity ?? 0;
+        }
+
+        // Add helper method to check if product is available in a store
+        public bool IsAvailableInStore(Guid storeId)
+        {
+            var inventory = StoreInventories.FirstOrDefault(si => si.StoreId == storeId);
+            return inventory?.IsAvailableForSale ?? false && inventory?.Quantity > 0;
+        }
+        public bool IsAvailableForPurchase()
+        {
+            if (!IsActive)
+                return false;
+
+            if (!ReleaseDate.HasValue)
+                return true;
+
+            return ReleaseDate.Value <= DateTime.Now;
         }
     }
 }

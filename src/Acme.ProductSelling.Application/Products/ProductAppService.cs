@@ -1,9 +1,11 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Permissions;
+using Acme.ProductSelling.Products.BackgroundJobs;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
 using Acme.ProductSelling.Specifications.Junctions;
 using Acme.ProductSelling.Specifications.Models;
+using Acme.ProductSelling.Stores;
 using Acme.ProductSelling.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -13,16 +15,14 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
+using Volo.Abp.BackgroundJobs;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 namespace Acme.ProductSelling.Products
 {
-    public class ProductAppService : CrudAppService<
-    Product,
-    ProductDto,
-    Guid,
-    PagedAndSortedResultRequestDto,
-    CreateUpdateProductDto>, IProductAppService
+    public class ProductAppService :
+        CrudAppService<Product, ProductDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateProductDto>,
+        IProductAppService
     {
         private readonly IRepository<Category, Guid> _categoryRepository;
         private readonly IProductRepository _productRepository;
@@ -30,13 +30,22 @@ namespace Acme.ProductSelling.Products
         private readonly IRepository<CaseMaterial> _caseMaterialRepository;
         private readonly IRepository<CaseSpecification, Guid> _caseSpecificationRepository;
         private readonly IRepository<CpuCoolerSpecification, Guid> _cpuCoolerSpecificationRepository;
+        private readonly IStoreInventoryRepository _storeInventoryRepository;
+        private readonly IStoreRepository _storeRepository;
+        private readonly IBackgroundJobManager _backgroundJobManager;
+        private readonly ILogger<ProductAppService> _logger;
         public ProductAppService(
             IRepository<Product, Guid> repository,
             IRepository<Category, Guid> categoryRepository,
             IRepository<CaseMaterial> caseMaterialRepository,
             IRepository<CaseSpecification, Guid> caseSpecificationRepository,
             IRepository<CpuCoolerSpecification, Guid> cpuCoolerSpecificationRepository,
-            ISpecificationService specificationService, IProductRepository productRepository)
+            ISpecificationService specificationService,
+            IProductRepository productRepository,
+            IStoreInventoryRepository storeInventoryRepository,
+            IStoreRepository storeRepository,
+            IBackgroundJobManager backgroundJobManager,
+            ILogger<ProductAppService> logger)
             : base(repository)
         {
             _categoryRepository = categoryRepository;
@@ -48,6 +57,10 @@ namespace Acme.ProductSelling.Products
 
 
             ConfigurePolicies();
+            _storeInventoryRepository = storeInventoryRepository;
+            _storeRepository = storeRepository;
+            _backgroundJobManager = backgroundJobManager;
+            _logger = logger;
         }
         private void ConfigurePolicies()
         {
@@ -64,23 +77,17 @@ namespace Acme.ProductSelling.Products
                 .IncludeAllRelations()
                 .FirstOrDefaultAsync(p => p.Id == id);
 
-            return product == null ? throw new EntityNotFoundException(typeof(Product), id) : ObjectMapper.Map<Product, ProductDto>(product);
-        }
-
-
-        public async Task<ProductDto> GetProductBySlug(string slug)
-        {
-            var query = await Repository.GetQueryableAsync();
-            var product = await query
-                .AsNoTracking()
-                .IncludeAllRelations()
-                .FirstOrDefaultAsync(p => p.UrlSlug.ToLower() == slug.ToLower());
-
             if (product == null)
             {
-                throw new EntityNotFoundException(typeof(Product), slug);
+                throw new EntityNotFoundException(typeof(Product), id);
             }
-            return ObjectMapper.Map<Product, ProductDto>(product);
+
+            var productDto = ObjectMapper.Map<Product, ProductDto>(product);
+
+            // NEW: Add store inventory information
+            await PopulateStoreInventoryAsync(productDto, id);
+
+            return productDto;
         }
 
         [Authorize(ProductSellingPermissions.Products.Create)]
@@ -99,7 +106,9 @@ namespace Acme.ProductSelling.Products
                 await Repository.InsertAsync(product, autoSave: true);
                 await Task.WhenAll(
                     _specificationService.CreateSpecificationAsync(product.Id, input, category.SpecificationType),
-                    HandleManyToManyAsync(product.Id, input));
+                    HandleManyToManyAsync(product.Id, input)
+                );
+                await ScheduleProductReleaseJobAsync(product);
 
                 return await GetAsync(product.Id);
             }
@@ -118,7 +127,7 @@ namespace Acme.ProductSelling.Products
             var product = await (await Repository.GetQueryableAsync())
                 .Include(p => p.Category)
                 .FirstAsync(p => p.Id == id);
-
+            var oldReleaseDate = product.ReleaseDate;
             var oldSpecType = product.Category.SpecificationType;
             ObjectMapper.Map(input, product);
 
@@ -134,11 +143,33 @@ namespace Acme.ProductSelling.Products
             await HandleManyToManyAsync(product.Id, input);
 
             await Repository.UpdateAsync(product, autoSave: true);
-
+            if (oldReleaseDate != product.ReleaseDate)
+            {
+                await ScheduleProductReleaseJobAsync(product);
+            }
             return await GetAsync(product.Id);
         }
+        private async Task ScheduleProductReleaseJobAsync(Product product)
+        {
+            if (!product.ReleaseDate.HasValue || product.ReleaseDate.Value <= DateTime.Now)
+            {
+                return; // Already released or no release date
+            }
 
+            var delay = product.ReleaseDate.Value - DateTime.Now;
 
+            await _backgroundJobManager.EnqueueAsync(
+                new ProductReleaseJobArgs { ProductId = product.Id },
+                delay: delay
+            );
+
+            Logger.LogInformation(
+                "Scheduled release job for Product {ProductId} ({ProductName}) at {ReleaseDate}",
+                product.Id,
+                product.ProductName,
+                product.ReleaseDate.Value
+            );
+        }
         private async Task HandleManyToManyAsync(Guid productId, CreateUpdateProductDto input)
         {
             var tasks = new List<Task>();
@@ -196,6 +227,29 @@ namespace Acme.ProductSelling.Products
             }
 
             await _cpuCoolerSpecificationRepository.UpdateAsync(spec, autoSave: false);
+        }
+        private async Task PopulateStoreInventoryAsync(ProductDto productDto, Guid productId)
+        {
+            var inventories = await _storeInventoryRepository.GetByProductAsync(productId);
+
+            productDto.StoreAvailability = new List<ProductStoreAvailabilityDto>();
+            productDto.TotalStockAcrossAllStores = 0;
+
+            foreach (var inventory in inventories)
+            {
+                var store = await _storeRepository.GetAsync(inventory.StoreId);
+
+                productDto.StoreAvailability.Add(new ProductStoreAvailabilityDto
+                {
+                    StoreId = inventory.StoreId,
+                    StoreName = store.Name,
+                    Quantity = inventory.Quantity,
+                    IsAvailableForSale = inventory.IsAvailableForSale,
+                    NeedsReorder = inventory.NeedsReorder()
+                });
+
+                productDto.TotalStockAcrossAllStores += inventory.Quantity;
+            }
         }
     }
 }

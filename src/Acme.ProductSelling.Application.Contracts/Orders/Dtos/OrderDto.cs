@@ -19,5 +19,21 @@ namespace Acme.ProductSelling.Orders.Dtos
         public string PaymentMethod { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
         public string PaymentStatusText { get; set; }
+
+        public Guid? StoreId { get; set; }
+        public string StoreName { get; set; }
+        public OrderType OrderType { get; set; }
+
+        // Staff information
+        public Guid? SellerId { get; set; }
+        public string SellerName { get; set; }
+        public Guid? CashierId { get; set; }
+        public string CashierName { get; set; }
+        public Guid? FulfillerId { get; set; }
+        public string FulfillerName { get; set; }
+
+        // Timestamps
+        public DateTime? CompletedAt { get; set; }
+        public DateTime? FulfilledAt { get; set; }
     }
 }

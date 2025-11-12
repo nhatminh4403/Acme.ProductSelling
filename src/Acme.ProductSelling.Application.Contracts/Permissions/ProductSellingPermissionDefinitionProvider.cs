@@ -86,7 +86,9 @@ public class ProductSellingPermissionDefinitionProvider : PermissionDefinitionPr
 
         #region Users 
         var usersPermission = myGroup.AddPermission(ProductSellingPermissions.Users.Default, L("Permission:Users"));
-        usersPermission.AddChild(ProductSellingPermissions.Users.ManageStoreAssignment, L("Permission:Users.ManageStoreAssignment"))
+        usersPermission.AddChild(ProductSellingPermissions.Users.ManageStoreAssignment, L("Permission:Users.ManageStoreAssignment"));
+        usersPermission.AddChild(ProductSellingPermissions.Users.AssignToStore, L("Permission:Users.AssignToStore"));
+        usersPermission.AddChild(ProductSellingPermissions.Users.Manage, L("Permission:Users.Manage"));
         #endregion
     }
     private static LocalizableString L(string name)

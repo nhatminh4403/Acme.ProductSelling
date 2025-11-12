@@ -14,34 +14,70 @@ namespace Acme.ProductSelling.Orders
 {
     public class Order : FullAuditedAggregateRoot<Guid>
     {
+        // Existing properties
         [Required]
         [StringLength(OrderConsts.MaxOrderNumberLength)]
         public string OrderNumber { get; protected set; }
+
         public DateTime OrderDate { get; protected set; }
+
         public Guid? CustomerId { get; protected set; }
+
         [Required]
         [StringLength(100)]
         public string CustomerName { get; protected set; }
+
         [CanBeNull]
         [StringLength(OrderConsts.MaxCustomerPhoneLentgth)]
         public string CustomerPhone { get; protected set; }
+
         [Required]
         public string ShippingAddress { get; protected set; }
+
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalAmount { get; protected set; }
+
         [Required]
         public string PaymentMethod { get; protected set; }
 
         public OrderStatus OrderStatus { get; private set; }
         public PaymentStatus PaymentStatus { get; private set; }
 
+        // NEW: Multi-location store properties
+        public Guid? StoreId { get; protected set; } // Nullable for online orders
+
+        public OrderType OrderType { get; protected set; } // Online or InStore
+
+        // Staff tracking for in-store orders
+        public Guid? SellerId { get; protected set; }
+        public string SellerName { get; protected set; }
+
+        public Guid? CashierId { get; protected set; }
+        public string CashierName { get; protected set; }
+
+        public Guid? FulfillerId { get; protected set; }
+        public string FulfillerName { get; protected set; }
+
+        // Timestamps for in-store workflow
+        public DateTime? CompletedAt { get; protected set; } // When cashier processed payment
+        public DateTime? FulfilledAt { get; protected set; } // When warehouse gave items
+
+        // Existing collections
         public virtual ICollection<OrderItem> OrderItems { get; protected set; } = new HashSet<OrderItem>();
         public virtual ICollection<OrderHistory> OrderHistories { get; protected set; } = new HashSet<OrderHistory>();
+
         protected Order() { /* Required by EF Core */ }
 
+        // Updated constructor for online orders (existing behavior)
         public Order(
-            Guid id, string orderNumber, DateTime orderDate, Guid? customerId,
-            string customerName, string customerPhone, string shippingAddress, string paymentMethod)
+            Guid id,
+            string orderNumber,
+            DateTime orderDate,
+            Guid? customerId,
+            string customerName,
+            string customerPhone,
+            string shippingAddress,
+            string paymentMethod)
             : base(id)
         {
             OrderNumber = Check.NotNullOrWhiteSpace(orderNumber, nameof(orderNumber));
@@ -53,14 +89,49 @@ namespace Acme.ProductSelling.Orders
             PaymentMethod = Check.NotNullOrWhiteSpace(paymentMethod, nameof(paymentMethod));
 
             PaymentStatus = PaymentStatus.Unpaid;
+            OrderType = OrderType.Online; // Default to online
         }
 
-        // --- CÁC PHƯƠNG THỨC NGHIỆP VỤ (PUBLIC METHODS) ---
+        // NEW: Constructor for in-store orders
+        public Order(
+            Guid id,
+            string orderNumber,
+            DateTime orderDate,
+            Guid storeId,
+            Guid? sellerId,
+            string sellerName,
+            string customerName,
+            string customerPhone,
+            string paymentMethod)
+            : base(id)
+        {
+            OrderNumber = Check.NotNullOrWhiteSpace(orderNumber, nameof(orderNumber));
+            OrderDate = orderDate;
+            StoreId = storeId;
+            SellerId = sellerId;
+            SellerName = sellerName;
+            CustomerName = Check.NotNullOrWhiteSpace(customerName, nameof(customerName));
+            CustomerPhone = customerPhone;
+            ShippingAddress = "In-Store Pickup"; // No shipping for in-store
+            PaymentMethod = Check.NotNullOrWhiteSpace(paymentMethod, nameof(paymentMethod));
+
+            PaymentStatus = PaymentStatus.Unpaid;
+            OrderStatus = OrderStatus.Placed;
+            OrderType = OrderType.InStore;
+        }
+
+        // PUBLIC METHODS
 
         public void SetInitialStatus(OrderStatus initialOrderStatus, PaymentStatus initialPaymentStatus)
         {
             OrderStatus = initialOrderStatus;
             PaymentStatus = initialPaymentStatus;
+        }
+
+        public void SetStoreInfo(Guid storeId, OrderType orderType)
+        {
+            StoreId = storeId;
+            OrderType = orderType;
         }
 
         public void UpdateShippingInfo(string customerName, string customerPhone, string shippingAddress)
@@ -104,7 +175,6 @@ namespace Acme.ProductSelling.Orders
             OrderStatus = newStatus;
         }
 
-
         public void SetPaymentStatus(PaymentStatus newPaymentStatus, IStringLocalizer<ProductSellingResource> localizer = null)
         {
             var validTransitions = new Dictionary<PaymentStatus, PaymentStatus[]>
@@ -118,7 +188,6 @@ namespace Acme.ProductSelling.Orders
                 { PaymentStatus.Refunded, new PaymentStatus[] { } }
             };
 
-            // Check if transition is valid
             if (!validTransitions.ContainsKey(PaymentStatus) ||
                 !validTransitions[PaymentStatus].Contains(newPaymentStatus))
             {
@@ -128,7 +197,6 @@ namespace Acme.ProductSelling.Orders
 
             PaymentStatus = newPaymentStatus;
         }
-
 
         public void SetPendingOnDelivery()
         {
@@ -148,6 +216,7 @@ namespace Acme.ProductSelling.Orders
                 SetStatus(OrderStatus.Confirmed);
             }
         }
+
         public void MarkAsCodPaidAndCompleted(IStringLocalizer<ProductSellingResource> localizer = null)
         {
             if (PaymentMethod != PaymentMethods.COD)
@@ -162,6 +231,63 @@ namespace Acme.ProductSelling.Orders
 
             PaymentStatus = PaymentStatus.Paid;
             SetStatus(OrderStatus.Delivered);
+        }
+
+        // NEW: In-store workflow methods
+
+        /// <summary>
+        /// Cashier completes payment for in-store order
+        /// </summary>
+        public void CompletePaymentInStore(Guid cashierId, string cashierName, decimal paidAmount)
+        {
+            if (OrderType != OrderType.InStore)
+            {
+                throw new UserFriendlyException("OnlyForInStoreOrders",
+                    "Phương thức này chỉ dành cho đơn hàng tại cửa hàng.");
+            }
+
+            if (OrderStatus != OrderStatus.Placed && OrderStatus != OrderStatus.Pending)
+            {
+                throw new UserFriendlyException("CannotCompletePayment",
+                    $"Chỉ có thể thanh toán cho đơn hàng ở trạng thái Placed hoặc Pending. Trạng thái hiện tại: {OrderStatus}");
+            }
+
+            CashierId = cashierId;
+            CashierName = cashierName;
+            CompletedAt = DateTime.UtcNow;
+
+            PaymentStatus = PaymentStatus.Paid;
+            OrderStatus = OrderStatus.Confirmed; // Move to confirmed after payment
+        }
+
+        /// <summary>
+        /// Warehouse staff fulfills in-store order (gives items to customer)
+        /// </summary>
+        public void FulfillInStore(Guid fulfillerId, string fulfillerName)
+        {
+            if (OrderType != OrderType.InStore)
+            {
+                throw new UserFriendlyException("OnlyForInStoreOrders",
+                    "Phương thức này chỉ dành cho đơn hàng tại cửa hàng.");
+            }
+
+            if (OrderStatus != OrderStatus.Confirmed && OrderStatus != OrderStatus.Processing)
+            {
+                throw new UserFriendlyException("CannotFulfillOrder",
+                    $"Chỉ có thể giao hàng cho đơn đã thanh toán. Trạng thái hiện tại: {OrderStatus}");
+            }
+
+            if (PaymentStatus != PaymentStatus.Paid)
+            {
+                throw new UserFriendlyException("PaymentNotCompleted",
+                    "Đơn hàng chưa được thanh toán.");
+            }
+
+            FulfillerId = fulfillerId;
+            FulfillerName = fulfillerName;
+            FulfilledAt = DateTime.UtcNow;
+
+            OrderStatus = OrderStatus.Delivered; // Final status for in-store orders
         }
 
         public void CancelByUser(IStringLocalizer<ProductSellingResource> localizer = null)
@@ -179,8 +305,7 @@ namespace Acme.ProductSelling.Orders
             PaymentStatus = PaymentStatus.Unpaid;
         }
 
-        // --- CÁC PHƯƠNG THỨC RIÊNG TƯ (PRIVATE METHODS) ---
-
+        // PRIVATE METHODS
         private bool IsNextStatusValid(OrderStatus newStatus)
         {
             if (newStatus == OrderStatus.Cancelled &&

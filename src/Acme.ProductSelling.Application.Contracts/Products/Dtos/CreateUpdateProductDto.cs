@@ -43,6 +43,7 @@ namespace Acme.ProductSelling.Products.Dtos
         public Guid CategoryId { get; set; }
         [Required]
         public Guid ManufacturerId { get; set; }
+        public DateTime? ReleaseDate { get; set; }
 
         // Existing specifications
         public CreateUpdateMonitorSpecificationDto? MonitorSpecification { get; set; }

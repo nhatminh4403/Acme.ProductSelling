@@ -23,5 +23,9 @@ namespace Acme.ProductSelling.Orders.Services
         Task<PagedResultDto<OrderDto>> GetProfitReportAsync(PagedAndSortedResultRequestDto input);
         Task<PagedResultDto<OrderDto>> GetDeletedOrdersAsync(PagedAndSortedResultRequestDto input);
         Task RestoreOrderAsync(Guid orderId);
+        Task<OrderDto> CreateInStoreOrderAsync(CreateInStoreOrderDto input);
+        Task<OrderDto> CompleteInStorePaymentAsync(Guid orderId, CompleteInStorePaymentDto input);
+        Task<OrderDto> FulfillInStoreOrderAsync(Guid orderId);
+        Task<PagedResultDto<OrderDto>> GetStoreOrdersAsync(GetOrderListInput input);
     }
 }

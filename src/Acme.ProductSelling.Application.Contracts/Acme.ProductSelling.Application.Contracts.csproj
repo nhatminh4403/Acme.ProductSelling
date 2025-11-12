@@ -6,6 +6,11 @@
     <RootNamespace>Acme.ProductSelling</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Stores\Dto\**" />
+    <EmbeddedResource Remove="Stores\Dto\**" />
+    <None Remove="Stores\Dto\**" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Acme.ProductSelling.Domain.Shared\Acme.ProductSelling.Domain.Shared.csproj" />
     <ProjectReference Include="..\Acme.ProductSelling.PaymentGateway.MoMo\Acme.ProductSelling.PaymentGateway.MoMo.csproj" />
     <ProjectReference Include="..\Acme.ProductSelling.PaymentGateway.PayPal\Acme.ProductSelling.PaymentGateway.PayPal.csproj" />
@@ -26,8 +31,5 @@
     <PackageReference Include="Volo.Abp.Identity.Application.Contracts" Version="9.3.6" />
     <PackageReference Include="Volo.Abp.Account.Application.Contracts" Version="9.3.6" />
     <PackageReference Include="Volo.Abp.TenantManagement.Application.Contracts" Version="9.3.6" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Stores\Dto\" />
   </ItemGroup>
 </Project>

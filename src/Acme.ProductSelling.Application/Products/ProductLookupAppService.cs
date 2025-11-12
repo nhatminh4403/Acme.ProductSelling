@@ -82,16 +82,13 @@ namespace Acme.ProductSelling.Products
         {
             var queryable = await _productRepository.GetQueryableAsync();
 
-            // Apply standard includes
             queryable = queryable
                 .Include(p => p.Category)
                 .Include(p => p.Manufacturer)
                 .AsNoTracking();
 
-            // Apply custom filter
             queryable = filterExpression.Compile()(queryable);
 
-            // Get total count
             var totalCount = await AsyncExecuter.CountAsync(queryable);
 
             // Apply sorting and paging

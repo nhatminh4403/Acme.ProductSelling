@@ -1,17 +1,26 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Manufacturers;
+using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Lookups;
 using Acme.ProductSelling.Specifications.Junctions;
 using Acme.ProductSelling.Specifications.Models;
+using Acme.ProductSelling.Stores;
+using Acme.ProductSelling.Users;
 using Acme.ProductSelling.Utils;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
 using Volo.Abp.Identity;
+using Volo.Abp.PermissionManagement;
 namespace Acme.ProductSelling
 {
     public class ProductSellingDataSeederContributor : IDataSeedContributor, ITransientDependency
@@ -35,6 +44,14 @@ namespace Acme.ProductSelling
         private readonly IRepository<HeadsetSpecification, Guid> _headsetSpecRepository;
         private readonly IGuidGenerator _guidGenerator;
         private readonly IRepository<Manufacturer, Guid> _manufacturerRepository;
+        private readonly IRepository<StoreInventory, Guid> _storeInventoryRepository;
+        private readonly ILogger<ProductSellingDataSeederContributor> _logger;
+        private readonly IdentityUserManager _identityUserManager;
+        private readonly ILookupNormalizer _lookupNormalizer;
+        private readonly IIdentityRoleRepository _identityRoleRepository;
+        private readonly IIdentityUserRepository _identityUserRepository;
+        private readonly IPermissionDataSeeder _permissionDataSeeder;
+        private readonly IStoreRepository _storeRepository;
 
         private readonly IRepository<CpuSocket, Guid> _socketRepository;
         private readonly IRepository<Chipset, Guid> _chipsetRepository;
@@ -110,9 +127,17 @@ namespace Acme.ProductSelling
             IRepository<HubSpecification, Guid> hubSpecRepository,
             IRepository<CableSpecification, Guid> cableSpecRepository,
             IRepository<ChargerSpecification, Guid> chargerSpecRepository,
-            IRepository<PowerBankSpecification, Guid> powerBankSpecRepository)
+            IRepository<PowerBankSpecification, Guid> powerBankSpecRepository,
+            IRepository<StoreInventory, Guid> storeInventoryRepository,
+            IStoreRepository storeRepository,
+            ILogger<ProductSellingDataSeederContributor> logger,
+            ILookupNormalizer lookupNormalizer,
+            IIdentityRoleRepository identityRoleRepository,
+            IIdentityUserRepository identityUserRepository,
+            IPermissionDataSeeder permissionDataSeeder)
 
         {
+            _identityUserManager = identityUserManager;
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
             _categoryManager = categoryManager;
@@ -156,6 +181,13 @@ namespace Acme.ProductSelling
             _cableSpecRepository = cableSpecRepository;
             _chargerSpecRepository = chargerSpecRepository;
             _powerBankSpecRepository = powerBankSpecRepository;
+            _storeInventoryRepository = storeInventoryRepository;
+            _storeRepository = storeRepository;
+            _logger = logger;
+            _lookupNormalizer = lookupNormalizer;
+            _identityRoleRepository = identityRoleRepository;
+            _identityUserRepository = identityUserRepository;
+            _permissionDataSeeder = permissionDataSeeder;
         }
         #endregion
         public async Task SeedAsync(DataSeedContext context)
@@ -511,9 +543,6 @@ namespace Acme.ProductSelling
             );
             #endregion
 
-            // (Inside your SeedAsync method)
-            // REPLACE this entire region in your file
-
             #region Manufacturers
             // We must insert each manufacturer and get the returned entity to ensure we have the correct DB-generated ID.
             var asus = await _manufacturerRepository.InsertAsync(new Manufacturer
@@ -855,8 +884,6 @@ namespace Acme.ProductSelling
             var switchTypes = await _switchTypeRepository.GetListAsync();
             #endregion
 
-
-
             #region Products and Specs
 
             #region CPU Products
@@ -864,7 +891,7 @@ namespace Acme.ProductSelling
                 cpus.Id, amd.Id, 8500000, 10,
                 "Ryzen 7 7700X",
                 "Powerful 8-core CPU",
-                50,
+                50, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/ryzen_7_-_1_00957bbe7b8542308c897a90d439b1fd_e1c9a16c537d47bb9768828dddb332d0_grande.jpg"
             );
             await _cpuSpecRepository.InsertAsync(new CpuSpecification
@@ -884,7 +911,7 @@ namespace Acme.ProductSelling
                 cpus.Id, intel.Id, 13500000, 7,
                 "Intel Core i9-13900K",
                 "Top-tier 24-core CPU",
-                30,
+                30, true, DateTime.Now.AddDays(7),
                 "https://product.hstatic.net/200000722513/product/i9k-t2-special-box-07-1080x1080pixels_6c9ec1001cdf4e4998c13af4ac6c7581_114c47698e4a4984863c3b26e0619b65_grande.png"
             );
             await _cpuSpecRepository.InsertAsync(new CpuSpecification
@@ -906,7 +933,7 @@ namespace Acme.ProductSelling
                 gpus.Id, asus.Id, 25000000, 5,
                 "ProArt GeForce RTX 4070 Ti SUPER 16GB",
                 "High-end graphics card",
-                20,
+                20, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/fwebp__10__1d22cf39c094494bb772b5bb1c002172_grande.png"
             );
             await _gpuSpecRepository.InsertAsync(new GpuSpecification
@@ -925,7 +952,7 @@ namespace Acme.ProductSelling
                 gpus.Id, asus.Id, 28000000, 10,
                 "Asus Radeon RX 7900 XT TUF Gaming",
                 "High-end AMD graphics card",
-                15,
+                15, true, DateTime.Now.AddDays(5),
                 "https://product.hstatic.net/200000722513/product/5681_ea11053c19e375dcaa8138b6f531262d_7d029f536978405393da9fb3c8f1e2fa_4d3cedb8fd4a485db1ece7519c1d41a8_grande.jpg"
             );
             await _gpuSpecRepository.InsertAsync(new GpuSpecification
@@ -946,7 +973,7 @@ namespace Acme.ProductSelling
                 rams.Id, corsair.Id, 2000000, 0,
                 "Vengeance LPX 16GB",
                 "High-performance RAM",
-                100,
+                100, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/gearvn-corsair-vengeance-rgb-ddr-5600-ddr5-5_6e319950a8e14231b28a416076c94951_grande.png"
             );
             await _ramSpecRepository.InsertAsync(new RamSpecification
@@ -966,6 +993,7 @@ namespace Acme.ProductSelling
                 "Trident Z RGB 16GB (2×8)",
                 "DDR4 3600MHz kit with RGB",
                 80,
+                true, DateTime.Now.AddDays(-3),
                 "https://anphat.com.vn/media/product/33685_153665426813.png"
             );
             await _ramSpecRepository.InsertAsync(new RamSpecification
@@ -987,6 +1015,7 @@ namespace Acme.ProductSelling
                 "970 EVO Plus 1TB",
                 "Fast NVMe SSD",
                 80,
+                true, DateTime.Now,
                 "https://bizweb.dktcdn.net/thumb/grande/100/329/122/products/970-evo-plus-1tb-01-1689929004911.jpg?v=1695052940103"
             );
             await _storageSpecRepository.InsertAsync(new StorageSpecification
@@ -1006,6 +1035,7 @@ namespace Acme.ProductSelling
                 "WD Black SN770 1TB",
                 "High-performance PCIe 4.0 NVMe SSD",
                 60,
+                true, DateTime.Now.AddDays(2),
                 "https://bizweb.dktcdn.net/thumb/grande/100/329/122/products/ssd-wd-black-sn770-pcie-gen4-x4-nvme-m-2-500gb-wds500g3x0e-b058273a-af63-4053-ac31-83b41eb593a2.jpg?v=1655710957737"
             );
             await _storageSpecRepository.InsertAsync(new StorageSpecification
@@ -1027,6 +1057,8 @@ namespace Acme.ProductSelling
                 "Logitech G Pro TKL Keyboard",
                 "Tenkeyless mechanical gaming keyboard",
                 80,
+                true,
+                DateTime.Now.AddDays(-10),
                 "https://product.hstatic.net/200000722513/product/1_5b2f7891bf434a7aab9f1abdba56c17e_grande.jpg"
             );
             await _keyboardSpecRepository.InsertAsync(new KeyboardSpecification
@@ -1043,6 +1075,7 @@ namespace Acme.ProductSelling
                 "Razer Huntsman Elite",
                 "Opto-mechanical gaming keyboard",
                 40,
+                true, DateTime.Now.AddMonths(1),
                 "https://product.hstatic.net/200000722513/product/r3m1_ac3aa0be001640e2873ff732d34617bc_2295901522e24ce399b8f5f07be51467_3ab2e4aca4434a9a84997283b79b5c3c_grande.png"
             );
             await _keyboardSpecRepository.InsertAsync(new KeyboardSpecification
@@ -1060,7 +1093,7 @@ namespace Acme.ProductSelling
                 monitors.Id, lg.Id, 7000000, 6,
                 "UltraGear 27GL850",
                 "27-inch QHD gaming monitor",
-                30,
+                30, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/lg_27gx790a-b_gearvn_18880ec6e5a944c2b29c76d85d44d243_medium.jpg"
             );
             await _monitorSpecRepository.InsertAsync(new MonitorSpecification
@@ -1080,7 +1113,7 @@ namespace Acme.ProductSelling
                 monitors.Id, asus.Id, 9000000, 12,
                 "ASUS TUF Gaming VG27AQ",
                 "27\" QHD IPS 165Hz gaming monitor",
-                25,
+                25, true, DateTime.Now.AddDays(3),
                 "https://product.hstatic.net/200000722513/product/ips-2k-170hz-g-sync-hdr-chuyen-game-1_f9de14d5b20041b2b52b0cde6884a3d9_317538ed8cff45e6a25feb1cbb8650d0_grande.png"
             );
             await _monitorSpecRepository.InsertAsync(new MonitorSpecification
@@ -1102,7 +1135,7 @@ namespace Acme.ProductSelling
                 15,
                 "Logitech G915 TKL LIGHTSPEED Wireless",
                 "Bàn phím cơ TKL mỏng nhẹ, hiệu năng cao, cung cấp 3 chế độ kết nối: LIGHTSPEED không dây chuyên nghiệp cho game, Bluetooth tiện dụng để kết nối nhiều thiết bị, và chế độ có dây.",
-                45,
+                45, true, DateTime.Now,
                 "https://resource.logitechg.com/w_692,c_lpad,ar_4:3,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/gaming/en/products/g915-tkl/g915-tkl-gallery/g915-tkl-carbon-gallery-1.png"
             );
 
@@ -1122,7 +1155,7 @@ namespace Acme.ProductSelling
                 psus.Id, corsair.Id, 2000000, 5,
                 "Corsair RM750x",
                 "750W fully modular power supply",
-                50,
+                50, true, DateTime.Now,
                 "https://bizweb.dktcdn.net/thumb/grande/100/329/122/products/nguon-may-tinh-corsair-rm750x-shift-750w-80-plus-gold-cp-9020251-na-04-20838ea6-b253-460f-bb0c-ad9327565373.jpg?v=1743639588677"
             );
             await _psuSpecRepository.InsertAsync(new PsuSpecification
@@ -1138,7 +1171,7 @@ namespace Acme.ProductSelling
                 psus.Id, evga.Id, 2200000, 20,
                 "EVGA SuperNOVA 750 G5",
                 "750W gold-rated fully modular PSU",
-                35,
+                35, true, DateTime.Now,
                 "https://tandoanh.vn/wp-content/uploads/2021/10/EVGA-SuperNOVA-750-G1-%E2%80%93-80-GOLD-750W-%E2%80%93-Fully-Modular-h1.jpg"
             );
             await _psuSpecRepository.InsertAsync(new PsuSpecification
@@ -1156,7 +1189,7 @@ namespace Acme.ProductSelling
                 cases.Id, nzxt.Id, 1500000, 5,
                 "NZXT H510",
                 "Mid-tower ATX case with tempered glass",
-                40,
+                40, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/4108_be554d73268e3ca69f25d192629df397_b7fd1aebb5f74f50ae18c3b23efb8755_b6d80711bb304b568b03fdcf3e94c1ab_grande.jpg"
             );
             var spec_case1 = await _caseSpecRepository.InsertAsync(new CaseSpecification
@@ -1186,7 +1219,7 @@ namespace Acme.ProductSelling
                 cases.Id, phanteks.Id, 1800000, 10,
                 "Phanteks Eclipse P400A",
                 "High-airflow mid-tower ATX case",
-                45,
+                45, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/k-_1_65d8edfddc2b4785af9a13f971fc258a_6043347819ed417bb6dd327b41b39b6e_60a930dd805e4bc891b6ea69e7c2d21a_grande.jpg"
             );
             var spec_case2 = await _caseSpecRepository.InsertAsync(new CaseSpecification
@@ -1218,7 +1251,7 @@ namespace Acme.ProductSelling
                 coolers.Id, coolerMaster.Id, 1200000, 5,
                 "Cooler Master Hyper 212",
                 "Air cooler with RGB lighting",
-                60,
+                60, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/hyper-212-argb-gallery-4-image_dc19349414e94e0e869c23e85c70cb49_d2713cd5bac947da94ee34d1456220fe_grande.png"
             );
             var spec_cooler1 = await _cpuCoolerSpecRepository.InsertAsync(new CpuCoolerSpecification
@@ -1245,7 +1278,7 @@ namespace Acme.ProductSelling
                 coolers.Id, noctua.Id, 4000000, 25,
                 "Noctua NH-D15",
                 "Premium dual-tower air cooler",
-                20,
+                20, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/noctua_nh-d15_2_75940b3d5fbb485190327d6b592429af_9ad735dcdbb94a71ba171d7d4ae0a326_grande.jpg"
             );
             var spec_cooler2 = await _cpuCoolerSpecRepository.InsertAsync(new CpuCoolerSpecification
@@ -1274,7 +1307,7 @@ namespace Acme.ProductSelling
                 headsets.Id, logitech.Id, 1500000, 5,
                 "Logitech G Pro X",
                 "High-quality gaming headset",
-                70,
+                70, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/gvn_logitech_prox_79c556630c454086baf1bee06c577ab7_3471d9d886fd4dbe8ab5ae6bed9f4d78_grande.png"
             );
             await _headsetSpecRepository.InsertAsync(new HeadsetSpecification
@@ -1296,7 +1329,7 @@ namespace Acme.ProductSelling
                 headsets.Id, hyperx.Id, 1200000, 5,
                 "HyperX Cloud Stinger Core II",
                 "Comfortable gaming headset with 7.1 surround",
-                60,
+                60, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/thumbtainghe_499f42bf16fe47d28ab00bffb7bd5748_47730811ddaf40a0a969f4e4d49c7b27_grande.png"
             );
             await _headsetSpecRepository.InsertAsync(new HeadsetSpecification
@@ -1320,7 +1353,7 @@ namespace Acme.ProductSelling
                 laptops.Id, asus.Id, 25000000, 12,
                 "ASUS ROG Zephyrus G16 GU605CX QR083W",
                 "Powerful gaming laptop",
-                10,
+                10, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/zephyrus_g16_gu605_grey_03_rgb_1_b58d513a9306445daf2980232fe2544b_grande.png"
             );
             await _laptopSpecRepository.InsertAsync(new LaptopSpecification
@@ -1341,7 +1374,7 @@ namespace Acme.ProductSelling
                 laptops.Id, dell.Id, 60000000, 10,
                 "Dell XPS 13 9310",
                 "Ultra-portable 13\" laptop",
-                8,
+                8, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/51529_laptop_dell_xps_9350_xps93_1d46c518185a488a92c40932dd4d5cf6_grande.png"
             );
             await _laptopSpecRepository.InsertAsync(new LaptopSpecification
@@ -1364,7 +1397,7 @@ namespace Acme.ProductSelling
                 motherboards.Id, gigabyte.Id, 8000000, 11,
                 "GIGABYTE Z790 AORUS XTREME X ICE",
                 "Premium E-ATX Motherboard",
-                20,
+                20, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/z790_aorus_xtreme_x_ice-01_5a397436688c4f2e9dc0e358ebf25927_grande.png"
             );
             await _motherboardSpecRepository.InsertAsync(new MotherboardSpecification
@@ -1385,7 +1418,7 @@ namespace Acme.ProductSelling
                 motherboards.Id, msi.Id, 44000000, 15,
                 "MSI MEG Z890 GODLIKE",
                 "Extreme Performance Motherboard",
-                15,
+                15, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/msi-meg_z890_godlike_3d2_rgb_b691f05efbcf45e58c54ab731ea28136_grande.png"
             );
             await _motherboardSpecRepository.InsertAsync(new MotherboardSpecification
@@ -1406,7 +1439,7 @@ namespace Acme.ProductSelling
                 motherboards.Id, asus.Id, 2100000, 0,
                 "ASUS ROG Crosshair X670E Hero",
                 "High-end AMD Motherboard",
-                12,
+                12, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/rog-crosshair-x870e-hero-01_5ab538b8eb38470a83ff1a122393bd26_grande.jpg"
             );
             await _motherboardSpecRepository.InsertAsync(new MotherboardSpecification
@@ -1427,7 +1460,7 @@ namespace Acme.ProductSelling
                 motherboards.Id, asrock.Id, 28000000, 0,
                 "ASRock X670E Taichi AQUA",
                 "High-end Watercooled Motherboard",
-                0,
+                10, true, DateTime.Now,
                 "https://www.asrock.com/mb/photo/X670E%20Taichi(M1).png"
             );
             await _motherboardSpecRepository.InsertAsync(new MotherboardSpecification
@@ -1450,7 +1483,7 @@ namespace Acme.ProductSelling
                 mice.Id, logitech.Id, 1000000, 5,
                 "Logitech G502 HERO",
                 "High-performance gaming mouse",
-                150,
+                150, true, DateTime.Now.AddDays(3),
                 "https://product.hstatic.net/200000722513/product/10001_01736316d2b443d0838e5a0741434420_grande.png"
             );
             await _mouseSpecRepository.InsertAsync(new MouseSpecification
@@ -1470,7 +1503,7 @@ namespace Acme.ProductSelling
                 mice.Id, razer.Id, 1500000, 10,
                 "Razer DeathAdder V2",
                 "Iconic ergonomic gaming mouse",
-                120,
+                120, true, DateTime.Now.AddDays(4),
                 "https://assets2.razerzone.com/images/pnx.assets/14f056ebbd06023cdd8b1351d17cbdaf/razer-deathadder-v2-gallery01.jpg"
             );
             await _mouseSpecRepository.InsertAsync(new MouseSpecification
@@ -1490,7 +1523,7 @@ namespace Acme.ProductSelling
                 mice.Id, steelseries.Id, 800000, 20,
                 "SteelSeries Rival 3",
                 "Lightweight RGB gaming mouse",
-                120,
+                120, true, DateTime.Now.AddDays(2),
                 "https://product.hstatic.net/200000722513/product/thumbchuot_e01eec6957cc40a88aba550b80cffed2_74ec8f2dec0447c382614fa201a4fa93_grande.png"
             );
             await _mouseSpecRepository.InsertAsync(new MouseSpecification
@@ -1510,7 +1543,7 @@ namespace Acme.ProductSelling
                 mice.Id, logitech.Id, 3500000, 5,
                 "Logitech G Pro X Superlight",
                 "Chuột không dây siêu nhẹ dành cho esports, pin trâu, cảm biến HERO 25K.",
-                60,
+                60, true, DateTime.Now.AddDays(6),
                 "https://resource.logitechg.com/w_600,c_limit,q_auto,f_auto,dpr_1.0/g_pro_x_superlight/gallery-1.png"
             );
             await _mouseSpecRepository.InsertAsync(new MouseSpecification
@@ -1530,8 +1563,8 @@ namespace Acme.ProductSelling
                 mice.Id, coolerMaster.Id, 1200000, 8,
                 "Cooler Master MM710",
                 "Chuột lỗ siêu nhẹ 53g, cảm biến PMW3389, thiết kế siêu bền.",
-                90,
-                "https://coolermaster.com/media/catalog/product/cache/1/image/1200x1200/9df78eab33525d08d6e5fb8d27136e95/mm710-gallery01.png"
+                90, true, DateTime.Now.AddDays(5),
+                "https://coolermaster.com/media/catalog/product/cache/1/image/1200x1200/9df78eab33525d08d6e5fb8d27136e95/mm710-gallery-01.png"
             );
             await _mouseSpecRepository.InsertAsync(new MouseSpecification
             {
@@ -1550,7 +1583,7 @@ namespace Acme.ProductSelling
                 mice.Id, steelseries.Id, 700000, 12,
                 "SteelSeries Rival 3 (Black)",
                 "Chuột gaming phổ thông với cảm biến TrueMove Core, bền bỉ, RGB tùy chỉnh.",
-                200,
+                200, true, DateTime.Now.AddDays(1),
                 "https://steelseries.com/cdn/shop/products/Rival3_ProductImage_1_grande.png"
             );
             await _mouseSpecRepository.InsertAsync(new MouseSpecification
@@ -1570,7 +1603,7 @@ namespace Acme.ProductSelling
                 mice.Id, hyperx.Id, 1100000, 9,
                 "HyperX Pulsefire Haste",
                 "Chuột siêu nhẹ 59g, honeycomb shell, dây HyperFlex không vướng.",
-                140,
+                140, true, DateTime.Now.AddDays(7),
                 "https://hyperx.com/media/catalog/product/cache/1/image/1200x/9df78eab33525d08d6e5fb8d27136e95/p/u/pulsefire-haste-gallery01.png"
             );
             await _mouseSpecRepository.InsertAsync(new MouseSpecification
@@ -1590,7 +1623,7 @@ namespace Acme.ProductSelling
                 mice.Id, asus.Id, 2200000, 6,
                 "ASUS ROG Gladius III",
                 "Chuột gaming đa kết nối, switch Omron 80M click, RGB AURA Sync.",
-                75,
+                75, true, DateTime.Now.AddDays(4),
                 "https://dlcdnrog.asus.com/rog/media/1670017436852.png"
             );
             await _mouseSpecRepository.InsertAsync(new MouseSpecification
@@ -1610,7 +1643,7 @@ namespace Acme.ProductSelling
                 mice.Id, msi.Id, 1300000, 10,
                 "MSI Clutch GM41 Lightweight",
                 "Chuột siêu nhẹ 65g, cảm biến PixArt 3389, vỏ lỗ thoáng khí.",
-                100,
+                100, true, DateTime.Now.AddDays(2),
                 "https://asset.msi.com/resize/image/global/product/product_5_20220224105048_61f9d024d22a7.png"
             );
 
@@ -1631,7 +1664,7 @@ namespace Acme.ProductSelling
                 mice.Id, gigabyte.Id, 1400000, 8,
                 "GIGABYTE AORUS M4",
                 "Chuột gaming tản nhiệt tốt, switch Omron, RGB ARGB 16.7 triệu màu.",
-                110,
+                110, true, DateTime.Now.AddDays(3),
                 "https://www.gigabyte.com/FileUpload/Image/Global/Products/m4-gallery-01.png"
             );
             await _mouseSpecRepository.InsertAsync(new MouseSpecification
@@ -1648,7 +1681,15 @@ namespace Acme.ProductSelling
             }, autoSave: true);
 
 
-            var productMouse_WiredWireless1 = await CreateProductAsync(mice.Id, razer.Id, 3200000, 15, "Razer Basilisk Ultimate", "Chuột gaming không dây hiệu năng cao với dock sạc, hỗ trợ cả hai chế độ kết nối có dây và không dây 2.4GHz.", 55, "https://assets2.razerzone.com/images/pnx.assets/d20a4597d86f7284897d51a667364b18/razer-basilisk-ultimate-gallery-1.jpg");
+            var productMouse_WiredWireless1 = await CreateProductAsync(
+                mice.Id,
+                razer.Id,
+                3200000,
+                15,
+                "Razer Basilisk Ultimate",
+                "Chuột gaming không dây hiệu năng cao với dock sạc, hỗ trợ cả hai chế độ kết nối có dây và không dây 2.4GHz.",
+                55, true, DateTime.Now.AddDays(5),
+                "https://assets2.razerzone.com/images/pnx.assets/d20a4597d86f7284897d51a667364b18/razer-basilisk-ultimate-gallery-1.jpg");
             await _mouseSpecRepository.InsertAsync(new MouseSpecification
             {
                 ProductId = productMouse_WiredWireless1.Id,
@@ -1656,19 +1697,20 @@ namespace Acme.ProductSelling
                 PollingRate = 1000,
                 SensorType = "Razer Focus+",
                 Weight = 107,
-                Connectivity = ConnectivityType.WiredAndWireless, // Sử dụng enum
+                Connectivity = ConnectivityType.WiredAndWireless,
                 ButtonCount = 11,
                 BacklightColor = "RGB Chroma",
                 Color = "Black"
             }, autoSave: true);
+
             var productMouse_MultiMode = await CreateProductAsync(
                 mice.Id,
-                razer.Id, // Giả sử 'razer' đã được khởi tạo
+                razer.Id,
                 4200000,
                 10,
                 "Razer Naga V2 Pro",
                 "Chuột MMO đỉnh cao với các tấm panel bên hông có thể thay đổi. Hỗ trợ kết nối HyperSpeed Wireless siêu tốc cho gaming, Bluetooth để tiết kiệm pin hoặc kết nối đa thiết bị, và chế độ có dây Speedflex.",
-                30,
+                30, true, DateTime.Now.AddDays(6),
                 "https://assets2.razerzone.com/images/pnx.assets/d7b5c3b0d5c41441b8f0dbde53d5f573/razer-naga-v2-pro-500x500.png"
             );
 
@@ -1687,8 +1729,6 @@ namespace Acme.ProductSelling
             #endregion
             #endregion
 
-
-
             #region New Category Products
 
             // CaseFan Product
@@ -1696,7 +1736,7 @@ namespace Acme.ProductSelling
                 caseFans.Id, noctua.Id, 450000, 5,
                 "Noctua NF-A12x25 PWM",
                 "Quạt tản nhiệt case 120mm cao cấp, êm ái",
-                100,
+                100, true, DateTime.Now.AddDays(2),
                 "https://noctua.at/pub/media/catalog/product/cache/74c1057f7991b4edb2bc7bdaa94de933/n/f/nf_a12x25_pwm_1.jpg"
             );
             await _caseFanSpecRepository.InsertAsync(new CaseFanSpecification
@@ -1718,7 +1758,7 @@ namespace Acme.ProductSelling
                 memoryCards.Id, samsung.Id, 350000, 8,
                 "Samsung EVO Plus microSD 128GB",
                 "Thẻ nhớ tốc độ cao, chống nước, chống sốc",
-                200,
+                200, true, DateTime.Now.AddDays(1),
                 "https://images.samsung.com/is/image/samsung/p6pim/vn/mb-mc128ka-apc/gallery/vn-microsdxc-evo-plus-mb-mc128ka-535234-mb-mc128ka-apc-538392334"
             );
             await _memoryCardSpecRepository.InsertAsync(new MemoryCardSpecification
@@ -1739,7 +1779,7 @@ namespace Acme.ProductSelling
                 speakers.Id, logitech.Id, 1500000, 10,
                 "Logitech Z623 2.1",
                 "Loa 2.1 THX công suất 200W, bass mạnh mẽ",
-                45,
+                45, true, DateTime.Now.AddDays(4),
                 "https://resource.logitech.com/w_800,c_lpad,ar_1:1,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/speakers/z623/gallery/z623-gallery-1.png"
             );
             await _speakerSpecRepository.InsertAsync(new SpeakerSpecification
@@ -1748,7 +1788,7 @@ namespace Acme.ProductSelling
                 SpeakerType = SpeakerType.Stereo_2_1_WithSubwoofer,
                 TotalWattage = 200,
                 Frequency = "35Hz - 20kHz",
-                Connectivity = ConnectivityType.Wired, // CHANGED
+                Connectivity = ConnectivityType.Wired,
                 InputPorts = "3.5mm, RCA",
                 Color = "Black"
             }, autoSave: true);
@@ -1758,7 +1798,7 @@ namespace Acme.ProductSelling
                 microphones.Id, hyperx.Id, 1800000, 5,
                 "HyperX QuadCast S",
                 "Micro USB chống rung, RGB, 4 polar pattern",
-                60,
+                60, true, DateTime.Now.AddDays(3),
                 "https://row.hyperx.com/cdn/shop/files/hyperx_quadcast_s_mic_1_top_down_zm_lg.jpg"
             );
             await _microphoneSpecRepository.InsertAsync(new MicrophoneSpecification
@@ -1782,7 +1822,7 @@ namespace Acme.ProductSelling
                 webcams.Id, logitech.Id, 2500000, 12,
                 "Logitech StreamCam",
                 "Webcam 1080p 60fps cho streaming, USB-C",
-                50,
+                50, true, DateTime.Now.AddDays(5),
                 "https://resource.logitech.com/w_800,c_lpad,ar_1:1,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/webcams/streamcam/gallery/streamcam-gallery-1-graphite.png"
             );
             await _webcamSpecRepository.InsertAsync(new WebcamSpecification
@@ -1805,7 +1845,7 @@ namespace Acme.ProductSelling
                 mousePads.Id, steelseries.Id, 800000, 15,
                 "SteelSeries QcK Heavy XXL",
                 "Lót chuột vải lớn 900x400mm, dày 6mm",
-                120,
+                120, true, DateTime.Now.AddDays(2),
                 "https://media.steelseriescdn.com/thumbs/catalogue/products/00431-qck-heavy-xxl/c0eb6b6563984f2fab338c58e37b0ee1.png.500x400_q100_crop-fit_optimize.png"
             );
             await _mousePadSpecRepository.InsertAsync(new MousePadSpecification
@@ -1827,7 +1867,7 @@ namespace Acme.ProductSelling
                 chairs.Id, corsair.Id, 8500000, 10,
                 "Corsair TC100 Relaxed",
                 "Ghế gaming vải thoáng khí, êm ái",
-                25,
+                25, true, DateTime.Now.AddDays(7),
                 "https://assets.corsair.com/image/upload/f_auto,q_auto/content/TC100-RELAXED-BLACK-Gallery-Hero-01.png"
             );
             await _chairSpecRepository.InsertAsync(new ChairSpecification
@@ -1851,7 +1891,7 @@ namespace Acme.ProductSelling
                 desks.Id, ikea.Id, 3500000, 5,
                 "IKEA UPPSPEL Gaming Desk",
                 "Bàn gaming 140x80cm, có hệ thống quản lý dây",
-                15,
+                15, true, DateTime.Now.AddDays(3),
                 "https://www.ikea.com/us/en/images/products/uppspel-gaming-desk-black__0981784_pe815503_s5.jpg"
             );
             await _deskSpecRepository.InsertAsync(new DeskSpecification
@@ -1875,7 +1915,7 @@ namespace Acme.ProductSelling
                 software.Id, microsoft.Id, 3200000, 0,
                 "Windows 11 Pro",
                 "Hệ điều hành Windows 11 Pro bản quyền",
-                500,
+                500, true, DateTime.Now.AddDays(1),
                 "https://cdn-dynmedia-1.microsoft.com/is/image/microsoftcorp/RWZQBF_Hero_960x540_2x_RE4VnJV"
             );
             await _softwareSpecRepository.InsertAsync(new SoftwareSpecification
@@ -1896,7 +1936,7 @@ namespace Acme.ProductSelling
                 networkHardware.Id, tplink.Id, 1200000, 8,
                 "TP-Link Archer AX55 AX3000",
                 "Router WiFi 6 dual-band, tốc độ 3Gbps",
-                40,
+                40, true, DateTime.Now.AddDays(2),
                 "https://static.tp-link.com/upload/product-overview/2021/202106/20210625155708974.png"
             );
             await _networkHardwareSpecRepository.InsertAsync(new NetworkHardwareSpecification
@@ -1918,7 +1958,7 @@ namespace Acme.ProductSelling
                 handhelds.Id, valve.Id, 12000000, 5,
                 "Steam Deck 512GB",
                 "Máy chơi game cầm tay, chạy SteamOS",
-                20,
+                20, true, DateTime.Now.AddDays(4),
                 "https://cdn.cloudflare.steamstatic.com/steamdeck/images/hero/hero_deck_fullbleed.jpg"
             );
             await _handheldSpecRepository.InsertAsync(new HandheldSpecification
@@ -1932,7 +1972,7 @@ namespace Acme.ProductSelling
                 BatteryLife = "2-8 hours",
                 Weight = "669g",
                 OperatingSystem = "SteamOS 3.0",
-                Connectivity = ConnectivityType.WirelessAndBluetooth, // CHANGED
+                Connectivity = ConnectivityType.WirelessAndBluetooth,
                 WifiVersion = "WiFi 5 (802.11ac)",
                 BluetoothVersion = "5.0"
             }, autoSave: true);
@@ -1942,7 +1982,7 @@ namespace Acme.ProductSelling
                 consoles.Id, sony.Id, 13000000, 8,
                 "PlayStation 5 Digital Edition",
                 "Máy chơi game thế hệ mới, bản kỹ thuật số",
-                30,
+                30, true, DateTime.Now.AddDays(6),
                 "https://gmedia.playstation.com/is/image/SIEPDC/ps5-digital-edition-console-image-block-01-en-25jun20"
             );
             await _consoleSpecRepository.InsertAsync(new ConsoleSpecification
@@ -1956,7 +1996,7 @@ namespace Acme.ProductSelling
                 MaxResolution = "4K UHD",
                 MaxFrameRate = "120fps",
                 HDRSupport = true,
-                Connectivity = ConnectivityType.WiredWirelessAndBluetooth, // CHANGED
+                Connectivity = ConnectivityType.WiredWirelessAndBluetooth,
                 HasEthernet = true,
                 WifiVersion = "WiFi 6 (802.11ax)",
                 BluetoothVersion = "5.1"
@@ -1967,7 +2007,7 @@ namespace Acme.ProductSelling
                 hubs.Id, anker.Id, 2500000, 12,
                 "Anker PowerExpand Elite 13-in-1",
                 "Docking station USB-C 13 cổng, 85W PD",
-                35,
+                35, true, DateTime.Now.AddDays(3),
                 "https://d2j6dbq0eux0bg.cloudfront.net/images/66203968/2624850885.jpg"
             );
             await _hubSpecRepository.InsertAsync(new HubSpecification
@@ -1993,7 +2033,7 @@ namespace Acme.ProductSelling
                 cables.Id, ugreen.Id, 250000, 5,
                 "UGREEN USB-C to USB-C 100W Cable 2m",
                 "Cáp USB-C hỗ trợ sạc nhanh 100W, truyền dữ liệu",
-                200,
+                200, true, DateTime.Now.AddDays(1),
                 "https://i5.walmartimages.com/asr/c6f8f7c8-c0f5-4c8e-9d0e-1f7e0e0e0e0e.jpg"
             );
             await _cableSpecRepository.InsertAsync(new CableSpecification
@@ -2015,7 +2055,7 @@ namespace Acme.ProductSelling
                 chargers.Id, anker.Id, 1200000, 15,
                 "Anker 737 Charger GaNPrime 120W",
                 "Sạc nhanh 3 cổng USB-C + USB-A, GaN công nghệ mới",
-                80,
+                80, true, DateTime.Now.AddDays(5),
                 "https://m.media-amazon.com/images/I/61Zfh+vkVoL._AC_SL1500_.jpg"
             );
             await _chargerSpecRepository.InsertAsync(new ChargerSpecification
@@ -2039,7 +2079,7 @@ namespace Acme.ProductSelling
                 powerBanks.Id, anker.Id, 2800000, 10,
                 "Anker 737 Power Bank 24000mAh",
                 "Sạc dự phòng 140W, màn hình LED hiển thị",
-                50,
+                50, true, DateTime.Now.AddDays(4),
                 "https://m.media-amazon.com/images/I/61SfU5bj9uL._AC_SL1500_.jpg"
             );
             await _powerBankSpecRepository.InsertAsync(new PowerBankSpecification
@@ -2058,12 +2098,13 @@ namespace Acme.ProductSelling
                 Weight = 640,
                 Color = "Black"
             }, autoSave: true);
+
             // Example: Bluetooth Speaker
             var productSpeaker2 = await CreateProductAsync(
                 speakers.Id, jbl.Id, 2200000, 15,
                 "JBL Charge 5",
                 "Loa Bluetooth chống nước IP67, pin 20 giờ",
-                70,
+                70, true, DateTime.Now.AddDays(2),
                 "https://example.com/jbl-charge-5.jpg"
             );
             await _speakerSpecRepository.InsertAsync(new SpeakerSpecification
@@ -2072,7 +2113,7 @@ namespace Acme.ProductSelling
                 SpeakerType = SpeakerType.Stereo_2_0,
                 TotalWattage = 40,
                 Frequency = "60Hz - 20kHz",
-                Connectivity = ConnectivityType.WirelessAndBluetooth, // Bluetooth speaker
+                Connectivity = ConnectivityType.WirelessAndBluetooth,
                 InputPorts = "USB-C (charging only)",
                 Color = "Black"
             }, autoSave: true);
@@ -2082,13 +2123,13 @@ namespace Acme.ProductSelling
                 headsets.Id, steelseries.Id, 4500000, 10,
                 "SteelSeries Arctis Nova Pro Wireless",
                 "Tai nghe gaming đa kết nối, DAC riêng",
-                30,
+                30, true, DateTime.Now.AddDays(6),
                 "https://example.com/arctis-nova-pro.jpg"
             );
             await _headsetSpecRepository.InsertAsync(new HeadsetSpecification
             {
                 ProductId = productHeadset3.Id,
-                Connectivity = ConnectivityType.WiredWirelessAndBluetooth, // Multi-mode
+                Connectivity = ConnectivityType.WiredWirelessAndBluetooth,
                 DriverSize = 40,
                 HasMicrophone = true,
                 IsNoiseCancelling = true,
@@ -2105,14 +2146,14 @@ namespace Acme.ProductSelling
                 mice.Id, logitech.Id, 2500000, 8,
                 "Logitech MX Master 3S",
                 "Chuột không dây cao cấp, kết nối đa thiết bị",
-                80,
+                80, true, DateTime.Now.AddDays(3),
                 "https://resource.logitech.com/w_800,c_lpad,ar_1:1,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/mice/mx-master-3s/gallery/mx-master-3s-mouse-top-view-graphite.png"
             );
             await _mouseSpecRepository.InsertAsync(new MouseSpecification
             {
                 ProductId = productMouse_MultiMode2.Id,
                 Dpi = 8000,
-                PollingRate = 125, // Wireless mice typically lower
+                PollingRate = 125,
                 SensorType = "Darkfield Laser",
                 Weight = 141,
                 Connectivity = ConnectivityType.WirelessAndBluetooth, // Can connect via USB receiver or Bluetooth
@@ -2121,14 +2162,130 @@ namespace Acme.ProductSelling
                 Color = "Graphite"
             }, autoSave: true);
             #endregion
+
+            var store1 = await SeedStoreAsync("ST001", "Main Store", "123 Main St", "Ho Chi Minh City", "84-28-1234-5678");
+            var store2 = await SeedStoreAsync("ST002", "District 1 Branch", "456 Le Loi Blvd", "Ho Chi Minh City", "84-28-2234-5678");
+            var store3 = await SeedStoreAsync("ST003", "District 7 Branch", "789 Nguyen Van Linh", "Ho Chi Minh City", "84-28-3234-5678");
+
+            await SeedStoreInventoriesAsync(store1.Id, store2.Id, store3.Id);
+            var adminRole = await CreateRoleIfNotExistsAsync(Acme.ProductSelling.Identity.IdentityRoleConsts.Admin);
+            var managerRole = await CreateRoleIfNotExistsAsync(Acme.ProductSelling.Identity.IdentityRoleConsts.Manager);
+            var editorRole = await CreateRoleIfNotExistsAsync(Acme.ProductSelling.Identity.IdentityRoleConsts.Blogger);
+            var sellerRole = await CreateRoleIfNotExistsAsync(Acme.ProductSelling.Identity.IdentityRoleConsts.Seller);
+            var cashierRole = await CreateRoleIfNotExistsAsync(Acme.ProductSelling.Identity.IdentityRoleConsts.Cashier);
+            var warehouseRole = await CreateRoleIfNotExistsAsync(Acme.ProductSelling.Identity.IdentityRoleConsts.WarehouseStaff);
+
+            var customerRole = await CreateRoleIfNotExistsAsync(Acme.ProductSelling.Identity.IdentityRoleConsts.Customer, isDefault: true);
+
+
+            await CreateUserIfNotExistsAsync(
+                username: "manager",
+                email: "manager@abp.io",
+                password: "123456",
+                roleNameToAssign: managerRole.Name
+            //ProductSellingPermissions.Blogs.Default
+            );
+
+
+            await CreateUserIfNotExistsAsync(
+                username: "editor",
+                email: "blogger@abp.io",
+                password: "123456",
+                roleNameToAssign: editorRole.Name/*,
+                ProductSellingPermissions.Blogs.Default*/
+            );
+
+            await CreateUserIfNotExistsAsync(
+                           username: "seller1",
+                           email: "seller1@acme.com",
+                           password: "1q2w3E*",
+                           roleNameToAssign: sellerRole.Name,
+                           storeId: store1.Id
+                       );
+
+            await CreateUserIfNotExistsAsync(
+                username: "seller2",
+                email: "seller2@acme.com",
+                password: "1q2w3E*",
+                roleNameToAssign: sellerRole.Name,
+                storeId: store2.Id
+            );
+
+            await CreateUserIfNotExistsAsync(
+                username: "cashier1",
+                email: "cashier@abp.io",
+                password: "123456",
+                roleNameToAssign: cashierRole.Name,
+                storeId: store1.Id
+            );
+            await CreateUserIfNotExistsAsync(
+                username: "cashier2",
+                email: "cashier2@abp.io",
+                password: "123456",
+                roleNameToAssign: cashierRole.Name,
+                storeId: store2.Id
+            );
+            await CreateUserIfNotExistsAsync(
+                username: "warehouse1",
+                email: "warehouse1@acme.com",
+                password: "1q2w3E*",
+                roleNameToAssign: warehouseRole.Name,
+                storeId: store1.Id
+            );
+
+            await CreateUserIfNotExistsAsync(
+                username: "warehouse2",
+                email: "warehouse2@acme.com",
+                password: "1q2w3E*",
+                roleNameToAssign: warehouseRole.Name,
+                storeId: store2.Id
+            );
+
+            await GrantPermissionsToRoleAsync(managerRole.Name, new[]
+{
+                ProductSellingPermissions.Blogs.Default,
+                ProductSellingPermissions.Blogs.Create,
+                ProductSellingPermissions.Blogs.Edit,
+                ProductSellingPermissions.Orders.Default,
+                ProductSellingPermissions.Orders.ViewAll,
+                ProductSellingPermissions.Products.Default,
+                ProductSellingPermissions.Products.Create,
+                ProductSellingPermissions.Products.Edit,
+            });
+            await GrantPermissionsToRoleAsync(editorRole.Name, new[]
+{
+                ProductSellingPermissions.Blogs.Default,
+                ProductSellingPermissions.Blogs.Edit,
+                ProductSellingPermissions.Blogs.Delete,
+                ProductSellingPermissions.Blogs.Create
+            });
+
+            await GrantPermissionsToRoleAsync(cashierRole.Name, new[]
+{
+                ProductSellingPermissions.Orders.Default,   // View orders
+                ProductSellingPermissions.Orders.Complete,  // Complete orders after payment
+                ProductSellingPermissions.Orders.Edit,      // Update order status
+            });
+            await GrantPermissionsToRoleAsync(warehouseRole.Name, new[]
+{
+                ProductSellingPermissions.Orders.Default,       // View orders
+                ProductSellingPermissions.Orders.ViewCompleted, // View completed orders
+                ProductSellingPermissions.Orders.Fulfill,       // Mark orders as fulfilled/delivered
+                ProductSellingPermissions.Products.Default,     // View products to pick items
+            });
+            await GrantPermissionsToRoleAsync(sellerRole.Name, new[]
+            {
+                ProductSellingPermissions.Products.Default, // View products
+                ProductSellingPermissions.Orders.Default,   // View orders
+                ProductSellingPermissions.Orders.Create,    // Create orders for customers
+                ProductSellingPermissions.Orders.Edit,      // Edit pending orders
+            });
+
         }
-
-
-
 
         private async Task<Product> CreateProductAsync(Guid categoryId, Guid manufacturerId, decimal price,
                                                         double discount, string name, string desc,
-                                                        int stock, string imageUrl)
+                                                        int stock, bool isActive, DateTime releaseDate, string imageUrl)
         {
             var product = new Product
             {
@@ -2140,11 +2297,179 @@ namespace Acme.ProductSelling
                 Description = desc,
                 StockCount = stock,
                 ImageUrl = imageUrl,
-                UrlSlug = UrlHelperMethod.RemoveDiacritics(name)
+                UrlSlug = UrlHelperMethod.RemoveDiacritics(name),
+                IsActive = isActive,
+                ReleaseDate = releaseDate
+
             };
             return await _productRepository.InsertAsync(product, autoSave: true);
         }
+        private async Task<Store> SeedStoreAsync(string code,
+                                                 string name,
+                                                 string address,
+                                                 string city,
+                                                 string phoneNumber)
+        {
+            var existingStore = await _storeRepository.FirstOrDefaultAsync(s => s.Code == code);
+            if (existingStore != null)
+            {
+                return existingStore;
+            }
 
+            var store = new Store(
+                _guidGenerator.Create(),
+                name,
+                code,
+                address,
+                city,
+                phoneNumber
+            );
+
+            //store.State = "HCMC";
+            store.Email = $"{code.ToLower()}@acme.com";
+            store.ManagerName = $"{name} Manager";
+
+            await _storeRepository.InsertAsync(store, autoSave: true);
+            return store;
+        }
+        private async Task SeedStoreInventoriesAsync(Guid store1Id, Guid store2Id, Guid store3Id)
+        {
+            // Check if inventories already exist
+            var existingCount = await _storeInventoryRepository.CountAsync();
+            if (existingCount > 0)
+            {
+                return; // Already seeded
+            }
+
+            // Get all products
+            var allProducts = await _productRepository.GetListAsync();
+
+            _logger.LogInformation("Seeding store inventories for {ProductCount} products across 3 stores...", allProducts.Count);
+
+            var inventories = new List<StoreInventory>();
+
+            foreach (var product in allProducts)
+            {
+                var totalStock = product.StockCount;
+
+                var store1Stock = (int)(totalStock * 0.5);
+                var store2Stock = (int)(totalStock * 0.3);
+                var store3Stock = totalStock - store1Stock - store2Stock;
+
+                if (store1Stock > 0)
+                {
+                    inventories.Add(new StoreInventory(
+                        _guidGenerator.Create(),
+                        store1Id,
+                        product.Id,
+                        store1Stock,
+                        10, // reorder level
+                        50  // reorder quantity
+                    ));
+                }
+
+                // Create inventory for Store 2
+                if (store2Stock > 0)
+                {
+                    inventories.Add(new StoreInventory(
+                        _guidGenerator.Create(),
+                        store2Id,
+                        product.Id,
+                        store2Stock,
+                        10,
+                        50
+                    ));
+                }
+
+                // Create inventory for Store 3
+                if (store3Stock > 0)
+                {
+                    inventories.Add(new StoreInventory(
+                        _guidGenerator.Create(),
+                        store3Id,
+                        product.Id,
+                        store3Stock,
+                        10,
+                        50
+                    ));
+                }
+            }
+
+            await _storeInventoryRepository.InsertManyAsync(inventories, autoSave: true);
+
+            _logger.LogInformation("Store inventories seeded successfully!");
+        }
+        private async Task<Volo.Abp.Identity.IdentityRole> CreateRoleIfNotExistsAsync(
+            string roleName,
+            bool isDefault = false,
+            bool isPublic = false)
+        {
+            var normalizedRoleName = _lookupNormalizer.NormalizeName(roleName);
+            var existingRole = await _identityRoleRepository.FindByNormalizedNameAsync(normalizedRoleName);
+            if (existingRole != null) return existingRole;
+
+            var role = new Volo.Abp.Identity.IdentityRole(_guidGenerator.Create(), roleName)
+            {
+                IsDefault = isDefault,
+                IsPublic = isPublic
+            };
+            role.ChangeName(roleName);
+
+            await _identityRoleRepository.InsertAsync(role);
+            return role;
+        }
+        private async Task<Volo.Abp.Identity.IdentityUser> CreateUserIfNotExistsAsync(
+                    string username,
+                    string email,
+                    string password,
+                    string roleNameToAssign = null,
+                    Guid? storeId = null)
+        {
+            var normalizedUserName = _lookupNormalizer.NormalizeName(username);
+            var existingUser = await _identityUserRepository.FindByNormalizedUserNameAsync(normalizedUserName);
+            if (existingUser != null)
+            {
+                return existingUser;
+            }
+
+            var user = new AppUser(_guidGenerator.Create(), username, email)
+            {
+                Name = username,
+            };
+
+            // Assign to store if specified (for staff only)
+            if (storeId.HasValue)
+            {
+                user.AssignToStore(storeId.Value);
+            }
+
+            var creationResult = await _identityUserManager.CreateAsync(user, password);
+            if (!creationResult.Succeeded)
+            {
+                var errorDetails = string.Join(", ", creationResult.Errors.Select(e => e.Description));
+                throw new Exception($"Cannot create user '{username}'. Reason: {errorDetails}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(roleNameToAssign))
+            {
+                var roleResult = await _identityUserManager.AddToRoleAsync(user, roleNameToAssign);
+                if (!roleResult.Succeeded)
+                {
+                    var errorDetails = string.Join(", ", roleResult.Errors.Select(e => e.Description));
+                    throw new Exception($"Cannot assign role '{roleNameToAssign}' to user '{username}'. Reason: {errorDetails}");
+                }
+            }
+
+            return user;
+        }
+        private async Task GrantPermissionsToRoleAsync(string roleName, string[] permissions)
+        {
+            await _permissionDataSeeder.SeedAsync(
+                RolePermissionValueProvider.ProviderName,
+                roleName,
+                permissions
+            );
+        }
     }
 }
 

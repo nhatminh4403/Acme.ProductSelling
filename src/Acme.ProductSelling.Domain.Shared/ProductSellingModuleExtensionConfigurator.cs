@@ -1,7 +1,4 @@
-﻿using Acme.ProductSelling.Users;
-using System;
-using Volo.Abp.ObjectExtending;
-using Volo.Abp.Threading;
+﻿using Volo.Abp.Threading;
 
 namespace Acme.ProductSelling;
 
@@ -69,27 +66,27 @@ public static class ProductSellingModuleExtensionConfigurator
          * https://docs.abp.io/en/abp/latest/Module-Entity-Extensions
          */
 
-        ObjectExtensionManager.Instance.Modules()
-        .ConfigureIdentity(identity =>
-        {
-            identity.ConfigureUser(user =>
-            {
-                user.AddOrUpdateProperty<DateTime?>(
-                    StaffExtraProperties.DateOfBirth,
-                    property =>
-                    {
-                    }
-                );
+        //ObjectExtensionManager.Instance.Modules()
+        //.ConfigureIdentity(identity =>
+        //{
+        //    identity.ConfigureUser(user =>
+        //    {
+        //        user.AddOrUpdateProperty<DateTime?>(
+        //            StaffExtraProperties.DateOfBirth,
+        //            property =>
+        //            {
+        //            }
+        //        );
 
-                user.AddOrUpdateProperty<UserGender>(
-                    StaffExtraProperties.Gender,
-                    propertyName =>
-                    {
+        //        user.AddOrUpdateProperty<UserGender>(
+        //            StaffExtraProperties.Gender,
+        //            propertyName =>
+        //            {
 
-                    }
-                );
-            });
-        });
+        //            }
+        //        );
+        //    });
+        //});
 
     }
 }

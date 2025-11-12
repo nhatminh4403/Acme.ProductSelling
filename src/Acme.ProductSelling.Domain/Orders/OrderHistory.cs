@@ -12,7 +12,7 @@ namespace Acme.ProductSelling.Orders
         public PaymentStatus OldPaymentStatus { get; set; }
         public PaymentStatus NewPaymentStatus { get; set; }
         public string ChangeDescription { get; set; }
-        public string ChangedBy { get; set; } // Username or ID
+        public string ChangedBy { get; set; }
 
         protected OrderHistory() { }
 

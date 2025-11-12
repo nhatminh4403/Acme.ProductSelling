@@ -11,6 +11,7 @@ using Acme.ProductSelling.Specifications.Junctions;
 using Acme.ProductSelling.Specifications.Models;
 using Acme.ProductSelling.Users;
 using Microsoft.EntityFrameworkCore;
+using System;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
@@ -58,6 +59,7 @@ public class ProductSellingDbContext :
     //Model Management
     public DbSet<Category> Categories { get; set; }
     public DbSet<Product> Products { get; set; }
+    public DbSet<StoreInventory> StoreInventories { get; set; }
     public DbSet<Manufacturer> Manufacturers { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
@@ -178,6 +180,34 @@ public class ProductSellingDbContext :
             b.HasOne(p => p.Category).WithMany(c => c.Products).HasForeignKey(p => p.CategoryId).OnDelete(DeleteBehavior.Restrict);
             b.HasOne(p => p.Manufacturer).WithMany(m => m.Products).HasForeignKey(p => p.ManufacturerId).OnDelete(DeleteBehavior.Restrict);
             b.HasIndex(p => p.UrlSlug).IsUnique();
+        });
+
+        builder.Entity<StoreInventory>(b =>
+        {
+            b.ToTable(tablePrefix + "StoreInventories");
+            b.ConfigureByConvention();
+
+            b.Property(si => si.Quantity).IsRequired();
+            b.Property(si => si.ReorderLevel).IsRequired().HasDefaultValue(10);
+            b.Property(si => si.ReorderQuantity).IsRequired().HasDefaultValue(50);
+            b.Property(si => si.IsAvailableForSale).IsRequired().HasDefaultValue(true);
+
+            // Relationships
+            b.HasOne(si => si.Store)
+                .WithMany()
+                .HasForeignKey(si => si.StoreId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            b.HasOne(si => si.Product)
+                .WithMany(p => p.StoreInventories)
+                .HasForeignKey(si => si.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Indexes
+            b.HasIndex(si => new { si.StoreId, si.ProductId }).IsUnique();
+            b.HasIndex(si => si.StoreId);
+            b.HasIndex(si => si.ProductId);
+            b.HasIndex(si => si.Quantity);
         });
         #endregion
 
@@ -450,6 +480,7 @@ public class ProductSellingDbContext :
         {
             b.ToTable(tablePrefix + "Orders");
             b.ConfigureFullAuditedAggregateRoot();
+            b.ConfigureByConvention();
 
             b.Property(o => o.OrderNumber).IsRequired().HasMaxLength(OrderConsts.MaxOrderNumberLength);
             b.HasIndex(o => o.OrderNumber).IsUnique();
@@ -457,11 +488,27 @@ public class ProductSellingDbContext :
             b.Property(o => o.CustomerPhone).HasMaxLength(OrderConsts.MaxCustomerPhoneLentgth);
             b.Property(o => o.ShippingAddress).IsRequired();
             b.Property(o => o.TotalAmount).HasColumnType("decimal(18,2)").IsRequired();
+            b.Property(x => x.PaymentMethod).IsRequired();
+            b.Property(x => x.SellerName).HasMaxLength(128);
+            b.Property(x => x.CashierName).HasMaxLength(128);
+            b.Property(x => x.FulfillerName).HasMaxLength(128);
+
+            b.HasIndex(x => x.OrderNumber).IsUnique();
+            b.HasIndex(x => x.StoreId);
+            b.HasIndex(x => x.OrderType);
+            b.HasIndex(x => x.OrderStatus);
+            b.HasIndex(x => x.PaymentStatus);
+            b.HasIndex(x => x.CustomerId);
+            b.HasIndex(x => x.CreationTime);
 
             b.HasMany(o => o.OrderItems)
              .WithOne()
              .HasForeignKey(oi => oi.OrderId)
              .IsRequired();
+            b.HasMany(x => x.OrderHistories)
+                .WithOne()
+                .HasForeignKey(x => x.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<OrderItem>(b =>
@@ -560,8 +607,13 @@ public class ProductSellingDbContext :
         {
             b.ToTable(AbpIdentityDbProperties.DbTablePrefix + "Users");
             b.ConfigureByConvention();
-            b.Property(u => u.DateOfBirth).IsRequired(false);
-            b.Property(u => u.Gender).IsRequired(false).HasDefaultValue(UserGender.NONE);
+            b.Property<Guid?>("AssignedStoreId")
+                 .HasColumnName("AssignedStoreId");
+            b.HasOne(u => u.Customer)
+             .WithOne(c => c.AppUser)
+             .HasForeignKey<Customer>(c => c.AppUserId)
+             .IsRequired()
+             .OnDelete(DeleteBehavior.Restrict);
         });
         //customer
         builder.Entity<Customer>(b =>
@@ -569,7 +621,9 @@ public class ProductSellingDbContext :
             b.ToTable(tablePrefix + "Customers");
             b.ConfigureByConvention();
             b.Property(u => u.DateOfBirth).IsRequired(false);
-            b.Property(u => u.Gender).IsRequired(false).HasDefaultValue(UserGender.NONE);
+            b.Property(u => u.Gender).IsRequired().HasDefaultValue(UserGender.NONE);
+
+            b.HasIndex(c => c.AppUserId).IsUnique();
         });
         #endregion
     }

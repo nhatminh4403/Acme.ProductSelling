@@ -55,11 +55,21 @@ public static class ProductSellingPermissions
         public const string Create = Default + ".Create";
         public const string Edit = Default + ".Edit";
         public const string Delete = Default + ".Delete";
+    }// You can add specific inventory permissions if needed
+    public static class Inventory
+    {
+        public const string Default = GroupName + ".Inventory";
+        public const string Manage = Default + ".Manage";
+        public const string Transfer = Default + ".Transfer";
+        public const string ViewAllStores = Default + ".ViewAllStores";
     }
     public static class Users
     {
         public const string Default = GroupName + ".Users";
         public const string ManageStoreAssignment = Default + ".ManageStoreAssignment";
+        public const string AssignToStore = Default + ".AssignToStore"; 
+        public const string Manage = Default + ".Manage";
+
     }
     public static class Blogs
     {

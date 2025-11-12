@@ -27,7 +27,7 @@ namespace Acme.ProductSelling.Orders
         }
         public void SetQuantity(int quantity)
         {
-            Check.Range(quantity, nameof(quantity), 1, int.MaxValue); // Đảm bảo số lượng > 0
+            Check.Range(quantity, nameof(quantity), 1, int.MaxValue);
             Quantity = quantity;
         }
     }

@@ -506,6 +506,17 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CashierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CashierName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .IsRequired()
@@ -547,6 +558,17 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ExtraProperties");
 
+                    b.Property<DateTime?>("FulfilledAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("FulfillerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FulfillerName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -572,6 +594,9 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<int>("OrderStatus")
                         .HasColumnType("int");
 
+                    b.Property<int>("OrderType")
+                        .HasColumnType("int");
+
                     b.Property<string>("PaymentMethod")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -579,17 +604,40 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<int>("PaymentStatus")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("SellerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SellerName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
                     b.Property<string>("ShippingAddress")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("StoreId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreationTime");
+
+                    b.HasIndex("CustomerId");
+
                     b.HasIndex("OrderNumber")
                         .IsUnique();
+
+                    b.HasIndex("OrderStatus");
+
+                    b.HasIndex("OrderType");
+
+                    b.HasIndex("PaymentStatus");
+
+                    b.HasIndex("StoreId");
 
                     b.ToTable("AppOrders", (string)null);
                 });
@@ -936,6 +984,9 @@ namespace Acme.ProductSelling.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -961,6 +1012,9 @@ namespace Acme.ProductSelling.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<DateTime?>("ReleaseDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("StockCount")
                         .HasColumnType("int");
 
@@ -979,6 +1033,91 @@ namespace Acme.ProductSelling.Migrations
                         .IsUnique();
 
                     b.ToTable("AppProducts", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Products.StoreInventory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DeleterId");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletionTime");
+
+                    b.Property<string>("ExtraProperties")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<bool>("IsAvailableForSale")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("IsDeleted");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("LastModificationTime");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LastModifierId");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReorderLevel")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(10);
+
+                    b.Property<int>("ReorderQuantity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(50);
+
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("Quantity");
+
+                    b.HasIndex("StoreId");
+
+                    b.HasIndex("StoreId", "ProductId")
+                        .IsUnique();
+
+                    b.ToTable("AppStoreInventories", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Junctions.CaseMaterial", b =>
@@ -2393,6 +2532,179 @@ namespace Acme.ProductSelling.Migrations
                         .IsUnique();
 
                     b.ToTable("AppWebcamSpecifications", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Stores.Store", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DeleterId");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletionTime");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExtraProperties")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("IsDeleted");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("LastModificationTime");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LastModifierId");
+
+                    b.Property<string>("ManagerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Store");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Users.Customer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AppUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DeleterId");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletionTime");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExtraProperties")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Gender")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("IsDeleted");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("LastModificationTime");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LastModifierId");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShippingAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId")
+                        .IsUnique();
+
+                    b.ToTable("AppCustomers", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>
@@ -4265,15 +4577,9 @@ namespace Acme.ProductSelling.Migrations
                 {
                     b.HasBaseType("Volo.Abp.Identity.IdentityUser");
 
-                    b.Property<DateTime?>("DateOfBirth")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Gender")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ShippingAddress")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                    b.Property<Guid?>("AssignedStoreId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("AssignedStoreId");
 
                     b.ToTable("AbpUsers", (string)null);
 
@@ -4324,6 +4630,25 @@ namespace Acme.ProductSelling.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Manufacturer");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Products.StoreInventory", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithMany("StoreInventories")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Acme.ProductSelling.Stores.Store", "Store")
+                        .WithMany()
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Store");
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Junctions.CaseMaterial", b =>
@@ -4763,6 +5088,17 @@ namespace Acme.ProductSelling.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Acme.ProductSelling.Users.Customer", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Users.AppUser", "AppUser")
+                        .WithOne("Customer")
+                        .HasForeignKey("Acme.ProductSelling.Users.Customer", "AppUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+                });
+
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLogAction", b =>
                 {
                     b.HasOne("Volo.Abp.AuditLogging.AuditLog", null)
@@ -5022,6 +5358,8 @@ namespace Acme.ProductSelling.Migrations
                     b.Navigation("StorageSpecification")
                         .IsRequired();
 
+                    b.Navigation("StoreInventories");
+
                     b.Navigation("WebcamSpecification")
                         .IsRequired();
                 });
@@ -5074,6 +5412,12 @@ namespace Acme.ProductSelling.Migrations
             modelBuilder.Entity("Volo.Abp.TenantManagement.Tenant", b =>
                 {
                     b.Navigation("ConnectionStrings");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Users.AppUser", b =>
+                {
+                    b.Navigation("Customer")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

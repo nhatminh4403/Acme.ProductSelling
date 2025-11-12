@@ -7,6 +7,7 @@ using Acme.ProductSelling.Orders.Services;
 using Acme.ProductSelling.Payments;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products;
+using Acme.ProductSelling.Stores;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -28,12 +29,14 @@ using Volo.Abp.Data;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
+using Volo.Abp.Identity;
 using Volo.Abp.Users;
 namespace Acme.ProductSelling.Orders
 {
     public class OrderAppService : ApplicationService, IOrderAppService
     {
-        private readonly IRepository<Order, Guid> _orderRepository;
+        private readonly IOrderRepository _orderRepository;
+
         private readonly IRepository<Product, Guid> _productRepository;
         private readonly IGuidGenerator _guidGenerator;
         private readonly ICurrentUser _currentUser;
@@ -45,8 +48,11 @@ namespace Acme.ProductSelling.Orders
         private readonly IStringLocalizer<ProductSellingResource> _localizer;
         private readonly IOrderHistoryAppService _orderHistoryAppService;
         private readonly IDataFilter<ISoftDelete> _softDeleteFilter;
+        private readonly IIdentityUserRepository _userRepository;
+        private readonly IStoreRepository _storeRepository;
+        private readonly IStoreInventoryRepository _storeInventoryRepository;
         public OrderAppService(
-            IRepository<Order, Guid> orderRepository,
+            IOrderRepository orderRepository,
             IRepository<Product, Guid> productRepository,
             IGuidGenerator guidGenerator,
             ICurrentUser currentUser,
@@ -57,7 +63,10 @@ namespace Acme.ProductSelling.Orders
             IOrderNotificationService orderNotificationService,
             IStringLocalizer<ProductSellingResource> localizer,
             IOrderHistoryAppService orderHistoryAppService,
-            IDataFilter<ISoftDelete> softDeleteFilter)
+            IDataFilter<ISoftDelete> softDeleteFilter,
+            IIdentityUserRepository userRepository,
+            IStoreRepository storeRepository,
+            IStoreInventoryRepository storeInventoryRepository)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
@@ -71,6 +80,9 @@ namespace Acme.ProductSelling.Orders
             _localizer = localizer;
             _orderHistoryAppService = orderHistoryAppService;
             _softDeleteFilter = softDeleteFilter;
+            _userRepository = userRepository;
+            _storeRepository = storeRepository;
+            _storeInventoryRepository = storeInventoryRepository;
         }
         [Authorize]
         public async Task<OrderDto> ConfirmPayPalOrderAsync(Guid guid)
@@ -108,7 +120,45 @@ namespace Acme.ProductSelling.Orders
             {
                 var query = (await _orderRepository.GetQueryableAsync())
                     .Include(o => o.OrderItems);
-                var totalCount = await AsyncExecuter.CountAsync(query);
+                IQueryable<Order> filteredQuery = query;
+
+                if (input.StoreId.HasValue)
+                {
+                    filteredQuery = query.Where(o => o.StoreId == input.StoreId.Value);
+                }
+
+                if (input.OrderType.HasValue)
+                {
+                    filteredQuery = query.Where(o => o.OrderType == input.OrderType.Value);
+                }
+
+                if (input.OrderStatus.HasValue)
+                {
+                    filteredQuery = query.Where(o => o.OrderStatus == input.OrderStatus.Value);
+                }
+
+                if (input.PaymentStatus.HasValue)
+                {
+                    filteredQuery = query.Where(o => o.PaymentStatus == input.PaymentStatus.Value);
+                }
+
+                if (input.StartDate.HasValue)
+                {
+                    filteredQuery = query.Where(o => o.CreationTime >= input.StartDate.Value);
+                }
+                if (input.EndDate.HasValue)
+                {
+                    filteredQuery = query.Where(o => o.CreationTime <= input.EndDate.Value);
+                }
+
+                var userStoreId = await GetCurrentUserStoreIdAsync();
+                if (userStoreId.HasValue && !await IsAdminOrManagerAsync())
+                {
+                    // Non-admin users can only see orders from their assigned store
+                    filteredQuery = query.Where(o => o.StoreId == userStoreId.Value);
+                }
+
+                var totalCount = await AsyncExecuter.CountAsync(filteredQuery);
                 var items = await AsyncExecuter.ToListAsync(
                     query.OrderBy(input.Sorting ?? "CreationTime DESC").PageBy(input)
                 );
@@ -118,6 +168,7 @@ namespace Acme.ProductSelling.Orders
                 );
             }
         }
+        [Authorize(ProductSellingPermissions.Orders.Create)]
         public async Task<CreateOrderResultDto> CreateAsync(CreateOrderDto input)
         {
             var customerId = _currentUser.Id.Value;
@@ -481,6 +532,342 @@ namespace Acme.ProductSelling.Orders
             await _orderRepository.UpdateAsync(order, autoSave: true);
 
             Logger.LogInformation("Order {OrderId} restored by admin {AdminId}", orderId, CurrentUser.Id);
+        }
+        [Authorize(ProductSellingPermissions.Orders.Create)]
+        public async Task<OrderDto> CreateInStoreOrderAsync(CreateInStoreOrderDto input)
+        {
+            var userStoreId = await GetCurrentUserStoreIdAsync();
+            if (!userStoreId.HasValue)
+            {
+                throw new UserFriendlyException(
+                    _localizer["Order:UserNotAssignedToStore"],
+                    "Người dùng phải được gán vào một cửa hàng để tạo đơn hàng."
+                );
+            }
+
+            // Get current user info (seller)
+            var currentUser = await _userRepository.GetAsync(_currentUser.Id.Value);
+            var store = await _storeRepository.GetAsync(userStoreId.Value);
+
+            // Generate order number for in-store order
+            var orderNumber = await GenerateInStoreOrderNumberAsync(userStoreId.Value);
+
+            // Create in-store order
+            var order = new Order(
+                _guidGenerator.Create(),
+                orderNumber,
+                DateTime.Now,
+                userStoreId.Value,
+                currentUser.Id,
+                currentUser.Name ?? currentUser.UserName,
+                input.CustomerName,
+                input.CustomerPhone,
+                input.PaymentMethod
+            );
+
+            // Get products and validate stock
+            var productIds = input.Items.Select(i => i.ProductId).ToList();
+            var products = (await _productRepository.GetListAsync(p => productIds.Contains(p.Id)))
+                          .ToDictionary(p => p.Id);
+
+            // Add order items
+            foreach (var itemDto in input.Items)
+            {
+                if (!products.TryGetValue(itemDto.ProductId, out var product))
+                {
+                    throw new UserFriendlyException(
+                        _localizer["Product:NotFound"],
+                        $"Không tìm thấy sản phẩm với ID: {itemDto.ProductId}"
+                    );
+                }
+
+                if (!product.IsActive)
+                {
+                    throw new UserFriendlyException(
+                        _localizer["Product:NotActive"],
+                        $"Sản phẩm '{product.ProductName}' không còn hoạt động."
+                    );
+                }
+                if (product.ReleaseDate.HasValue && product.ReleaseDate.Value > DateTime.Now)
+                {
+                    throw new UserFriendlyException(
+                        _localizer["Product:NotYetReleased"],
+                        $"Sản phẩm '{product.ProductName}' sẽ có sẵn từ {product.ReleaseDate.Value:dd/MM/yyyy}."
+                    );
+                }
+                // NEW: Check store-specific inventory
+                var hasStock = await _storeInventoryRepository.HasSufficientStockAsync(
+                    userStoreId.Value,
+                    product.Id,
+                    itemDto.Quantity
+                );
+
+                if (!hasStock)
+                {
+                    var availableStock = await GetAvailableStockAsync(userStoreId.Value, product.Id);
+                    throw new UserFriendlyException(
+                        _localizer["Product:Stock:NotEnoughStockInStore", product.ProductName, store.Name, availableStock]
+                    );
+                }
+
+                // Add item to order
+                order.AddOrderItem(
+                    product.Id,
+                    product.ProductName,
+                    product.DiscountedPrice ?? product.OriginalPrice,
+                    itemDto.Quantity
+                );
+
+                // NEW: Reduce store-specific inventory
+                var storeInventory = await _storeInventoryRepository.GetByStoreAndProductAsync(
+                    userStoreId.Value,
+                    product.Id
+                );
+                storeInventory.RemoveStock(itemDto.Quantity);
+                await _storeInventoryRepository.UpdateAsync(storeInventory);
+            }
+
+            // Calculate totals
+            order.CalculateTotals();
+
+            // Save order
+            await _orderRepository.InsertAsync(order, autoSave: true);
+
+            // Log order creation
+            await _orderHistoryAppService.LogOrderChangeAsync(
+                order.Id,
+                OrderStatus.Pending,
+                order.OrderStatus,
+                PaymentStatus.Unpaid,
+                order.PaymentStatus,
+                "In-store order created"
+            );
+
+            // Notify via SignalR
+            await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
+
+            Logger.LogInformation(
+                "In-store order {OrderNumber} created at store {StoreId} by seller {SellerId}",
+                order.OrderNumber, userStoreId.Value, currentUser.Id
+            );
+
+            return await MapToOrderDtoAsync(order);
+        }
+
+        [Authorize(ProductSellingPermissions.Orders.Complete)]
+        public async Task<OrderDto> CompleteInStorePaymentAsync(Guid orderId, CompleteInStorePaymentDto input)
+        {
+            var order = await _orderRepository.GetAsync(orderId);
+
+            // Validate order type
+            if (order.OrderType != OrderType.InStore)
+            {
+                throw new UserFriendlyException(
+                    _localizer["Order:OnlyForInStoreOrders"],
+                    "Phương thức này chỉ dành cho đơn hàng tại cửa hàng."
+                );
+            }
+
+            // Check store access
+            await CheckStoreAccessAsync(order.StoreId.Value);
+
+            // Get current user (cashier)
+            var currentUser = await _userRepository.GetAsync(_currentUser.Id.Value);
+
+            var oldOrderStatus = order.OrderStatus;
+            var oldPaymentStatus = order.PaymentStatus;
+
+            // Complete payment
+            order.CompletePaymentInStore(
+                currentUser.Id,
+                currentUser.Name ?? currentUser.UserName,
+                input.PaidAmount
+            );
+
+            await _orderRepository.UpdateAsync(order, autoSave: true);
+
+            // Log the change
+            await _orderHistoryAppService.LogOrderChangeAsync(
+                orderId,
+                oldOrderStatus,
+                order.OrderStatus,
+                oldPaymentStatus,
+                order.PaymentStatus,
+                $"Payment completed by cashier. Amount: {input.PaidAmount:C}"
+            );
+
+            // Notify via SignalR
+            await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
+
+            Logger.LogInformation(
+                "In-store order {OrderId} payment completed by cashier {CashierId}",
+                orderId, currentUser.Id
+            );
+
+            return await MapToOrderDtoAsync(order);
+        }
+
+
+        private async Task<int> GetAvailableStockAsync(Guid storeId, Guid productId)
+        {
+            var inventory = await _storeInventoryRepository.GetByStoreAndProductAsync(storeId, productId);
+            return inventory?.Quantity ?? 0;
+        }
+        [Authorize(ProductSellingPermissions.Orders.Fulfill)]
+        public async Task<OrderDto> FulfillInStoreOrderAsync(Guid orderId)
+        {
+            var order = await _orderRepository.GetAsync(orderId);
+
+            // Validate order type
+            if (order.OrderType != OrderType.InStore)
+            {
+                throw new UserFriendlyException(
+                    _localizer["Order:OnlyForInStoreOrders"],
+                    "Phương thức này chỉ dành cho đơn hàng tại cửa hàng."
+                );
+            }
+
+            // Check store access
+            await CheckStoreAccessAsync(order.StoreId.Value);
+
+            // Get current user (warehouse staff)
+            var currentUser = await _userRepository.GetAsync(_currentUser.Id.Value);
+
+            var oldOrderStatus = order.OrderStatus;
+
+            // Fulfill order
+            order.FulfillInStore(
+                currentUser.Id,
+                currentUser.Name ?? currentUser.UserName
+            );
+
+            await _orderRepository.UpdateAsync(order, autoSave: true);
+
+            // Log the change
+            await _orderHistoryAppService.LogOrderChangeAsync(
+                orderId,
+                oldOrderStatus,
+                order.OrderStatus,
+                order.PaymentStatus,
+                order.PaymentStatus,
+                "Order fulfilled - items given to customer"
+            );
+
+            // Notify via SignalR
+            await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
+
+            Logger.LogInformation(
+                "In-store order {OrderId} fulfilled by warehouse staff {FulfillerId}",
+                orderId, currentUser.Id
+            );
+
+            return await MapToOrderDtoAsync(order);
+        }
+
+        [Authorize]
+        public async Task<PagedResultDto<OrderDto>> GetStoreOrdersAsync(GetOrderListInput input)
+        {
+            var userStoreId = await GetCurrentUserStoreIdAsync();
+
+            if (!userStoreId.HasValue)
+            {
+                throw new UserFriendlyException(
+                    _localizer["Order:UserNotAssignedToStore"],
+                    "Người dùng phải được gán vào một cửa hàng."
+                );
+            }
+
+            // Override store filter with user's assigned store (unless admin/manager)
+            if (!await IsAdminOrManagerAsync())
+            {
+                input.StoreId = userStoreId.Value;
+            }
+
+            return await GetListAsync(input);
+        }
+
+
+        private async Task<Guid?> GetCurrentUserStoreIdAsync()
+        {
+            if (!_currentUser.Id.HasValue)
+                return null;
+
+            var user = await _userRepository.GetAsync(_currentUser.Id.Value);
+
+            // Get AssignedStoreId from extra properties
+            var storeIdProperty = user.GetProperty<Guid?>("AssignedStoreId");
+            return storeIdProperty;
+        }
+
+        private async Task<bool> IsAdminOrManagerAsync()
+        {
+            if (!_currentUser.Id.HasValue)
+                return false;
+
+            return await IsInRoleAsync("admin") || await IsInRoleAsync("manager");
+        }
+
+        private async Task<bool> IsInRoleAsync(string roleName)
+        {
+            if (!_currentUser.Id.HasValue)
+                return false;
+
+            var user = await _userRepository.GetAsync(_currentUser.Id.Value);
+            var roles = await _userRepository.GetRolesAsync(user.Id);
+            return roles.Any(r => string.Equals(r.Name, roleName, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private async Task CheckStoreAccessAsync(Guid storeId)
+        {
+            // Admins and managers can access all stores
+            if (await IsAdminOrManagerAsync())
+            {
+                return;
+            }
+
+            // Other users can only access their assigned store
+            var userStoreId = await GetCurrentUserStoreIdAsync();
+            if (!userStoreId.HasValue || userStoreId.Value != storeId)
+            {
+                throw new UserFriendlyException(
+                    _localizer["Order:NoStoreAccess"],
+                    "Bạn không có quyền truy cập dữ liệu của cửa hàng này."
+                );
+            }
+        }
+        private async Task<string> GenerateInStoreOrderNumberAsync(Guid storeId)
+        {
+            var store = await _storeRepository.GetAsync(storeId);
+            var date = DateTime.Now.ToString("yyyyMMdd");
+
+            // Get today's order count for this store
+            var todayStart = DateTime.Today;
+            var todayEnd = todayStart.AddDays(1);
+
+            var query = await _orderRepository.GetQueryableAsync();
+            var todayOrderCount = await AsyncExecuter.CountAsync(
+                query.Where(x => x.StoreId == storeId &&
+                    x.OrderType == OrderType.InStore &&
+                    x.CreationTime >= todayStart &&
+                    x.CreationTime < todayEnd)
+            );
+
+            var sequence = (todayOrderCount + 1).ToString("D4");
+            return $"ST-{store.Code}-{date}-{sequence}";
+        }
+
+        private async Task<OrderDto> MapToOrderDtoAsync(Order order)
+        {
+            var dto = ObjectMapper.Map<Order, OrderDto>(order);
+
+            // Map store name if order has a store
+            if (order.StoreId.HasValue)
+            {
+                var store = await _storeRepository.GetAsync(order.StoreId.Value);
+                dto.StoreName = store.Name;
+            }
+
+            return dto;
         }
     }
 }
