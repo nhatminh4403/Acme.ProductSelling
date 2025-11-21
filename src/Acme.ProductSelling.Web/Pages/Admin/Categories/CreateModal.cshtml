@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "{prefix}/categories/create"
 @model Acme.ProductSelling.Web.Pages.Admin.Categories.CreateModalModel
 @using Acme.ProductSelling.Localization
 @using Microsoft.Extensions.Localization
@@ -9,7 +9,7 @@
     Layout = null;
 }
 
-<form method="post" id="CategoryForm" asp-page="/Admin/Categories/CreateModal">
+<form method="post" id="CategoryForm" asp-page="@($"/{Model.Prefix}/categories/create")">
     <abp-modal>
         <abp-modal-header title="@L["Category:CreateCategory"].Value"></abp-modal-header>
         <abp-modal-body>

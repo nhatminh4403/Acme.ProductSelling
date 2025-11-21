@@ -1,0 +1,52 @@
+﻿.recently-viewed-wrapper {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 1.5rem 0;
+    border-radius: 0.5rem;
+}
+
+.product-card-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .product-card-hover:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .product-card-hover img {
+        transition: transform 0.3s ease;
+    }
+
+    .product-card-hover:hover img {
+        transform: scale(1.05);
+    }
+
+/* Skeleton animation */
+.placeholder {
+    animation: placeholder-glow 2s ease-in-out infinite;
+}
+
+@keyframes placeholder-glow {
+    0%, 100% {
+        opacity: 0.4;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .recently-viewed-wrapper h5 {
+        font-size: 1rem;
+    }
+
+    .recently-viewed-wrapper .card-title {
+        font-size: 0.75rem !important;
+    }
+
+    .recently-viewed-wrapper .card-body {
+        padding: 0.5rem !important;
+    }
+}

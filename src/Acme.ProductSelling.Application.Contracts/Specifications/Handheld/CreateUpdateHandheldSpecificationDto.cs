@@ -1,6 +1,6 @@
 using Acme.ProductSelling.Categories;
 
-namespace Acme.ProductSelling.Specifications.Handheld
+namespace Acme.ProductSelling.Specifications
 {
     public class CreateUpdateHandheldSpecificationDto
     {

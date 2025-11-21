@@ -76,7 +76,7 @@ function formatArrayBuffer(data) {
         str += `0x${pad}${num.toString(16)} `;
     });
     // Trim of trailing space.
-    return str.substr(0, str.length - 1);
+    return str.substring(0, str.length - 1);
 }
 exports.formatArrayBuffer = formatArrayBuffer;
 // Also in signalr-protocol-msgpack/Utils.ts

@@ -1,4 +1,5 @@
-﻿using Volo.Abp.Domain.Services;
+﻿using Acme.ProductSelling.Products.Services;
+using Volo.Abp.Domain.Services;
 
 namespace Acme.ProductSelling.Products
 {

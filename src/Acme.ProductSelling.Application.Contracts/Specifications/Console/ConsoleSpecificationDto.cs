@@ -2,7 +2,7 @@
 using System;
 using Volo.Abp.Application.Dtos;
 
-namespace Acme.ProductSelling.Specifications.Console
+namespace Acme.ProductSelling.Specifications
 {
     public class ConsoleSpecificationDto : EntityDto<Guid>
     {

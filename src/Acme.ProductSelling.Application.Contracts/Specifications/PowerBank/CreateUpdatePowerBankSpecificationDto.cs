@@ -1,4 +1,4 @@
-namespace Acme.ProductSelling.Specifications.PowerBank
+namespace Acme.ProductSelling.Specifications
 {
     public class CreateUpdatePowerBankSpecificationDto
     {

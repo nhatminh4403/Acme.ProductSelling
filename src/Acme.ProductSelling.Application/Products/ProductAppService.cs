@@ -1,10 +1,13 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products.BackgroundJobs;
+using Acme.ProductSelling.Products.BackgroundJobs.ProductRelease;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
+using Acme.ProductSelling.Products.Specification;
 using Acme.ProductSelling.Specifications.Junctions;
 using Acme.ProductSelling.Specifications.Models;
+using Acme.ProductSelling.StoreInventories;
 using Acme.ProductSelling.Stores;
 using Acme.ProductSelling.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -34,6 +37,8 @@ namespace Acme.ProductSelling.Products
         private readonly IStoreRepository _storeRepository;
         private readonly IBackgroundJobManager _backgroundJobManager;
         private readonly ILogger<ProductAppService> _logger;
+        private readonly IRecentlyViewedProductAppService _recentlyViewedService;
+
         public ProductAppService(
             IRepository<Product, Guid> repository,
             IRepository<Category, Guid> categoryRepository,
@@ -45,7 +50,8 @@ namespace Acme.ProductSelling.Products
             IStoreInventoryRepository storeInventoryRepository,
             IStoreRepository storeRepository,
             IBackgroundJobManager backgroundJobManager,
-            ILogger<ProductAppService> logger)
+            ILogger<ProductAppService> logger,
+            IRecentlyViewedProductAppService recentlyViewedService)
             : base(repository)
         {
             _categoryRepository = categoryRepository;
@@ -61,6 +67,7 @@ namespace Acme.ProductSelling.Products
             _storeRepository = storeRepository;
             _backgroundJobManager = backgroundJobManager;
             _logger = logger;
+            _recentlyViewedService = recentlyViewedService;
         }
         private void ConfigurePolicies()
         {
@@ -86,7 +93,15 @@ namespace Acme.ProductSelling.Products
 
             // NEW: Add store inventory information
             await PopulateStoreInventoryAsync(productDto, id);
-
+            try
+            {
+                await _recentlyViewedService.TrackProductViewAsync(id);
+            }
+            catch (Exception ex)
+            {
+                // Log but don't fail if tracking fails
+                _logger.LogWarning(ex, "Failed to track product view for ProductId: {ProductId}", id);
+            }
             return productDto;
         }
 

@@ -1,6 +1,6 @@
 using Acme.ProductSelling.Categories;
 
-namespace Acme.ProductSelling.Specifications.Chair
+namespace Acme.ProductSelling.Specifications
 {
     public class CreateUpdateChairSpecificationDto
     {

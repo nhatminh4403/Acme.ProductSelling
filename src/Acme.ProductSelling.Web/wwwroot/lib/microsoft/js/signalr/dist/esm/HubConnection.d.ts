@@ -177,4 +177,5 @@ export declare class HubConnection {
     private _createStreamItemMessage;
     private _createCompletionMessage;
     private _createCloseMessage;
+    private _trySendPingMessage;
 }

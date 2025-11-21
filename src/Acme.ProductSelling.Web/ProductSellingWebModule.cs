@@ -8,6 +8,8 @@ using Acme.ProductSelling.PaymentGateway.MoMo;
 using Acme.ProductSelling.PaymentGateway.PayPal;
 using Acme.ProductSelling.PaymentGateway.VnPay;
 using Acme.ProductSelling.Products;
+using Acme.ProductSelling.Products.BackgroundJobs.RecentlyViewed;
+using Acme.ProductSelling.Products.Specification;
 using Acme.ProductSelling.Web.Filters;
 using Acme.ProductSelling.Web.Hangfire;
 using Acme.ProductSelling.Web.HealthChecks;
@@ -241,6 +243,13 @@ public class ProductSellingWebModule : AbpModule
             options.Conventions.AddPageRoute("/TenantManagement/Tenants/Index", "/admin/TenantManagement/Tenants");
             options.Conventions.AddPageRoute("/SettingManagement/Index", "/admin/SettingManagement");
             options.Conventions.AddPageRoute("/Account/Manage", "/admin/Account/Manage");
+
+
+            //options.Conventions.AddPageRoute("/Admin/Blogs/Index", "/{prefix:regex(^(admin|blogger|manager)$)}/blogs");
+            //options.Conventions.AddPageRoute("/Admin/Products/Index", "/{prefix:regex(^(admin|manager|seller|cashier|warehouse)$)}/products");
+            //options.Conventions.AddPageRoute("/Admin/Orders/Index", "/{prefix:regex(^(admin|manager|seller|cashier|warehouse)$)}/orders");
+
+            // Add more routes as needed
         });
 
         Configure<RazorPagesOptions>(options =>
@@ -542,7 +551,12 @@ public class ProductSellingWebModule : AbpModule
                 job => job.ExecuteAsync(new CleanupOldOrdersJobArgs { MonthsOld = 6 }),
                 Cron.Monthly(1, 2)
         );
-
+        RecurringJob.AddOrUpdate<RecentlyViewedCleanupJob>(
+                "recently-viewed-cleanup",
+                job => job.ExecuteAsync(new RecentlyViewedCleanupArgs 
+                                            { DaysToKeep = RecentlyViewedConsts.CleanupDaysToKeep }),
+                Cron.Daily(3, 0)
+        );
         app.UseConfiguredEndpoints(endpoints =>
         {
 

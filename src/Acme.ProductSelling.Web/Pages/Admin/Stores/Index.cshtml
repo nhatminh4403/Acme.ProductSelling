@@ -1,0 +1,35 @@
+﻿    @page "/{prefix}/stores"
+@model Acme.ProductSelling.Web.Pages.Admin.Stores.IndexModel
+@using Acme.ProductSelling.Permissions
+
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = L["Stores"];
+    Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
+}
+
+@section scripts {
+    <abp-script src="/Pages/Admin/Stores/Index.js" />
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <h2>@L["Stores"]</h2>
+            </abp-column>
+            <abp-column size-md="_6" class="text-end">
+                @if (await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Stores.Create))
+                {
+                    <abp-button id="NewStoreButton"
+                                text="@L["NewStore"].Value"
+                                icon="plus"
+                                button-type="Primary" />
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="StoresTable" class="nowrap"></abp-table>
+    </abp-card-body>
+</abp-card>

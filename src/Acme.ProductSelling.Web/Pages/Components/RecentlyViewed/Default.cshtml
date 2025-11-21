@@ -1,0 +1,104 @@
+﻿<!-- src/Acme.ProductSelling.Web/Views/Shared/Components/RecentlyViewed/Default.cshtml -->
+@model Acme.ProductSelling.Web.Models.RecentlyViewedViewModel
+
+<div class="recently-viewed-wrapper my-4"
+     id="recently-viewed-section"
+     style="display: none;"
+     data-max-count="@Model.MaxCount"
+     data-exclude-product-id="@(Model.ExcludeProductId?.ToString() ?? "")"
+     data-is-authenticated="@Model.IsAuthenticated.ToString().ToLowerInvariant()">
+
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">
+                <i class="fas fa-history me-2 text-primary"></i>@Model.Title
+            </h5>
+            <a href="javascript:void(0);"
+               class="text-muted small text-decoration-none"
+               id="btn-clear-recently-viewed"
+               title="Xóa lịch sử xem">
+                <i class="fas fa-trash-alt me-1"></i>Xóa tất cả
+            </a>
+        </div>
+
+        <div id="recently-viewed-container">
+            <!-- Skeleton Loading -->
+            <div class="row g-3" id="recently-viewed-skeleton">
+                @for (int i = 0; i < 6; i++)
+                {
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <div class="card h-100 border-0">
+                            <div class="placeholder-glow">
+                                <div class="placeholder bg-secondary"
+                                     style="aspect-ratio: 1/1; width: 100%;"></div>
+                            </div>
+                            <div class="card-body p-2">
+                                <p class="placeholder-glow mb-1">
+                                    <span class="placeholder col-10 bg-secondary"></span>
+                                </p>
+                                <p class="placeholder-glow mb-0">
+                                    <span class="placeholder col-6 bg-secondary"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Actual Products Container -->
+            <div class="row g-3" id="recently-viewed-products" style="display: none;">
+                <!-- Products loaded via JS -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Pass data to JavaScript *@
+@* <script>
+    (function() {
+        const config = {
+            maxCount: @Model.MaxCount,
+            excludeProductId: '@(Model.ExcludeProductId?.ToString() ?? "")',
+            isAuthenticated: @Model.IsAuthenticated.ToString().ToLowerInvariant()
+        };
+
+        // Wait for DOM and RecentlyViewedManager to be ready
+        $(function() {
+            if (typeof RecentlyViewedManager === 'undefined') {
+                console.warn('RecentlyViewedManager not loaded');
+                return;
+            }
+
+            RecentlyViewedManager.loadWidget(
+                'recently-viewed-products',
+                config.maxCount,
+                config.excludeProductId || null,
+                function onLoaded(hasProducts) {
+                    // Hide skeleton, show products
+                    $('#recently-viewed-skeleton').hide();
+
+                    if (hasProducts) {
+                        $('#recently-viewed-products').show();
+                        $('#recently-viewed-section').fadeIn(300);
+                    } else {
+                        $('#recently-viewed-section').hide();
+                    }
+                }
+            );
+
+            // Clear button handler
+            $('#btn-clear-recently-viewed').on('click', function(e) {
+                e.preventDefault();
+
+                if (!confirm('Bạn có chắc muốn xóa lịch sử sản phẩm đã xem?')) {
+                    return;
+                }
+
+                RecentlyViewedManager.clear().then(function() {
+                    $('#recently-viewed-section').fadeOut(300);
+                    abp.notify.success('Đã xóa lịch sử xem sản phẩm');
+                });
+            });
+        });
+    })();
+</script> *@

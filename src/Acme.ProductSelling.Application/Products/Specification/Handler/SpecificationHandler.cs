@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
 
-namespace Acme.ProductSelling.Products
+namespace Acme.ProductSelling.Products.Specification.Handler
 {
 
     public class SpecificationHandler<TEntity, TDto> : ISpecificationHandler

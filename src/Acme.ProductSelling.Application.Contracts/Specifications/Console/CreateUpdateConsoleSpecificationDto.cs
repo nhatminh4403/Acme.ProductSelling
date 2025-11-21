@@ -1,6 +1,6 @@
 using Acme.ProductSelling.Categories;
 
-namespace Acme.ProductSelling.Specifications.Console
+namespace Acme.ProductSelling.Specifications
 {
 
     public class CreateUpdateConsoleSpecificationDto

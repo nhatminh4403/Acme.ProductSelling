@@ -9,24 +9,12 @@ using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Lookups;
 using Acme.ProductSelling.Specifications;
-using Acme.ProductSelling.Specifications.Cable;
-using Acme.ProductSelling.Specifications.CaseFan;
-using Acme.ProductSelling.Specifications.Chair;
-using Acme.ProductSelling.Specifications.Charger;
-using Acme.ProductSelling.Specifications.Console;
-using Acme.ProductSelling.Specifications.Desk;
-using Acme.ProductSelling.Specifications.Handheld;
-using Acme.ProductSelling.Specifications.Hub;
+
 using Acme.ProductSelling.Specifications.Lookups.DTOs;
-using Acme.ProductSelling.Specifications.MemoryCard;
-using Acme.ProductSelling.Specifications.Microphone;
+
 using Acme.ProductSelling.Specifications.Models;
-using Acme.ProductSelling.Specifications.MousePad;
-using Acme.ProductSelling.Specifications.NetworkHardware;
-using Acme.ProductSelling.Specifications.PowerBank;
-using Acme.ProductSelling.Specifications.Software;
-using Acme.ProductSelling.Specifications.Speaker;
-using Acme.ProductSelling.Specifications.Webcam;
+using Acme.ProductSelling.StoreInventories;
+using Acme.ProductSelling.StoreInventories.Dtos;
 using Acme.ProductSelling.Stores;
 using Acme.ProductSelling.Stores.Dtos;
 using AutoMapper;

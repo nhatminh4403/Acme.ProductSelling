@@ -1,4 +1,4 @@
-using Acme.ProductSelling.Categories;
+﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Folder;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Manufacturers;
@@ -6,23 +6,7 @@ using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
 using Acme.ProductSelling.Specifications;
-using Acme.ProductSelling.Specifications.Cable;
-using Acme.ProductSelling.Specifications.CaseFan;
-using Acme.ProductSelling.Specifications.Chair;
-using Acme.ProductSelling.Specifications.Charger;
-using Acme.ProductSelling.Specifications.Console;
-using Acme.ProductSelling.Specifications.Desk;
-using Acme.ProductSelling.Specifications.Handheld;
-using Acme.ProductSelling.Specifications.Hub;
 using Acme.ProductSelling.Specifications.Lookups.InterfaceAppServices;
-using Acme.ProductSelling.Specifications.MemoryCard;
-using Acme.ProductSelling.Specifications.Microphone;
-using Acme.ProductSelling.Specifications.MousePad;
-using Acme.ProductSelling.Specifications.NetworkHardware;
-using Acme.ProductSelling.Specifications.PowerBank;
-using Acme.ProductSelling.Specifications.Software;
-using Acme.ProductSelling.Specifications.Speaker;
-using Acme.ProductSelling.Specifications.Webcam;
 using Acme.ProductSelling.Web.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -40,11 +24,12 @@ using Volo.Abp;
 namespace Acme.ProductSelling.Web.Pages.Admin.Products
 {
     [Authorize(ProductSellingPermissions.Products.Create)]
-    public class CreateModel : ProductSellingPageModel
+    public class CreateModel : AdminPageModelBase
     {
         [BindProperty]
         public CreateUpdateProductDto Product { get; set; }
-
+        [BindProperty(SupportsGet = true)]
+        public string Prefix { get; set; }
         public Dictionary<string, string> CategorySpecTypesJson { get; set; }
 
         // Existing lists
@@ -131,6 +116,11 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
 
         public async Task OnGetAsync()
         {
+            if( Prefix != RoleBasedPrefix)
+            {
+                Response.Redirect($"/{RoleBasedPrefix}/products/create");
+            }
+
             InitializeProductDto();
             await LoadDropdownDataAsync();
         }
@@ -164,7 +154,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
                 TempData["UserMessage"] = _localizer["Product:CreateSuccessMessage", Product.ProductName];
                 TempData["MessageType"] = "success";
 
-                return Redirect("/admin/products");
+                return Redirect(GetUrl("/products"));
             }
             catch (UserFriendlyException ex)
             {

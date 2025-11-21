@@ -13,6 +13,8 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Manufacturers
         [HiddenInput]
         [BindProperty(SupportsGet = true)]
         public Guid Id { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public string Prefix { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public CreateUpdateManufacturerDto Manufacturer { get; set; }

@@ -1,30 +1,16 @@
 ﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Dtos;
+using Acme.ProductSelling.Products.Specification.Handler;
 using Acme.ProductSelling.Specifications;
-using Acme.ProductSelling.Specifications.Cable;
-using Acme.ProductSelling.Specifications.CaseFan;
-using Acme.ProductSelling.Specifications.Chair;
-using Acme.ProductSelling.Specifications.Charger;
-using Acme.ProductSelling.Specifications.Console;
-using Acme.ProductSelling.Specifications.Desk;
-using Acme.ProductSelling.Specifications.Handheld;
-using Acme.ProductSelling.Specifications.Hub;
-using Acme.ProductSelling.Specifications.MemoryCard;
-using Acme.ProductSelling.Specifications.Microphone;
 using Acme.ProductSelling.Specifications.Models;
-using Acme.ProductSelling.Specifications.MousePad;
-using Acme.ProductSelling.Specifications.NetworkHardware;
-using Acme.ProductSelling.Specifications.PowerBank;
-using Acme.ProductSelling.Specifications.Software;
-using Acme.ProductSelling.Specifications.Speaker;
-using Acme.ProductSelling.Specifications.Webcam;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
-namespace Acme.ProductSelling.Products
+namespace Acme.ProductSelling.Products.Specification
 {
     public class SpecificationService : ISpecificationService
     {

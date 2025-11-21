@@ -30,7 +30,6 @@ namespace Acme.ProductSelling.Orders.BackgroundJobs.OrderCleanup
 
                 _logger.LogInformation("Starting cleanup of orders older than {CutoffDate}", cutoffDate);
 
-                // Get orders older than X months that aren't already deleted
                 var oldOrders = await _orderRepository.GetListAsync(o => o.CreationTime < cutoffDate && !o.IsDeleted);
                 var ordersNeededCleanup = oldOrders.Where(o => o.OrderStatus == OrderStatus.Cancelled).ToList();
 

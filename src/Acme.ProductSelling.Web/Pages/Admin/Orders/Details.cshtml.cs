@@ -1,7 +1,8 @@
 using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Orders.Services;
+using Acme.ProductSelling.Permissions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -9,10 +10,14 @@ using System.Threading.Tasks;
 
 namespace Acme.ProductSelling.Web.Pages.Admin.Orders
 {
-    public class DetailsModel : PageModel
+    [Authorize(ProductSellingPermissions.Orders.Default)]
+    public class DetailsModel : AdminPageModelBase
     {
         [BindProperty(SupportsGet = true)]
         public string OrderNumber { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string Prefix { get; set; }
 
         private readonly IOrderAppService _orderAppService;
         private readonly ILogger<DetailsModel> _logger;
@@ -29,22 +34,27 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Orders
         {
             try
             {
+                if (Prefix != RoleBasedPrefix)
+                {
+                    Response.Redirect($"/{RoleBasedPrefix}/orders/details/{OrderNumber}");
+                }     
                 Order = await _orderAppService.GetByOrderNumberAsync(OrderNumber);
 
                 if (Order == null)
                 {
+                    _logger.LogWarning("Order not found: {OrderNumber}", OrderNumber);
+
                     return NotFound();
                 }
 
-                var orderId = Order.Id;
-                OrderHistory = await _orderAppService.GetOrderHistoryAsync(orderId);
+                OrderHistory = await _orderAppService.GetOrderHistoryAsync(Order.Id);
                 return Page();
             }
             catch (Exception ex)
             {
                 // Log the error
                 _logger.LogError(ex, "Error loading order detail for OrderNumber: {OrderNumber}", OrderNumber);
-                return RedirectToPage("/Admin/Orders/Index");
+                return RedirectToPage(GetUrl("/orders"));
             }
         }
     }

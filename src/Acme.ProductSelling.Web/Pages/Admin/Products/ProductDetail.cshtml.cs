@@ -1,4 +1,4 @@
-using Acme.ProductSelling.Permissions;
+﻿using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -10,19 +10,26 @@ using System.Threading.Tasks;
 namespace Acme.ProductSelling.Web.Pages.Admin.Products
 {
     [Authorize(ProductSellingPermissions.Products.Default)]
-    public class ProductDetailModel : PageModel
+    public class ProductDetailModel : AdminPageModelBase
     {
         private readonly IProductAppService _productAppService;
 
         [BindProperty(SupportsGet = true)]
         public Guid Id { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public string Prefix { get; set; }
         public ProductDto Product { get; set; }
+        
         public ProductDetailModel(IProductAppService productAppService)
         {
             _productAppService = productAppService;
         }
         public async Task OnGetAsync()
         {
+            if(Prefix != RoleBasedPrefix)
+            {
+                Response.Redirect($"/{RoleBasedPrefix}/products/detail/{Id}");
+            }
             var product = await _productAppService.GetAsync(Id);
             Product = product;
         }

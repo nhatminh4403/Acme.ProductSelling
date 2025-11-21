@@ -12,7 +12,7 @@ using Volo.Abp;
 using Volo.Abp.Users;
 namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
 {
-    public class CreateBlogModel : ProductSellingPageModel
+    public class CreateBlogModel : AdminPageModelBase
     {
         private readonly IBlogAppService _blogAppService;
         private readonly IWebHostEnvironment _webHostEnvironment;
@@ -22,6 +22,8 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
         public CreateAndUpdateBlogDto Blog { get; set; }
         [BindProperty]
         public IFormFile? CoverImageFile { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public string Prefix { get; set; }
         public CreateBlogModel(IBlogAppService blogAppService, IWebHostEnvironment webHostEnvironment, ICurrentUser currentUser)
         {
             _webHostEnvironment = webHostEnvironment;
@@ -30,6 +32,11 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Blogs
         }
         public void OnGet()
         {
+            if (Prefix != RoleBasedPrefix)
+            {
+                Response.Redirect($"/{RoleBasedPrefix}/blogs/create");
+            }
+
             Blog = new CreateAndUpdateBlogDto
             {
                 PublishedDate = DateTime.Now,

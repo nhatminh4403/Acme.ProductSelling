@@ -1,10 +1,5 @@
-﻿@page "/admin/manufacturers"
-@using Acme.ProductSelling.Localization
-@using Microsoft.Extensions.Localization
-@using Microsoft.AspNetCore.Authorization
-@using Acme.ProductSelling.Permissions
+﻿@page "/{prefix}/manufacturers"
 
-@inject IStringLocalizer<ProductSellingResource> L
 @inject IAuthorizationService AuthorizationService
 @model Acme.ProductSelling.Web.Pages.Admin.Manufacturers.IndexModel
 @{

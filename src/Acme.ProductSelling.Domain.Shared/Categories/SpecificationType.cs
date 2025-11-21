@@ -326,7 +326,7 @@ namespace Acme.ProductSelling.Categories
     public enum StorageFormFactor
     {
         // HDD
-        [Description("3.5-inch HDD")] // <-- Ví dụ
+        [Description("3.5-inch HDD")] 
         Hdd35Inch,
         [Description("2.5-inch HDD")]
         Hdd25Inch,

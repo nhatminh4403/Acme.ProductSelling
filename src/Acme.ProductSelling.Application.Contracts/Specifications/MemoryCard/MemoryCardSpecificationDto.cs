@@ -2,7 +2,7 @@
 using System;
 using Volo.Abp.Application.Dtos;
 
-namespace Acme.ProductSelling.Specifications.MemoryCard
+namespace Acme.ProductSelling.Specifications
 {
     public class MemoryCardSpecificationDto : EntityDto<Guid>
     {

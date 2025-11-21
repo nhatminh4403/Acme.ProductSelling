@@ -1,7 +1,7 @@
 
 using Acme.ProductSelling.Categories;
 
-namespace Acme.ProductSelling.Specifications.MousePad
+namespace Acme.ProductSelling.Specifications
 {
 
     public class CreateUpdateMousePadSpecificationDto

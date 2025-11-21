@@ -1,0 +1,144 @@
+﻿@page "/{prefix}/store-inventory/low-stock"
+@model Acme.ProductSelling.Web.Pages.Admin.StoreInventory.LowStockModel
+
+@inject IAuthorizationService AuthorizationService
+
+@{
+    ViewData["Title"] = L["Inventory:LowStockItems"];
+    Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
+}
+
+@section scripts {
+    <abp-script src="/Pages/Admin/StoreInventory/LowStock.js" />
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size="_8">
+                <h2>
+                    <i class="fa fa-exclamation-triangle text-warning"></i>
+                    @L["Inventory:LowStockItems"]
+                </h2>
+                <p class="text-muted mb-0">@L["Inventory:LowStockItemsDescription"]</p>
+            </abp-column>
+            <abp-column size="_4" class="text-end">
+                @if (!Model.IsAdminOrManager() && Model.CurrentUserStoreId.HasValue)
+                {
+                    <span class="badge bg-info fs-6">@Model.CurrentUserStoreName</span>
+                }
+                else if (Model.IsAdminOrManager())
+                {
+                    <select id="storeFilter" class="form-select d-inline-block w-auto">
+                        <option value="">@L["AllStores"]</option>
+                    </select>
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+
+        <!-- Filters -->
+        <abp-row class="mb-3">
+            <abp-column size="_6">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="criticalOnlyFilter">
+                    <label class="form-check-label" for="criticalOnlyFilter">
+                        <i class="fa fa-fire text-danger"></i> @L["Inventory:ShowCriticalOnly"]
+                    </label>
+                </div>
+            </abp-column>
+            <abp-column size="_6" class="text-end">
+                <button id="generateReorderListBtn" class="btn btn-primary">
+                    <i class="fa fa-file-export"></i> @L["Inventory:GenerateReorderList"]
+                </button>
+            </abp-column>
+        </abp-row>
+
+        <!-- Statistics Cards -->
+        <abp-row class="mb-4">
+            <abp-column size-md="_4">
+                <abp-card class="text-center border-warning">
+                    <abp-card-body>
+                        <h3 id="lowStockCount" class="text-warning mb-0">
+                            <span class="spinner-border spinner-border-sm" role="status"></span>
+                        </h3>
+                        <p class="mb-0 text-muted">@L["Inventory:LowStockItems"]</p>
+                    </abp-card-body>
+                </abp-card>
+            </abp-column>
+
+            <abp-column size-md="_4">
+                <abp-card class="text-center border-danger">
+                    <abp-card-body>
+                        <h3 id="criticalStockCount" class="text-danger mb-0">
+                            <span class="spinner-border spinner-border-sm" role="status"></span>
+                        </h3>
+                        <p class="mb-0 text-muted">@L["Inventory:CriticalStockItems"]</p>
+                    </abp-card-body>
+                </abp-card>
+            </abp-column>
+
+            <abp-column size-md="_4">
+                <abp-card class="text-center border-info">
+                    <abp-card-body>
+                        <h3 id="totalItems" class="text-info mb-0">
+                            <span class="spinner-border spinner-border-sm" role="status"></span>
+                        </h3>
+                        <p class="mb-0 text-muted">@L["Inventory:TotalItemsNeedingReorder"]</p>
+                    </abp-card-body>
+                </abp-card>
+            </abp-column>
+        </abp-row>
+
+        <!-- Table -->
+        <abp-table striped-rows="true" id="LowStockTable" class="nowrap"></abp-table>
+    </abp-card-body>
+</abp-card>
+
+<!-- Quick Reorder Modal -->
+<abp-modal id="quickReorderModal" static="true" size="Default">
+    <abp-modal-header title="@L["QuickReorder"].Value"></abp-modal-header>
+
+    <abp-modal-body>
+        <form id="quickReorderForm">
+
+            <input type="hidden" id="reorderInventoryId" />
+
+            <div class="mb-3">
+                <label class="form-label">@L["Product"]</label>
+                <input type="text" class="form-control" id="reorderProductName" readonly />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">@L["Store"]</label>
+                <input type="text" class="form-control" id="reorderStoreName" readonly />
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">@L["CurrentQuantity"]</label>
+                    <input type="text" class="form-control" id="reorderCurrentQty" readonly />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">@L["ReorderLevel"]</label>
+                    <input type="text" class="form-control" id="reorderLevel" readonly />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">@L["Inventory:ReorderQuantity"] *</label>
+                <input type="number" class="form-control" id="reorderQuantity" required min="1" />
+                <small class="form-text text-muted" id="reorderHint"></small>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">@L["Notes"]</label>
+                <textarea class="form-control" id="reorderNotes" rows="2"></textarea>
+            </div>
+
+        </form>
+    </abp-modal-body>
+
+    <abp-modal-footer buttons="@(AbpModalButtons.Save | AbpModalButtons.Cancel)"></abp-modal-footer>
+</abp-modal>

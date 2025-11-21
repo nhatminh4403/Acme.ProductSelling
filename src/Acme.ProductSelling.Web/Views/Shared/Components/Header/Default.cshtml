@@ -27,7 +27,7 @@
         <!-- Desktop Category Button -->
         <button class="category-btn d-none d-lg-flex ms-3" type="button" id="categoryMenuBtn" aria-label="Categories">
             <i class="bi bi-grid-3x3-gap-fill"></i>
-            <span>@L["Categories"]</span>
+            <span>@L["Category:Categories"]</span>
         </button>
 
 
@@ -73,7 +73,7 @@
                         </a>
                         @if (hasAdminPermission || CurrentUser.IsInRole("Admin") || CurrentUser.IsInRole("admin"))
                         {
-                            <a class="dropdown-item" href="@Url.Page("/Admin/Index", new { area = "" })" data-no-culture="true">
+                            <a class="dropdown-item" asp-page="/Admin/Index" data-no-culture="true">
                                 <i class="bi bi-shield-lock"></i>
                                 @L["Admin:Panel"]
                             </a>

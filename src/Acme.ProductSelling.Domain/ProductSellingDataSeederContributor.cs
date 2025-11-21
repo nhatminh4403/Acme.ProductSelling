@@ -5,6 +5,7 @@ using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Lookups;
 using Acme.ProductSelling.Specifications.Junctions;
 using Acme.ProductSelling.Specifications.Models;
+using Acme.ProductSelling.StoreInventories;
 using Acme.ProductSelling.Stores;
 using Acme.ProductSelling.Users;
 using Acme.ProductSelling.Utils;
@@ -213,7 +214,7 @@ namespace Acme.ProductSelling
             // 2. Main, CPU, VGA Group
             var cpus = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "CPUs (Processors)",
+                    "CPUs",
                     "Central Processing Units",
                     SpecificationType.CPU,
                     CategoryGroup.MainCpuVga,
@@ -224,7 +225,7 @@ namespace Acme.ProductSelling
 
             var gpus = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Graphics Cards (GPUs)",
+                    "GPUs",
                     "Video Graphics Cards",
                     SpecificationType.GPU,
                     CategoryGroup.MainCpuVga,
@@ -258,7 +259,7 @@ namespace Acme.ProductSelling
 
             var psus = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Power Supplies (PSUs)",
+                    "PSUs",
                     "Power Supply Units",
                     SpecificationType.PSU,
                     CategoryGroup.CaseAndCooling,
@@ -292,7 +293,7 @@ namespace Acme.ProductSelling
             // 4. Storage, RAM, Memory Group
             var storage = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Storage (SSD/HDD)",
+                    "Storages",
                     "Storage Drives",
                     SpecificationType.Storage,
                     CategoryGroup.StorageRamMemory,
@@ -303,7 +304,7 @@ namespace Acme.ProductSelling
 
             var rams = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "RAM (Memory)",
+                    "RAMs",
                     "Random Access Memory",
                     SpecificationType.RAM,
                     CategoryGroup.StorageRamMemory,
@@ -488,7 +489,7 @@ namespace Acme.ProductSelling
             // 13. Accessories Group
             var hubs = await _categoryRepository.InsertAsync(
                 await _categoryManager.CreateAsync(
-                    "Hubs & Docks",
+                    "Hubs And Docks",
                     "USB Hubs and Docking Stations",
                     SpecificationType.Hub,
                     CategoryGroup.Accessories,
@@ -2163,6 +2164,8 @@ namespace Acme.ProductSelling
             }, autoSave: true);
             #endregion
 
+
+            #region Store and Users Seed
             var store1 = await SeedStoreAsync("ST001", "Main Store", "123 Main St", "Ho Chi Minh City", "84-28-1234-5678");
             var store2 = await SeedStoreAsync("ST002", "District 1 Branch", "456 Le Loi Blvd", "Ho Chi Minh City", "84-28-2234-5678");
             var store3 = await SeedStoreAsync("ST003", "District 7 Branch", "789 Nguyen Van Linh", "Ho Chi Minh City", "84-28-3234-5678");
@@ -2280,8 +2283,9 @@ namespace Acme.ProductSelling
                 ProductSellingPermissions.Orders.Create,    // Create orders for customers
                 ProductSellingPermissions.Orders.Edit,      // Edit pending orders
             });
-
+            #endregion
         }
+
 
         private async Task<Product> CreateProductAsync(Guid categoryId, Guid manufacturerId, decimal price,
                                                         double discount, string name, string desc,

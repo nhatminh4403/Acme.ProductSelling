@@ -1,0 +1,30 @@
+﻿@model Acme.ProductSelling.Specifications.CaseSpecificationDto
+
+<table class="table table-bordered mb-0">
+    <tbody>
+        <tr>
+            <th>@L["Product:Case:SupportedMbFormFactor"]</th>
+            <td>
+                @Model.SupportedMbFormFactorName
+            </td>
+        </tr>
+        <tr>
+            <th>@L["Product:Case:Color"]</th>
+            <td>
+                @Model.Color
+            </td>
+        </tr>
+        <tr>
+            <th>@L["Product:Case:MaxCpuCoolerHeight"]</th>
+            <td>
+                @Model.MaxCpuCoolerHeight
+            </td>
+        </tr>
+        <tr>
+            <th>@L["Product:Case:MaxGpuLength"]</th>
+            <td>
+                @Model.MaxGpuLength
+            </td>
+        </tr>
+    </tbody>
+</table>

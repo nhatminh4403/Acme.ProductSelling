@@ -1,21 +1,5 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Specifications;
-using Acme.ProductSelling.Specifications.Cable;
-using Acme.ProductSelling.Specifications.CaseFan;
-using Acme.ProductSelling.Specifications.Chair;
-using Acme.ProductSelling.Specifications.Charger;
-using Acme.ProductSelling.Specifications.Console;
-using Acme.ProductSelling.Specifications.Desk;
-using Acme.ProductSelling.Specifications.Handheld;
-using Acme.ProductSelling.Specifications.Hub;
-using Acme.ProductSelling.Specifications.MemoryCard;
-using Acme.ProductSelling.Specifications.Microphone;
-using Acme.ProductSelling.Specifications.MousePad;
-using Acme.ProductSelling.Specifications.NetworkHardware;
-using Acme.ProductSelling.Specifications.PowerBank;
-using Acme.ProductSelling.Specifications.Software;
-using Acme.ProductSelling.Specifications.Speaker;
-using Acme.ProductSelling.Specifications.Webcam;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -44,7 +28,6 @@ namespace Acme.ProductSelling.Products.Dtos
         public DateTime? ReleaseDate { get; set; }
         public bool IsAvailableForPurchase { get; set; }
 
-        // Existing specifications
         #region Specifications
         public MonitorSpecificationDto MonitorSpecification { get; set; }
         public MouseSpecificationDto MouseSpecification { get; set; }
@@ -59,8 +42,6 @@ namespace Acme.ProductSelling.Products.Dtos
         public CpuCoolerSpecificationDto CpuCoolerSpecification { get; set; }
         public KeyboardSpecificationDto KeyboardSpecification { get; set; }
         public HeadsetSpecificationDto HeadsetSpecification { get; set; }
-
-        // New specifications
         public SpeakerSpecificationDto SpeakerSpecification { get; set; }
         public WebcamSpecificationDto WebcamSpecification { get; set; }
         public CableSpecificationDto CableSpecification { get; set; }

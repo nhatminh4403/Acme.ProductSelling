@@ -2,7 +2,7 @@
 using System;
 using Volo.Abp.Application.Dtos;
 
-namespace Acme.ProductSelling.Specifications.Handheld
+namespace Acme.ProductSelling.Specifications
 {
     public class HandheldSpecificationDto : EntityDto<Guid>
     {

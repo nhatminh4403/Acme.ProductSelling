@@ -1,0 +1,21 @@
+﻿@page "/{prefix}/stores/create"
+@model Acme.ProductSelling.Web.Pages.Admin.Stores.CreateModel
+
+@{
+    ViewData["Title"] = L["CreateStore"];
+    Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
+}
+
+<abp-card>
+    <abp-card-header>
+        <h2>@L["NewStore"]</h2>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-dynamic-form abp-model="Store" asp-page="@($"/{Model.Prefix}/stores/create")">
+            <abp-form-content />
+            <hr />
+            <abp-button button-type="Default" text="@L["Save"].Value" theme="Primary" />
+            <a href="@($"/{Model.Prefix}/stores")" class="btn btn-secondary">@L["Cancel"].Value</a>
+        </abp-dynamic-form>
+    </abp-card-body>
+</abp-card>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -12,5 +13,7 @@ namespace Acme.ProductSelling.Blogs
         Task<BlogDto> GetBlogBySlug(string slug);
         string ExtractTitleFromHtml(string htmlContent);
         string GenerateUrlSlug(string title);
+        
+        Task<PagedResultDto<BlogDto>> GetBlogByBloggerAsync(PagedAndSortedResultRequestDto input);    
     }
 }

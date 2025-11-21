@@ -1,4 +1,7 @@
-﻿using Acme.ProductSelling.Permissions;
+﻿using Acme.ProductSelling.Orders.Dtos;
+using Acme.ProductSelling.Permissions;
+using Acme.ProductSelling.Products;
+using Acme.ProductSelling.Products.Dtos;
 using Ganss.Xss;
 using HtmlAgilityPack;
 using Microsoft.AspNetCore.Authorization;
@@ -6,11 +9,15 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Authorization;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
@@ -20,7 +27,8 @@ namespace Acme.ProductSelling.Blogs
         CrudAppService<Blog, BlogDto, Guid, PagedAndSortedResultRequestDto, CreateAndUpdateBlogDto>,
         IBlogAppService
     {
-        private readonly IRepository<Blog, Guid> _repository;
+        //private readonly IRepository<Blog, Guid> _blogRepository;
+        private readonly IBlogRepository _blogRepository;
         private readonly IGuidGenerator _guidGenerator;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IHtmlSanitizer _HtmlSanitizer;
@@ -28,9 +36,10 @@ namespace Acme.ProductSelling.Blogs
             IRepository<Blog, Guid> repository,
             IGuidGenerator guidGenerator,
             IWebHostEnvironment webHostEnvironment,
-            IHtmlSanitizer htmlSanitizer) : base(repository)
+            IHtmlSanitizer htmlSanitizer,
+            IBlogRepository blogRepository) : base(repository)
         {
-            _repository = repository;
+            _blogRepository = blogRepository;
             _guidGenerator = guidGenerator;
             _webHostEnvironment = webHostEnvironment;
             _HtmlSanitizer = htmlSanitizer;
@@ -38,6 +47,7 @@ namespace Acme.ProductSelling.Blogs
 
             ConfigurePolicies();
             ConfigureHtmlSanitizer();
+            _blogRepository = blogRepository;
         }
 
         private void ConfigurePolicies()
@@ -48,11 +58,16 @@ namespace Acme.ProductSelling.Blogs
             DeletePolicyName = ProductSellingPermissions.Blogs.Delete;
             GetListPolicyName = ProductSellingPermissions.Blogs.Default;
         }
+        [AllowAnonymous]
+        public override Task<PagedResultDto<BlogDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+        {
+            return base.GetListAsync(input);
+        }
 
         [AllowAnonymous]
         public virtual async Task<BlogDto> GetBlogBySlug(string slug)
         {
-            var blog = await _repository.FirstOrDefaultAsync(b => b.UrlSlug == slug);
+            var blog = await _blogRepository.FirstOrDefaultAsync(b => b.UrlSlug == slug);
             if (blog == null)
             {
                 throw new Exception("Blog not found");
@@ -96,14 +111,14 @@ namespace Acme.ProductSelling.Blogs
                 input.MainImageId
                 );
 
-            var newBlog = await _repository.InsertAsync(blog, autoSave: true);
+            var newBlog = await _blogRepository.InsertAsync(blog, autoSave: true);
             var result = ObjectMapper.Map<Blog, BlogDto>(newBlog);
             return result;
         }
 
         public override async Task DeleteAsync(Guid id)
         {
-            var blog = await _repository.GetAsync(id);
+            var blog = await _blogRepository.GetAsync(id);
 
             // Delete associated image file if exists
             if (!string.IsNullOrEmpty(blog.MainImageUrl))
@@ -116,7 +131,7 @@ namespace Acme.ProductSelling.Blogs
 
         public override async Task<BlogDto> UpdateAsync(Guid id, CreateAndUpdateBlogDto input)
         {
-            var blog = await _repository.GetAsync(id);
+            var blog = await _blogRepository.GetAsync(id);
             blog.Title = input.Title;
             blog.Content = _HtmlSanitizer.Sanitize(input.Content);
             blog.PublishedDate = input.PublishedDate;
@@ -244,6 +259,23 @@ namespace Acme.ProductSelling.Blogs
             {
                 Logger.LogWarning(ex, "Failed to delete blog image: {ImageUrl}", imageUrl);
             }
+        }
+
+        public async Task<PagedResultDto<BlogDto>> GetBlogByBloggerAsync( PagedAndSortedResultRequestDto input)
+        {
+            var query = await Repository.GetQueryableAsync();
+            var authorId = CurrentUser.Id ?? throw new AbpAuthorizationException("User must be logged in");
+            var queryable = query.Where(b => b.AuthorId == authorId);
+
+            var totalCount = await AsyncExecuter.CountAsync(queryable);
+
+            var sortedQuery = queryable.OrderBy(input.Sorting.IsNullOrWhiteSpace() ? nameof(Blog.CreationTime) + " DESC" : input.Sorting).PageBy(input);
+
+            var blogs = await AsyncExecuter.ToListAsync(sortedQuery.AsNoTracking());
+            return new PagedResultDto<BlogDto>(
+                totalCount,
+                 ObjectMapper.Map<List<Blog>, List<BlogDto>>(blogs)
+            );
         }
     }
 }

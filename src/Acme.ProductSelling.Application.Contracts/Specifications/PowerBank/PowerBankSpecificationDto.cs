@@ -1,7 +1,7 @@
 ﻿using System;
 using Volo.Abp.Application.Dtos;
 
-namespace Acme.ProductSelling.Specifications.PowerBank
+namespace Acme.ProductSelling.Specifications
 {
     public class PowerBankSpecificationDto : EntityDto<Guid>
     {

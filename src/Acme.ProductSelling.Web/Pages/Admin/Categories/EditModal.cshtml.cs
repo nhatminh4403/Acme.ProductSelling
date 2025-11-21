@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 namespace Acme.ProductSelling.Web.Pages.Admin.Categories
 {
     [Authorize(ProductSellingPermissions.Categories.Edit)]
-    public class EditModalModel : ProductSellingPageModel
+    public class EditModalModel : AdminPageModelBase
     {
         [HiddenInput]
         [BindProperty(SupportsGet = true)]
         public Guid Id { get; set; }
-
+        [BindProperty(SupportsGet = true)]
+        public string Prefix { get; set; }
         [BindProperty]
         public CreateUpdateCategoryDto Category { get; set; }
 

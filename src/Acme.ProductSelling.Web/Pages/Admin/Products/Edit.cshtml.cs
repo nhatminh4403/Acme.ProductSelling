@@ -1,4 +1,4 @@
-using Acme.ProductSelling.Categories;
+﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Folder;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Manufacturers;
@@ -6,23 +6,7 @@ using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
 using Acme.ProductSelling.Specifications;
-using Acme.ProductSelling.Specifications.Cable;
-using Acme.ProductSelling.Specifications.CaseFan;
-using Acme.ProductSelling.Specifications.Chair;
-using Acme.ProductSelling.Specifications.Charger;
-using Acme.ProductSelling.Specifications.Console;
-using Acme.ProductSelling.Specifications.Desk;
-using Acme.ProductSelling.Specifications.Handheld;
-using Acme.ProductSelling.Specifications.Hub;
 using Acme.ProductSelling.Specifications.Lookups.InterfaceAppServices;
-using Acme.ProductSelling.Specifications.MemoryCard;
-using Acme.ProductSelling.Specifications.Microphone;
-using Acme.ProductSelling.Specifications.MousePad;
-using Acme.ProductSelling.Specifications.NetworkHardware;
-using Acme.ProductSelling.Specifications.PowerBank;
-using Acme.ProductSelling.Specifications.Software;
-using Acme.ProductSelling.Specifications.Speaker;
-using Acme.ProductSelling.Specifications.Webcam;
 using Acme.ProductSelling.Web.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -40,16 +24,17 @@ using Volo.Abp;
 namespace Acme.ProductSelling.Web.Pages.Admin.Products
 {
     [Authorize(ProductSellingPermissions.Products.Edit)]
-    public class EditModel : ProductSellingPageModel
+    public class EditModel : AdminPageModelBase
     {
         [BindProperty]
         public CreateUpdateProductDto Product { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public Guid Id { get; set; }
-
+        [BindProperty(SupportsGet = true)]
+        public string Prefix { get; set; }
         public Dictionary<string, string> CategorySpecTypesJson { get; set; }
-
+        #region List Properties
         // Existing lists
         public List<SelectListItem> Categories { get; set; }
         public List<SelectListItem> Manufacturers { get; set; }
@@ -88,6 +73,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
         public List<SelectListItem> PsuModularities { get; set; }
         public List<SelectListItem> StorageFormFactors { get; set; }
         public List<SelectListItem> StorageTypes { get; set; }
+        #endregion
 
         private readonly IProductAppService _productAppService;
         private readonly ICategoryAppService _categoryAppService;
@@ -134,6 +120,10 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
 
         public async Task OnGetAsync()
         {
+            if (Prefix != RoleBasedPrefix)
+            {
+                Response.Redirect($"/{RoleBasedPrefix}/products/edit/{Id}");
+            }
             await LoadProductAsync();
             await LoadDropdownDataAsync();
         }
@@ -167,7 +157,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
                 TempData["UserMessage"] = _localizer["Product:UpdateSuccessMessage", Product.ProductName];
                 TempData["MessageType"] = "success";
 
-                return Redirect("/admin/products");
+                return Redirect(GetUrl("/products"));
             }
             catch (UserFriendlyException ex)
             {

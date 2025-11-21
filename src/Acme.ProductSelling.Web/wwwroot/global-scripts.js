@@ -1,9 +1,307 @@
-﻿/* Global Scripts - Cleaned and Organized */
+﻿/* Global Scripts */
 
 // =============================================================================
 // UTILITY FUNCTIONS
 // =============================================================================
 
+/**
+ * RECENTLY VIEWED PRODUCT MANAGER
+ * Handles LocalStorage for guests and syncs with Server upon Login
+ */
+
+const RecentlyViewedManager = (function () {
+    const STORAGE_KEY = 'Acme_RecentlyViewed_Ids';
+    const MAX_GUEST_ITEMS = 10;
+
+    // =========================================================================
+    // PRIVATE: LocalStorage Helpers
+    // =========================================================================
+
+    function getGuestIds() {
+        try {
+            const json = localStorage.getItem(STORAGE_KEY);
+            return json ? JSON.parse(json) : [];
+        } catch (e) {
+            console.warn('Failed to read recently viewed:', e);
+            return [];
+        }
+    }
+
+    function saveGuestIds(ids) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+        } catch (e) {
+            console.warn('Failed to save recently viewed:', e);
+        }
+    }
+
+    function clearGuestIds() {
+        try {
+            localStorage.removeItem(STORAGE_KEY);
+        } catch (e) {
+            console.warn('Failed to clear recently viewed:', e);
+        }
+    }
+
+    function isAuthenticated() {
+        return !!(abp?.currentUser?.isAuthenticated);
+    }
+
+    function getApiProxy() {
+        return acme?.productSelling?.products?.recentlyViewedProduct || null;
+    }
+
+    function formatCurrency(value) {
+        return new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+            maximumFractionDigits: 0
+        }).format(value);
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function renderProductCard(product) {
+        let priceHtml;
+        if (product.discountedPrice && product.discountedPrice < product.originalPrice) {
+            priceHtml = `
+                <span class="text-muted text-decoration-line-through small me-1">
+                    ${formatCurrency(product.originalPrice)}
+                </span>
+                <span class="text-danger fw-bold">
+                    ${formatCurrency(product.discountedPrice)}
+                </span>`;
+        } else {
+            priceHtml = `<span class="text-primary fw-bold">${formatCurrency(product.originalPrice)}</span>`;
+        }
+
+        const stockBadge = product.isAvailableForPurchase
+            ? ''
+            : '<span class="badge bg-secondary position-absolute top-0 end-0 m-1" style="font-size: 0.65rem;">Hết hàng</span>';
+
+        return `
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="card h-100 shadow-sm border-0 position-relative product-card-hover">
+                    ${stockBadge}
+                    <a href="/products/${product.urlSlug}" class="text-decoration-none">
+                        <img src="${product.imageUrl || '/images/placeholder.png'}"
+                             class="card-img-top"
+                             alt="${escapeHtml(product.productName)}"
+                             style="aspect-ratio: 1/1; object-fit: cover;"
+                             loading="lazy"
+                             onerror="this.src='/images/placeholder.png'">
+                    </a>
+                    <div class="card-body p-2">
+                        <h6 class="card-title text-truncate mb-1" style="font-size: 0.85rem;">
+                            <a href="/products/${product.urlSlug}"
+                               class="text-dark text-decoration-none"
+                               title="${escapeHtml(product.productName)}">
+                                ${escapeHtml(product.productName)}
+                            </a>
+                        </h6>
+                        <div class="mb-0" style="font-size: 0.8rem;">
+                            ${priceHtml}
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    // =========================================================================
+    // PUBLIC API
+    // =========================================================================
+
+    return {
+        /**
+         * Track a product view
+         */
+        trackView: function (productId) {
+            if (!productId) return;
+
+            // Always update localStorage
+            let ids = getGuestIds();
+            ids = ids.filter(id => id !== productId);
+            ids.unshift(productId);
+            if (ids.length > MAX_GUEST_ITEMS) ids.pop();
+            saveGuestIds(ids);
+
+            // If authenticated, also track on server
+            if (isAuthenticated()) {
+                const api = getApiProxy();
+                if (api) {
+                    api.trackProductView(productId).catch(err => {
+                        console.warn('Failed to track view:', err);
+                    });
+                }
+            }
+        },
+
+        /**
+         * Sync guest history to server after login
+         */
+        syncWithServer: function () {
+            const guestIds = getGuestIds();
+            if (guestIds.length === 0 || !isAuthenticated()) {
+                return Promise.resolve();
+            }
+
+            const api = getApiProxy();
+            if (!api) return Promise.resolve();
+
+            return api.syncGuestHistory({ productIds: guestIds })
+                .then(function () {
+                    clearGuestIds();
+                    console.log('Recently viewed synced');
+                })
+                .catch(function (err) {
+                    console.warn('Sync failed:', err);
+                });
+        },
+
+        /**
+         * Load and render widget
+         * @param {string} containerId - Container element ID
+         * @param {number} maxCount - Max products to show
+         * @param {string|null} excludeProductId - Product ID to exclude (current product)
+         * @param {function} callback - Callback with (hasProducts) parameter
+         */
+        loadWidget: function (containerId, maxCount, excludeProductId, callback) {
+            maxCount = maxCount || 6;
+            const $container = $('#' + containerId);
+
+            if ($container.length === 0) {
+                if (callback) callback(false);
+                return;
+            }
+
+            let guestIds = getGuestIds();
+
+            // Exclude current product if specified
+            if (excludeProductId) {
+                guestIds = guestIds.filter(id => id !== excludeProductId);
+            }
+
+            // If no guest IDs and not authenticated, nothing to show
+            if (guestIds.length === 0 && !isAuthenticated()) {
+                if (callback) callback(false);
+                return;
+            }
+
+            const api = getApiProxy();
+            if (!api) {
+                if (callback) callback(false);
+                return;
+            }
+
+            api.getList({
+                maxCount: maxCount + 1, // Fetch one extra in case we need to exclude
+                guestProductIds: guestIds
+            })
+                .then(function (products) {
+                    if (!products || products.length === 0) {
+                        if (callback) callback(false);
+                        return;
+                    }
+
+                    // Filter out excluded product
+                    let filtered = products;
+                    if (excludeProductId) {
+                        filtered = products.filter(p => p.productId !== excludeProductId);
+                    }
+
+                    // Take only what we need
+                    filtered = filtered.slice(0, maxCount);
+
+                    if (filtered.length === 0) {
+                        if (callback) callback(false);
+                        return;
+                    }
+
+                    // Render
+                    const html = filtered.map(renderProductCard).join('');
+                    $container.html(html);
+
+                    if (callback) callback(true);
+                })
+                .catch(function (err) {
+                    console.warn('Failed to load recently viewed:', err);
+                    if (callback) callback(false);
+                });
+        },
+
+        /**
+         * Clear all recently viewed
+         */
+        clear: function () {
+            clearGuestIds();
+
+            if (isAuthenticated()) {
+                const api = getApiProxy();
+                if (api?.clear) {
+                    return api.clear().catch(console.warn);
+                }
+            }
+
+            return Promise.resolve();
+        },
+
+        getGuestIds: getGuestIds
+    };
+})();
+// At the bottom of recently-viewed-manager.js, outside the Manager object
+
+document.addEventListener('DOMContentLoaded', function () {
+    const $wrapper = $('#recently-viewed-section');
+
+    // 1. Check if the ViewComponent exists on this page
+    if ($wrapper.length === 0) return;
+
+    // 2. Check if dependencies are loaded
+    if (typeof RecentlyViewedManager === 'undefined') {
+        console.error('RecentlyViewedManager script is missing');
+        return;
+    }
+
+    // 3. Read the Data Attributes we set in the CSHTML
+    const config = {
+        maxCount: $wrapper.data('max-count'),
+        excludeProductId: $wrapper.data('exclude-product-id'),
+        isAuthenticated: $wrapper.data('is-authenticated')
+    };
+
+    // 4. Execute Logic
+    RecentlyViewedManager.loadWidget(
+        'recently-viewed-products', // Container ID inside the wrapper
+        config.maxCount,
+        config.excludeProductId || null,
+        function (hasProducts) {
+            $('#recently-viewed-skeleton').hide();
+            if (hasProducts) {
+                $('#recently-viewed-products').show();
+                $wrapper.fadeIn(300);
+            } else {
+                $wrapper.hide();
+            }
+        }
+    );
+
+    // 5. Attach Click Event (Delegation or direct)
+    $('#btn-clear-recently-viewed').on('click', function (e) {
+        e.preventDefault();
+        if (confirm('Bạn có chắc muốn xóa lịch sử sản phẩm đã xem?')) {
+            RecentlyViewedManager.clear().then(function () {
+                $wrapper.fadeOut(300);
+                if (typeof abp !== 'undefined') abp.notify.success('Đã xóa lịch sử xem sản phẩm');
+            });
+        }
+    });
+});
+window.RecentlyViewedManager = RecentlyViewedManager;
 /**
  * Safely initialize a Bootstrap modal
  */
@@ -251,7 +549,44 @@ $(function () {
 // =============================================================================
 // LOGIN HANDLER
 // =============================================================================
+// =============================================================================
+// SESSION NOTIFICATION HANDLER (Login/Logout/Register messages)
+// =============================================================================
 
+$(function () {
+    // 1. Check for Logout
+    try {
+        if (sessionStorage.getItem('justLoggedOut') === 'true') {
+            sessionStorage.removeItem('justLoggedOut');
+            // Small delay to ensure UI is ready
+            setTimeout(function () {
+                if (typeof abp !== 'undefined' && abp.notify) {
+                    abp.notify.success(L('Logout:Success'), L('Logout:Complete'));
+                }
+            }, 500);
+        }
+    } catch (e) { console.warn(e) };
+
+    // 2. Check for Login Success
+    try {
+        if (sessionStorage.getItem('justLoggedIn') === 'true') {
+            sessionStorage.removeItem('justLoggedIn');
+            setTimeout(function () {
+                showNotification(L('Login:Success'), '', 'success');
+            }, 500);
+        }
+    } catch (e) { console.warn(e) };
+
+    // 3. Check for Register Success
+    try {
+        if (sessionStorage.getItem('justRegistered') === 'true') {
+            sessionStorage.removeItem('justRegistered');
+            setTimeout(function () {
+                showNotification('Chào mừng bạn gia nhập!', 'Đăng ký thành công', 'success');
+            }, 500);
+        }
+    } catch (e) { console.warn(e) };
+});
 $(function () {
     const $loginModalElement = $('#loginModal');
     const loginForm = $('#loginForm');
@@ -332,13 +667,29 @@ $(function () {
                 console.warn("Could not hide login modal:", e);
             }
         }
+        sessionStorage.setItem('justLoggedIn', 'true');
 
         showNotification(L('Login:Success'), '', 'success', { timeOut: 2000 });
 
-        setTimeout(() => {
+
+        const executeRedirect = () => {
             const returnUrl = new URLSearchParams(window.location.search).get('ReturnUrl');
             window.location.href = returnUrl ? decodeURIComponent(returnUrl) : window.location.href;
-        }, 1000);
+        };
+
+        if (typeof RecentlyViewedManager !== 'undefined') {
+            if (loginButton) loginButton.html('<i class="fas fa-sync fa-spin"></i> Đang đồng bộ...');
+
+            RecentlyViewedManager.syncWithServer()
+                .then(() => { setTimeout(executeRedirect, 800); })
+                .catch(() => { setTimeout(executeRedirect, 800); })
+                .finally(() => {
+                    setTimeout(executeRedirect, 500);
+                });
+        } else {
+            setTimeout(executeRedirect(), 1000); 
+        }
+
     }
 
     function handleLoginError(error) {
@@ -538,6 +889,7 @@ $(function () {
             password: password,
             rememberMe: false
         };
+        showNotification('Đang tự động đăng nhập...', 'Vui lòng đợi', 'info');
 
         $.ajax({
             url: '/api/account/login',
@@ -547,12 +899,23 @@ $(function () {
             dataType: 'json',
             timeout: 10000,
             success: function () {
+                sessionStorage.setItem('justRegistered', 'true');
+
                 showNotification(L('Login:Success'), '', 'success');
 
-                setTimeout(() => {
+                // --- CHANGED: START Sync Logic (Auto Login) ---
+                const executeRedirect = () => {
                     const returnUrl = new URLSearchParams(window.location.search).get('ReturnUrl');
                     window.location.href = returnUrl ? decodeURIComponent(returnUrl) : window.location.href;
-                }, 1000);
+                };
+
+                if (typeof RecentlyViewedManager !== 'undefined') {
+                    RecentlyViewedManager.syncWithServer()
+                        .then(() => { setTimeout(executeRedirect, 1000); })
+                        .catch(() => { setTimeout(executeRedirect, 1000); });
+                } else {
+                    setTimeout(executeRedirect, 1000);
+                }
             },
             error: function (xhr) {
                 let errorMessage = L('AutoLogin:ErrorDefault');

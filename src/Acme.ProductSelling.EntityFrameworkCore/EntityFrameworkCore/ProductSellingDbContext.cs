@@ -9,6 +9,7 @@ using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Lookups;
 using Acme.ProductSelling.Specifications.Junctions;
 using Acme.ProductSelling.Specifications.Models;
+using Acme.ProductSelling.StoreInventories;
 using Acme.ProductSelling.Users;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -70,6 +71,7 @@ public class ProductSellingDbContext :
     public DbSet<Blog> Blogs { get; set; }
     public DbSet<Likes> Likes { get; set; }
     public DbSet<Customer> Customers { get; set; }
+    public DbSet<RecentlyViewedProduct> RecentlyViewedProducts { get; set; }
     #endregion
 
     #region Specs
@@ -180,6 +182,41 @@ public class ProductSellingDbContext :
             b.HasOne(p => p.Category).WithMany(c => c.Products).HasForeignKey(p => p.CategoryId).OnDelete(DeleteBehavior.Restrict);
             b.HasOne(p => p.Manufacturer).WithMany(m => m.Products).HasForeignKey(p => p.ManufacturerId).OnDelete(DeleteBehavior.Restrict);
             b.HasIndex(p => p.UrlSlug).IsUnique();
+        });
+
+        builder.Entity<RecentlyViewedProduct>(b =>
+        {
+            b.ToTable(tablePrefix + "RecentlyViewedProducts", ProductSellingConsts.DbSchema);
+            b.ConfigureByConvention();
+            // Index for fast lookups
+            b.HasKey(x => x.Id);
+
+            b.Property(x => x.UserId)
+                .IsRequired();
+
+            b.Property(x => x.ProductId)
+                .IsRequired();
+
+            b.Property(x => x.ViewedAt)
+                .IsRequired();
+
+            // Indexes
+            b.HasIndex(x => new { x.UserId, x.ViewedAt })
+                .IsDescending(false, true)
+                .HasDatabaseName("IX_RecentlyViewed_UserId_ViewedAt");
+
+            b.HasIndex(x => new { x.UserId, x.ProductId })
+                .IsUnique()
+                .HasDatabaseName("IX_RecentlyViewed_UserId_ProductId");
+
+            b.HasIndex(x => x.ViewedAt)
+                .HasDatabaseName("IX_RecentlyViewed_ViewedAt"); 
+
+            // Relationships
+            b.HasOne(x => x.Product)
+                .WithMany()
+                .HasForeignKey(x => x.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<StoreInventory>(b =>

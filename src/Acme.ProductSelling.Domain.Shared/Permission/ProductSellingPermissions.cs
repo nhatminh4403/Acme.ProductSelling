@@ -67,7 +67,7 @@ public static class ProductSellingPermissions
     {
         public const string Default = GroupName + ".Users";
         public const string ManageStoreAssignment = Default + ".ManageStoreAssignment";
-        public const string AssignToStore = Default + ".AssignToStore"; 
+        public const string AssignToStore = Default + ".AssignToStore";
         public const string Manage = Default + ".Manage";
 
     }

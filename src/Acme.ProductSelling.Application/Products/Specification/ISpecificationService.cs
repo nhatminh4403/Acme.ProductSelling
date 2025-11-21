@@ -4,7 +4,7 @@ using System;
 using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
 
-namespace Acme.ProductSelling.Products
+namespace Acme.ProductSelling.Products.Specification
 {
     public interface ISpecificationService : ITransientDependency
     {

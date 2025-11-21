@@ -2,6 +2,7 @@ using Acme.ProductSelling.Localization;
 using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.Localization;
 namespace Acme.ProductSelling.Permissions;
+
 public class ProductSellingPermissionDefinitionProvider : PermissionDefinitionProvider
 {
     public override void Define(IPermissionDefinitionContext context)

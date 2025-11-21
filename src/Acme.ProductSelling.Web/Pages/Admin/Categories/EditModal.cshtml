@@ -1,17 +1,12 @@
-﻿@page
+﻿@page "{prefix}/categories/edit/{id:guid}"
 @model Acme.ProductSelling.Web.Pages.Admin.Categories.EditModalModel
-@using Acme.ProductSelling.Localization
-@using Microsoft.Extensions.Localization
-@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal;
-@inject IStringLocalizer<ProductSellingResource> L
+
 @{
     Layout = null;
 }
 
 
-
-
-<form method="post" asp-page="/Categories/EditModal" asp-route-id="@Model.Id">
+<form method="post" asp-page="@($"/{Model.Prefix}/categories/edit-modal/{Model.Id}")">
     <input type="hidden" asp-for="Id" />
     <abp-modal>
         <abp-modal-header title="@L["Category:EditCategory"].Value"></abp-modal-header>

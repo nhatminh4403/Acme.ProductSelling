@@ -1,0 +1,20 @@
+﻿@page "/{prefix}/manufacturers/create-modal"
+@model Acme.ProductSelling.Web.Pages.Admin.Manufacturers.CreateModalModel
+@{
+    Layout = null;
+}
+@section scripts {
+    @* <abp-script src="/Pages/Admin/Manufacturers/manufacturers-common.js" /> *@
+}
+
+<form method="post" id="ManufacturerForm" asp-page="@($"/{Model.Prefix}/manufacturers/create-modal")">
+    <abp-modal>
+        <abp-modal-header title="@L["Manufacturer:CreateManufacturer"].Value"></abp-modal-header>
+        <abp-modal-body>
+            <abp-input asp-for="Manufacturer.Name" />
+            <abp-input asp-for="Manufacturer.Description" type="textarea" />
+            <abp-input asp-for="Manufacturer.UrlSlug" readonly="true" />
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel | AbpModalButtons.Save)"></abp-modal-footer>
+    </abp-modal>
+</form>

@@ -34,7 +34,6 @@ public class IndexModel : ProductSellingPageModel
 
     public PagedResultDto<CategoryDto> CategoryList { get; set; }
     public PagedResultDto<ManufacturerDto> ManufacturerList { get; set; }
-    //public ListResultDto<CategoryWithManufacturersDto> BrandsWithAssociatedCategory { get; set; }
 
     public PagerModel PagerModel { get; set; }
 
@@ -73,9 +72,6 @@ public class IndexModel : ProductSellingPageModel
             TotalCount = productList.TotalCount
         };
 
-
-
-
         var manufacturerLookup = await _manufacturerRepository.GetListAsync();
 
         ManufacturerList = new PagedResultDto<ManufacturerDto>
@@ -83,11 +79,7 @@ public class IndexModel : ProductSellingPageModel
             Items = ObjectMapper.Map<List<Manufacturer>, List<ManufacturerDto>>(manufacturerLookup),
             TotalCount = manufacturerLookup.Count
         };
-        //var brandsWithAssociatedCategory = await _categoryAppService.GetListWithManufacturersAsync();
-        //BrandsWithAssociatedCategory = new ListResultDto<CategoryWithManufacturersDto>
-        //{
-        //    Items = brandsWithAssociatedCategory.Items
-        //};
+
         var categoryLookup = await _categoryRepository.GetListAsync();
 
         CategoryList = new PagedResultDto<CategoryDto>
@@ -96,7 +88,7 @@ public class IndexModel : ProductSellingPageModel
             TotalCount = categoryLookup.Count
         };
         FeaturedProductCarousels = new List<FeaturedCategoryProductsDto>();
-        int numberOfFeaturedCategories = 4; // Display carousels for 4 categories
+        int numberOfFeaturedCategories = 4; 
         int productsPerCarousel = 8;
         var categoriesToFeature = CategoryList.Items.Take(numberOfFeaturedCategories).ToList();
 

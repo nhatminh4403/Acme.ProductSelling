@@ -1,5 +1,5 @@
 using Acme.ProductSelling.Categories;
-namespace Acme.ProductSelling.Specifications.Microphone
+namespace Acme.ProductSelling.Specifications
 {
     public class CreateUpdateMicrophoneSpecificationDto
     {

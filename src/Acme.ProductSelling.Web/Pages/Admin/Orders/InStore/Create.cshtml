@@ -1,0 +1,129 @@
+﻿@page "/{prefix}/orders/in-store/create"
+@model Acme.ProductSelling.Web.Pages.Admin.Orders.InStore.CreateModel
+@{
+    Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = L["CreateInStoreOrder"];
+}
+@section scripts {
+    <abp-script src="/Pages/Admin/Orders/InStore/Create.js" />
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size="_8">
+                <h2>@L["CreateInStoreOrder"]</h2>
+            </abp-column>
+            <abp-column size="_4" class="text-end">
+                @if (Model.CurrentUserStoreId.HasValue)
+                {
+                    <span class="badge bg-info">@Model.CurrentUserStoreName</span>
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <form asp-page="@($"/{Model.Prefix}/orders/in-store/create")" method="post" id="createOrderForm">
+            <abp-card class="mb-3">
+                <abp-card-header>
+                    <h4>@L["CustomerInformation"]</h4>
+                </abp-card-header>
+                <abp-card-body>
+                    <abp-row>
+                        <abp-column size="_6">
+                            <abp-input asp-for="Order.CustomerName" />
+                        </abp-column>
+                        <abp-column size="_6">
+                            <abp-input asp-for="Order.CustomerPhone" />
+                        </abp-column>
+                    </abp-row>
+                </abp-card-body>
+            </abp-card>
+
+            <abp-card class="mb-3">
+                <abp-card-header>
+                    <abp-row>
+                        <abp-column size="_6">
+                            <h4>@L["OrderItems"]</h4>
+                        </abp-column>
+                        <abp-column size="_6" class="text-end">
+                            <button type="button" class="btn btn-sm btn-success" id="addItemBtn">
+                                <i class="fa fa-plus"></i> @L["AddItem"]
+                            </button>
+                        </abp-column>
+                    </abp-row>
+                </abp-card-header>
+                <abp-card-body>
+                    <div id="orderItemsContainer">
+                        <!-- Items will be added here dynamically -->
+                    </div>
+                    <div class="text-muted" id="noItemsMessage">
+                        <i class="fa fa-info-circle"></i> @L["NoItemsAdded"]
+                    </div>
+                </abp-card-body>
+            </abp-card>
+
+            <abp-card class="mb-3">
+                <abp-card-header>
+                    <h4>@L["PaymentMethod"]</h4>
+                </abp-card-header>
+                <abp-card-body>
+                    <abp-select asp-for="Order.PaymentMethod">
+                        <abp-select-item value="Cash">@L["Cash"]</abp-select-item>
+                        <abp-select-item value="Card">@L["Card"]</abp-select-item>
+                        <abp-select-item value="E-Wallet">@L["E-Wallet"]</abp-select-item>
+                    </abp-select>
+                </abp-card-body>
+            </abp-card>
+
+            <abp-card>
+                <abp-card-body>
+                    <abp-row>
+                        <abp-column size="_6">
+                            <h4>@L["Total"]: <span id="totalAmount">0 VND</span></h4>
+                        </abp-column>
+                        <abp-column size="_6" class="text-end">
+                            <abp-button button-type="Primary" text="@L["CreateOrder"].Value" type="Submit" />
+                            <a href="@($"/{Model.Prefix}/orders/in-store")" class="btn btn-secondary">@L["Cancel"]</a>
+                        </abp-column>
+                    </abp-row>
+                </abp-card-body>
+            </abp-card>
+        </form>
+    </abp-card-body>
+</abp-card>
+
+<!-- Hidden template for order item row -->
+<template id="orderItemTemplate">
+    <div class="order-item-row card mb-2" data-item-index="">
+        <div class="card-body">
+            <abp-row>
+                <abp-column size="_5">
+                    <select class="form-select product-select" name="Order.Items[INDEX].ProductId" required>
+                        <option value="">-- @L["SelectProduct"] --</option>
+                        @foreach (var product in Model.AvailableProducts)
+                        {
+                            <option value="@product.Value" data-price="@product.Text.Split('-')[1].Split('(')[0].Trim()">
+                                @product.Text
+                            </option>
+                        }
+                    </select>
+                </abp-column>
+                <abp-column size="_3">
+                    <input type="number" class="form-control quantity-input"
+                           name="Order.Items[INDEX].Quantity"
+                           placeholder="@L["Quantity"]"
+                           min="1" value="1" required />
+                </abp-column>
+                <abp-column size="_3">
+                    <input type="text" class="form-control line-total" readonly placeholder="0 VND" />
+                </abp-column>
+                <abp-column size="_1" class="text-end">
+                    <button type="button" class="btn btn-sm btn-danger remove-item-btn">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </abp-column>
+            </abp-row>
+        </div>
+    </div>
+</template>

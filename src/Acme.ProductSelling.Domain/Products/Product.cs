@@ -1,6 +1,7 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Specifications.Models;
+using Acme.ProductSelling.StoreInventories;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

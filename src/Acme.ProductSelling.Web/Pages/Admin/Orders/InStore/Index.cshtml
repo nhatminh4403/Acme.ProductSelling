@@ -1,0 +1,36 @@
+﻿@page "/{prefix}/orders/in-store"
+@inject IAuthorizationService AuthorizationService
+
+@model Acme.ProductSelling.Web.Pages.Admin.Orders.InStore.IndexModel
+@{
+}
+@section scripts {
+    <abp-script src="/Pages/Admin/Orders/InStore/Index.js" />
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size="_6">
+                <h2>@L["MyInStoreOrders"]</h2>
+            </abp-column>
+            <abp-column size="_6" class="text-end">
+                @if (Model.CurrentUserStoreId.HasValue)
+                {
+                    <span class="badge bg-info me-2">@Model.CurrentUserStoreName</span>
+                }
+                @if (await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Orders.Create))
+                {
+                    <abp-button id="CreateOrderButton"
+                                text="@L["CreateOrder"].Value"
+                                icon="plus"
+                                button-type="Primary"
+                                href="@($"/{Model.Prefix}/orders/in-store/create")" />
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="InStoreOrdersTable" class="nowrap"></abp-table>
+    </abp-card-body>
+</abp-card>

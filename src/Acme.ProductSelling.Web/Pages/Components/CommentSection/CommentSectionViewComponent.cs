@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Comments;
+using Acme.ProductSelling.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -31,10 +32,5 @@ namespace Acme.ProductSelling.Web.Pages.Components.CommentSection
         }
 
     }
-    public class CommentSectionViewModel
-    {
-        public string EntityType { get; set; }
-        public Guid EntityId { get; set; }
-        public List<CommentDto> Comments { get; set; }
-    }
+
 }

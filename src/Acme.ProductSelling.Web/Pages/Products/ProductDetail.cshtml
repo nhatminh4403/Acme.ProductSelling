@@ -2,106 +2,20 @@
 @model Acme.ProductSelling.Web.Pages.Products.ProductDetailModel
 @using Acme.ProductSelling.Categories
 @using Acme.ProductSelling.Web.Helpers
-
+@using Acme.ProductSelling.Web.Pages.Components.RecentlyViewed
 @{
     ViewData["Title"] = Model.Product?.ProductName ?? L["Product:ProductDetail"];
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 @section styles {
     <link href="~/css/global/products/detail.css" rel="stylesheet" />
+    <link href="~/css/global/products/recently-viewed.css" rel="stylesheet" />
 }
-@section scripts {
+@section Scripts {
     <script>
-        function toggleContent(id, button) {
-            const container = document.getElementById(id);
-            container.classList.toggle('expanded');
-            button.classList.toggle('rotated');
-
-            const showMoreText = button.querySelector('.show-more-text');
-            const showLessText = button.querySelector('.show-less-text');
-
-            if (showMoreText && showLessText) {
-              showMoreText.classList.toggle('d-none');
-              showLessText.classList.toggle('d-none');
-            }
-        }
-        document.addEventListener('DOMContentLoaded', function () {
-            const leftCard = document.getElementById('leftCard');
-            const rightSidebar = document.getElementById('rightSidebar');
-
-            if (leftCard && rightSidebar) {
-                const height = leftCard.offsetHeight;
-                rightSidebar.style.height = height + 'px';
-            }
-           const demoProducts = [
-                {
-                    id: '1',
-                    name: 'AMD Ryzen 5 5600X',
-                    imageUrl: 'https://placehold.co/200',
-                    price: 4590000,
-                    originalPrice: 5990000,
-                    discountPercent: 23,
-                    slug: 'amd-ryzen-5-5600x'
-                },
-                {
-                    id: '2',
-                    name: 'NVIDIA GeForce RTX 3060',
-                    imageUrl: 'https://placehold.co/200',
-                    price: 8490000,
-                    originalPrice: 10990000,
-                    discountPercent: 22,
-                    slug: 'nvidia-geforce-rtx-3060'
-                },
-                {
-                    id: '3',
-                    name: 'Kingston HyperX DDR4 16GB',
-                    imageUrl: 'https://placehold.co/200',
-                    price: 1290000,
-                    originalPrice: 1290000,
-                    discountPercent: 0,
-                    slug: 'kingston-hyperx-ddr4-16gb'
-                },
-                {
-                    id: '4',
-                    name: 'Samsung 970 EVO Plus 1TB',
-                    imageUrl: 'https://placehold.co/200',
-                    price: 2590000,
-                    originalPrice: 3190000,
-                    discountPercent: 19,
-                    slug: 'samsung-970-evo-plus-1tb'
-                }
-            ];
-
-            // Populate recently viewed products carousel with demo data
-            const recentProductsContainer = document.getElementById('recentProductsRow');
-            if (recentProductsContainer) {
-                demoProducts.forEach(product => {
-                    const productCol = document.createElement('div');
-                    productCol.className = 'col-md-3 col-6 mb-3';
-
-                    productCol.innerHTML = `
-                        <a href="/products/${product.slug}" class="text-decoration-none">
-                            <div class="viewed-product-card position-relative">
-                                ${product.discountPercent > 0 ?
-                                  `<span class="viewed-product-discount">-${product.discountPercent}%</span>` : ''}
-                                <div class="viewed-product-img">
-                                    <img src="${product.imageUrl}" alt="${product.name}" class="img-fluid">
-                                </div>
-                                <div class="viewed-product-info">
-                                    <h6 class="viewed-product-title">${product.name}</h6>
-                                    ${product.discountPercent > 0 ?
-                                      `<span class="viewed-product-original-price">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.originalPrice)}</span>` : ''}
-                                    <span class="viewed-product-price">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}</span>
-                                </div>
-                            </div>
-                        </a>
-                    `;
-
-                    recentProductsContainer.appendChild(productCol);
-                });
-            }
+        $(function () {
+            RecentlyViewedManager.trackView('@Model.Product.Id');
         });
-
     </script>
 
 }
@@ -283,21 +197,18 @@
             <!-- Sidebar -->
             <div class="col-lg-4">
                 <div class="sticky-sidebar shadow" id="rightSidebar">
-                    <h5>Sticky Sidebar</h5>
+                    <h5>@L["UI:Title:RelatedBlogs"]</h5>
                     <p>This sidebar stays visible while scrolling the expanded content on the left.</p>
                 </div>
             </div>
         </div>
 
         <!-- Recently Viewed Products -->
-        <div class="recently-viewed-section  mt-4">
-            <div class="container">
-                <h4 class="recently-viewed-title">@L["UI:RecentlyViewedProducts"]</h4>
-                <div class="row" id="recentProductsRow">
-                    <!-- Placeholder for demo products - will be populated by JavaScript -->
-                </div>
-            </div>
-        </div>
+        @await Component.InvokeAsync(typeof(RecentlyViewedViewComponent), new {
+        maxCount = 6,
+        excludeProductId = Model.Product.Id,
+        title = L["UI:OtherRecentlyViewed"].Value.ToString(),
+        })
 
     </div>
 }

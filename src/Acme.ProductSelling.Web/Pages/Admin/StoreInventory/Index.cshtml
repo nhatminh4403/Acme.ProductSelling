@@ -1,0 +1,74 @@
+﻿@page "/{prefix}/store-inventory"
+@model Acme.ProductSelling.Web.Pages.Admin.StoreInventory.IndexModel
+@inject IAuthorizationService AuthorizationService
+
+@{
+    ViewData["Title"] = L["StoreInventory"];
+    Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
+
+}
+
+@section scripts {
+    <abp-script src="/Pages/Admin/StoreInventory/Index.js" />
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size="_6">
+                <h2>@L["StoreInventory"]</h2>
+            </abp-column>
+            <abp-column size="_6" class="text-end">
+                @if (!Model.IsAdminOrManager() && Model.CurrentUserStoreId.HasValue)
+                {
+                    <span class="badge bg-info">@Model.CurrentUserStoreName</span>
+                }
+                else if (Model.IsAdminOrManager())
+                {
+                    <select id="storeFilter" class="form-select d-inline-block w-auto">
+                        <option value="">@L["AllStores"]</option>
+                    </select>
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="StoreInventoryTable" class="nowrap"></abp-table>
+    </abp-card-body>
+</abp-card>
+
+<!-- Adjust Inventory Modal -->
+<abp-modal id="adjustInventoryModal" static="true" size="Default">
+    <abp-modal-header title="@L["AdjustInventory"].Value"></abp-modal-header>
+    <abp-modal-body>
+        <form id="adjustInventoryForm">
+            <input type="hidden" id="inventoryId" />
+            <div class="mb-3">
+                <label class="form-label">@L["Product"]</label>
+                <input type="text" class="form-control" id="productName" readonly />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">@L["Store"]</label>
+                <input type="text" class="form-control" id="storeName" readonly />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">@L["CurrentQuantity"]</label>
+                <input type="text" class="form-control" id="currentQuantity" readonly />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">@L["QuantityChange"] *</label>
+                <input type="number" class="form-control" id="quantityChange" required />
+                <small class="form-text text-muted">@L["UseNegativeForDecrease"]</small>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">@L["Reason"]</label>
+                <textarea class="form-control" id="reason" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">@L["NewQuantity"]</label>
+                <input type="text" class="form-control" id="newQuantity" readonly />
+            </div>
+        </form>
+    </abp-modal-body>
+    <abp-modal-footer buttons="@(AbpModalButtons.Save | AbpModalButtons.Cancel)"></abp-modal-footer>
+</abp-modal>

@@ -15,4 +15,5 @@ public class ProductSellingMenus
     public const string HangfireDashboard = Prefix + ".HangfireDashboard";
     public const string Inventory = Prefix + ".Inventory";
     public const string Stores = Prefix + ".Stores";
+    public const string Users = Prefix + ".Users";
 }

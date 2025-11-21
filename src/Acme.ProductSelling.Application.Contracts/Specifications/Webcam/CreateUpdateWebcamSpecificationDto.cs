@@ -1,6 +1,6 @@
 using Acme.ProductSelling.Categories;
 
-namespace Acme.ProductSelling.Specifications.Webcam
+namespace Acme.ProductSelling.Specifications
 {
 
     public class CreateUpdateWebcamSpecificationDto

@@ -231,11 +231,6 @@
     node-fetch "^2.6.7"
     ws "^7.4.5"
 
-"@popperjs/core@^2.11.8":
-  version "2.11.8"
-  resolved "https://registry.npmjs.org/@popperjs/core/-/core-2.11.8.tgz"
-  integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
-
 abort-controller@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/abort-controller/-/abort-controller-3.0.0.tgz"
@@ -276,14 +271,7 @@ datatables.net-bs5@^2.1.8:
     datatables.net "2.3.1"
     jquery ">=1.7"
 
-datatables.net@^2.1.8:
-  version "2.3.1"
-  resolved "https://registry.npmjs.org/datatables.net/-/datatables.net-2.3.1.tgz"
-  integrity sha512-pRXZuk3oR7P5kTl/CRvopcTihlvmZiY+xSBjbNI6e8MjYtgZQodWEqLUUOrIZeLH8CfxapPR/Bmb0NKAvILP5g==
-  dependencies:
-    jquery ">=1.7"
-
-datatables.net@2.3.1:
+datatables.net@2.3.1, datatables.net@^2.1.8:
   version "2.3.1"
   resolved "https://registry.npmjs.org/datatables.net/-/datatables.net-2.3.1.tgz"
   integrity sha512-pRXZuk3oR7P5kTl/CRvopcTihlvmZiY+xSBjbNI6e8MjYtgZQodWEqLUUOrIZeLH8CfxapPR/Bmb0NKAvILP5g==
@@ -328,12 +316,12 @@ jquery-validation-unobtrusive@^4.0.0:
     jquery "^3.6.0"
     jquery-validation ">=1.19"
 
-jquery-validation@^1.21.0, jquery-validation@>=1.19:
+jquery-validation@>=1.19, jquery-validation@^1.21.0:
   version "1.21.0"
   resolved "https://registry.npmjs.org/jquery-validation/-/jquery-validation-1.21.0.tgz"
   integrity sha512-xNot0rlUIgu7duMcQ5qb6MGkGL/Z1PQaRJQoZAURW9+a/2PGOUxY36o/WyNeP2T9R6jvWB8Z9lUVvvQWI/Zs5w==
 
-"jquery@^1.7 || ^2.0 || ^3.1", jquery@>=1.10, jquery@>=1.12.0, "jquery@>=1.5.0 <4.0", jquery@>=1.7, jquery@>=1.7.2, "jquery@>=3.4.0 <4.0.0":
+jquery@>=1.10, jquery@>=1.12.0, "jquery@>=1.5.0 <4.0", jquery@>=1.7, jquery@>=1.7.2, "jquery@>=3.4.0 <4.0.0":
   version "3.5.1"
   resolved "https://registry.npmjs.org/jquery/-/jquery-3.5.1.tgz"
   integrity sha512-XwIBPqcMn57FxfT+Go5pzySnm4KWkT1Tv7gjrpT1srtf8Weynl6R273VJ5GjkRb51IzMp5nbaPjJXMWeju2MKg==
@@ -370,13 +358,12 @@ moment@^2.30.1, moment@^2.9.0:
   resolved "https://registry.npmjs.org/moment/-/moment-2.30.1.tgz"
   integrity sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==
 
-"my-app@file:":
+"my-app@file:.":
   version "1.0.0"
-  resolved "file:"
   dependencies:
     "@abp/aspnetcore.mvc.ui.theme.leptonxlite" "~4.1.0"
     "@abp/signalr" "^9.2.0"
-    my-app "file:"
+    my-app "file:C:/Users/NotAdmin/AppData/Local/Yarn/Cache/v6/npm-my-app-1.0.0-af65f1fe-4091-43e7-9dd0-5c35c6e7c40f-1763732762416/node_modules/my-app"
 
 node-fetch@^2.6.7:
   version "2.7.0"

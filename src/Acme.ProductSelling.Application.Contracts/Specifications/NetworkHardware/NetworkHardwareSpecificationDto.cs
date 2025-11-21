@@ -2,7 +2,7 @@
 using System;
 using Volo.Abp.Application.Dtos;
 
-namespace Acme.ProductSelling.Specifications.NetworkHardware
+namespace Acme.ProductSelling.Specifications
 {
     public class NetworkHardwareSpecificationDto : EntityDto<Guid>
     {

@@ -1,40 +1,93 @@
-﻿@page "/admin/orders"
+﻿@page "/{prefix}/orders"
 @model Acme.ProductSelling.Web.Pages.Admin.Orders.IndexModel
 @using Acme.ProductSelling.Localization
-@using Acme.ProductSelling.Web.Pages.Admin.Categories
 @using Microsoft.Extensions.Localization
 @using Microsoft.AspNetCore.Authorization
 @using Acme.ProductSelling.Permissions
-
 @inject IStringLocalizer<ProductSellingResource> L
 @inject IAuthorizationService AuthorizationService
-@{
-    ViewData["Title"] = L["UI:Title:Admin:Orders"]; Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
 
+@{
+    ViewData["Title"] = L["UI:Title:Admin:Orders"];
+    Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
 }
+
 @section scripts {
     <abp-script-bundle name="Shared.Order.SignalR" />
     <abp-script src="/Pages/Admin/Orders/Index.js" />
 }
-<abp-card class="py-3 px-1">
+
+<abp-card>
     <abp-card-header>
         <abp-row>
-            <abp-column size-md="_6" class="d-flex justify-content-start align-items-center">
-                <abp-card-title class="mb-0 ms-3">@L["Order:Orders"]</abp-card-title>
+            <abp-column size-md="_6">
+                <h2 class="mb-0">@L["Order:Orders"]</h2>
             </abp-column>
-
-            <abp-column size-md="_6" class="d-flex justify-content-end align-items-center">
-                <div class="form-check form-switch me-3">
-                    <input class="form-check-input" type="checkbox" id="IncludeDeletedCheckbox">
-                    <label class="form-check-label" for="IncludeDeletedCheckbox">
-                        @L["ShowDeleted"]
-                    </label>
-                </div>
+            <abp-column size-md="_6" class="text-end">
+                @if (Model.CurrentUserStoreId.HasValue && !Model.IsAdminOrManager())
+                {
+                    <span class="badge bg-info fs-6 me-2">@Model.CurrentUserStoreName</span>
+                }
             </abp-column>
-
         </abp-row>
     </abp-card-header>
     <abp-card-body>
-        <abp-table striped-rows="true" id="OrdersTable"></abp-table>
+        <!-- Filters -->
+        <abp-row class="mb-3">
+            <abp-column size-md="_3">
+                @if (Model.IsAdminOrManager())
+                {
+                    <label class="form-label">@L["Store"]</label>
+                    <select id="storeFilter" class="form-select">
+                        <option value="">@L["AllStores"]</option>
+                    </select>
+                }
+            </abp-column>
+            <abp-column size-md="_3">
+                <label class="form-label">@L["OrderType"]</label>
+                <select id="orderTypeFilter" class="form-select">
+                    <option value="">@L["AllTypes"]</option>
+                    <option value="0">@L["Online"]</option>
+                    <option value="1">@L["InStore"]</option>
+                </select>
+            </abp-column>
+            <abp-column size-md="_3">
+                <label class="form-label">@L["OrderStatus"]</label>
+                <select id="orderStatusFilter" class="form-select">
+                    <option value="">@L["AllStatuses"]</option>
+                    <option value="0">@L["Enum:OrderStatus.Pending"]</option>
+                    <option value="1">@L["Enum:OrderStatus.Placed"]</option>
+                    <option value="2">@L["Enum:OrderStatus.Confirmed"]</option>
+                    <option value="3">@L["Enum:OrderStatus.Processing"]</option>
+                    <option value="4">@L["Enum:OrderStatus.Shipped"]</option>
+                    <option value="5">@L["Enum:OrderStatus.Delivered"]</option>
+                    <option value="6">@L["Enum:OrderStatus.Cancelled"]</option>
+                </select>
+            </abp-column>
+            <abp-column size-md="_3">
+                <label class="form-label">&nbsp;</label>
+                <button id="applyFiltersBtn" class="btn btn-primary w-100">
+                    <i class="fa fa-filter"></i> @L["ApplyFilter"]
+                </button>
+            </abp-column>
+        </abp-row>
+
+        <!-- Show Deleted Checkbox -->
+        @if (await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Orders.ViewAll))
+        {
+            <abp-row class="mb-3">
+                <abp-column size="_12">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="IncludeDeletedCheckbox">
+                        <label class="form-check-label" for="IncludeDeletedCheckbox">
+                            @L["ShowDeleted"]
+                        </label>
+                    </div>
+                </abp-column>
+            </abp-row>
+        }
+
+        <!-- Orders Table -->
+        <abp-table striped-rows="true" id="OrdersTable" class="nowrap"></abp-table>
     </abp-card-body>
 </abp-card>

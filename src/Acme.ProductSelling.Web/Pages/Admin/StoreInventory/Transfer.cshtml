@@ -1,0 +1,36 @@
+﻿@page "/{prefix}/store-inventory/transfer"
+@model Acme.ProductSelling.Web.Pages.Admin.StoreInventory.TransferModel
+@using Acme.ProductSelling.Localization
+@{
+    ViewData["Title"] = L["TransferInventory"];
+    Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
+}
+
+<abp-card>
+    <abp-card-header>
+        <h2>@L["TransferInventory"]</h2>
+    </abp-card-header>
+    <abp-card-body>
+        <form asp-page="@($"/{Model.Prefix}/store-inventory/transfer")" method="post">
+            <abp-row>
+                <abp-column size-md="_6">
+                    <abp-select asp-for="Transfer.FromStoreId" asp-items="Model.Stores" label="@L["FromStore"].Value" />
+                </abp-column>
+                <abp-column size-md="_6">
+                    <abp-select asp-for="Transfer.ToStoreId" asp-items="Model.Stores" label="@L["ToStore"].Value" />
+                </abp-column>
+            </abp-row>
+
+            <abp-select asp-for="Transfer.ProductId" asp-items="Model.Products" label="@L["Product"].Value" />
+
+            <abp-input asp-for="Transfer.Quantity" label="@L["Quantity"].Value" />
+
+            <abp-input asp-for="Transfer.Notes" label="@L["Notes"].Value" />
+
+            <hr />
+
+            <abp-button button-type="Primary" text="@L["Transfer"].Value" type="Submit" />
+            <a href="@($"/{Model.Prefix}/store-inventory")" class="btn btn-secondary">@L["Cancel"]</a>
+        </form>
+    </abp-card-body>
+</abp-card>

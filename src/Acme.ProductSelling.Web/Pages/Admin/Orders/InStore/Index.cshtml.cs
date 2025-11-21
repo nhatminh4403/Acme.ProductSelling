@@ -1,0 +1,22 @@
+using Acme.ProductSelling.Permissions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
+namespace Acme.ProductSelling.Web.Pages.Admin.Orders.InStore
+{
+    [Authorize(ProductSellingPermissions.Orders.Create)]
+    public class IndexModel : AdminPageModelBase
+    {
+        [BindProperty(SupportsGet = true)]
+        public string Prefix { get; set; }
+
+        public void OnGet()
+        {
+            if (Prefix != RoleBasedPrefix)
+            {
+                Response.Redirect(GetUrl("/orders/in-store"));
+            }
+        }
+    }
+}

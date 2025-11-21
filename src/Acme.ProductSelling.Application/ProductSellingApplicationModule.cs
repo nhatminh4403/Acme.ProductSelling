@@ -13,6 +13,7 @@ using Volo.Abp.PermissionManagement;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
 namespace Acme.ProductSelling;
+
 [DependsOn(
     typeof(AcmeProductSellingPaymentGatewayVnPayModule),
     typeof(AcmeProductSellingPaymentGatewayPayPalModule),

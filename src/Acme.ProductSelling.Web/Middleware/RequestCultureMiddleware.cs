@@ -127,7 +127,6 @@ namespace Acme.ProductSelling.Web.Middleware
         {
             if (GetCultureFromCookies(context) != culture)
             {
-                // Set the official ASP.NET Core cookie. This is the recommended way.
                 var feature = context.Features.Get<IRequestCultureFeature>();
                 var actualCulture = feature?.RequestCulture ?? new RequestCulture(culture);
 
@@ -137,7 +136,6 @@ namespace Acme.ProductSelling.Web.Middleware
                     new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
                 );
 
-                // Also update legacy/custom cookies if needed by other parts of the app (like JS)
                 var cookieOptions = new CookieOptions
                 {
                     Expires = DateTimeOffset.UtcNow.AddYears(1),
@@ -169,7 +167,8 @@ namespace Acme.ProductSelling.Web.Middleware
             "/swagger", "/signalr", "/favicon.ico", "/_vs/","/health-status",
             "/signalr-hubs","/admin", "/identity", "/account/manage","/account", "/TenantManagement",
             "/SettingManagement","/abp","/abp-web-resources", "/swagger-ui", "/swagger/v1/swagger.json",
-            "/Abp","/libs","/.well-known", "/connect","/hangfire"
+            "/Abp","/libs","/.well-known", "/connect","/hangfire","/blogger","/manager","/seller","/cashier","/warehouse",
+
             };
 
             return pathPrefixesToIgnore.Any(prefix => path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));

@@ -91,10 +91,16 @@
     <PackageReference Include="Volo.Abp.TenantManagement.Web" Version="9.3.6" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.Studio.Client.AspNetCore" Version="1.4.1" />
+    <PackageReference Include="Volo.Abp.Studio.Client.AspNetCore" Version="1.4.2" />
   </ItemGroup>
   <ItemGroup>
     <None Include="wwwroot\js\admin\blogs\create.js" />
+    <None Include="wwwroot\Pages\Admin\Blogs\Index.js" />
+    <None Include="wwwroot\Pages\Admin\Categories\Index.js" />
+    <None Include="wwwroot\Pages\Admin\Manufacturers\Index.js" />
+    <None Include="wwwroot\Pages\Admin\Orders\Index.js" />
+    <None Include="wwwroot\Pages\Admin\Products\Index.js" />
+    <None Include="wwwroot\Pages\Admin\Stores\Index.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Pages\Admin\Products\Components\" />

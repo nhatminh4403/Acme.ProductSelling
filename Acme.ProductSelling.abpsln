@@ -18,9 +18,7 @@
   },
   "options": {
     "httpRequests": {
-      "ignoredUrls": [
-      
-      ]
+      "ignoredUrls": []
     }
   },
   "creatingStudioConfiguration": {
@@ -42,8 +40,8 @@
     "createInitialMigration": "true",
     "theme": "leptonx-lite",
     "themeStyle": "",
-    "mobileFramework": "none",
     "publicWebsite": "false",
     "socialLogin": ""
-  }
+  },
+  "defaultRunProfile": "Default"
 }

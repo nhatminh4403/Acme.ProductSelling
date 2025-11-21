@@ -1,16 +1,23 @@
 ﻿@page "/"
 @using Acme.ProductSelling.Web.Pages.Components.Home.HeroSection
 @using Acme.ProductSelling.Web.Pages.Components.Home.CategoryList
+@using Acme.ProductSelling.Web.Pages.Components.RecentlyViewed
 @inject ICurrentUser CurrentUser
 @model Acme.ProductSelling.Web.Pages.IndexModel
 
 @section styles {
     <abp-style src="/Pages/Index.css" />
     <link href="~/css/shared/products/product-item.css" rel="stylesheet" />
+    <link href="~/css/global/products/recently-viewed.css" rel="stylesheet" />
+
 }
 
 @section scripts {
     <abp-script src="/Pages/Index.js" />
+
+    <script>
+        RecentlyViewedManager.loadWidget('my-recently-viewed-container');
+    </script>
 }
 
 @{
@@ -33,7 +40,7 @@
                     }
 
                     var carouselId = $"carousel_{featuredCategory.Category.Id.ToString().Replace("-", "")}";
-                      <section class="container my-3 bg-light rounded py-3">
+                    <section class="container my-3 bg-light rounded py-3">
                         <div class="d-flex justify-content-between align-items-center pb-2 mb-3 ps-2">
                             <h2 class="m-0 h4">
                                 @L["UI:ProductsFromCategory"] @HelperMethods.GetCategoryLocalizerName(featuredCategory.Category.Name, L)
@@ -85,7 +92,7 @@
                                                         </h6>
                                                     </div>
 
-                                                    @if (product.DiscountPercent > 0 || product.DiscountedPrice != null)
+                                                    @if (product.DiscountPercent > 0)
                                                     {
                                                         <div class="card-text mt-auto">
                                                             <div class="text-muted text-decoration-line-through small mb-0">
@@ -135,8 +142,25 @@
             }
 
 
+            <div class="recently-viewed-wrapper" style="display: none;">
+                <section class="container my-3 bg-light rounded py-3">
+                    <div class="d-flex justify-content-between align-items-center pb-2 mb-3 ps-2">
+                        <h2 class="m-0 h4">@L["UI:RecentlyViewed"]</h2>
+                       
+                    </div>
 
+                    <div id="my-recently-viewed-container">
+                        <div class="text-center p-4 text-muted">
+                            <i class="fas fa-spinner fa-spin me-2"></i> Loading...
+                        </div>
+                    </div>
+                </section>
+            </div>
             @await Component.InvokeAsync(typeof(CategoryListViewComponent))
+
+            @await Component.InvokeAsync(typeof(RecentlyViewedViewComponent),
+                                        new { maxCount = 6, title = L["UI:RecentlyViewed"].Value, })
+            
         </div>
     </div>
 </div>

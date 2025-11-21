@@ -1,21 +1,20 @@
-﻿@page
+﻿@page "/{prefix}/manufacturers/edit-modal/{id:guid}"
+
 @model Acme.ProductSelling.Web.Pages.Admin.Manufacturers.EditModalModel
-@using Acme.ProductSelling.Localization
-@using Microsoft.Extensions.Localization
-@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal;
-@inject IStringLocalizer<ProductSellingResource> L
+
 @{
     Layout = null;
 }
 
 
-<form method="post" asp-page="/Categories/EditModal" asp-route-id="@Model.Id">
+<form method="post" asp-page="@($"/{Model.Prefix}/manufacturers/edit-modal/{Model.Id}")">
     <input type="hidden" asp-for="Id" />
     <abp-modal>
         <abp-modal-header title="@L["Manufacturer:EditManufacturer"].Value"></abp-modal-header>
         <abp-modal-body>
             <abp-input asp-for="Manufacturer.Name" label="@L["Manufacturer:Name"].Value" />
-            <abp-input asp-for="Manufacturer.Description" label="@L["Manufacturer:Description"]" type="textarea" />
+            <abp-input asp-for="Manufacturer.Description" label="@L["Manufacturer:Description"]" type="textarea" />    
+            <abp-input asp-for="Manufacturer.UrlSlug" readonly="true" />
 
         </abp-modal-body>
         <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>

@@ -25,14 +25,6 @@ namespace Acme.ProductSelling.Web.Helpers
             var localizedName = localizer["Category:" + trimmedName];
             return localizedName.ResourceNotFound ? categoryName : localizedName;
         }
-        public static string GetProductLocalizerName(string productName)
-        {
-            if (string.IsNullOrEmpty(productName))
-            {
-                return "Unknown Product";
-            }
-            return productName.Replace(" ", "_").ToLowerInvariant();
-        }
 
         public static async Task<bool> IsImageUrlValidAsync(string imageUrl)
         {

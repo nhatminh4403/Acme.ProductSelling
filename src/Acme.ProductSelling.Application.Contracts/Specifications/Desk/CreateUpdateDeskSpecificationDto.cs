@@ -1,6 +1,6 @@
 using Acme.ProductSelling.Categories;
 
-namespace Acme.ProductSelling.Specifications.Desk
+namespace Acme.ProductSelling.Specifications   
 {
     public class CreateUpdateDeskSpecificationDto
     {

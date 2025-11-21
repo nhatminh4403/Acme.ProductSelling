@@ -1,0 +1,59 @@
+﻿@page "/{prefix}/orders/pending-payment"
+@model Acme.ProductSelling.Web.Pages.Admin.Orders.PendingPayment.IndexModel
+@{
+    ViewData["Title"] = L["Orders:PendingPayment"];
+    Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
+
+}
+@section scripts {
+    <abp-script src="/Pages/Admin/Orders/PendingPayment/Index.js" />
+}
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size="_6">
+                <h2>@L["PendingPaymentOrders"]</h2>
+            </abp-column>
+            <abp-column size="_6" class="text-end">
+                @if (Model.CurrentUserStoreId.HasValue)
+                {
+                    <span class="badge bg-info">@Model.CurrentUserStoreName</span>
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="PendingPaymentOrdersTable" class="nowrap"></abp-table>
+    </abp-card-body>
+</abp-card>
+
+<!-- Payment Modal -->
+<abp-modal id="completePaymentModal" static="true" size="Default">
+    <abp-modal-header title="@L["CompletePayment"].Value"></abp-modal-header>
+    <abp-modal-body>
+        <form id="completePaymentForm">
+            <input type="hidden" id="orderId" />
+            <div class="mb-3">
+                <label class="form-label">@L["OrderNumber"]</label>
+                <input type="text" class="form-control" id="orderNumber" readonly />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">@L["CustomerName"]</label>
+                <input type="text" class="form-control" id="customerName" readonly />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">@L["TotalAmount"]</label>
+                <input type="text" class="form-control" id="orderTotal" readonly />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">@L["PaidAmount"] *</label>
+                <input type="number" class="form-control" id="paidAmount" required min="0" step="1000" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">@L["Change"]</label>
+                <input type="text" class="form-control" id="changeAmount" readonly />
+            </div>
+        </form>
+    </abp-modal-body>
+    <abp-modal-footer buttons="@(AbpModalButtons.Save | AbpModalButtons.Cancel)"></abp-modal-footer>
+</abp-modal>

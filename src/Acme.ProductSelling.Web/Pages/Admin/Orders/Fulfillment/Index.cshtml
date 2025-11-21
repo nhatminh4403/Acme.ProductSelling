@@ -1,0 +1,59 @@
+﻿@page "/{prefix}/orders/fulfillment"
+@model Acme.ProductSelling.Web.Pages.Admin.Orders.Fulfillment.IndexModel
+@{
+    ViewData["Title"] = L["OrderFulfillment"];
+    Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
+}
+
+@section scripts {
+    <abp-script src="/Pages/Admin/Orders/Fulfillment/Index.js" />
+}
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size="_6">
+                <h2>@L["OrdersReadyForFulfillment"]</h2>
+            </abp-column>
+            <abp-column size="_6" class="text-end">
+                @if (Model.CurrentUserStoreId.HasValue)
+                {
+                    <span class="badge bg-info">@Model.CurrentUserStoreName</span>
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="FulfillmentOrdersTable" class="nowrap"></abp-table>
+    </abp-card-body>
+</abp-card>
+
+<!-- Fulfillment Modal -->
+<abp-modal id="fulfillOrderModal" static="true" size="Large">
+    <abp-modal-header title="@L["FulfillOrder"].Value"></abp-modal-header>
+    <abp-modal-body>
+        <input type="hidden" id="fulfillOrderId" />
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <strong>@L["OrderNumber"]:</strong> <span id="fulfillOrderNumber"></span>
+            </div>
+            <div class="col-md-6">
+                <strong>@L["CustomerName"]:</strong> <span id="fulfillCustomerName"></span>
+            </div>
+        </div>
+        <h5>@L["OrderItems"]</h5>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>@L["Product"]</th>
+                    <th>@L["Quantity"]</th>
+                    <th>@L["Prepared"]</th>
+                </tr>
+            </thead>
+            <tbody id="fulfillItemsBody"></tbody>
+        </table>
+        <div class="alert alert-info">
+            <i class="fa fa-info-circle"></i> @L["VerifyAllItemsBeforeFulfilling"]
+        </div>
+    </abp-modal-body>
+    <abp-modal-footer buttons="@(AbpModalButtons.Save | AbpModalButtons.Cancel)"></abp-modal-footer>
+</abp-modal>
