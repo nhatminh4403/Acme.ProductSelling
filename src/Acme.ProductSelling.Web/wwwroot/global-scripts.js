@@ -70,46 +70,48 @@ const RecentlyViewedManager = (function () {
         let priceHtml;
         if (product.discountedPrice && product.discountedPrice < product.originalPrice) {
             priceHtml = `
-                <span class="text-muted text-decoration-line-through small me-1">
+            <div class="rv-price-group">
+                
+                <span class="rv-price-old">
                     ${formatCurrency(product.originalPrice)}
                 </span>
-                <span class="text-danger fw-bold">
+                    <span class="rv-price-current">
                     ${formatCurrency(product.discountedPrice)}
-                </span>`;
+                </span>
+                <span class="rv-discount-badge">
+                    -${product.discountPercent}%
+                </span>
+            </div>`;
         } else {
-            priceHtml = `<span class="text-primary fw-bold">${formatCurrency(product.originalPrice)}</span>`;
+            priceHtml = `        
+            <div class="rv-price-group">
+                <span class="rv-price-current text-primary">
+                    ${formatCurrency(product.originalPrice)}
+                </span>
+            </div>`;
         }
-
-        const stockBadge = product.isAvailableForPurchase
+        const stockHtml = product.isAvailableForPurchase
             ? ''
-            : '<span class="badge bg-secondary position-absolute top-0 end-0 m-1" style="font-size: 0.65rem;">Hết hàng</span>';
+            : '<div class="rv-stock-badge">Hết hàng</div>';
 
         return `
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="card h-100 shadow-sm border-0 position-relative product-card-hover">
-                    ${stockBadge}
-                    <a href="/products/${product.urlSlug}" class="text-decoration-none">
-                        <img src="${product.imageUrl || '/images/placeholder.png'}"
-                             class="card-img-top"
-                             alt="${escapeHtml(product.productName)}"
-                             style="aspect-ratio: 1/1; object-fit: cover;"
-                             loading="lazy"
-                             onerror="this.src='/images/placeholder.png'">
-                    </a>
-                    <div class="card-body p-2">
-                        <h6 class="card-title text-truncate mb-1" style="font-size: 0.85rem;">
-                            <a href="/products/${product.urlSlug}"
-                               class="text-dark text-decoration-none"
-                               title="${escapeHtml(product.productName)}">
-                                ${escapeHtml(product.productName)}
-                            </a>
-                        </h6>
-                        <div class="mb-0" style="font-size: 0.8rem;">
-                            ${priceHtml}
-                        </div>
-                    </div>
+        <div class="col-12 col-md-6 col-lg-3">
+            <a href="/products/${product.urlSlug}" class="rv-card" title="${escapeHtml(product.productName)}">
+                <div class="rv-img-wrapper">
+                    ${stockHtml}
+                    <img src="${product.imageUrl || '/images/placeholder.png'}" 
+                         alt="${escapeHtml(product.productName)}"
+                         loading="lazy"
+                         onerror="this.src='/images/placeholder.png'">
                 </div>
-            </div>`;
+                <div class="rv-content">
+                    <div class="rv-title">
+                        ${escapeHtml(product.productName)}
+                    </div>
+                    ${priceHtml}
+                </div>
+            </a>
+        </div>`;
     }
 
     // =========================================================================

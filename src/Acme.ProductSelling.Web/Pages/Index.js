@@ -81,12 +81,12 @@
         constructor(container) {
             this.container = container;
             this.track = container.querySelector('.product-carousel-track');
-            this.prev = container.querySelector('.carousel-control-prev-custom');
-            this.next = container.querySelector('.carousel-control-next-custom');
+            this.prev = container.querySelector('.carousel-nav-prev');
+            this.next = container.querySelector('.carousel-nav-next');
             if (!this.track || !this.prev || !this.next) return;
 
             this.isMoving = false;
-            this.autoScrollInterval = null; // To hold the interval ID
+            this.autoScrollInterval = null;
             this.init();
         }
 
@@ -99,12 +99,14 @@
             this.originalItems = Array.from(this.track.children);
             this.totalOriginalItems = this.originalItems.length;
 
+            // Check if navigation is needed
+            this.updateNavigationState();
+
+            // If we don't need navigation, we can stop here (optional, depending on cloning preference)
+            // However, sticking to your logic regarding cloning:
             if (this.totalOriginalItems <= this.perView) {
-                this.prev.style.display = 'none';
-                this.next.style.display = 'none';
                 return;
             }
-
             const itemsToCloneCount = this.perView;
 
             // Clone items for infinite effect
@@ -118,31 +120,34 @@
 
             this.bindEvents();
             this.updatePosition(false);
-            this.startAutoScroll(); // Start auto-scrolling on initialization
+            this.startAutoScroll();
         }
 
         startAutoScroll() {
-            // Clear any existing interval to prevent duplicates
             if (this.autoScrollInterval) clearInterval(this.autoScrollInterval);
-
-            // Set an interval to move the carousel. Duration is set to 7000ms (7 seconds).
             this.autoScrollInterval = setInterval(() => {
-                this.move(1); // Move to the next item
-            }, 7000); // You can change this value (5000 to 10000ms)
+                this.move(1);
+            }, 5000); // Auto-scroll every 5 seconds
         }
 
         stopAutoScroll() {
-            // Clear the interval to stop auto-scrolling
             clearInterval(this.autoScrollInterval);
         }
-
+        updateNavigationState() {
+            if (this.totalOriginalItems <= this.perView) {
+                this.container.classList.remove('has-nav'); 
+                this.container.classList.add('no-navigation');
+            } else {
+                this.container.classList.add('has-nav'); 
+                this.container.classList.remove('no-navigation');
+            }
+        }
         bindEvents() {
             this.prev.addEventListener('click', () => this.move(-1));
             this.next.addEventListener('click', () => this.move(1));
 
-            // When a transition finishes, check if we need to jump to the reset position
             this.track.addEventListener('transitionend', () => {
-                this.isMoving = false; // Allow moving again
+                this.isMoving = false;
                 if (this.index < this.perView) {
                     this.index += this.totalOriginalItems;
                     this.updatePosition(false);
@@ -152,15 +157,22 @@
                 }
             });
 
-            // Pause auto-scroll on mouse hover
+            // Pause auto-scroll on hover
             this.container.addEventListener('mouseenter', () => this.stopAutoScroll());
             this.container.addEventListener('mouseleave', () => this.startAutoScroll());
 
-            window.addEventListener('resize', () => this.updatePosition(false));
+            // Re-check navigation visibility on resize
+            window.addEventListener('resize', () => {
+                this.updateNavigationState();
+                this.updatePosition(false);
+            });
 
             // Touch swipe support
             let startX = 0;
-            this.track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+            this.track.addEventListener('touchstart', e => {
+                startX = e.touches[0].clientX;
+            }, { passive: true });
+
             this.track.addEventListener('touchend', e => {
                 if (this.isMoving) return;
                 const diff = startX - e.changedTouches[0].clientX;
@@ -176,19 +188,18 @@
         }
 
         updatePosition(animated = true) {
-            // The existing CSS transition provides the smooth, fluid animation
             this.track.style.transition = animated
                 ? 'transform .5s cubic-bezier(0.4, 0, 0.2, 1)'
                 : 'none';
 
             const itemWidth = this.originalItems[0]?.offsetWidth || 0;
             if (itemWidth === 0) return;
-            const gap = 16; // Assuming a 1rem (16px) gap, adjust if necessary
+            const gap = 20; // 1.25rem = 20px
             this.track.style.transform = `translateX(-${this.index * (itemWidth + gap)}px)`;
         }
     }
 
-    // Initialize all infinite carousels on the page
+    // Initialize all carousels
     document.querySelectorAll('.product-carousel-container')
         .forEach(container => new ResponsiveCarousel(container));
 });

@@ -177,6 +177,7 @@ namespace Acme.ProductSelling.Products
                 DiscountedPrice = product.DiscountedPrice,
                 UrlSlug = product.UrlSlug,
                 IsAvailableForPurchase = product.IsAvailableForPurchase(),
+                DiscountPercent = product.DiscountPercent,
                 TotalStockAcrossAllStores = product.StoreInventories?.Sum(x => x.Quantity) ?? 0
             };
         }

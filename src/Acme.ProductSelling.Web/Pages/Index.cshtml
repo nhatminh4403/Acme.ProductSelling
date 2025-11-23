@@ -7,7 +7,7 @@
 
 @section styles {
     <abp-style src="/Pages/Index.css" />
-    <link href="~/css/shared/products/product-item.css" rel="stylesheet" />
+    @* <link href="~/css/shared/products/product-item.css" rel="stylesheet" /> *@
     <link href="~/css/global/products/recently-viewed.css" rel="stylesheet" />
 
 }
@@ -40,94 +40,113 @@
                     }
 
                     var carouselId = $"carousel_{featuredCategory.Category.Id.ToString().Replace("-", "")}";
-                    <section class="container my-3 bg-light rounded py-3">
-                        <div class="d-flex justify-content-between align-items-center pb-2 mb-3 ps-2">
-                            <h2 class="m-0 h4">
-                                @L["UI:ProductsFromCategory"] @HelperMethods.GetCategoryLocalizerName(featuredCategory.Category.Name, L)
-                            </h2>
+
+                    <section class="featured-section">
+                        <div class="featured-header">
+                            <div class="featured-title-wrapper">
+                                <div class="title-accent"></div>
+
+                                <span class="featured-title">
+                                    @L["UI:ProductsFromCategory"]
+                                        @HelperMethods.GetCategoryLocalizerName(featuredCategory.Category.Name, L)
+                                   
+                                </span>
+                            </div>
                             <a asp-page="/Products/ProductsByCategory"
                                asp-route-slug="@featuredCategory.Category.UrlSlug"
-                               class="btn btn-sm btn-outline-primary">
-                                @L["SeeAll"] <i class="bi bi-arrow-right-short"></i>
+                               class="view-all-btn">
+                                @L["SeeAll"]
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
                             </a>
                         </div>
 
                         <div class="product-carousel-wrapper">
                             <div id="@carouselId" class="product-carousel-container">
-                                <button class="carousel-control-custom carousel-control-prev-custom" type="button">
-                                    <i class="bi bi-chevron-left"></i>
+                                <button class="carousel-nav carousel-nav-prev" type="button" aria-label="Previous">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
                                 </button>
-
+                                
                                 <div class="product-carousel-track">
                                     @foreach (var product in featuredCategory.Products)
                                     {
                                         <div class="product-carousel-item">
-                                            <div class="card product-card shadow-sm">
-                                                @if (!string.IsNullOrWhiteSpace(product.ImageUrl))
-                                                {
-                                                    <a asp-page="/Products/ProductDetail" asp-route-slug="@product.UrlSlug">
-                                                        <img src="@($"https://placehold.co/200x200?text={product.ProductName.Substring(0, 1)}")"
-                                                             class="card-img-top p-3"
-                                                             loading="lazy"
-                                                             alt="@product.ProductName"
-                                                             style="max-height: 180px; object-fit: contain;">
-                                                    </a>
-                                                }
-                                                else
-                                                {
-                                                    <div class="text-center p-5 bg-light">
-                                                        <i class="fas fa-image fa-3x text-secondary"></i>
-                                                    </div>
-                                                }
-
-                                                <div class="card-body d-flex flex-column">
-                                                    <div class="product-header mb-2">
-                                                        <h6 class="card-title mb-1 fs-6" style="min-height: 40px;">
-                                                            <a asp-page="/Products/ProductDetail"
-                                                               class="text-decoration-none text-dark"
-                                                               asp-route-slug="@product.UrlSlug"
-                                                               title="@product.ProductName">
-                                                                @(product.ProductName.Length > 50 ? product.ProductName.Substring(0, 47) + "..." : product.ProductName)
-                                                            </a>
-                                                        </h6>
-                                                    </div>
-
-                                                    @if (product.DiscountPercent > 0)
-                                                    {
-                                                        <div class="card-text mt-auto">
-                                                            <div class="text-muted text-decoration-line-through small mb-0">
-                                                                @product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
-                                                            </div>
-                                                            <div class="d-flex align-items-center gap-2">
-                                                                <span class="fw-bold fs-6 text-danger">
-                                                                    @product.DiscountedPrice.Value.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
-                                                                </span>
-                                                                <span class="badge bg-danger small">-@product.DiscountPercent%</span>
-                                                            </div>
-                                                        </div>
-                                                    }
-                                                    else
-                                                    {
-                                                        <div class="mt-auto fw-bold text-danger fs-6">
-                                                            @product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
-                                                        </div>
-                                                    }
-                                                </div>
-
-                                                <div class="card-footer bg-transparent border-0 text-center pb-2">
+                                            <article class="product-card-modern">
+                                                <div class="product-image-wrapper">
                                                     <a asp-page="/Products/ProductDetail"
                                                        asp-route-slug="@product.UrlSlug"
-                                                       class="btn btn-sm btn-primary w-100">
-                                                        @L["ViewDetails"]
+                                                       class="product-image-link">
+                                                        @if (!string.IsNullOrWhiteSpace(product.ImageUrl))
+                                                        {
+                                                            <img @*src="@($"https://placehold.co/300x300?text={product.ProductName.Substring(0, 1)}")"*@
+                                                                 src="@product.ImageUrl"
+                                                                 class="product-image"
+                                                                 loading="lazy"
+                                                                 alt="@product.ProductName">
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="product-image-placeholder">
+                                                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                                                                    <path d="M21 19V5C21 3.9 20.1 3 19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19ZM8.5 13.5L11 16.51L14.5 12L19 18H5L8.5 13.5Z" fill="currentColor" />
+                                                                </svg>
+                                                            </div>
+                                                        }
+                                                    </a>
+
+                                                </div>
+
+                                                <div class="product-content">
+                                                    <h3 class="product-name">
+                                                        <a asp-page="/Products/ProductDetail"
+                                                           asp-route-slug="@product.UrlSlug"
+                                                           title="@product.ProductName">
+                                                            @(product.ProductName.Length > 50 ? product.ProductName.Substring(0, 47) + "..." : product.ProductName)
+                                                        </a>
+                                                    </h3>
+                                                    <div class="product-pricing">
+                                                        @if (product.DiscountPercent > 0)
+                                                        {
+                                                           <span class="price-original">
+                                                                    @product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
+                                                                </span>
+                                                            <div class="price-group">
+                                                                
+                                                                <span class="price-current">
+                                                                    @product.DiscountedPrice.Value.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
+                                                                </span>
+                                                                <span class="price-discount-badge">-@product.DiscountPercent%</span>
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="price-current">
+                                                                @product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
+                                                            </span>
+                                                        }
+                                                    </div>
+
+                                                    <a asp-page="/Products/ProductDetail"
+                                                       asp-route-slug="@product.UrlSlug"
+                                                       class="product-cta">
+                                                        <span>@L["ViewDetails"]</span>
+                                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                                            <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                                        </svg>
                                                     </a>
                                                 </div>
-                                            </div>
+                                            </article>
                                         </div>
                                     }
                                 </div>
 
-                                <button class="carousel-control-custom carousel-control-next-custom" type="button">
-                                    <i class="bi bi-chevron-right"></i>
+                                <button class="carousel-nav carousel-nav-next" type="button" aria-label="Next">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                        <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
                                 </button>
                             </div>
                         </div>
@@ -136,31 +155,21 @@
             }
             else
             {
-                <section class="container my-2 bg-light rounded py-3">
-                    <div class="alert alert-info">@L["Product:NoFeaturedProductsFound"]</div>
+                <section class="empty-state">
+                    <div class="empty-state-content">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+                            <path d="M20 7H4C2.9 7 2 7.9 2 9V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V9C22 7.9 21.1 7 20 7ZM20 18H4V9H20V18ZM12 4L8 7H16L12 4Z" fill="currentColor" opacity="0.3" />
+                        </svg>
+                        <h3>@L["Product:NoFeaturedProductsFound"]</h3>
+                        <p>Check back soon for exciting new products!</p>
+                    </div>
                 </section>
             }
 
-
-            <div class="recently-viewed-wrapper" style="display: none;">
-                <section class="container my-3 bg-light rounded py-3">
-                    <div class="d-flex justify-content-between align-items-center pb-2 mb-3 ps-2">
-                        <h2 class="m-0 h4">@L["UI:RecentlyViewed"]</h2>
-                       
-                    </div>
-
-                    <div id="my-recently-viewed-container">
-                        <div class="text-center p-4 text-muted">
-                            <i class="fas fa-spinner fa-spin me-2"></i> Loading...
-                        </div>
-                    </div>
-                </section>
-            </div>
             @await Component.InvokeAsync(typeof(CategoryListViewComponent))
 
-            @await Component.InvokeAsync(typeof(RecentlyViewedViewComponent),
-                                        new { maxCount = 6, title = L["UI:RecentlyViewed"].Value, })
-            
+            @await Component.InvokeAsync(typeof(RecentlyViewedViewComponent), new { maxCount = 6, title = L["UI:RecentlyViewed"].Value, })
+
         </div>
     </div>
 </div>
