@@ -26,7 +26,7 @@
                                 text: l('Category:Edit'),
                                 visible: abp.auth.isGranted('ProductSelling.Categories.Edit'),
                                 action: function (data) {
-                                    editModal.open({ url: `/${prefix}/categories/edit-modal/${data.record.id}` { id: data.record.id });
+                                    editModal.open({ url: `/${prefix}/categories/edit-modal/${data.record.id}` });
                                 }
                             },
                             {

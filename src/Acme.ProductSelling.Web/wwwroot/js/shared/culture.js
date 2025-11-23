@@ -1,4 +1,5 @@
-﻿class CultureHelper {
+﻿//culture.js
+class CultureHelper {
     static getCurrentCulture() {
         const path = window.location.pathname;
         const parts = path.split('/');
@@ -63,14 +64,12 @@
                 pathWithoutCulture.toLowerCase().startsWith('/admin/') ||
                 pathWithoutCulture.startsWith('/Abp/') ||
                 pathWithoutCulture.startsWith('/identity/') ||
-                pathWithoutCulture.startsWith('/account/') ||
+                pathWithoutCulture.startsWith('/Account/') ||
                 pathWithoutCulture.startsWith('/SettingManagement/') ||
                 pathWithoutCulture.startsWith('/TenantManagement/') ||
                 pathWithoutCulture.startsWith('/PermissionManagement/') ||
                 pathWithoutCulture.startsWith('/hangfire/') || 
                 pathWithoutCulture.startsWith('/swagger/') ||
-                pathWithoutCulture.startsWith('/Account/Logout') ||
-
                 pathWithoutCulture.startsWith('/Identity/') || 
                 href.includes('.')) {
                 return; // Skip this link

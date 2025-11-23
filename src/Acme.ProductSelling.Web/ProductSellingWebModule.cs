@@ -93,13 +93,12 @@ namespace Acme.ProductSelling.Web;
     typeof(AbpSwashbuckleModule),
     typeof(AbpAspNetCoreSerilogModule),
     typeof(AbpAspNetCoreSignalRModule),
-    typeof(ProductSellingHttpApiClientModule),
     typeof(AbpAspNetCoreMvcUiThemeSharedModule),
     typeof(AbpAspNetCoreMvcModule),
     typeof(AbpAspNetCoreMvcUiModule),
     //typeof(AbpBackgroundJobOptions),
     typeof(AbpBackgroundJobsHangfireModule)
-
+    
 )]
 
 #endregion
@@ -412,7 +411,6 @@ public class ProductSellingWebModule : AbpModule
         });
         context.Services.ConfigureApplicationCookie(options =>
         {
-            options.LogoutPath = "/Account/Logout";
             options.Events.OnRedirectToLogin = context =>
             {
                 context.Response.Redirect($"/loi?statusCode=401");
@@ -440,6 +438,7 @@ public class ProductSellingWebModule : AbpModule
         Configure<AbpVirtualFileSystemOptions>(options =>
         {
             options.FileSets.AddEmbedded<ProductSellingWebModule>();
+            options.FileSets.AddEmbedded<Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.AbpAspNetCoreMvcUiThemeSharedModule>();
 
             if (hostingEnvironment.IsDevelopment())
             {
@@ -515,8 +514,8 @@ public class ProductSellingWebModule : AbpModule
         app.MapAbpStaticAssets();
         app.UseAbpStudioLink();
 
-        app.UseMiddleware<RequestCultureMiddleware>();
         app.UseRouting();
+        app.UseMiddleware<RequestCultureMiddleware>();
 
         app.UseMiddleware<PaymentIPWhitelistMiddleware>();
 

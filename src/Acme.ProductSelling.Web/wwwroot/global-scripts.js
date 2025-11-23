@@ -253,7 +253,6 @@ const RecentlyViewedManager = (function () {
         getGuestIds: getGuestIds
     };
 })();
-// At the bottom of recently-viewed-manager.js, outside the Manager object
 
 document.addEventListener('DOMContentLoaded', function () {
     const $wrapper = $('#recently-viewed-section');
@@ -674,20 +673,43 @@ $(function () {
 
         const executeRedirect = () => {
             const returnUrl = new URLSearchParams(window.location.search).get('ReturnUrl');
-            window.location.href = returnUrl ? decodeURIComponent(returnUrl) : window.location.href;
+            if (returnUrl) {
+                window.location.href = decodeURIComponent(returnUrl);
+                return;
+            }
+            $.ajax({
+                url: '/api/app/account/role-prefix',
+                type: 'GET',
+                headers: getABPHeaders(),
+                success: function (result) {
+                    if (result && result.hasAdminAccess) {
+                        // Redirect to admin panel with role-based prefix
+                        window.location.href = '/' + result.prefix;
+                    } else {
+                        // Regular user - stay on current page or go home
+                        window.location.href = '/';
+                    }
+                },
+                error: function () {
+                    // If the API fails, just reload current page
+                    window.location.reload();
+                }
+            });
         };
+
+        const redirectDelay = 1500; // 1.5 seconds to see the toast
 
         if (typeof RecentlyViewedManager !== 'undefined') {
             if (loginButton) loginButton.html('<i class="fas fa-sync fa-spin"></i> Đang đồng bộ...');
 
             RecentlyViewedManager.syncWithServer()
-                .then(() => { setTimeout(executeRedirect, 800); })
-                .catch(() => { setTimeout(executeRedirect, 800); })
                 .finally(() => {
-                    setTimeout(executeRedirect, 500);
+                    // Only call executeRedirect ONCE in finally
+                    setTimeout(executeRedirect, redirectDelay);
                 });
         } else {
-            setTimeout(executeRedirect(), 1000); 
+            // Fixed: removed () to pass function reference, not invoke it
+            setTimeout(executeRedirect, redirectDelay);
         }
 
     }
@@ -903,18 +925,41 @@ $(function () {
 
                 showNotification(L('Login:Success'), '', 'success');
 
-                // --- CHANGED: START Sync Logic (Auto Login) ---
+
                 const executeRedirect = () => {
                     const returnUrl = new URLSearchParams(window.location.search).get('ReturnUrl');
-                    window.location.href = returnUrl ? decodeURIComponent(returnUrl) : window.location.href;
+
+                    if (returnUrl) {
+                        window.location.href = decodeURIComponent(returnUrl);
+                        return;
+                    }
+
+                    // Fetch role prefix for new user
+                    $.ajax({
+                        url: '/api/app/account/role-prefix',
+                        type: 'GET',
+                        headers: getABPHeaders(),
+                        success: function (result) {
+                            if (result && result.hasAdminAccess) {
+                                window.location.href = '/' + result.prefix;
+                            } else {
+                                window.location.href = '/';
+                            }
+                        },
+                        error: function () {
+                            window.location.reload();
+                        }
+                    });
                 };
+                const redirectDelay = 1500;
 
                 if (typeof RecentlyViewedManager !== 'undefined') {
                     RecentlyViewedManager.syncWithServer()
-                        .then(() => { setTimeout(executeRedirect, 1000); })
-                        .catch(() => { setTimeout(executeRedirect, 1000); });
+                        .finally(() => {
+                            setTimeout(executeRedirect, redirectDelay);
+                        });
                 } else {
-                    setTimeout(executeRedirect, 1000);
+                    setTimeout(executeRedirect, redirectDelay);
                 }
             },
             error: function (xhr) {

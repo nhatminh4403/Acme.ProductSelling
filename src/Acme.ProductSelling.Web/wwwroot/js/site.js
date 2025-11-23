@@ -11,7 +11,6 @@ $(function () {
     }, 1000);
 
     function initializeCartFunctionality() {
-        // Only initialize once
         if (window.cartInitialized) {
             return;
         }

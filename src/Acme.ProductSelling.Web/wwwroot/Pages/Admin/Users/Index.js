@@ -1,8 +1,7 @@
 ﻿(function () {
     const l = abp.localization.getResource('ProductSelling');
-    const userService = acme.productSelling.users.userManagementAppService;
-    const storeService = acme.productSelling.stores.services.storeAppService;
-
+    const userService = acme.productSelling.users.userManagement;
+    const storeService = acme.productSelling.stores.store;
     let stores = [];
 
     // Load stores

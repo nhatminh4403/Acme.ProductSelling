@@ -27,6 +27,53 @@ namespace Acme.ProductSelling.Account
             _customerRepository = customerRepository;
         }
 
+        public async Task<RolePrefixDto> GetRolePrefixAsync()
+        {
+            var result = new RolePrefixDto
+            {
+                Prefix = "admin",
+                HasAdminAccess = false
+            };
+            if (!CurrentUser.IsAuthenticated || !CurrentUser.Id.HasValue)
+            {
+                return result;
+            }
+            var user = await _userRepository.GetAsync(CurrentUser.Id.Value);
+            var roles = await _userRepository.GetRolesAsync(user.Id);
+            var roleNames = roles.Select(r => r.Name).ToList();
+            result.HasAdminAccess = roleNames.Any(r =>
+                           r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Admin, StringComparison.OrdinalIgnoreCase) ||
+                           r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Blogger, StringComparison.OrdinalIgnoreCase) ||
+                           r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Manager, StringComparison.OrdinalIgnoreCase) ||
+                           r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Seller, StringComparison.OrdinalIgnoreCase) ||
+                           r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Cashier, StringComparison.OrdinalIgnoreCase) ||
+                           r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.WarehouseStaff, StringComparison.OrdinalIgnoreCase)
+                       );
+            if (roleNames.Any(r => r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Blogger, StringComparison.OrdinalIgnoreCase)))
+            {
+                result.Prefix = "blogger";
+            }
+            else if (roleNames.Any(r => r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Manager, StringComparison.OrdinalIgnoreCase)))
+            {
+                result.Prefix = "manager";
+            }
+            else if (roleNames.Any(r => r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Seller, StringComparison.OrdinalIgnoreCase)))
+            {
+                result.Prefix = "seller";
+            }
+            else if (roleNames.Any(r => r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Cashier, StringComparison.OrdinalIgnoreCase)))
+            {
+                result.Prefix = "cashier";
+            }
+            else if (roleNames.Any(r => r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.WarehouseStaff, StringComparison.OrdinalIgnoreCase)))
+            {
+                result.Prefix = "warehouse";
+            }
+            // Default is "admin" (already set)
+
+            return result;
+        }
+
         public async Task<IdentityUserDto> RegisterAsync(RegisterDto input)
         {
             if (await _userRepository.FindByNormalizedUserNameAsync(_userManager.NormalizeName(input.UserName)) != null)

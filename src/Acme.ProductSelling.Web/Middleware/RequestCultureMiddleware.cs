@@ -15,6 +15,20 @@ namespace Acme.ProductSelling.Web.Middleware
         private readonly string[] _supportedCultures;
         private readonly string _defaultCulture;
 
+        // 1. OPTIMIZATION: Move static arrays to class level so they aren't allocated on every request
+        private static readonly string[] _staticFileExtensions = new[] {
+            ".css", ".js", ".png", ".jpg", ".jpeg", ".gif", ".ico",
+            ".svg", ".woff", ".woff2", ".ttf", ".map", ".json"
+        };
+
+        private static readonly string[] _pathPrefixesToIgnore = new[] {
+            "/api", "/_framework", "/css", "/js", "/lib", "/images",
+            "/swagger", "/signalr", "/favicon.ico", "/_vs/","/health-status",
+            "/signalr-hubs","/admin", "/identity", "/Account", "/TenantManagement",
+            "/SettingManagement","/abp","/abp-web-resources", "/swagger-ui", "/swagger/v1/swagger.json",
+            "/Abp","/libs","/.well-known", "/connect","/hangfire","/blogger","/manager","/seller","/cashier","/warehouse",
+        };
+
         public RequestCultureMiddleware(RequestDelegate next, IOptions<RequestLocalizationOptions> options)
         {
             _next = next;
@@ -27,37 +41,52 @@ namespace Acme.ProductSelling.Web.Middleware
         {
             var path = context.Request.Path.Value ?? string.Empty;
 
-            // 1. Skip processing for static resources and API calls.
             if (IsStaticResource(path))
             {
                 await _next(context);
                 return;
             }
 
-            // 2. Determine the culture from different sources.
             var urlCulture = GetCultureFromUrl(path);
             var cookieCulture = GetCultureFromCookies(context);
-
-            // 3. Establish the final "target" culture based on priority: Cookie > URL > Default
             var targetCulture = cookieCulture ?? urlCulture ?? _defaultCulture;
 
-            // 4. Decide if a redirect is necessary.
-            // A redirect is needed if the URL is missing a culture, or has the wrong one.
             if (urlCulture != targetCulture)
             {
                 var newPath = UpdatePathWithCulture(path, targetCulture, urlCulture);
                 var redirectUrl = $"{newPath}{context.Request.QueryString}";
-
-                Console.WriteLine($"[RequestCultureMiddleware] Redirecting from '{path}' to '{redirectUrl}' because URL culture ('{urlCulture}') mismatches target culture ('{targetCulture}').");
-
                 context.Response.Redirect(redirectUrl, permanent: false);
                 return;
             }
 
-            // 5. If no redirect is needed, ensure cookies are in sync with the current URL culture.
             SyncCultureCookies(context, targetCulture);
 
             await _next(context);
+        }
+
+        private bool IsStaticResource(string path)
+        {
+            if (string.IsNullOrEmpty(path)) return false;
+            if (path.Contains("Logout", StringComparison.OrdinalIgnoreCase) ||    path.Contains("/Account/Logout", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+            // Check Extensions
+            if (_staticFileExtensions.Any(ext => path.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
+            {
+                return true;
+            }
+
+            // Check Prefixes
+            bool isIgnoredPrefix = _pathPrefixesToIgnore.Any(prefix => path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
+
+            // 2. FIX: Calculate result first, then log using the variable. No Recursion.
+            if (path.Contains("Logout", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine($"[DEBUG] Logout path detected: {path}, IsStatic: {isIgnoredPrefix}");
+            }
+
+            return isIgnoredPrefix;
         }
 
         private string GetCultureFromUrl(string path)
@@ -74,11 +103,9 @@ namespace Acme.ProductSelling.Web.Middleware
 
         private string GetCultureFromCookies(HttpContext context)
         {
-            // The official ASP.NET Core cookie is the highest priority source.
             if (context.Request.Cookies.TryGetValue(".AspNetCore.Culture", out var aspNetCoreCultureValue))
             {
                 var decodedValue = HttpUtility.UrlDecode(aspNetCoreCultureValue);
-                // The cookie value is typically "c=vi|uic=vi". We just need the 'c' part.
                 var culturePart = decodedValue.Split('|')
                     .FirstOrDefault(p => p.StartsWith("c="))?
                     .Substring(2);
@@ -89,7 +116,6 @@ namespace Acme.ProductSelling.Web.Middleware
                 }
             }
 
-            // Fallback to custom/ABP cookies
             string[] cookieNames = { "culture", "Abp.Localization.CultureName" };
             foreach (var name in cookieNames)
             {
@@ -104,7 +130,6 @@ namespace Acme.ProductSelling.Web.Middleware
 
         private string UpdatePathWithCulture(string originalPath, string newCulture, string currentUrlCulture)
         {
-            // If path is root, just return the new culture
             if (string.IsNullOrEmpty(originalPath) || originalPath == "/")
             {
                 return $"/{newCulture}";
@@ -112,14 +137,12 @@ namespace Acme.ProductSelling.Web.Middleware
 
             var segments = originalPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
 
-            // If the URL already has a culture, replace it
             if (currentUrlCulture != null && segments.Length > 0 && segments[0].Equals(currentUrlCulture, StringComparison.OrdinalIgnoreCase))
             {
                 segments[0] = newCulture;
                 return "/" + string.Join("/", segments);
             }
 
-            // Otherwise, prepend the new culture
             return $"/{newCulture}{originalPath}";
         }
 
@@ -146,32 +169,6 @@ namespace Acme.ProductSelling.Web.Middleware
                 context.Response.Cookies.Append("culture", culture, cookieOptions);
                 context.Response.Cookies.Append("Abp.Localization.CultureName", culture, cookieOptions);
             }
-        }
-
-        private bool IsStaticResource(string path)
-        {
-            if (string.IsNullOrEmpty(path)) return false;
-
-            var staticFileExtensions = new[] {
-                ".css", ".js", ".png", ".jpg", ".jpeg", ".gif", ".ico",
-                ".svg", ".woff", ".woff2", ".ttf", ".map", ".json"
-            };
-
-            if (staticFileExtensions.Any(ext => path.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
-            {
-                return true;
-            }
-
-            var pathPrefixesToIgnore = new[] {
-            "/api", "/_framework", "/css", "/js", "/lib", "/images",
-            "/swagger", "/signalr", "/favicon.ico", "/_vs/","/health-status",
-            "/signalr-hubs","/admin", "/identity", "/account/manage","/account", "/TenantManagement",
-            "/SettingManagement","/abp","/abp-web-resources", "/swagger-ui", "/swagger/v1/swagger.json",
-            "/Abp","/libs","/.well-known", "/connect","/hangfire","/blogger","/manager","/seller","/cashier","/warehouse",
-
-            };
-
-            return pathPrefixesToIgnore.Any(prefix => path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
         }
     }
 }
