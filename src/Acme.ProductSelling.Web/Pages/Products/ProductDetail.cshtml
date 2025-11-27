@@ -89,26 +89,14 @@
                     <div class="card-header bg-light"><h2>@L["Product:Specification"]</h2></div>
                     <div class="card-body">
                         <p>Debug Type: @Model.Product.CategorySpecificationType</p>
-                        <p>Debug LaptopSpec Null?: @(Model.Product.LaptopSpecification==null)</p>
+                        <p>Debug MOuse Null?: @(Model.Product.MouseSpecification==null)</p>
                         <div>
                             @switch (Model.Product.CategorySpecificationType)
                             {
-                                case SpecificationType.Monitor:
-                                    @if (Model.Product.MonitorSpecification != null)
-                                    {
-                                        <partial name="~/Pages/Components/ProductSpecs/_MonitorSpecsPartial.cshtml" model="Model.Product.MonitorSpecification" />
-                                    }
-                                    break;
-                                case SpecificationType.Mouse:
-                                    @if (Model.Product.MouseSpecification != null)
-                                    {
-                                        <partial name="~/Pages/Components/ProductSpecs/_MouseSpecsPartial.cshtml" model="Model.Product.MouseSpecification" />
-                                    }
-                                    break;
+                                // --- Core Components ---
                                 case SpecificationType.CPU:
                                     @if (Model.Product.CpuSpecification != null)
                                     {
-
                                         <partial name="~/Pages/Components/ProductSpecs/_CpuSpecsPartial.cshtml" model="Model.Product.CpuSpecification" />
                                     }
                                     break;
@@ -136,6 +124,14 @@
                                         <partial name="~/Pages/Components/ProductSpecs/_StorageSpecsPartial.cshtml" model="Model.Product.StorageSpecification" />
                                     }
                                     break;
+                                case SpecificationType.MemoryCard:
+                                    @if (Model.Product.MemoryCardSpecification != null)
+                                    {
+                                        <partial name="~/Pages/Components/ProductSpecs/_MemoryCardSpecsPartial.cshtml" model="Model.Product.MemoryCardSpecification" />
+                                    }
+                                    break;
+
+                                // --- Cooling & Power ---
                                 case SpecificationType.PSU:
                                     @if (Model.Product.PsuSpecification != null)
                                     {
@@ -151,36 +147,148 @@
                                 case SpecificationType.CPUCooler:
                                     @if (Model.Product.CpuCoolerSpecification != null)
                                     {
-                                        <partial name="/Pages/Components/ProductSpecs/_CpuCoolerSpecsPartial.cshtml" model="Model.Product.CpuCoolerSpecification" />
+                                        <partial name="~/Pages/Components/ProductSpecs/_CpuCoolerSpecsPartial.cshtml" model="Model.Product.CpuCoolerSpecification" />
+                                    }
+                                    break;
+                                case SpecificationType.CaseFan:
+                                    @if (Model.Product.CaseFanSpecification != null)
+                                    {
+                                        <partial name="~/Pages/Components/ProductSpecs/_CaseFanSpecsPartial.cshtml" model="Model.Product.CaseFanSpecification" />
+                                    }
+                                    break;
+
+                                // --- Computers ---
+                                case SpecificationType.Laptop:
+                                    @if (Model.Product.LaptopSpecification != null)
+                                    {
+                                        <partial name="~/Pages/Components/ProductSpecs/_LaptopSpecsPartial.cshtml" model="Model.Product.LaptopSpecification" />
+                                    }
+                                    break;
+                                case SpecificationType.Handheld:
+                                    @if (Model.Product.HandheldSpecification != null)
+                                    {
+                                        <partial name="~/Pages/Components/ProductSpecs/_HandheldSpecsPartial.cshtml" model="Model.Product.HandheldSpecification" />
+                                    }
+                                    break;
+                                case SpecificationType.Console:
+                                    @if (Model.Product.ConsoleSpecification != null)
+                                    {
+                                        <partial name="~/Pages/Components/ProductSpecs/_ConsoleSpecsPartial.cshtml" model="Model.Product.ConsoleSpecification" />
+                                    }
+                                    break;
+
+                                // --- Peripherals ---
+                                case SpecificationType.Monitor:
+                                    @if (Model.Product.MonitorSpecification != null)
+                                    {
+                                        <partial name="~/Pages/Components/ProductSpecs/_MonitorSpecsPartial.cshtml" model="Model.Product.MonitorSpecification" />
                                     }
                                     break;
                                 case SpecificationType.Keyboard:
                                     @if (Model.Product.KeyboardSpecification != null)
                                     {
-                                        <partial name="/Pages/Components/ProductSpecs/_KeyboardSpecsPartial.cshtml" model="Model.Product.KeyboardSpecification" />
+                                        <partial name="~/Pages/Components/ProductSpecs/_KeyboardSpecsPartial.cshtml" model="Model.Product.KeyboardSpecification" />
                                     }
                                     break;
+                                case SpecificationType.Mouse:
+                                    @if (Model.Product.MouseSpecification != null)
+                                    {
+                                        <partial name="~/Pages/Components/ProductSpecs/_MouseSpecsPartial.cshtml" model="Model.Product.MouseSpecification" />
+                                    }
+                                    break;
+                                case SpecificationType.MousePad:
+                                    @if (Model.Product.MousepadSpecification != null)
+                                    {
+                                        <partial name="~/Pages/Components/ProductSpecs/_MousePadSpecsPartial.cshtml" model="Model.Product.MousepadSpecification" />
+                                    }
+                                    break;
+
+                                // --- Audio & Video ---
                                 case SpecificationType.Headset:
                                     @if (Model.Product.HeadsetSpecification != null)
                                     {
-                                        <partial name="/Pages/Components/ProductSpecs/_HeadsetSpecsPartial.cshtml" model="Model.Product.HeadsetSpecification" />
+                                        <partial name="~/Pages/Components/ProductSpecs/_HeadsetSpecsPartial.cshtml" model="Model.Product.HeadsetSpecification" />
                                     }
                                     break;
-                                case SpecificationType.Laptop:
-                                    @if (Model.Product.LaptopSpecification != null)
+                                case SpecificationType.Speaker:
+                                    @if (Model.Product.SpeakerSpecification != null)
                                     {
-                                        <partial name="/Pages/Components/ProductSpecs/_LaptopSpecsPartial.cshtml" model="Model.Product.LaptopSpecification" />
+                                        <partial name="~/Pages/Components/ProductSpecs/_SpeakerSpecsPartial.cshtml" model="Model.Product.SpeakerSpecification" />
                                     }
                                     break;
-                                default:
-                                    <p>@L["Product:NoSpecificSpecifications"]</p>
+                                case SpecificationType.Microphone:
+                                    @if (Model.Product.MicrophoneSpecification != null)
+                                    {
+                                        <partial name="~/Pages/Components/ProductSpecs/_MicrophoneSpecsPartial.cshtml" model="Model.Product.MicrophoneSpecification" />
+                                    }
+                                    break;
+                                case SpecificationType.Webcam:
+                                    @if (Model.Product.WebcamSpecification != null)
+                                    {
+                                        <partial name="~/Pages/Components/ProductSpecs/_WebcamSpecsPartial.cshtml" model="Model.Product.WebcamSpecification" />
+                                    }
+                                    break;
 
-                                    <p>@Model.Product.CategorySpecificationType</p>
+                                // --- Furniture ---
+                                case SpecificationType.Chair:
+                                    @if (Model.Product.ChairSpecification != null)
+                                    {
+                                        <partial name="~/Pages/Components/ProductSpecs/_ChairSpecsPartial.cshtml" model="Model.Product.ChairSpecification" />
+                                    }
+                                    break;
+                                case SpecificationType.Desk:
+                                    @if (Model.Product.DeskSpecification != null)
+                                    {
+                                        <partial name="~/Pages/Components/ProductSpecs/_DeskSpecsPartial.cshtml" model="Model.Product.DeskSpecification" />
+                                    }
+                                    break;
+
+                                // --- Networking & Software ---
+                                case SpecificationType.NetworkHardware:
+                                    @if (Model.Product.NetworkHardwareSpecification != null)
+                                    {
+                                        <partial name="~/Pages/Components/ProductSpecs/_NetworkHardwareSpecsPartial.cshtml" model="Model.Product.NetworkHardwareSpecification" />
+                                    }
+                                    break;
+                                case SpecificationType.Software:
+                                    @if (Model.Product.SoftwareSpecification != null)
+                                    {
+                                        <partial name="~/Pages/Components/ProductSpecs/_SoftwareSpecsPartial.cshtml" model="Model.Product.SoftwareSpecification" />
+                                    }
+                                    break;
+
+                                // --- Accessories ---
+                                case SpecificationType.Hub:
+                                    @if (Model.Product.HubSpecification != null)
+                                    {
+                                        <partial name="~/Pages/Components/ProductSpecs/_HubSpecsPartial.cshtml" model="Model.Product.HubSpecification" />
+                                    }
+                                    break;
+                                case SpecificationType.Cable:
+                                    @if (Model.Product.CableSpecification != null)
+                                    {
+                                        <partial name="~/Pages/Components/ProductSpecs/_CableSpecsPartial.cshtml" model="Model.Product.CableSpecification" />
+                                    }
+                                    break;
+                                case SpecificationType.Charger:
+                                    @if (Model.Product.ChargerSpecification != null)
+                                    {
+                                        <partial name="~/Pages/Components/ProductSpecs/_ChargerSpecsPartial.cshtml" model="Model.Product.ChargerSpecification" />
+                                    }
+                                    break;
+                                case SpecificationType.PowerBank:
+                                    @if (Model.Product.PowerBankSpecification != null)
+                                    {
+                                        <partial name="~/Pages/Components/ProductSpecs/_PowerBankSpecsPartial.cshtml" model="Model.Product.PowerBankSpecification" />
+                                    }
+                                    break;
+
+                                // --- Fallback ---
+                                default:
+                                    <p class="text-muted">@L["Product:NoSpecificSpecifications"]</p>
                                     break;
                             }
-
                         </div>
-
                         <hr />
 
                     </div>
