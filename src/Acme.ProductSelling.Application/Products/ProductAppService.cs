@@ -39,23 +39,25 @@ namespace Acme.ProductSelling.Products
         private readonly IBackgroundJobManager _backgroundJobManager;
         private readonly ILogger<ProductAppService> _logger;
         private readonly IRecentlyViewedProductAppService _recentlyViewedService;
-        private readonly ProductMapper _productToProductDtoMapper;
-        private readonly ProductToCreateUpdateMapper _productDtoToCreateUpdateProductDtoMapper;
-        public ProductAppService(
-            IRepository<Product, Guid> repository,
-            IRepository<Category, Guid> categoryRepository,
-            IRepository<CaseMaterial> caseMaterialRepository,
-            IRepository<CaseSpecification, Guid> caseSpecificationRepository,
-            IRepository<CpuCoolerSpecification, Guid> cpuCoolerSpecificationRepository,
-            ISpecificationService specificationService,
-            IProductRepository productRepository,
-            IStoreInventoryRepository storeInventoryRepository,
-            IStoreRepository storeRepository,
-            IBackgroundJobManager backgroundJobManager,
-            ILogger<ProductAppService> logger,
-            IRecentlyViewedProductAppService recentlyViewedService,
-            ProductMapper productToProductDtoMapper,
-            ProductToCreateUpdateMapper productDtoToCreateUpdateProductDtoMapper)
+
+        private readonly ProductToProductDtoMapper _productToProductDtoMapper;
+        private readonly ProductDtoToCreateUpdateProductDtoMapper _productDtoToCreateUpdateProductDtoMapper;
+        private readonly CreateUpdateProductDtoToProductMapper _createUpdateProductDtoToProductMapper;
+        public ProductAppService(IRepository<Product, Guid> repository,
+                                 IRepository<Category, Guid> categoryRepository,
+                                 IRepository<CaseMaterial> caseMaterialRepository,
+                                 IRepository<CaseSpecification, Guid> caseSpecificationRepository,
+                                 IRepository<CpuCoolerSpecification, Guid> cpuCoolerSpecificationRepository,
+                                 ISpecificationService specificationService,
+                                 IProductRepository productRepository,
+                                 IStoreInventoryRepository storeInventoryRepository,
+                                 IStoreRepository storeRepository,
+                                 IBackgroundJobManager backgroundJobManager,
+                                 ILogger<ProductAppService> logger,
+                                 IRecentlyViewedProductAppService recentlyViewedService,
+                                 ProductToProductDtoMapper productToProductDtoMapper,
+                                 ProductDtoToCreateUpdateProductDtoMapper productDtoToCreateUpdateProductDtoMapper,
+                                 CreateUpdateProductDtoToProductMapper createUpdateProductDtoToProductMapper)
             : base(repository)
         {
             _categoryRepository = categoryRepository;
@@ -63,10 +65,7 @@ namespace Acme.ProductSelling.Products
             _caseMaterialRepository = caseMaterialRepository;
             _caseSpecificationRepository = caseSpecificationRepository;
             _cpuCoolerSpecificationRepository = cpuCoolerSpecificationRepository;
-            _specificationService = specificationService;
-
-
-            ConfigurePolicies();
+            _specificationService = specificationService;            
             _storeInventoryRepository = storeInventoryRepository;
             _storeRepository = storeRepository;
             _backgroundJobManager = backgroundJobManager;
@@ -76,6 +75,9 @@ namespace Acme.ProductSelling.Products
             _productDtoToCreateUpdateProductDtoMapper = productDtoToCreateUpdateProductDtoMapper;
             _productToProductDtoMapper = productToProductDtoMapper;
             _productDtoToCreateUpdateProductDtoMapper = productDtoToCreateUpdateProductDtoMapper;
+            _createUpdateProductDtoToProductMapper = createUpdateProductDtoToProductMapper;
+            
+            ConfigurePolicies();
         }
         private void ConfigurePolicies()
         {
@@ -118,7 +120,6 @@ namespace Acme.ProductSelling.Products
 
             var productDto = _productToProductDtoMapper.Map(product);
 
-            // NEW: Add store inventory information
             await PopulateStoreInventoryAsync(productDto, id);
             try
             {
@@ -126,11 +127,11 @@ namespace Acme.ProductSelling.Products
             }
             catch (Exception ex)
             {
-                // Log but don't fail if tracking fails
                 _logger.LogWarning(ex, "Failed to track product view for ProductId: {ProductId}", id);
             }
             return productDto;
         }
+
 
         [Authorize(ProductSellingPermissions.Products.Create)]
         public override async Task<ProductDto> CreateAsync(CreateUpdateProductDto input)
@@ -140,12 +141,14 @@ namespace Acme.ProductSelling.Products
                 await CheckCreatePolicyAsync();
                 var category = await _categoryRepository.GetAsync(input.CategoryId);
 
-                //var product = await CreateProductEntityAsync(input);
-                //await Repository.InsertAsync(product, autoSave: true);
-                var product = ObjectMapper.Map<CreateUpdateProductDto, Product>(input);
+                // Use Mapperly
+                var product = _createUpdateProductDtoToProductMapper.Map(input);
 
+                // Set explicit/calculated properties
                 product.UrlSlug = UrlHelperMethod.RemoveDiacritics(product.ProductName);
+
                 await Repository.InsertAsync(product, autoSave: true);
+
                 await Task.WhenAll(
                     _specificationService.CreateSpecificationAsync(product.Id, input, category.SpecificationType),
                     HandleManyToManyAsync(product.Id, input)
@@ -171,7 +174,9 @@ namespace Acme.ProductSelling.Products
                 .FirstAsync(p => p.Id == id);
             var oldReleaseDate = product.ReleaseDate;
             var oldSpecType = product.Category.SpecificationType;
-            ObjectMapper.Map(input, product);
+
+            // Use Mapperly to update existing entity
+            _createUpdateProductDtoToProductMapper.Map(input, product);
 
             var newCategory = await _categoryRepository.GetAsync(input.CategoryId);
 
@@ -180,6 +185,7 @@ namespace Acme.ProductSelling.Products
                 await _specificationService.HandleCategoryChangeAsync(product.Id, oldSpecType, newCategory.SpecificationType);
                 product.CategoryId = newCategory.Id;
             }
+
             await _specificationService.UpdateSpecificationAsync(product.Id, input, newCategory.SpecificationType);
 
             await HandleManyToManyAsync(product.Id, input);

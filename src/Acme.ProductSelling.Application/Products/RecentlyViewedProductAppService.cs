@@ -14,12 +14,17 @@ namespace Acme.ProductSelling.Products
     {
         private readonly IRecentlyViewedProductRepository _recentlyViewedRepository;
         private readonly IProductRepository _productRepository;
+        // Inject the specific mapper
+        private readonly ProductToRecentlyViewedProductDtoMapper _productMapper;
 
-        public RecentlyViewedProductAppService(IRecentlyViewedProductRepository recentlyViewedRepository,
-                                               IProductRepository productRepository)
+        public RecentlyViewedProductAppService(
+            IRecentlyViewedProductRepository recentlyViewedRepository,
+            IProductRepository productRepository,
+            ProductToRecentlyViewedProductDtoMapper productMapper)
         {
             _recentlyViewedRepository = recentlyViewedRepository;
             _productRepository = productRepository;
+            _productMapper = productMapper;
         }
 
         public async Task<List<RecentlyViewedProductDto>> GetListAsync(GetRecentlyViewedInputDtos input)
@@ -53,15 +58,13 @@ namespace Acme.ProductSelling.Products
                 return new List<RecentlyViewedProductDto>();
             }
 
-            // 4. Fetch products
             var products = await _productRepository.GetListAsync(
                 p => targetIds.Contains(p.Id) && p.IsActive);
 
-            // 5. Map in order of targetIds to preserve recency
             return targetIds
                 .Select(id => products.FirstOrDefault(p => p.Id == id))
                 .Where(p => p != null)
-                .Select(MapToDto)
+                .Select(p => _productMapper.Map(p)) // Use Mapperly
                 .ToList();
         }
 
@@ -74,20 +77,16 @@ namespace Acme.ProductSelling.Products
             }
 
             var userId = CurrentUser.GetId();
-
-            // Validate which product IDs actually exist
             var validProductIds = await _productRepository
                 .GetListAsync(p => input.ProductIds.Contains(p.Id));
             var validIds = validProductIds.Select(p => p.Id).ToHashSet();
 
-            // Get user's existing history
             var existingViews = await _recentlyViewedRepository
                 .GetByUserIdAsync(userId, RecentlyViewedConsts.MaxItemsPerUser);
             var existingProductIds = existingViews
                 .Select(x => x.ProductId)
                 .ToHashSet();
 
-            // Process in reverse to maintain correct order (oldest first, newest last)
             var toProcess = input.ProductIds
                 .Where(id => validIds.Contains(id))
                 .Reverse()
@@ -97,14 +96,12 @@ namespace Acme.ProductSelling.Products
             {
                 if (existingProductIds.Contains(productId))
                 {
-                    // Update existing
                     var existing = existingViews.First(x => x.ProductId == productId);
                     existing.UpdateViewedTime();
                     await _recentlyViewedRepository.UpdateAsync(existing);
                 }
                 else
                 {
-                    // Insert new
                     await _recentlyViewedRepository.InsertAsync(
                         new RecentlyViewedProduct(
                             GuidGenerator.Create(),
@@ -116,20 +113,19 @@ namespace Acme.ProductSelling.Products
                 }
             }
 
-            // Cleanup excess entries
             await _recentlyViewedRepository.DeleteOldestForUserAsync(
                 userId,
                 RecentlyViewedConsts.MaxItemsPerUser);
         }
+
         [Authorize]
         public async Task TrackProductViewAsync(Guid productId)
         {
             var userId = CurrentUser.GetId();
 
-            // Validate product exists
             if (!await _productRepository.AnyAsync(p => p.Id == productId))
             {
-                return; // Silently ignore invalid products
+                return;
             }
 
             var existing = await _recentlyViewedRepository.FindByUserAndProductAsync(
@@ -137,13 +133,11 @@ namespace Acme.ProductSelling.Products
 
             if (existing != null)
             {
-                // Update timestamp
                 existing.UpdateViewedTime();
                 await _recentlyViewedRepository.UpdateAsync(existing);
             }
             else
             {
-                // Insert new
                 await _recentlyViewedRepository.InsertAsync(
                     new RecentlyViewedProduct(
                         GuidGenerator.Create(),
@@ -151,32 +145,17 @@ namespace Acme.ProductSelling.Products
                         productId,
                         DateTime.UtcNow));
 
-                // Cleanup old entries
                 await _recentlyViewedRepository.DeleteOldestForUserAsync(
                     userId,
                     RecentlyViewedConsts.MaxItemsPerUser);
             }
         }
+
         [Authorize]
         public async Task ClearAsync()
         {
             var userId = CurrentUser.GetId();
             await _recentlyViewedRepository.DeleteAsync(x => x.UserId == userId);
-        }
-        private RecentlyViewedProductDto MapToDto(Product product)
-        {
-            return new RecentlyViewedProductDto
-            {
-                ProductId = product.Id,
-                ProductName = product.ProductName,
-                ImageUrl = product.ImageUrl,
-                OriginalPrice = product.OriginalPrice,
-                DiscountedPrice = product.DiscountedPrice,
-                UrlSlug = product.UrlSlug,
-                IsAvailableForPurchase = product.IsAvailableForPurchase(),
-                DiscountPercent = product.DiscountPercent,
-                TotalStockAcrossAllStores = product.StoreInventories?.Sum(x => x.Quantity) ?? 0
-            };
         }
     }
 }

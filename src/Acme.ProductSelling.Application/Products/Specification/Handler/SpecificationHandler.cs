@@ -3,27 +3,28 @@ using Acme.ProductSelling.Specifications;
 using System;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories;
-using Volo.Abp.ObjectMapping;
 
 namespace Acme.ProductSelling.Products.Specification.Handler
 {
-
     public class SpecificationHandler<TEntity, TDto> : ISpecificationHandler
         where TEntity : SpecificationBase, new()
         where TDto : class
     {
         private readonly IRepository<TEntity, Guid> _repository;
-        private readonly IObjectMapper _objectMapper;
         private readonly Func<CreateUpdateProductDto, TDto> _getDto;
+        private readonly Func<TDto, TEntity> _mapToEntity;
+        private readonly Action<TDto, TEntity> _mapToExistingEntity;
 
         public SpecificationHandler(
             IRepository<TEntity, Guid> repository,
-            IObjectMapper objectMapper,
-            Func<CreateUpdateProductDto, TDto> getSpecId)
+            Func<CreateUpdateProductDto, TDto> getDtoPart,
+            Func<TDto, TEntity> mapToEntity,
+            Action<TDto, TEntity> mapToExistingEntity)
         {
             _repository = repository;
-            _objectMapper = objectMapper;
-            _getDto = getSpecId;
+            _getDto = getDtoPart;
+            _mapToEntity = mapToEntity;
+            _mapToExistingEntity = mapToExistingEntity;
         }
 
         public async Task CreateAsync(Guid productId, CreateUpdateProductDto dto)
@@ -31,7 +32,8 @@ namespace Acme.ProductSelling.Products.Specification.Handler
             var specDto = _getDto(dto);
             if (specDto != null)
             {
-                var spec = _objectMapper.Map<TDto, TEntity>(specDto);
+                // Execute delegate using specific mapper defined in Service
+                var spec = _mapToEntity(specDto);
                 spec.ProductId = productId;
                 spec = await _repository.InsertAsync(spec, autoSave: true);
             }
@@ -46,8 +48,8 @@ namespace Acme.ProductSelling.Products.Specification.Handler
             {
                 if (currentSpecId != null)
                 {
-                    //var existingSpec = await _repository.GetAsync(currentSpecId.Value);
-                    _objectMapper.Map(specDto, currentSpecId);
+                    // Execute delegate to map DTO onto existing entity
+                    _mapToExistingEntity(specDto, currentSpecId);
                     await _repository.UpdateAsync(currentSpecId, autoSave: true);
                 }
                 else
@@ -58,7 +60,6 @@ namespace Acme.ProductSelling.Products.Specification.Handler
             else if (currentSpecId != null)
             {
                 await _repository.DeleteAsync(currentSpecId, autoSave: true);
-
             }
         }
 

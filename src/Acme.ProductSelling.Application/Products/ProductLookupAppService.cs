@@ -3,6 +3,7 @@ using Acme.ProductSelling.Categories.Dtos;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,19 +12,21 @@ using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
-//using static Acme.ProductSelling.Permissions.ProductSellingPermissions;
 
 namespace Acme.ProductSelling.Products
 {
     public class ProductLookupAppService : ProductSellingAppService, IProductLookupAppService
     {
         private readonly IProductRepository _productRepository;
-        private readonly ProductMapper _productMapper;
-        public ProductLookupAppService(IProductRepository productRepository, ProductMapper productMapper)
+        // Inject the specific Mapperly mapper
+        private readonly ProductToProductDtoMapper _productMapper;
+
+        public ProductLookupAppService(IProductRepository productRepository, ProductToProductDtoMapper productMapper)
         {
             _productRepository = productRepository;
             _productMapper = productMapper;
         }
+
         public virtual async Task<PagedResultDto<ProductDto>> GetListByCategoryAsync(GetProductsByCategoryInput input)
         {
             return await ExecutePagedQueryAsync(
@@ -49,7 +52,6 @@ namespace Acme.ProductSelling.Products
                 query => query.Where(p => p.ProductName.Contains(input.Filter)),
                 input
             );
-
         }
 
         public virtual async Task<PagedResultDto<ProductDto>> GetProductByManufacturer(GetProductsByManufacturerDto input)
@@ -65,17 +67,15 @@ namespace Acme.ProductSelling.Products
         public async Task<ProductDto> GetProductBySlug(string slug)
         {
             var query = await _productRepository.GetQueryableAsync();
-            var product = await query
-                .AsNoTracking()
-                .IncludeAllRelations()
-                .FirstOrDefaultAsync(p => p.UrlSlug.ToLower() == slug.ToLower());
 
+            var product = await query.AsNoTracking().IncludeAllRelations().Where(p => p.UrlSlug.ToLower() == slug.ToLower()).FirstOrDefaultAsync();
             if (product == null)
             {
                 throw new EntityNotFoundException(typeof(Product), slug);
             }
 
             return _productMapper.Map(product);
+
         }
 
         private async Task<PagedResultDto<ProductDto>> ExecutePagedQueryAsync<TInput>(
@@ -95,18 +95,18 @@ namespace Acme.ProductSelling.Products
 
             var totalCount = await AsyncExecuter.CountAsync(queryable);
 
-            // Apply sorting and paging
             var sortProperty = input.Sorting ?? nameof(Product.ProductName);
             var products = await AsyncExecuter.ToListAsync(
                 queryable
                     .OrderBy(p => EF.Property<object>(p, sortProperty))
                     .PageBy(input)
             );
-            //categories.Select(c => _categoryToLookupMapper.Map(c)).ToList();
-            var productDtos = ObjectMapper.Map<List<Product>, List<ProductDto>>(products);
-            //var productDtos = products.Select(p => _productMapper.Map(p)).ToList();
+
+            // Using Mapperly in Projection
+            var productDtos = products.Select(p => _productMapper.Map(p)).ToList();
 
             return new PagedResultDto<ProductDto>(totalCount, productDtos);
         }
+
     }
 }

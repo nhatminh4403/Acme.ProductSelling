@@ -9,7 +9,7 @@ namespace Acme.ProductSelling.Products
         public static IQueryable<Product> IncludeAllRelations(this IQueryable<Product> query)
         {
             return query
-                .Include(p => p.Category)
+                .Include(p => p.Category).Include(p => p.Manufacturer).Include(p=> p.StoreInventories)
                 .Include(p => p.MonitorSpecification).ThenInclude(p => p.PanelType)
                 .Include(p => p.MouseSpecification)
                 .Include(p => p.LaptopSpecification)
@@ -44,10 +44,6 @@ namespace Acme.ProductSelling.Products
                 .Include(p => p.MousepadSpecification)
                 .Include(p => p.NetworkHardwareSpecification)
                 .Include(p => p.PowerBankSpecification)
-
-
-                .Include(p => p.Manufacturer)
-
                 .AsSplitQuery();
         }
     }

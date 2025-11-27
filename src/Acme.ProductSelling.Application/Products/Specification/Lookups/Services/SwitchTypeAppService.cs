@@ -10,8 +10,10 @@ namespace Acme.ProductSelling.Products.Specification.Lookups.Services
         LookupAppServiceBase<SwitchType, Guid>,
         ISwitchTypeAppService
     {
-        public SwitchTypeAppService(IRepository<SwitchType, Guid> repository) : base(repository)
+        private readonly SwitchTypeToProductLookupDtoMapper _mapper;
+        public SwitchTypeAppService(IRepository<SwitchType, Guid> repository, SwitchTypeToProductLookupDtoMapper mapper) : base(repository)
         {
+            _mapper = mapper;
         }
 
 
@@ -25,11 +27,7 @@ namespace Acme.ProductSelling.Products.Specification.Lookups.Services
 
         protected override ProductLookupDto<Guid> MapToLookupDto(SwitchType entity)
         {
-            return new ProductLookupDto<Guid>
-            {
-                Name = entity.Name,
-                Id = entity.Id,
-            };
+            return _mapper.Map(entity);
         }
 
         protected override void UpdateEntity(SwitchType entity, ProductLookupDto<Guid> updateInput)

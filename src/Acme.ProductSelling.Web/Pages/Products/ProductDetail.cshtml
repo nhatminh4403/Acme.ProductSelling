@@ -6,6 +6,7 @@
 @{
     ViewData["Title"] = Model.Product?.ProductName ?? L["Product:ProductDetail"];
     Layout = "/Views/Shared/_Layout.cshtml";
+
 }
 @section styles {
     <link href="~/css/global/products/detail.css" rel="stylesheet" />
@@ -87,66 +88,64 @@
                 <div class="card h-100" id="leftCard">
                     <div class="card-header bg-light"><h2>@L["Product:Specification"]</h2></div>
                     <div class="card-body">
+                        <p>Debug Type: @Model.Product.CategorySpecificationType</p>
+                        <p>Debug LaptopSpec Null?: @(Model.Product.LaptopSpecification==null)</p>
                         <div>
                             @switch (Model.Product.CategorySpecificationType)
                             {
                                 case SpecificationType.Monitor:
                                     @if (Model.Product.MonitorSpecification != null)
                                     {
-                                        <partial name="/Pages/Components/ProductSpecs/_MonitorSpecsPartial.cshtml" model="Model.Product.MonitorSpecification" />
+                                        <partial name="~/Pages/Components/ProductSpecs/_MonitorSpecsPartial.cshtml" model="Model.Product.MonitorSpecification" />
                                     }
                                     break;
                                 case SpecificationType.Mouse:
                                     @if (Model.Product.MouseSpecification != null)
                                     {
-                                        <partial name="/Pages/Components/ProductSpecs/_MouseSpecsPartial.cshtml" model="Model.Product.MouseSpecification" />
+                                        <partial name="~/Pages/Components/ProductSpecs/_MouseSpecsPartial.cshtml" model="Model.Product.MouseSpecification" />
                                     }
                                     break;
                                 case SpecificationType.CPU:
                                     @if (Model.Product.CpuSpecification != null)
                                     {
 
-                                        <partial name="/Pages/Components/ProductSpecs/_CpuSpecsPartial.cshtml" model="Model.Product.CpuSpecification" />
-                                    }
-                                    else
-                                    {
-                                        <p> @Model.Product.CpuSpecification</p>
+                                        <partial name="~/Pages/Components/ProductSpecs/_CpuSpecsPartial.cshtml" model="Model.Product.CpuSpecification" />
                                     }
                                     break;
                                 case SpecificationType.GPU:
                                     @if (Model.Product.GpuSpecification != null)
                                     {
-                                        <partial name="/Pages/Components/ProductSpecs/_GpuSpecsPartial.cshtml" model="Model.Product.GpuSpecification" />
+                                        <partial name="~/Pages/Components/ProductSpecs/_GpuSpecsPartial.cshtml" model="Model.Product.GpuSpecification" />
                                     }
                                     break;
                                 case SpecificationType.RAM:
                                     @if (Model.Product.RamSpecification != null)
                                     {
-                                        <partial name="/Pages/Components/ProductSpecs/_RamSpecsPartial.cshtml" model="Model.Product.RamSpecification" />
+                                        <partial name="~/Pages/Components/ProductSpecs/_RamSpecsPartial.cshtml" model="Model.Product.RamSpecification" />
                                     }
                                     break;
                                 case SpecificationType.Motherboard:
                                     @if (Model.Product.MotherboardSpecification != null)
                                     {
-                                        <partial name="/Pages/Components/ProductSpecs/_MotherboardSpecsPartial.cshtml" model="Model.Product.MotherboardSpecification" />
+                                        <partial name="~/Pages/Components/ProductSpecs/_MotherboardSpecsPartial.cshtml" model="Model.Product.MotherboardSpecification" />
                                     }
                                     break;
                                 case SpecificationType.Storage:
                                     @if (Model.Product.StorageSpecification != null)
                                     {
-                                        <partial name="/Pages/Components/ProductSpecs/_StorageSpecsPartial.cshtml" model="Model.Product.StorageSpecification" />
+                                        <partial name="~/Pages/Components/ProductSpecs/_StorageSpecsPartial.cshtml" model="Model.Product.StorageSpecification" />
                                     }
                                     break;
                                 case SpecificationType.PSU:
                                     @if (Model.Product.PsuSpecification != null)
                                     {
-                                        <partial name="/Pages/Components/ProductSpecs/_PsuSpecsPartial.cshtml" model="Model.Product.PsuSpecification" />
+                                        <partial name="~/Pages/Components/ProductSpecs/_PsuSpecsPartial.cshtml" model="Model.Product.PsuSpecification" />
                                     }
                                     break;
                                 case SpecificationType.Case:
                                     @if (Model.Product.CaseSpecification != null)
                                     {
-                                        <partial name="/Pages/Components/ProductSpecs/_CaseSpecsPartial.cshtml" model="Model.Product.CaseSpecification" />
+                                        <partial name="~/Pages/Components/ProductSpecs/_CaseSpecsPartial.cshtml" model="Model.Product.CaseSpecification" />
                                     }
                                     break;
                                 case SpecificationType.CPUCooler:
@@ -198,11 +197,11 @@
         </div>
 
         <!-- Recently Viewed Products -->
-        @await Component.InvokeAsync(typeof(RecentlyViewedViewComponent), new {
+        @* @await Component.InvokeAsync(typeof(RecentlyViewedViewComponent), new {
         maxCount = 6,
         excludeProductId = Model.Product.Id,
         title = L["UI:OtherRecentlyViewed"].Value.ToString(),
-        })
+        }) *@
 
     </div>
 }

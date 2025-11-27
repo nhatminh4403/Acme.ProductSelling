@@ -10,8 +10,10 @@ namespace Acme.ProductSelling.Products.Specification.Lookups.Services
         LookupAppServiceBase<PanelType, Guid>,
         IPanelTypeAppService
     {
-        public PanelTypeAppService(IRepository<PanelType, Guid> repository) : base(repository)
+        private readonly PanelTypeToProductLookupDtoMapper _mapper;
+        public PanelTypeAppService(IRepository<PanelType, Guid> repository, PanelTypeToProductLookupDtoMapper mapper) : base(repository)
         {
+            _mapper = mapper;
         }
 
         protected override PanelType CreateEntity(ProductLookupDto<Guid> createInput)
@@ -22,11 +24,7 @@ namespace Acme.ProductSelling.Products.Specification.Lookups.Services
 
         protected override ProductLookupDto<Guid> MapToLookupDto(PanelType entity)
         {
-            return new ProductLookupDto<Guid>
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-            };
+           return  _mapper.Map(entity);
         }
 
         protected override void UpdateEntity(PanelType entity, ProductLookupDto<Guid> updateInput)

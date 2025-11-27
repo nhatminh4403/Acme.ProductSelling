@@ -1,7 +1,9 @@
 ﻿using Acme.ProductSelling.Blogs;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
+using Castle.Core.Logging;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Entities;
@@ -22,10 +24,12 @@ namespace Acme.ProductSelling.Web.Pages.Products
 
         private readonly IProductLookupAppService _productAppService;
         private readonly IBlogAppService _blogAppService;
-        public ProductDetailModel(IProductLookupAppService productAppService, IBlogAppService blogAppService)
+        private readonly ILogger<ProductDetailModel> _logger;
+        public ProductDetailModel(IProductLookupAppService productAppService, IBlogAppService blogAppService, ILogger<ProductDetailModel> logger)
         {
             _productAppService = productAppService;
             _blogAppService = blogAppService;
+            _logger = logger;
         }
 
 
@@ -46,9 +50,9 @@ namespace Acme.ProductSelling.Web.Pages.Products
                     return NotFound();
                 }
                 //Product = await _productAppService.GetAsync(Id);
-                Product = await _productAppService.GetProductBySlug(Slug);
-
-
+                //Product = await _productAppService.GetProductBySlug(Slug);
+                var product = await _productAppService.GetProductBySlug(Slug);
+                Product = product;
 
                 //Blogs = await _blogAppService.GetListAsync(input);
 

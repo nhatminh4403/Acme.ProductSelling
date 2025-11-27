@@ -10,8 +10,10 @@ namespace Acme.ProductSelling.Products.Specification.Lookups.Services
         LookupAppServiceBase<RamType, Guid>,
         IRamTypeAppService
     {
-        public RamTypeAppService(IRepository<RamType, Guid> repository) : base(repository)
+        private readonly RamTypeToProductLookupDtoMapper _mapper;
+        public RamTypeAppService(IRepository<RamType, Guid> repository, RamTypeToProductLookupDtoMapper mapper) : base(repository)
         {
+            _mapper = mapper;
         }
 
         protected override RamType CreateEntity(ProductLookupDto<Guid> createInput)
@@ -22,11 +24,7 @@ namespace Acme.ProductSelling.Products.Specification.Lookups.Services
 
         protected override ProductLookupDto<Guid> MapToLookupDto(RamType entity)
         {
-            return new ProductLookupDto<Guid>
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-            };
+           return _mapper.Map(entity);
         }
 
         protected override void UpdateEntity(RamType entity, ProductLookupDto<Guid> updateInput)

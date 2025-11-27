@@ -9,8 +9,10 @@ namespace Acme.ProductSelling.Products.Specification.Lookups.Services
     public class FormFactorAppService : LookupAppServiceBase<FormFactor, Guid>,
                                         IFormFactorAppSerivce
     {
-        public FormFactorAppService(IRepository<FormFactor, Guid> repository) : base(repository)
+        private readonly FormFactorToProductLookupDtoMapper _mapper;
+        public FormFactorAppService(IRepository<FormFactor, Guid> repository, FormFactorToProductLookupDtoMapper mapper) : base(repository)
         {
+            _mapper = mapper;
         }
 
         protected override FormFactor CreateEntity(ProductLookupDto<Guid> dto)
@@ -20,11 +22,7 @@ namespace Acme.ProductSelling.Products.Specification.Lookups.Services
 
         protected override ProductLookupDto<Guid> MapToLookupDto(FormFactor entity)
         {
-            return new ProductLookupDto<Guid>
-            {
-                Id = entity.Id,
-                Name = entity.Name
-            };
+            return _mapper.Map(entity);
         }
 
         protected override void UpdateEntity(FormFactor entity, ProductLookupDto<Guid> dto)

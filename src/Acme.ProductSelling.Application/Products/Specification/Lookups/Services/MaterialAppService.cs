@@ -10,8 +10,10 @@ namespace Acme.ProductSelling.Products.Specification.Lookups.Services
         LookupAppServiceBase<Material, Guid>,
         IMaterialAppService
     {
-        public MaterialAppService(IRepository<Material, Guid> repository) : base(repository)
+        private readonly MaterialToProductLookupDtoMapper _mapper;
+        public MaterialAppService(IRepository<Material, Guid> repository, MaterialToProductLookupDtoMapper mapper) : base(repository)
         {
+            _mapper = mapper;
         }
 
         protected override Material CreateEntity(ProductLookupDto<Guid> createInput)
@@ -22,11 +24,7 @@ namespace Acme.ProductSelling.Products.Specification.Lookups.Services
         protected override ProductLookupDto<Guid> MapToLookupDto(Material entity)
         {
 
-            return new ProductLookupDto<Guid>
-            {
-                Id = entity.Id,
-                Name = entity.Name
-            };
+            return _mapper.Map(entity);
         }
 
         protected override void UpdateEntity(Material entity, ProductLookupDto<Guid> updateInput)

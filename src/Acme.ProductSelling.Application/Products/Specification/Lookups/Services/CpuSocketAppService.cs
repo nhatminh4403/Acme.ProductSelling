@@ -9,8 +9,10 @@ namespace Acme.ProductSelling.Products.Specification.Lookups.Services
     public class CpuSocketAppService : LookupAppServiceBase<CpuSocket, Guid>,
                                         ICpuSocketAppService
     {
-        public CpuSocketAppService(IRepository<CpuSocket, Guid> repository) : base(repository)
+        private readonly CpuSocketToProductLookupDtoMapper _mapper;
+        public CpuSocketAppService(IRepository<CpuSocket, Guid> repository, CpuSocketToProductLookupDtoMapper mapper) : base(repository)
         {
+            _mapper = mapper;
         }
 
 
@@ -21,11 +23,7 @@ namespace Acme.ProductSelling.Products.Specification.Lookups.Services
 
         protected override ProductLookupDto<Guid> MapToLookupDto(CpuSocket entity)
         {
-            return new ProductLookupDto<Guid>
-            {
-                Id = entity.Id,
-                Name = entity.Name
-            };
+            return _mapper.Map(entity);
         }
 
         protected override void UpdateEntity(CpuSocket entity, ProductLookupDto<Guid> dto)

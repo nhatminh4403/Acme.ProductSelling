@@ -10,17 +10,15 @@ namespace Acme.ProductSelling.Products.Specification.Lookups.Services
         LookupAppServiceBase<Chipset, Guid>,
         IChipsetAppService
     {
-        public ChipsetAppService(IRepository<Chipset, Guid> repository) : base(repository)
+        private readonly ChipsetToProductLookupDtoMapper _mapper;
+        public ChipsetAppService(IRepository<Chipset, Guid> repository, ChipsetToProductLookupDtoMapper mapper) : base(repository)
         {
+            _mapper = mapper;
         }
 
         protected override ProductLookupDto<Guid> MapToLookupDto(Chipset entity)
         {
-            return new ProductLookupDto<Guid>
-            {
-                Id = entity.Id,
-                Name = entity.Name
-            };
+            return _mapper.Map(entity);
         }
 
         protected override void UpdateEntity(Chipset entity, ProductLookupDto<Guid> dto)

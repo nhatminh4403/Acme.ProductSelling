@@ -9,9 +9,7 @@
 //using Acme.ProductSelling.Products.Dtos;
 //using Acme.ProductSelling.Products.Lookups;
 //using Acme.ProductSelling.Specifications;
-
 //using Acme.ProductSelling.Specifications.Lookups.DTOs;
-
 //using Acme.ProductSelling.Specifications.Models;
 //using Acme.ProductSelling.StoreInventories;
 //using Acme.ProductSelling.StoreInventories.Dtos;
@@ -20,6 +18,7 @@
 //using System;
 //using System.Linq;
 //using Volo.Abp.Mapperly;
+
 //namespace Acme.ProductSelling;
 
 //public class ProductSellingApplicationAutoMapperProfile : Profile
@@ -31,7 +30,6 @@
 //            .ForMember(dest => dest.UrlSlug, opt => opt.MapFrom(src => src.UrlSlug));
 //        CreateMap<CreateUpdateManufacturerDto, Manufacturer>();
 //        CreateMap<Manufacturer, ManufacturerLookupDto>();
-//        CreateMap<Manufacturer, ManufacturerDto>();
 //        #endregion
 
 //        #region Store Mappings
@@ -39,28 +37,40 @@
 //        CreateMap<CreateUpdateStoreDto, Store>();
 //        #endregion
 
+//        #region Store Inventory Mappings
 //        CreateMap<StoreInventory, StoreInventoryDto>()
-//            .ForMember(dest => dest.StoreName, opt => opt.Ignore())
-//            .ForMember(dest => dest.ProductName, opt => opt.Ignore())
+//            .ForMember(dest => dest.StoreName, opt => opt.Ignore()) // Usually filled by Repo/Service
+//            .ForMember(dest => dest.ProductName, opt => opt.Ignore()) // Usually filled by Repo/Service
 //            .ForMember(dest => dest.ProductImageUrl, opt => opt.Ignore())
-//            .ForMember(dest => dest.NeedsReorder, opt => opt.Ignore());
+//            .ForMember(dest => dest.NeedsReorder, opt => opt.MapFrom(src => src.Quantity <= src.ReorderLevel));
 
 //        CreateMap<CreateUpdateStoreInventoryDto, StoreInventory>()
 //            .ForMember(dest => dest.Id, opt => opt.Ignore())
 //            .ForMember(dest => dest.Store, opt => opt.Ignore())
 //            .ForMember(dest => dest.Product, opt => opt.Ignore());
-
+//        #endregion
 
 //        #region Category Mappings
 //        CreateMap<Category, CategoryDto>()
 //            .ForMember(dest => dest.UrlSlug, opt => opt.MapFrom(src => src.UrlSlug));
+
 //        CreateMap<CategoryDto, CreateUpdateCategoryDto>()
 //            .ForMember(dest => dest.UrlSlug, opt => opt.MapFrom(src => src.UrlSlug));
+
 //        CreateMap<CreateUpdateCategoryDto, Category>()
 //            .ForMember(dest => dest.UrlSlug, opt => opt.MapFrom(src => src.UrlSlug));
+
 //        CreateMap<Category, CategoryLookupDto>();
+
 //        CreateMap<Category, CategoryInGroupDto>()
 //            .ForMember(dest => dest.Manufacturers, opt => opt.Ignore());
+
+//        // NEW: Mapping for CategoryWithManufacturersDto
+//        CreateMap<Category, CategoryWithManufacturersDto>()
+//            .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Name))
+//            .ForMember(dest => dest.CategoryUrlSlug, opt => opt.MapFrom(src => src.UrlSlug))
+//            .ForMember(dest => dest.Manufacturers, opt => opt.Ignore()) // Populated manually
+//            .ForMember(dest => dest.ManufacturerCount, opt => opt.Ignore());
 //        #endregion
 
 //        #region Lookup Mappings
@@ -84,16 +94,25 @@
 //        #region Product Mappings
 //        CreateMap<Product, ProductDto>()
 //            .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
+//            // NEW: Map Category Specification Type
+//            .ForMember(dest => dest.CategorySpecificationType, opt => opt.MapFrom(src => src.Category.SpecificationType))
 //            .ForMember(dest => dest.ManufacturerName, opt => opt.MapFrom(src => src.Manufacturer.Name))
 //            .ForMember(dest => dest.IsAvailableForPurchase, opt => opt.MapFrom(src => src.StockCount > 0 && (!src.ReleaseDate.HasValue || src.ReleaseDate.Value <= DateTime.Now)))
+//            // NEW: Calculate total stock if StoreInventories are included
+//            .ForMember(dest => dest.TotalStockAcrossAllStores, opt => opt.MapFrom(src => src.StoreInventories != null ? src.StoreInventories.Sum(x => x.Quantity) : 0))
 //            .ForMember(dest => dest.StoreAvailability, opt => opt.Ignore());
+
 //        // For Edit page - Map ProductDto back to CreateUpdateProductDto
 //        CreateMap<ProductDto, CreateUpdateProductDto>()
 //            .ForMember(dest => dest.ProductImageFile, opt => opt.Ignore())
 //            .ForMember(dest => dest.ReleaseDate, opt => opt.Ignore());
+
 //        CreateMap<CreateUpdateProductDto, Product>()
 //            .ForMember(dest => dest.Category, opt => opt.Ignore())
 //            .ForMember(dest => dest.Manufacturer, opt => opt.Ignore())
+//            .ForMember(dest => dest.IsActive, opt => opt.Ignore())
+//            // Ignore navigation properties to let EF Core or custom logic handle them if needed, 
+//            // though AutoMapper will usually map properties if names match. Explicit ignores are safer for Aggregates.
 //            .ForMember(dest => dest.MonitorSpecification, opt => opt.Ignore())
 //            .ForMember(dest => dest.MouseSpecification, opt => opt.Ignore())
 //            .ForMember(dest => dest.LaptopSpecification, opt => opt.Ignore())
@@ -107,7 +126,6 @@
 //            .ForMember(dest => dest.CpuCoolerSpecification, opt => opt.Ignore())
 //            .ForMember(dest => dest.KeyboardSpecification, opt => opt.Ignore())
 //            .ForMember(dest => dest.HeadsetSpecification, opt => opt.Ignore())
-//            // New specs
 //            .ForMember(dest => dest.CaseFanSpecification, opt => opt.Ignore())
 //            .ForMember(dest => dest.MemoryCardSpecification, opt => opt.Ignore())
 //            .ForMember(dest => dest.SpeakerSpecification, opt => opt.Ignore())
@@ -123,8 +141,24 @@
 //            .ForMember(dest => dest.HubSpecification, opt => opt.Ignore())
 //            .ForMember(dest => dest.CableSpecification, opt => opt.Ignore())
 //            .ForMember(dest => dest.ChargerSpecification, opt => opt.Ignore())
-//            .ForMember(dest => dest.PowerBankSpecification, opt => opt.Ignore())
-//            .ForMember(dest => dest.IsActive, opt => opt.Ignore());
+//            .ForMember(dest => dest.PowerBankSpecification, opt => opt.Ignore());
+
+//        // NEW: Recently Viewed Product Mappings
+//        CreateMap<Product, RecentlyViewedProductDto>()
+//            .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.Id))
+//            .ForMember(dest => dest.IsAvailableForPurchase, opt => opt.MapFrom(src => src.StockCount > 0 && (!src.ReleaseDate.HasValue || src.ReleaseDate.Value <= DateTime.Now)))
+//            .ForMember(dest => dest.TotalStockAcrossAllStores, opt => opt.MapFrom(src => src.StoreInventories != null ? src.StoreInventories.Sum(x => x.Quantity) : 0));
+
+//        CreateMap<RecentlyViewedProduct, RecentlyViewedProductDto>()
+//             .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
+//             .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.ProductName))
+//             .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Product.ImageUrl))
+//             .ForMember(dest => dest.OriginalPrice, opt => opt.MapFrom(src => src.Product.OriginalPrice))
+//             .ForMember(dest => dest.DiscountedPrice, opt => opt.MapFrom(src => src.Product.DiscountedPrice))
+//             .ForMember(dest => dest.UrlSlug, opt => opt.MapFrom(src => src.Product.UrlSlug))
+//             .ForMember(dest => dest.DiscountPercent, opt => opt.MapFrom(src => src.Product.DiscountPercent))
+//             .ForMember(dest => dest.IsAvailableForPurchase, opt => opt.MapFrom(src => src.Product.StockCount > 0 && (!src.Product.ReleaseDate.HasValue || src.Product.ReleaseDate.Value <= DateTime.Now)))
+//             .ForMember(dest => dest.TotalStockAcrossAllStores, opt => opt.MapFrom(src => src.Product.StoreInventories != null ? src.Product.StoreInventories.Sum(x => x.Quantity) : 0));
 //        #endregion
 
 //        #region Existing Specifications - Entity to DTO
@@ -390,7 +424,7 @@
 //            .ForMember(dest => dest.OrderStatusText, opt => opt.MapFrom(src => src.OrderStatus.ToString()))
 //            .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.PaymentStatus))
 //            .ForMember(dest => dest.PaymentStatusText, opt => opt.MapFrom(src => src.PaymentStatus.ToString()))
-//            .ForMember(dest => dest.StoreName, opt => opt.Ignore())
+//            .ForMember(dest => dest.StoreName, opt => opt.Ignore()) // Must be filled manually or via query include if nav prop existed
 //            .ForMember(dest => dest.PaymentMethod, opt => opt.MapFrom(src => src.PaymentMethod));
 
 //        CreateMap<CreateOrderDto, Order>()
@@ -409,7 +443,10 @@
 //        CreateMap<Cart, CartDto>()
 //            .ForMember(dest => dest.CartItems, opt => opt.MapFrom(src => src.Items));
 
-//        CreateMap<CartItem, CartItemDto>();
+//        CreateMap<CartItem, CartItemDto>()
+//            // This needs to be populated from Product table manually in the app service
+//            // as CartItem doesn't have a navigation property to Product in the provided entity
+//            .ForMember(dest => dest.ProductUrlSlug, opt => opt.Ignore());
 
 
 //        CreateMap<OrderHistory, OrderHistoryDto>();

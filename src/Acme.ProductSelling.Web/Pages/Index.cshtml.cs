@@ -30,7 +30,6 @@ public class IndexModel : ProductSellingPageModel
     private readonly ICategoryRepository _categoryRepository;
     private readonly IManufacturerAppService _manufacturerAppService;
     private readonly IManufacturerRepository _manufacturerRepository;
-    private readonly HttpClient _httpClient;
     public PagedResultDto<ProductDto> ProductList { get; set; }
 
     public PagedResultDto<CategoryDto> CategoryList { get; set; }
@@ -40,8 +39,8 @@ public class IndexModel : ProductSellingPageModel
 
     public List<FeaturedCategoryProductsDto> FeaturedProductCarousels { get; set; }
 
-    private readonly ProductMapper ProductMapper;
-    private readonly CategoryMapper CategoryMapper;
+    private readonly ProductToProductDtoMapper ProductMapper;
+    private readonly CategoryToCategoryDtoMapper CategoryMapper;
     public IndexModel(IProductAppService productAppService,
                       ICategoryAppService categoryAppService,
                       IStringLocalizer<ProductSellingResource> localizer,
@@ -49,8 +48,8 @@ public class IndexModel : ProductSellingPageModel
                       IManufacturerAppService manufacturerAppService,
                       IManufacturerRepository manufacturerRepository,
                       IProductRepository productRepository,
-                      ProductMapper productMapper,
-                      CategoryMapper categoryMapper)
+                      ProductToProductDtoMapper productMapper,
+                      CategoryToCategoryDtoMapper categoryMapper)
     {
         _productAppService = productAppService;
         _localizer = localizer;
@@ -59,7 +58,6 @@ public class IndexModel : ProductSellingPageModel
         _manufacturerAppService = manufacturerAppService;
         _manufacturerRepository = manufacturerRepository;
         _productRepository = productRepository;
-        _httpClient = new HttpClient();
         ProductMapper = productMapper;
         CategoryMapper = categoryMapper;
     }
@@ -83,13 +81,6 @@ public class IndexModel : ProductSellingPageModel
             TotalCount = productList.TotalCount
         };
 
-        //var manufacturerLookup = await _manufacturerRepository.GetListAsync();
-
-        //ManufacturerList = new PagedResultDto<ManufacturerDto>
-        //{
-        //    Items = ObjectMapper.Map<List<Manufacturer>, List<ManufacturerDto>>(manufacturerLookup),
-        //    TotalCount = manufacturerLookup.Count
-        //};
 
         var categoryLookup = await _categoryRepository.GetListAsync();
 
@@ -120,7 +111,7 @@ public class IndexModel : ProductSellingPageModel
         if (!categoriesToFeature.Any())
             return;
         var categoryIds = categoriesToFeature.Select(c => c.Id).ToList();
-        var allProducts = await _productRepository.GetListAsync(p => categoryIds.Contains(p.CategoryId));
+        var allProducts = productList.Items.Where(p => categoryIds.Contains(p.CategoryId)).ToList();
 
         foreach (var category in categoriesToFeature)
         {
@@ -137,7 +128,7 @@ public class IndexModel : ProductSellingPageModel
             {
                 Category = category,
                 //Products = ObjectMapper.Map<List<Product>, List<ProductDto>>(randomProducts)
-                Products = randomProducts.Select(p => ProductMapper.Map(p)).ToList()
+                Products = randomProducts
             });
         }
 

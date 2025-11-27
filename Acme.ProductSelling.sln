@@ -49,6 +49,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "payment", "payment", "{02EA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acme.ProductSelling.PaymentGateway.VnPay", "src\Acme.ProductSelling.PaymentGateway.VnPay\Acme.ProductSelling.PaymentGateway.VnPay.csproj", "{950943F2-76CF-49D6-8622-E6519B2EBD83}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7CE90F89-BA4D-4111-8AE2-11936F29D7D2}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

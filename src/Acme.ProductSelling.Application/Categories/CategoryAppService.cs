@@ -29,9 +29,9 @@ namespace Acme.ProductSelling.Categories
         private readonly IRepository<Manufacturer, Guid> _manufacturerRepository;
         private readonly IStringLocalizer<ProductSellingResource> _localizer;
 
-        private readonly CategoryMapper _categoryToDtoMapper;
-        private readonly CategoryLookupMapper _categoryToLookupMapper;
-        private readonly ManufacturerMapper _manufacturerToDtoMapper;
+        private readonly CategoryToCategoryDtoMapper _categoryToDtoMapper;
+        private readonly CategoryToCategoryLookupDtoMapper _categoryToLookupMapper;
+        private readonly ManufacturerToManufacturerDtoMapper _manufacturerToDtoMapper;
 
         public CategoryAppService(ICategoryRepository categoryRepository,
                                   IRepository<Product, Guid> productRepository,
@@ -39,9 +39,9 @@ namespace Acme.ProductSelling.Categories
                                   ILogger<CategoryAppService> logger,
                                   IRepository<Manufacturer, Guid> manufacturerRepository,
                                   IStringLocalizer<ProductSellingResource> localizer,
-                                  CategoryMapper categoryToDtoMapper,
-                                  CategoryLookupMapper categoryToLookupMapper,
-                                  ManufacturerMapper manufacturerToDtoMapper)
+                                  CategoryToCategoryDtoMapper categoryToDtoMapper,
+                                  CategoryToCategoryLookupDtoMapper categoryToLookupMapper,
+                                  ManufacturerToManufacturerDtoMapper manufacturerToDtoMapper)
                  : base(categoryRepository)
         {
             _categoryRepository = categoryRepository;
