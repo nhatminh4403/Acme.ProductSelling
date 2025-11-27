@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories.Services;
 using Acme.ProductSelling.Folder;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Manufacturers;

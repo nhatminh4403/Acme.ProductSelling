@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories.Services;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products.Services;
@@ -8,7 +9,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Admin.Products
 {
@@ -29,7 +29,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
             ICategoryAppService categoryAppService,
             IManufacturerAppService manufacturerAppService)
         {
-            _productAppService = productAppService; 
+            _productAppService = productAppService;
             _categoryAppService = categoryAppService;
             _manufacturerAppService = manufacturerAppService;
         }

@@ -3,7 +3,6 @@ using Acme.ProductSelling.Identity;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Orders.Services;
-using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Web.Pages.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +12,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
-using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 using Volo.Abp.Users;
 
 namespace Acme.ProductSelling.Web.Admin.Pages

@@ -1,31 +1,50 @@
-﻿@model Acme.ProductSelling.Specifications.CaseSpecificationDto
-
+﻿@model Acme.ProductSelling.Specifications.ChargerSpecificationDto
 
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["Product:Case:SupportedMbFormFactor"]</th>
-            <td>
-                @Model.SupportedMbFormFactorName
-            </td>
+            <th>@L["Product:Charger:ChargerType"]</th>
+            <td>@Model.ChargerType</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:Color"]</th>
-            <td>
-                @Model.Color
-            </td>
+            <th>@L["Product:Charger:TotalWattage"]</th>
+            <td>@Model.TotalWattage W</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxCpuCoolerHeight"]</th>
-            <td>
-                @Model.MaxCpuCoolerHeight
-            </td>
+            <th>@L["Product:Charger:PortCount"]</th>
+            <td>@Model.PortCount</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxGpuLength"]</th>
-            <td>
-                @Model.MaxGpuLength
-            </td>
+            <th>@L["Product:Charger:UsbCPorts"]</th>
+            <td>@Model.UsbCPorts</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Charger:UsbAPorts"]</th>
+            <td>@Model.UsbAPorts</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Charger:MaxOutputPerPort"]</th>
+            <td>@Model.MaxOutputPerPort</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Charger:FastChargingProtocols"]</th>
+            <td>@Model.FastChargingProtocols</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Charger:CableIncluded"]</th>
+            <td>@L[Model.CableIncluded ? "Product:Yes" : "Product:No"]</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Charger:HasFoldablePlug"]</th>
+            <td>@L[Model.HasFoldablePlug ? "Product:Yes" : "Product:No"]</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Charger:Technology"]</th>
+            <td>@Model.Technology</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Charger:Color"]</th>
+            <td>@Model.Color</td>
         </tr>
     </tbody>
 </table>

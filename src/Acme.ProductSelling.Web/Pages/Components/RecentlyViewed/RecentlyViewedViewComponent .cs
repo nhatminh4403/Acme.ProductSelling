@@ -1,12 +1,9 @@
 ﻿using Acme.ProductSelling.Localization;
-using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
 using Acme.ProductSelling.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.Users;
 

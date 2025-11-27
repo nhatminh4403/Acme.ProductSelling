@@ -1,31 +1,50 @@
-﻿@model Acme.ProductSelling.Specifications.CaseSpecificationDto
-
+﻿@model Acme.ProductSelling.Specifications.DeskSpecificationDto
 
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["Product:Case:SupportedMbFormFactor"]</th>
-            <td>
-                @Model.SupportedMbFormFactorName
-            </td>
+            <th>@L["Product:Desk:Width"]</th>
+            <td>@Model.Width</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:Color"]</th>
-            <td>
-                @Model.Color
-            </td>
+            <th>@L["Product:Desk:Depth"]</th>
+            <td>@Model.Depth</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxCpuCoolerHeight"]</th>
-            <td>
-                @Model.MaxCpuCoolerHeight
-            </td>
+            <th>@L["Product:Desk:Height"]</th>
+            <td>@Model.Height</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxGpuLength"]</th>
-            <td>
-                @Model.MaxGpuLength
-            </td>
+            <th>@L["Product:Desk:Material"]</th>
+            <td>@Model.Material</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Desk:MaxWeight"]</th>
+            <td>@Model.MaxWeight</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Desk:IsHeightAdjustable"]</th>
+            <td>@L[Model.IsHeightAdjustable ? "Product:Yes" : "Product:No"]</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Desk:HasCableManagement"]</th>
+            <td>@L[Model.HasCableManagement ? "Product:Yes" : "Product:No"]</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Desk:HasCupHolder"]</th>
+            <td>@L[Model.HasCupHolder ? "Product:Yes" : "Product:No"]</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Desk:HasHeadphoneHook"]</th>
+            <td>@L[Model.HasHeadphoneHook ? "Product:Yes" : "Product:No"]</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Desk:SurfaceType"]</th>
+            <td>@Model.SurfaceType</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Desk:Color"]</th>
+            <td>@Model.Color</td>
         </tr>
     </tbody>
 </table>

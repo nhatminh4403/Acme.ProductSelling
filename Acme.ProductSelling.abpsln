@@ -2,9 +2,11 @@
   "id": "a917d73b-04ba-4499-a4d2-531b841caf5a",
   "template": "app",
   "versions": {
-    "AbpFramework": "9.1.0",
-    "AbpStudio": "0.9.25",
-    "TargetDotnetFramework": "net9.0"
+    "AbpFramework": "10.0.0",
+    "AbpStudio": "2.0.1",
+    "TargetDotnetFramework": "net9.0",
+    "AbpCommercial": "10.0.0",
+    "LeptonX": "5.0.0"
   },
   "modules": {
     "Acme.ProductSelling": {

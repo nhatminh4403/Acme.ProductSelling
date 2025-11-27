@@ -1,31 +1,50 @@
-﻿@model Acme.ProductSelling.Specifications.CaseSpecificationDto
-
+﻿@model Acme.ProductSelling.Specifications.HandheldSpecificationDto
 
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["Product:Case:SupportedMbFormFactor"]</th>
-            <td>
-                @Model.SupportedMbFormFactorName
-            </td>
+            <th>@L["Product:Handheld:Processor"]</th>
+            <td>@Model.Processor</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:Color"]</th>
-            <td>
-                @Model.Color
-            </td>
+            <th>@L["Product:Handheld:Graphics"]</th>
+            <td>@Model.Graphics</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxCpuCoolerHeight"]</th>
-            <td>
-                @Model.MaxCpuCoolerHeight
-            </td>
+            <th>@L["Product:Handheld:RAM"]</th>
+            <td>@Model.RAM</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxGpuLength"]</th>
-            <td>
-                @Model.MaxGpuLength
-            </td>
+            <th>@L["Product:Handheld:Storage"]</th>
+            <td>@Model.Storage</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Handheld:Display"]</th>
+            <td>@Model.Display</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Handheld:BatteryLife"]</th>
+            <td>@Model.BatteryLife</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Handheld:Weight"]</th>
+            <td>@Model.Weight</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Handheld:OperatingSystem"]</th>
+            <td>@Model.OperatingSystem</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Handheld:Connectivity"]</th>
+            <td>@Model.Connectivity</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Handheld:WifiVersion"]</th>
+            <td>@Model.WifiVersion</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Handheld:BluetoothVersion"]</th>
+            <td>@Model.BluetoothVersion</td>
         </tr>
     </tbody>
 </table>

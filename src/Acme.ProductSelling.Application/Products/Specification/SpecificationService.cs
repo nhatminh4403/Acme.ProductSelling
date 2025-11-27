@@ -1,5 +1,4 @@
 ﻿using Acme.ProductSelling.Categories;
-using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Specification.Handler;
 using Acme.ProductSelling.Specifications;

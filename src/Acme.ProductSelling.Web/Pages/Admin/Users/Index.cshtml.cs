@@ -1,7 +1,6 @@
-using Acme.ProductSelling.Permissions;
+﻿using Acme.ProductSelling.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Acme.ProductSelling.Web.Pages.Admin.Users
 {

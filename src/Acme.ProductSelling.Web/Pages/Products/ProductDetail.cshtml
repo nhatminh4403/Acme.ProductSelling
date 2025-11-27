@@ -11,13 +11,12 @@
     <link href="~/css/global/products/detail.css" rel="stylesheet" />
     <link href="~/css/global/products/recently-viewed.css" rel="stylesheet" />
 }
-@section Scripts {
+@section scripts {
     <script>
         $(function () {
             RecentlyViewedManager.trackView('@Model.Product.Id');
         });
     </script>
-
 }
 
 
@@ -88,7 +87,7 @@
                 <div class="card h-100" id="leftCard">
                     <div class="card-header bg-light"><h2>@L["Product:Specification"]</h2></div>
                     <div class="card-body">
-                        <div class="content-container" id="content2">
+                        <div>
                             @switch (Model.Product.CategorySpecificationType)
                             {
                                 case SpecificationType.Monitor:
@@ -184,12 +183,7 @@
                         </div>
 
                         <hr />
-                        <button class="btn btn-sm btn-outline-primary toggle-button d-block mx-auto"
-                                onclick="toggleContent('content2', this)">
-                            <span class="show-more-text">@L["Expand"]</span>
-                            <span class="show-less-text d-none">@L["Collapse"]</span>
-                            <i class="bi bi-chevron-down ms-1"></i>
-                        </button>
+
                     </div>
                 </div>
             </div>

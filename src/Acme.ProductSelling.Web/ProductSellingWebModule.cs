@@ -53,11 +53,11 @@ using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Toolbars;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.AspNetCore.SignalR;
 using Volo.Abp.Autofac;
-using Volo.Abp.AutoMapper;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.BackgroundJobs.Hangfire;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity.Web;
+using Volo.Abp.Mapperly;
 using Volo.Abp.Modularity;
 using Volo.Abp.OpenIddict;
 using Volo.Abp.PermissionManagement;
@@ -97,8 +97,9 @@ namespace Acme.ProductSelling.Web;
     typeof(AbpAspNetCoreMvcModule),
     typeof(AbpAspNetCoreMvcUiModule),
     //typeof(AbpBackgroundJobOptions),
-    typeof(AbpBackgroundJobsHangfireModule)
-    
+    typeof(AbpBackgroundJobsHangfireModule),
+    typeof(AbpMapperlyModule)
+
 )]
 
 #endregion
@@ -179,11 +180,11 @@ public class ProductSellingWebModule : AbpModule
         ConfigureUrls(configuration);
         ConfigureHealthChecks(context);
         ConfigureAuthentication(context);
-        ConfigureAutoMapper();
+        ConfigureAutoMapper(services);
         ConfigureVirtualFileSystem(hostingEnvironment);
         ConfigureNavigationServices();
         ConfigureAutoApiControllers();
-        ConfigureSwaggerServices(context.Services);
+        ConfigureSwaggerServices(services);
 
         Configure<PermissionManagementOptions>(options =>
         {
@@ -425,12 +426,9 @@ public class ProductSellingWebModule : AbpModule
         });
     }
 
-    private void ConfigureAutoMapper()
+    private void ConfigureAutoMapper(IServiceCollection services)
     {
-        Configure<AbpAutoMapperOptions>(options =>
-        {
-            options.AddMaps<ProductSellingWebModule>();
-        });
+        services.AddMapperlyObjectMapper();
     }
 
     private void ConfigureVirtualFileSystem(IWebHostEnvironment hostingEnvironment)
@@ -552,8 +550,8 @@ public class ProductSellingWebModule : AbpModule
         );
         RecurringJob.AddOrUpdate<RecentlyViewedCleanupJob>(
                 "recently-viewed-cleanup",
-                job => job.ExecuteAsync(new RecentlyViewedCleanupArgs 
-                                            { DaysToKeep = RecentlyViewedConsts.CleanupDaysToKeep }),
+                job => job.ExecuteAsync(new RecentlyViewedCleanupArgs
+                { DaysToKeep = RecentlyViewedConsts.CleanupDaysToKeep }),
                 Cron.Daily(3, 0)
         );
         app.UseConfiguredEndpoints(endpoints =>

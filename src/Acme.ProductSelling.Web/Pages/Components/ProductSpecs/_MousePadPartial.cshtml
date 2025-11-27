@@ -1,30 +1,42 @@
-﻿@model Acme.ProductSelling.Specifications.CaseSpecificationDto
+﻿@model Acme.ProductSelling.Specifications.MousePadSpecificationDto
 
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["Product:Case:SupportedMbFormFactor"]</th>
-            <td>
-                @Model.SupportedMbFormFactorName
-            </td>
+            <th>@L["Product:MousePad:Width"]</th>
+            <td>@Model.Width</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:Color"]</th>
-            <td>
-                @Model.Color
-            </td>
+            <th>@L["Product:MousePad:Height"]</th>
+            <td>@Model.Height</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxCpuCoolerHeight"]</th>
-            <td>
-                @Model.MaxCpuCoolerHeight
-            </td>
+            <th>@L["Product:MousePad:Thickness"]</th>
+            <td>@Model.Thickness</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxGpuLength"]</th>
-            <td>
-                @Model.MaxGpuLength
-            </td>
+            <th>@L["Product:MousePad:Material"]</th>
+            <td>@Model.Material</td>
+        </tr>
+        <tr>
+            <th>@L["Product:MousePad:SurfaceType"]</th>
+            <td>@Model.SurfaceType</td>
+        </tr>
+        <tr>
+            <th>@L["Product:MousePad:BaseType"]</th>
+            <td>@Model.BaseType</td>
+        </tr>
+        <tr>
+            <th>@L["Product:MousePad:HasRgb"]</th>
+            <td>@L[Model.HasRgb ? "Product:Yes" : "Product:No"]</td>
+        </tr>
+        <tr>
+            <th>@L["Product:MousePad:IsWashable"]</th>
+            <td>@L[Model.IsWashable ? "Product:Yes" : "Product:No"]</td>
+        </tr>
+        <tr>
+            <th>@L["Product:MousePad:Color"]</th>
+            <td>@Model.Color</td>
         </tr>
     </tbody>
 </table>

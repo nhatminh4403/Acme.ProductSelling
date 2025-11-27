@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Acme.ProductSelling.Categories.Dtos;
+using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
-namespace Acme.ProductSelling.Categories
+namespace Acme.ProductSelling.Categories.Services
 {
     public interface ICategoryAppService : ICrudAppService<
      CategoryDto,

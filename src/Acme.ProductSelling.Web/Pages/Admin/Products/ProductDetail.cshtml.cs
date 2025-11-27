@@ -3,7 +3,6 @@ using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Threading.Tasks;
 
@@ -19,14 +18,14 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
         [BindProperty(SupportsGet = true)]
         public string Prefix { get; set; }
         public ProductDto Product { get; set; }
-        
+
         public ProductDetailModel(IProductAppService productAppService)
         {
             _productAppService = productAppService;
         }
         public async Task OnGetAsync()
         {
-            if(Prefix != RoleBasedPrefix)
+            if (Prefix != RoleBasedPrefix)
             {
                 Response.Redirect($"/{RoleBasedPrefix}/products/detail/{Id}");
             }

@@ -1,30 +1,38 @@
-﻿@model Acme.ProductSelling.Specifications.CaseSpecificationDto
+﻿@model Acme.ProductSelling.Specifications.MemoryCardSpecificationDto
 
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["Product:Case:SupportedMbFormFactor"]</th>
-            <td>
-                @Model.SupportedMbFormFactorName
-            </td>
+            <th>@L["Product:MemoryCard:Capacity"]</th>
+            <td>@Model.Capacity</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:Color"]</th>
-            <td>
-                @Model.Color
-            </td>
+            <th>@L["Product:MemoryCard:CardType"]</th>
+            <td>@Model.CardType</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxCpuCoolerHeight"]</th>
-            <td>
-                @Model.MaxCpuCoolerHeight
-            </td>
+            <th>@L["Product:MemoryCard:SpeedClass"]</th>
+            <td>@Model.SpeedClass</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxGpuLength"]</th>
-            <td>
-                @Model.MaxGpuLength
-            </td>
+            <th>@L["Product:MemoryCard:ReadSpeed"]</th>
+            <td>@Model.ReadSpeed</td>
+        </tr>
+        <tr>
+            <th>@L["Product:MemoryCard:WriteSpeed"]</th>
+            <td>@Model.WriteSpeed</td>
+        </tr>
+        <tr>
+            <th>@L["Product:MemoryCard:Warranty"]</th>
+            <td>@Model.Warranty</td>
+        </tr>
+        <tr>
+            <th>@L["Product:MemoryCard:Waterproof"]</th>
+            <td>@L[Model.Waterproof ? "Product:Yes" : "Product:No"]</td>
+        </tr>
+        <tr>
+            <th>@L["Product:MemoryCard:Shockproof"]</th>
+            <td>@L[Model.Shockproof ? "Product:Yes" : "Product:No"]</td>
         </tr>
     </tbody>
 </table>

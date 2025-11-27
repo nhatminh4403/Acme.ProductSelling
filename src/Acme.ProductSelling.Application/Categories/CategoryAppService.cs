@@ -1,4 +1,6 @@
-﻿using Acme.ProductSelling.Localization;
+﻿using Acme.ProductSelling.Categories.Dtos;
+using Acme.ProductSelling.Categories.Services;
+using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products;
@@ -26,13 +28,20 @@ namespace Acme.ProductSelling.Categories
         private readonly ILogger<CategoryAppService> _logger;
         private readonly IRepository<Manufacturer, Guid> _manufacturerRepository;
         private readonly IStringLocalizer<ProductSellingResource> _localizer;
-        public CategoryAppService(
-                 ICategoryRepository categoryRepository,
-                 IRepository<Product, Guid> productRepository,
-                 IGuidGenerator guidGenerator,
-                 ILogger<CategoryAppService> logger,
-                 IRepository<Manufacturer, Guid> manufacturerRepository,
-                 IStringLocalizer<ProductSellingResource> localizer)
+
+        private readonly CategoryMapper _categoryToDtoMapper;
+        private readonly CategoryLookupMapper _categoryToLookupMapper;
+        private readonly ManufacturerMapper _manufacturerToDtoMapper;
+
+        public CategoryAppService(ICategoryRepository categoryRepository,
+                                  IRepository<Product, Guid> productRepository,
+                                  IGuidGenerator guidGenerator,
+                                  ILogger<CategoryAppService> logger,
+                                  IRepository<Manufacturer, Guid> manufacturerRepository,
+                                  IStringLocalizer<ProductSellingResource> localizer,
+                                  CategoryMapper categoryToDtoMapper,
+                                  CategoryLookupMapper categoryToLookupMapper,
+                                  ManufacturerMapper manufacturerToDtoMapper)
                  : base(categoryRepository)
         {
             _categoryRepository = categoryRepository;
@@ -43,6 +52,12 @@ namespace Acme.ProductSelling.Categories
             _manufacturerRepository = manufacturerRepository;
             _localizer = localizer;
             ConfigurePolicies();
+            _manufacturerToDtoMapper = manufacturerToDtoMapper;
+            _categoryToDtoMapper = categoryToDtoMapper;
+            _categoryToLookupMapper = categoryToLookupMapper;
+            _categoryToDtoMapper = categoryToDtoMapper;
+            _categoryToLookupMapper = categoryToLookupMapper;
+            _manufacturerToDtoMapper = manufacturerToDtoMapper;
         }
         private void ConfigurePolicies()
         {
@@ -71,7 +86,7 @@ namespace Acme.ProductSelling.Categories
                 var insertedCategory = await Repository.InsertAsync(category, autoSave: true);
                 _logger.LogInformation("Category created successfully: {Id}", insertedCategory.Id);
 
-                var result = ObjectMapper.Map<Category, CategoryDto>(insertedCategory);
+                var result = _categoryToDtoMapper.Map(insertedCategory);
                 return result;
             }
             catch (Exception ex)
@@ -93,7 +108,7 @@ namespace Acme.ProductSelling.Categories
                 category.UrlSlug = input.UrlSlug;
                 var updatedCategory = await Repository.UpdateAsync(category, autoSave: true);
                 _logger.LogInformation("Category updated successfully: {Id}", updatedCategory.Id);
-                return ObjectMapper.Map<Category, CategoryDto>(updatedCategory);
+                return _categoryToDtoMapper.Map(updatedCategory);
             }
             catch (Exception ex)
             {
@@ -105,10 +120,10 @@ namespace Acme.ProductSelling.Categories
         [AllowAnonymous]
         public async Task<ListResultDto<CategoryLookupDto>> GetCategoryLookupAsync()
         {
-            var categories = await Repository.GetListAsync();
-            return new ListResultDto<CategoryLookupDto>(
-                ObjectMapper.Map<List<Category>, List<CategoryLookupDto>>(categories)
-            );
+            var categories = await _categoryRepository.GetListAsync();
+            var lookupDtos = categories.Select(c => _categoryToLookupMapper.Map(c)).ToList();
+
+            return new ListResultDto<CategoryLookupDto>(lookupDtos);
         }
 
         [AllowAnonymous]
@@ -189,15 +204,17 @@ namespace Acme.ProductSelling.Categories
             Category category,
             Dictionary<Guid, List<Manufacturer>> manufacturersByCategory)
         {
+            var manufacturers = manufacturersByCategory.TryGetValue(category.Id, out var manufs)
+                ? manufs
+                : new List<Manufacturer>();
             return new CategoryInGroupDto
             {
                 Id = category.Id,
                 Name = category.Name,
                 UrlSlug = category.UrlSlug,
                 SpecificationType = category.SpecificationType,
-                Manufacturers = manufacturersByCategory.TryGetValue(category.Id, out var manufs)
-                    ? ObjectMapper.Map<List<Manufacturer>, List<ManufacturerDto>>(manufs)
-                    : new List<ManufacturerDto>()
+                Manufacturers = manufacturers.Select(m => _manufacturerToDtoMapper.Map(m)).ToList()
+
             };
         }
 
@@ -216,7 +233,7 @@ namespace Acme.ProductSelling.Categories
                 CategoryUrlSlug = category.UrlSlug,
                 CategoryGroup = category.CategoryGroup,
                 IconCssClass = category.IconCssClass,
-                Manufacturers = ObjectMapper.Map<List<Manufacturer>, List<ManufacturerDto>>(manufacturers),
+                Manufacturers = manufacturers.Select(m => _manufacturerToDtoMapper.Map(m)).ToList(),
                 ManufacturerCount = manufacturers.Count
             };
         }

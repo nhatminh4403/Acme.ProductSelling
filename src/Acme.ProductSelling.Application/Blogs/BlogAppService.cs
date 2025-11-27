@@ -1,7 +1,4 @@
-﻿using Acme.ProductSelling.Orders.Dtos;
-using Acme.ProductSelling.Permissions;
-using Acme.ProductSelling.Products;
-using Acme.ProductSelling.Products.Dtos;
+﻿using Acme.ProductSelling.Permissions;
 using Ganss.Xss;
 using HtmlAgilityPack;
 using Microsoft.AspNetCore.Authorization;
@@ -261,7 +258,7 @@ namespace Acme.ProductSelling.Blogs
             }
         }
 
-        public async Task<PagedResultDto<BlogDto>> GetBlogByBloggerAsync( PagedAndSortedResultRequestDto input)
+        public async Task<PagedResultDto<BlogDto>> GetBlogByBloggerAsync(PagedAndSortedResultRequestDto input)
         {
             var query = await Repository.GetQueryableAsync();
             var authorId = CurrentUser.Id ?? throw new AbpAuthorizationException("User must be logged in");

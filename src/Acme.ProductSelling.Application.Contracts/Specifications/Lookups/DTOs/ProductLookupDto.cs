@@ -1,5 +1,5 @@
 ﻿using Volo.Abp.Application.Dtos;
-namespace Acme.ProductSelling.Products.Dtos
+namespace Acme.ProductSelling.Specifications.Lookups.DTOs
 {
     public class ProductLookupDto<TKey> : EntityDto<TKey>
     {

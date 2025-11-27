@@ -1,31 +1,58 @@
-﻿@model Acme.ProductSelling.Specifications.CaseSpecificationDto
-
+﻿@model Acme.ProductSelling.Specifications.HubSpecificationDto
 
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["Product:Case:SupportedMbFormFactor"]</th>
-            <td>
-                @Model.SupportedMbFormFactorName
-            </td>
+            <th>@L["Product:Hub:HubType"]</th>
+            <td>@Model.HubType</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:Color"]</th>
-            <td>
-                @Model.Color
-            </td>
+            <th>@L["Product:Hub:PortCount"]</th>
+            <td>@Model.PortCount</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxCpuCoolerHeight"]</th>
-            <td>
-                @Model.MaxCpuCoolerHeight
-            </td>
+            <th>@L["Product:Hub:UsbAPorts"]</th>
+            <td>@Model.UsbAPorts</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxGpuLength"]</th>
-            <td>
-                @Model.MaxGpuLength
-            </td>
+            <th>@L["Product:Hub:UsbCPorts"]</th>
+            <td>@Model.UsbCPorts</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Hub:HdmiPorts"]</th>
+            <td>@Model.HdmiPorts</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Hub:DisplayPorts"]</th>
+            <td>@Model.DisplayPorts</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Hub:EthernetPort"]</th>
+            <td>@L[Model.EthernetPort ? "Product:Yes" : "Product:No"]</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Hub:SdCardReader"]</th>
+            <td>@L[Model.SdCardReader ? "Product:Yes" : "Product:No"]</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Hub:AudioJack"]</th>
+            <td>@L[Model.AudioJack ? "Product:Yes" : "Product:No"]</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Hub:MaxDisplays"]</th>
+            <td>@Model.MaxDisplays</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Hub:MaxResolution"]</th>
+            <td>@Model.MaxResolution</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Hub:PowerDelivery"]</th>
+            <td>@Model.PowerDelivery</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Hub:Color"]</th>
+            <td>@Model.Color</td>
         </tr>
     </tbody>
 </table>

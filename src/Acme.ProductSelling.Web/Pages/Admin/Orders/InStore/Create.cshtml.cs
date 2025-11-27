@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp;
-using Volo.Abp.Domain.Repositories;
 
 namespace Acme.ProductSelling.Web.Pages.Admin.Orders.InStore
 {

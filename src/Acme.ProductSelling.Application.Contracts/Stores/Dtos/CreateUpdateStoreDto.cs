@@ -21,9 +21,6 @@ namespace Acme.ProductSelling.Stores.Dtos
         [StringLength(64)]
         public string State { get; set; }
 
-        [StringLength(16)]
-        public string PostalCode { get; set; }
-
         [Required]
         [StringLength(32)]
         public string PhoneNumber { get; set; }

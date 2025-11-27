@@ -1,4 +1,4 @@
-using Acme.ProductSelling.Orders.Dtos;
+﻿using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Orders.Services;
 using Acme.ProductSelling.Permissions;
 using Microsoft.AspNetCore.Authorization;
@@ -37,7 +37,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Orders
                 if (Prefix != RoleBasedPrefix)
                 {
                     Response.Redirect($"/{RoleBasedPrefix}/orders/details/{OrderNumber}");
-                }     
+                }
                 Order = await _orderAppService.GetByOrderNumberAsync(OrderNumber);
 
                 if (Order == null)

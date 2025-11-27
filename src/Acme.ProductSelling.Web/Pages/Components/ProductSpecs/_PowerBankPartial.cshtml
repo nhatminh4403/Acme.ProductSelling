@@ -1,30 +1,54 @@
-﻿@model Acme.ProductSelling.Specifications.CaseSpecificationDto
+﻿@model Acme.ProductSelling.Specifications.PowerBankSpecificationDto
 
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["Product:Case:SupportedMbFormFactor"]</th>
-            <td>
-                @Model.SupportedMbFormFactorName
-            </td>
+            <th>@L["Product:PowerBank:Capacity"]</th>
+            <td>@Model.Capacity</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:Color"]</th>
-            <td>
-                @Model.Color
-            </td>
+            <th>@L["Product:PowerBank:TotalWattage"]</th>
+            <td>@Model.TotalWattage W</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxCpuCoolerHeight"]</th>
-            <td>
-                @Model.MaxCpuCoolerHeight
-            </td>
+            <th>@L["Product:PowerBank:PortCount"]</th>
+            <td>@Model.PortCount</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxGpuLength"]</th>
-            <td>
-                @Model.MaxGpuLength
-            </td>
+            <th>@L["Product:PowerBank:UsbCPorts"]</th>
+            <td>@Model.UsbCPorts</td>
+        </tr>
+        <tr>
+            <th>@L["Product:PowerBank:UsbAPorts"]</th>
+            <td>@Model.UsbAPorts</td>
+        </tr>
+        <tr>
+            <th>@L["Product:PowerBank:InputPorts"]</th>
+            <td>@Model.InputPorts</td>
+        </tr>
+        <tr>
+            <th>@L["Product:PowerBank:MaxOutputPerPort"]</th>
+            <td>@Model.MaxOutputPerPort</td>
+        </tr>
+        <tr>
+            <th>@L["Product:PowerBank:FastChargingProtocols"]</th>
+            <td>@Model.FastChargingProtocols</td>
+        </tr>
+        <tr>
+            <th>@L["Product:PowerBank:RechargingTime"]</th>
+            <td>@Model.RechargingTime</td>
+        </tr>
+        <tr>
+            <th>@L["Product:PowerBank:HasDisplay"]</th>
+            <td>@L[Model.HasDisplay ? "Product:Yes" : "Product:No"]</td>
+        </tr>
+        <tr>
+            <th>@L["Product:PowerBank:Weight"]</th>
+            <td>@Model.Weight</td>
+        </tr>
+        <tr>
+            <th>@L["Product:PowerBank:Color"]</th>
+            <td>@Model.Color</td>
         </tr>
     </tbody>
 </table>

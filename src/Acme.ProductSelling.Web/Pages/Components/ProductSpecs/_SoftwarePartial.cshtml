@@ -1,30 +1,38 @@
-﻿@model Acme.ProductSelling.Specifications.CaseSpecificationDto
+﻿@model Acme.ProductSelling.Specifications.SoftwareSpecificationDto
 
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["Product:Case:SupportedMbFormFactor"]</th>
-            <td>
-                @Model.SupportedMbFormFactorName
-            </td>
+            <th>@L["Product:Software:SoftwareType"]</th>
+            <td>@Model.SoftwareType</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:Color"]</th>
-            <td>
-                @Model.Color
-            </td>
+            <th>@L["Product:Software:LicenseType"]</th>
+            <td>@Model.LicenseType</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxCpuCoolerHeight"]</th>
-            <td>
-                @Model.MaxCpuCoolerHeight
-            </td>
+            <th>@L["Product:Software:Platform"]</th>
+            <td>@Model.Platform</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxGpuLength"]</th>
-            <td>
-                @Model.MaxGpuLength
-            </td>
+            <th>@L["Product:Software:Version"]</th>
+            <td>@Model.Version</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Software:Language"]</th>
+            <td>@Model.Language</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Software:DeliveryMethod"]</th>
+            <td>@Model.DeliveryMethod</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Software:SystemRequirements"]</th>
+            <td>@Model.SystemRequirements</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Software:IsSubscription"]</th>
+            <td>@L[Model.IsSubscription ? "Product:Yes" : "Product:No"]</td>
         </tr>
     </tbody>
 </table>

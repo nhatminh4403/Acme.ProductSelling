@@ -2,7 +2,6 @@
 using Acme.ProductSelling.Products.Services;
 using Acme.ProductSelling.StoreInventories.Dtos;
 using Acme.ProductSelling.StoreInventories.Services;
-using Acme.ProductSelling.Stores;
 using Acme.ProductSelling.Stores.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -1,31 +1,54 @@
-﻿@model Acme.ProductSelling.Specifications.CaseSpecificationDto
-
+﻿@model Acme.ProductSelling.Specifications.ConsoleSpecificationDto
 
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["Product:Case:SupportedMbFormFactor"]</th>
-            <td>
-                @Model.SupportedMbFormFactorName
-            </td>
+            <th>@L["Product:Console:Processor"]</th>
+            <td>@Model.Processor</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:Color"]</th>
-            <td>
-                @Model.Color
-            </td>
+            <th>@L["Product:Console:Graphics"]</th>
+            <td>@Model.Graphics</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxCpuCoolerHeight"]</th>
-            <td>
-                @Model.MaxCpuCoolerHeight
-            </td>
+            <th>@L["Product:Console:RAM"]</th>
+            <td>@Model.RAM</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxGpuLength"]</th>
-            <td>
-                @Model.MaxGpuLength
-            </td>
+            <th>@L["Product:Console:Storage"]</th>
+            <td>@Model.Storage</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Console:OpticalDrive"]</th>
+            <td>@Model.OpticalDrive</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Console:MaxResolution"]</th>
+            <td>@Model.MaxResolution</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Console:MaxFrameRate"]</th>
+            <td>@Model.MaxFrameRate</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Console:HDRSupport"]</th>
+            <td>@L[Model.HDRSupport ? "Product:Yes" : "Product:No"]</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Console:Connectivity"]</th>
+            <td>@Model.Connectivity</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Console:HasEthernet"]</th>
+            <td>@L[Model.HasEthernet ? "Product:Yes" : "Product:No"]</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Console:WifiVersion"]</th>
+            <td>@Model.WifiVersion</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Console:BluetoothVersion"]</th>
+            <td>@Model.BluetoothVersion</td>
         </tr>
     </tbody>
 </table>

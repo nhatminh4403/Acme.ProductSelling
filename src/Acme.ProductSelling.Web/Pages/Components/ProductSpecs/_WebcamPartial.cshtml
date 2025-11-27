@@ -1,30 +1,46 @@
-﻿@model Acme.ProductSelling.Specifications.CaseSpecificationDto
+﻿@model Acme.ProductSelling.Specifications.WebcamSpecificationDto
 
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["Product:Case:SupportedMbFormFactor"]</th>
-            <td>
-                @Model.SupportedMbFormFactorName
-            </td>
+            <th>@L["Product:Webcam:Resolution"]</th>
+            <td>@Model.Resolution</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:Color"]</th>
-            <td>
-                @Model.Color
-            </td>
+            <th>@L["Product:Webcam:FrameRate"]</th>
+            <td>@Model.FrameRate fps</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxCpuCoolerHeight"]</th>
-            <td>
-                @Model.MaxCpuCoolerHeight
-            </td>
+            <th>@L["Product:Webcam:FocusType"]</th>
+            <td>@Model.FocusType</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxGpuLength"]</th>
-            <td>
-                @Model.MaxGpuLength
-            </td>
+            <th>@L["Product:Webcam:FieldOfView"]</th>
+            <td>@Model.FieldOfView°</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Webcam:Connectivity"]</th>
+            <td>@Model.Connectivity</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Webcam:Connection"]</th>
+            <td>@Model.Connection</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Webcam:HasMicrophone"]</th>
+            <td>@L[Model.HasMicrophone ? "Product:Yes" : "Product:No"]</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Webcam:HasPrivacyShutter"]</th>
+            <td>@L[Model.HasPrivacyShutter ? "Product:Yes" : "Product:No"]</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Webcam:MountType"]</th>
+            <td>@Model.MountType</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Webcam:Color"]</th>
+            <td>@Model.Color</td>
         </tr>
     </tbody>
 </table>

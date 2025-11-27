@@ -1,6 +1,6 @@
 ﻿using System;
 using Volo.Abp.Application.Dtos;
-namespace Acme.ProductSelling.Categories
+namespace Acme.ProductSelling.Categories.Dtos
 {
     public class CategoryLookupDto : EntityDto<Guid>
     {

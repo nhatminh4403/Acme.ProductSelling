@@ -1,6 +1,5 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Permissions;
-using Acme.ProductSelling.Products.BackgroundJobs;
 using Acme.ProductSelling.Products.BackgroundJobs.ProductRelease;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
@@ -15,6 +14,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -38,7 +39,8 @@ namespace Acme.ProductSelling.Products
         private readonly IBackgroundJobManager _backgroundJobManager;
         private readonly ILogger<ProductAppService> _logger;
         private readonly IRecentlyViewedProductAppService _recentlyViewedService;
-
+        private readonly ProductMapper _productToProductDtoMapper;
+        private readonly ProductToCreateUpdateMapper _productDtoToCreateUpdateProductDtoMapper;
         public ProductAppService(
             IRepository<Product, Guid> repository,
             IRepository<Category, Guid> categoryRepository,
@@ -51,7 +53,9 @@ namespace Acme.ProductSelling.Products
             IStoreRepository storeRepository,
             IBackgroundJobManager backgroundJobManager,
             ILogger<ProductAppService> logger,
-            IRecentlyViewedProductAppService recentlyViewedService)
+            IRecentlyViewedProductAppService recentlyViewedService,
+            ProductMapper productToProductDtoMapper,
+            ProductToCreateUpdateMapper productDtoToCreateUpdateProductDtoMapper)
             : base(repository)
         {
             _categoryRepository = categoryRepository;
@@ -68,6 +72,10 @@ namespace Acme.ProductSelling.Products
             _backgroundJobManager = backgroundJobManager;
             _logger = logger;
             _recentlyViewedService = recentlyViewedService;
+            _productToProductDtoMapper = productToProductDtoMapper;
+            _productDtoToCreateUpdateProductDtoMapper = productDtoToCreateUpdateProductDtoMapper;
+            _productToProductDtoMapper = productToProductDtoMapper;
+            _productDtoToCreateUpdateProductDtoMapper = productDtoToCreateUpdateProductDtoMapper;
         }
         private void ConfigurePolicies()
         {
@@ -76,6 +84,25 @@ namespace Acme.ProductSelling.Products
             UpdatePolicyName = ProductSellingPermissions.Products.Edit;
             DeletePolicyName = ProductSellingPermissions.Products.Delete;
         }
+
+        [AllowAnonymous]
+        public override async Task<PagedResultDto<ProductDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+        {
+            var query = await Repository.GetQueryableAsync();
+            query = query.AsNoTracking().IncludeAllRelations();
+            var totalCount = await AsyncExecuter.CountAsync(query);
+            query = query.OrderBy(input.Sorting ?? nameof(Product.ProductName));
+            query = query.PageBy(input);
+            var products = await AsyncExecuter.ToListAsync(query);
+
+            var productDtos = products.Select(p => _productToProductDtoMapper.Map(p)).ToList();
+
+            return new PagedResultDto<ProductDto>(
+                totalCount,
+                productDtos
+            );
+        }
+
         public override async Task<ProductDto> GetAsync(Guid id)
         {
             var query = await Repository.GetQueryableAsync();
@@ -89,7 +116,7 @@ namespace Acme.ProductSelling.Products
                 throw new EntityNotFoundException(typeof(Product), id);
             }
 
-            var productDto = ObjectMapper.Map<Product, ProductDto>(product);
+            var productDto = _productToProductDtoMapper.Map(product);
 
             // NEW: Add store inventory information
             await PopulateStoreInventoryAsync(productDto, id);

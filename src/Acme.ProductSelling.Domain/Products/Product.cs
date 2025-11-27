@@ -69,7 +69,6 @@ namespace Acme.ProductSelling.Products
         public virtual KeyboardSpecification KeyboardSpecification { get; set; }
         public virtual HeadsetSpecification HeadsetSpecification { get; set; }
 
-        //new specs for more diversity
         public virtual SpeakerSpecification SpeakerSpecification { get; set; }
         public virtual WebcamSpecification WebcamSpecification { get; set; }
         public virtual CableSpecification CableSpecification { get; set; }
@@ -103,7 +102,6 @@ namespace Acme.ProductSelling.Products
             return inventory?.Quantity ?? 0;
         }
 
-        // Add helper method to check if product is available in a store
         public bool IsAvailableInStore(Guid storeId)
         {
             var inventory = StoreInventories.FirstOrDefault(si => si.StoreId == storeId);

@@ -1,5 +1,6 @@
 ﻿using Acme.ProductSelling.Categories;
-using Acme.ProductSelling.Extensions;
+using Acme.ProductSelling.Categories.Dtos;
+using Acme.ProductSelling.Categories.Services;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products;
@@ -38,10 +39,18 @@ public class IndexModel : ProductSellingPageModel
     public PagerModel PagerModel { get; set; }
 
     public List<FeaturedCategoryProductsDto> FeaturedProductCarousels { get; set; }
-    public IndexModel(IProductAppService productAppService, ICategoryAppService categoryAppService,
-        IStringLocalizer<ProductSellingResource> localizer, ICategoryRepository categoryRepository,
-        IManufacturerAppService manufacturerAppService, IManufacturerRepository manufacturerRepository,
-        IProductRepository productRepository)
+
+    private readonly ProductMapper ProductMapper;
+    private readonly CategoryMapper CategoryMapper;
+    public IndexModel(IProductAppService productAppService,
+                      ICategoryAppService categoryAppService,
+                      IStringLocalizer<ProductSellingResource> localizer,
+                      ICategoryRepository categoryRepository,
+                      IManufacturerAppService manufacturerAppService,
+                      IManufacturerRepository manufacturerRepository,
+                      IProductRepository productRepository,
+                      ProductMapper productMapper,
+                      CategoryMapper categoryMapper)
     {
         _productAppService = productAppService;
         _localizer = localizer;
@@ -51,6 +60,8 @@ public class IndexModel : ProductSellingPageModel
         _manufacturerRepository = manufacturerRepository;
         _productRepository = productRepository;
         _httpClient = new HttpClient();
+        ProductMapper = productMapper;
+        CategoryMapper = categoryMapper;
     }
 
     public async Task OnGetAsync()
@@ -72,42 +83,62 @@ public class IndexModel : ProductSellingPageModel
             TotalCount = productList.TotalCount
         };
 
-        var manufacturerLookup = await _manufacturerRepository.GetListAsync();
+        //var manufacturerLookup = await _manufacturerRepository.GetListAsync();
 
-        ManufacturerList = new PagedResultDto<ManufacturerDto>
-        {
-            Items = ObjectMapper.Map<List<Manufacturer>, List<ManufacturerDto>>(manufacturerLookup),
-            TotalCount = manufacturerLookup.Count
-        };
+        //ManufacturerList = new PagedResultDto<ManufacturerDto>
+        //{
+        //    Items = ObjectMapper.Map<List<Manufacturer>, List<ManufacturerDto>>(manufacturerLookup),
+        //    TotalCount = manufacturerLookup.Count
+        //};
 
         var categoryLookup = await _categoryRepository.GetListAsync();
 
         CategoryList = new PagedResultDto<CategoryDto>
         {
-            Items = ObjectMapper.Map<List<Category>, List<CategoryDto>>(categoryLookup),
+            //Items = ObjectMapper.Map<List<Category>, List<CategoryDto>>(categoryLookup),
+            Items = categoryLookup.Select(c => CategoryMapper.Map(c)).ToList(),
             TotalCount = categoryLookup.Count
         };
-        FeaturedProductCarousels = new List<FeaturedCategoryProductsDto>();
-        int numberOfFeaturedCategories = 4; 
-        int productsPerCarousel = 8;
-        var categoriesToFeature = CategoryList.Items.Take(numberOfFeaturedCategories).ToList();
 
+
+        FeaturedProductCarousels = new List<FeaturedCategoryProductsDto>();
+        int numberOfFeaturedCategories = 4;
+        int productsPerCarousel = 10;
+        var featuredSpecTypes = new[]
+        {
+            SpecificationType.Mouse,
+            SpecificationType.Laptop,
+            SpecificationType.Monitor,
+            SpecificationType.Keyboard
+        };
+
+        var categoriesToFeature = CategoryList.Items
+            .Where(c => featuredSpecTypes.Contains(c.SpecificationType))
+            .Take(numberOfFeaturedCategories)
+            .ToList();
+
+        if (!categoriesToFeature.Any())
+            return;
+        var categoryIds = categoriesToFeature.Select(c => c.Id).ToList();
+        var allProducts = await _productRepository.GetListAsync(p => categoryIds.Contains(p.CategoryId));
 
         foreach (var category in categoriesToFeature)
         {
-            var allProductsInCategory = await _productRepository.GetListAsync(p => p.CategoryId == category.Id);
+            var productsInCategory = allProducts
+                .Where(p => p.CategoryId == category.Id)
+                .ToList();
 
-            // 2. Use your extension method to shuffle the list, then take the desired number of products.
-            var randomProducts = allProductsInCategory.Shuffle().Take(productsPerCarousel).ToList();
+            if (!productsInCategory.Any())
+                continue;
 
-            if (randomProducts.Any())
+            var randomProducts = productsInCategory.Shuffle().Take(productsPerCarousel).ToList();
+
+            FeaturedProductCarousels.Add(new FeaturedCategoryProductsDto
             {
-                FeaturedProductCarousels.Add(new FeaturedCategoryProductsDto
-                {
-                    Category = category,
-                    Products = ObjectMapper.Map<List<Product>, List<ProductDto>>(randomProducts)
-                });
-            }
+                Category = category,
+                //Products = ObjectMapper.Map<List<Product>, List<ProductDto>>(randomProducts)
+                Products = randomProducts.Select(p => ProductMapper.Map(p)).ToList()
+            });
         }
 
         PagerModel = new PagerModel(ProductList.TotalCount, 3, CurrentPage, PageSize, "/");

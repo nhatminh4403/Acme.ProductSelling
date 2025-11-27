@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories.Dtos;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
 using Microsoft.EntityFrameworkCore;
@@ -10,15 +11,18 @@ using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
+//using static Acme.ProductSelling.Permissions.ProductSellingPermissions;
 
 namespace Acme.ProductSelling.Products
 {
     public class ProductLookupAppService : ProductSellingAppService, IProductLookupAppService
     {
-        private readonly IRepository<Product, Guid> _productRepository;
-        public ProductLookupAppService(IRepository<Product, Guid> productRepository)
+        private readonly IProductRepository _productRepository;
+        private readonly ProductMapper _productMapper;
+        public ProductLookupAppService(IProductRepository productRepository, ProductMapper productMapper)
         {
             _productRepository = productRepository;
+            _productMapper = productMapper;
         }
         public virtual async Task<PagedResultDto<ProductDto>> GetListByCategoryAsync(GetProductsByCategoryInput input)
         {
@@ -71,7 +75,7 @@ namespace Acme.ProductSelling.Products
                 throw new EntityNotFoundException(typeof(Product), slug);
             }
 
-            return ObjectMapper.Map<Product, ProductDto>(product);
+            return _productMapper.Map(product);
         }
 
         private async Task<PagedResultDto<ProductDto>> ExecutePagedQueryAsync<TInput>(
@@ -98,8 +102,9 @@ namespace Acme.ProductSelling.Products
                     .OrderBy(p => EF.Property<object>(p, sortProperty))
                     .PageBy(input)
             );
-
+            //categories.Select(c => _categoryToLookupMapper.Map(c)).ToList();
             var productDtos = ObjectMapper.Map<List<Product>, List<ProductDto>>(products);
+            //var productDtos = products.Select(p => _productMapper.Map(p)).ToList();
 
             return new PagedResultDto<ProductDto>(totalCount, productDtos);
         }

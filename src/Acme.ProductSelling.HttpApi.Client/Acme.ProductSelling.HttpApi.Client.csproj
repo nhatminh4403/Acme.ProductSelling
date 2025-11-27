@@ -3,8 +3,8 @@
   <Import Project="..\..\common.props" />
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
     <RootNamespace>Acme.ProductSelling</RootNamespace>
   </PropertyGroup>
 
@@ -13,17 +13,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.10" />
+    <PackageReference Include="KubernetesClient" Version="18.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Build" Version="18.0.2" />
+    <PackageReference Include="Microsoft.IdentityModel.Abstractions" Version="8.15.0" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-    <PackageReference Include="Volo.Abp.PermissionManagement.HttpApi.Client" Version="9.3.6" />
-    <PackageReference Include="Volo.Abp.FeatureManagement.HttpApi.Client" Version="9.3.6" />
-    <PackageReference Include="Volo.Abp.SettingManagement.HttpApi.Client" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.IdentityModel" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.HttpApi.Client" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.FeatureManagement.HttpApi.Client" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.SettingManagement.HttpApi.Client" Version="10.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.Identity.HttpApi.Client" Version="9.3.6" />
-    <PackageReference Include="Volo.Abp.Account.HttpApi.Client" Version="9.3.6" />
-    <PackageReference Include="Volo.Abp.TenantManagement.HttpApi.Client" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.Identity.HttpApi.Client" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.Account.HttpApi.Client" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.TenantManagement.HttpApi.Client" Version="10.0.0" />
   </ItemGroup>
 
   <ItemGroup>

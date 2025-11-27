@@ -1,31 +1,50 @@
-﻿@model Acme.ProductSelling.Specifications.CaseSpecificationDto
-
+﻿@model Acme.ProductSelling.Specifications.ChairSpecificationDto
 
 <table class="table table-bordered mb-0">
     <tbody>
         <tr>
-            <th>@L["Product:Case:SupportedMbFormFactor"]</th>
-            <td>
-                @Model.SupportedMbFormFactorName
-            </td>
+            <th>@L["Product:Chair:ChairType"]</th>
+            <td>@Model.ChairType</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:Color"]</th>
-            <td>
-                @Model.Color
-            </td>
+            <th>@L["Product:Chair:Material"]</th>
+            <td>@Model.Material</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxCpuCoolerHeight"]</th>
-            <td>
-                @Model.MaxCpuCoolerHeight
-            </td>
+            <th>@L["Product:Chair:MaxWeight"]</th>
+            <td>@Model.MaxWeight</td>
         </tr>
         <tr>
-            <th>@L["Product:Case:MaxGpuLength"]</th>
-            <td>
-                @Model.MaxGpuLength
-            </td>
+            <th>@L["Product:Chair:ArmrestType"]</th>
+            <td>@Model.ArmrestType</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Chair:BackrestAdjustment"]</th>
+            <td>@Model.BackrestAdjustment</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Chair:SeatHeight"]</th>
+            <td>@Model.SeatHeight</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Chair:HasLumbarSupport"]</th>
+            <td>@L[Model.HasLumbarSupport ? "Product:Yes" : "Product:No"]</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Chair:HasHeadrest"]</th>
+            <td>@L[Model.HasHeadrest ? "Product:Yes" : "Product:No"]</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Chair:BaseType"]</th>
+            <td>@Model.BaseType</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Chair:WheelType"]</th>
+            <td>@Model.WheelType</td>
+        </tr>
+        <tr>
+            <th>@L["Product:Chair:Color"]</th>
+            <td>@Model.Color</td>
         </tr>
     </tbody>
 </table>

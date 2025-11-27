@@ -9,12 +9,12 @@ namespace Acme.ProductSelling.Categories
         public string Name { get; set; }
         public string Description { get; set; }
         public SpecificationType SpecificationType { get; set; } = SpecificationType.None;
-        public CategoryGroup CategoryGroup { get; set; } = CategoryGroup.Individual; 
+        public CategoryGroup CategoryGroup { get; set; } = CategoryGroup.Individual;
         public int DisplayOrder { get; set; }
-        public string IconCssClass { get; set; } 
+        public string IconCssClass { get; set; }
         public string UrlSlug { get; set; }
         public ICollection<Product> Products { get; set; }
-        private Category()
+        protected Category()
         {
         }
         public Category(Guid id,

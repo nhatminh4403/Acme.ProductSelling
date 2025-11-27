@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Acme.ProductSelling.Extensions
+﻿namespace Acme.ProductSelling.Extensions
 {
     public static class RandomShuffleExtensions
     {
-        private static Random rng = new Random();
+        //private static Random rng = new Random();
 
-        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source)
-        {
-            return source.OrderBy(item => rng.Next());
-        }
+        //public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source)
+        //{
+        //    return source.OrderBy(item => rng.Next());
+        //}
     }
 }

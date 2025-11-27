@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Products.Dtos;
+﻿using Acme.ProductSelling.Specifications.Lookups.DTOs;
 using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;

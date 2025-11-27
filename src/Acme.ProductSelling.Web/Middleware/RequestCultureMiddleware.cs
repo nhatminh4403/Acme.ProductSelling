@@ -67,7 +67,7 @@ namespace Acme.ProductSelling.Web.Middleware
         private bool IsStaticResource(string path)
         {
             if (string.IsNullOrEmpty(path)) return false;
-            if (path.Contains("Logout", StringComparison.OrdinalIgnoreCase) ||    path.Contains("/Account/Logout", StringComparison.OrdinalIgnoreCase))
+            if (path.Contains("Logout", StringComparison.OrdinalIgnoreCase) || path.Contains("/Account/Logout", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }

@@ -1,6 +1,4 @@
-﻿using Acme.ProductSelling.Products.Dtos;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace Acme.ProductSelling.Web.Models
 {

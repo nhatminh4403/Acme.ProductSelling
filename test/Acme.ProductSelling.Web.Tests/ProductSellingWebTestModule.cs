@@ -1,4 +1,4 @@
-using Acme.ProductSelling.EntityFrameworkCore;
+﻿using Acme.ProductSelling.EntityFrameworkCore;
 using Acme.ProductSelling.Web;
 using Acme.ProductSelling.Web.Menus;
 using Microsoft.AspNetCore.Builder;
@@ -12,7 +12,6 @@ using Volo.Abp.AspNetCore.TestBase;
 using Volo.Abp.Modularity;
 using Volo.Abp.OpenIddict;
 using Volo.Abp.UI.Navigation;
-
 namespace Acme.ProductSelling;
 
 [DependsOn(

@@ -46,7 +46,9 @@ namespace Acme.ProductSelling.Products
                 .Include(p => p.PowerBankSpecification)
 
 
-                .Include(p => p.Manufacturer);
+                .Include(p => p.Manufacturer)
+
+                .AsSplitQuery();
         }
     }
 }

@@ -210,7 +210,7 @@ public class ProductSellingDbContext :
                 .HasDatabaseName("IX_RecentlyViewed_UserId_ProductId");
 
             b.HasIndex(x => x.ViewedAt)
-                .HasDatabaseName("IX_RecentlyViewed_ViewedAt"); 
+                .HasDatabaseName("IX_RecentlyViewed_ViewedAt");
 
             // Relationships
             b.HasOne(x => x.Product)

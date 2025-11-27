@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Acme.ProductSelling.Categories
+namespace Acme.ProductSelling.Categories.Dtos
 {
     public class CategoryGroupDto
     {
