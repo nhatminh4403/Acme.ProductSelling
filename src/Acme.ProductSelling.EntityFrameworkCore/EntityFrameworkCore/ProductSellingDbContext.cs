@@ -526,9 +526,9 @@ public class ProductSellingDbContext :
             b.Property(o => o.ShippingAddress).IsRequired();
             b.Property(o => o.TotalAmount).HasColumnType("decimal(18,2)").IsRequired();
             b.Property(x => x.PaymentMethod).IsRequired();
-            b.Property(x => x.SellerName).HasMaxLength(128);
-            b.Property(x => x.CashierName).HasMaxLength(128);
-            b.Property(x => x.FulfillerName).HasMaxLength(128);
+            b.Property(x => x.SellerName).HasMaxLength(128).IsRequired(false);
+            b.Property(x => x.CashierName).HasMaxLength(128).IsRequired(false);
+            b.Property(x => x.FulfillerName).HasMaxLength(128).IsRequired(false);
 
             b.HasIndex(x => x.OrderNumber).IsUnique();
             b.HasIndex(x => x.StoreId);

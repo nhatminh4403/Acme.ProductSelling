@@ -1,8 +1,6 @@
 ﻿using Acme.ProductSelling.Categories.Dtos;
 using Riok.Mapperly.Abstractions;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Volo.Abp.Mapperly;
 
 namespace Acme.ProductSelling.Categories;

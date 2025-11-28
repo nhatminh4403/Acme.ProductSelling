@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using Volo.Abp;
+
 namespace Acme.ProductSelling.Payments
 {
     public class PayPalPaymentGateway : IPaymentGateway
@@ -18,7 +19,11 @@ namespace Acme.ProductSelling.Payments
         private const decimal MIN_USD_AMOUNT = 0.01m;
         private const decimal MAX_USD_AMOUNT = 10000m;
 
-        public PayPalPaymentGateway(IPayPalService payPalService, IHttpContextAccessor httpContextAccessor, IExchangeCurrencyService exchangeCurrencyService, ILogger<PayPalPaymentGateway> logger)
+        public PayPalPaymentGateway(
+            IPayPalService payPalService,
+            IHttpContextAccessor httpContextAccessor,
+            IExchangeCurrencyService exchangeCurrencyService,
+            ILogger<PayPalPaymentGateway> logger)
         {
             _payPalService = payPalService;
             _exchangeCurrencyService = exchangeCurrencyService;
@@ -41,6 +46,8 @@ namespace Acme.ProductSelling.Payments
                 }
 
                 var baseUrl = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}";
+
+                // NOTE: Changed parameter name from 'orderId' to match the new callback handler
                 var returnUrl = $"{baseUrl}/thanh-toan/paypal-success?orderId={order.Id}";
                 var cancelUrl = $"{baseUrl}/thanh-toan/paypal-cancel?orderId={order.Id}";
 
@@ -49,7 +56,7 @@ namespace Acme.ProductSelling.Payments
                     order.OrderNumber, order.Id, order.TotalAmount
                 );
 
-                // IMPROVEMENT: Better currency conversion with error handling
+                // Currency conversion with error handling
                 decimal totalPriceUSD;
                 try
                 {
@@ -67,7 +74,7 @@ namespace Acme.ProductSelling.Payments
                     );
                 }
 
-                // IMPROVEMENT: Validate converted amount
+                // Validate converted amount
                 totalPriceUSD = Math.Round(totalPriceUSD, 2);
 
                 if (totalPriceUSD < MIN_USD_AMOUNT)
@@ -93,8 +100,8 @@ namespace Acme.ProductSelling.Payments
                     order.TotalAmount, totalPriceUSD, order.Id
                 );
 
-                // Create PayPal payment
-                var paymentUrl = _payPalService.CreatePayment(
+                // Create PayPal order (previously payment)
+                var paymentUrl = await _payPalService.CreatePaymentAsync(
                     totalPriceUSD,
                     "USD",
                     returnUrl,
@@ -113,7 +120,7 @@ namespace Acme.ProductSelling.Payments
                 {
                     RedirectUrl = paymentUrl,
                     Success = true,
-                    ConvertedAmount = totalPriceUSD, // IMPROVEMENT: Store converted amount
+                    ConvertedAmount = totalPriceUSD,
                     ConvertedCurrency = "USD"
                 };
             }
@@ -127,6 +134,7 @@ namespace Acme.ProductSelling.Payments
                 throw new UserFriendlyException("Đã có lỗi xảy ra khi kết nối với PayPal. Vui lòng thử lại sau.");
             }
         }
+
         private void ValidateOrder(Order order)
         {
             if (order == null)
@@ -149,5 +157,4 @@ namespace Acme.ProductSelling.Payments
             }
         }
     }
-
 }

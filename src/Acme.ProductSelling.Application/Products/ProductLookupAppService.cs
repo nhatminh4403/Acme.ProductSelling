@@ -1,11 +1,8 @@
-﻿using Acme.ProductSelling.Categories;
-using Acme.ProductSelling.Categories.Dtos;
+﻿using Acme.ProductSelling.Categories.Dtos;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -18,7 +15,6 @@ namespace Acme.ProductSelling.Products
     public class ProductLookupAppService : ProductSellingAppService, IProductLookupAppService
     {
         private readonly IProductRepository _productRepository;
-        // Inject the specific Mapperly mapper
         private readonly ProductToProductDtoMapper _productMapper;
 
         public ProductLookupAppService(IProductRepository productRepository, ProductToProductDtoMapper productMapper)
@@ -106,53 +102,6 @@ namespace Acme.ProductSelling.Products
 
             return new PagedResultDto<ProductDto>(totalCount, productDtos);
         }
-        private IQueryable<Product> IncludeSpecifications(IQueryable<Product> query)
-        {
-            return query
-                // --- Group: Monitor ---
-                .Include(p => p.MonitorSpecification).ThenInclude(x => x.PanelType)
 
-                // --- Group: Core Components ---
-                .Include(p => p.CpuSpecification).ThenInclude(x => x.Socket)
-                .Include(p => p.MotherboardSpecification).ThenInclude(x => x.Socket)
-                .Include(p => p.MotherboardSpecification).ThenInclude(x => x.Chipset)
-                .Include(p => p.MotherboardSpecification).ThenInclude(x => x.FormFactor)
-                .Include(p => p.MotherboardSpecification).ThenInclude(x => x.SupportedRamTypes)
-                .Include(p => p.RamSpecification).ThenInclude(x => x.RamType)
-                .Include(p => p.GpuSpecification)
-                .Include(p => p.StorageSpecification)
-                .Include(p => p.PsuSpecification).ThenInclude(x => x.FormFactor)
-
-                // --- Group: Case & Cooling (Complex Relations) ---
-                .Include(p => p.CaseSpecification).ThenInclude(x => x.FormFactor)
-                .Include(p => p.CaseSpecification).ThenInclude(x => x.Materials).ThenInclude(m => m.Material)
-                .Include(p => p.CpuCoolerSpecification).ThenInclude(x => x.SupportedSockets).ThenInclude(s => s.Socket)
-                .Include(p => p.CaseFanSpecification)
-
-                // --- Group: Peripherals ---
-                .Include(p => p.KeyboardSpecification).ThenInclude(x => x.SwitchType)
-                .Include(p => p.MouseSpecification)
-                .Include(p => p.HeadsetSpecification)
-                .Include(p => p.MousepadSpecification)
-                .Include(p => p.SpeakerSpecification)
-                .Include(p => p.WebcamSpecification)
-                .Include(p => p.MicrophoneSpecification)
-
-                // --- Group: Laptop/Mobile/Console ---
-                .Include(p => p.LaptopSpecification)
-                .Include(p => p.HandheldSpecification)
-                .Include(p => p.ConsoleSpecification)
-
-                // --- Group: Accessories & Networking ---
-                .Include(p => p.SoftwareSpecification)
-                .Include(p => p.CableSpecification)
-                .Include(p => p.HubSpecification)
-                .Include(p => p.ChargerSpecification)
-                .Include(p => p.PowerBankSpecification)
-                .Include(p => p.MemoryCardSpecification)
-                .Include(p => p.NetworkHardwareSpecification)
-                .Include(p => p.ChairSpecification)
-                .Include(p => p.DeskSpecification);
-        }
     }
 }

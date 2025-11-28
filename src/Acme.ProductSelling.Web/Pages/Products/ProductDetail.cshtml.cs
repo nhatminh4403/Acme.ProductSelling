@@ -1,7 +1,6 @@
 ﻿using Acme.ProductSelling.Blogs;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
-using Castle.Core.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;

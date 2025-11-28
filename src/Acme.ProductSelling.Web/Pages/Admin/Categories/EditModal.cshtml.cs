@@ -1,5 +1,4 @@
-﻿using Acme.ProductSelling.Categories;
-using Acme.ProductSelling.Categories.Dtos;
+﻿using Acme.ProductSelling.Categories.Dtos;
 using Acme.ProductSelling.Categories.Services;
 using Acme.ProductSelling.Permissions;
 using Microsoft.AspNetCore.Authorization;

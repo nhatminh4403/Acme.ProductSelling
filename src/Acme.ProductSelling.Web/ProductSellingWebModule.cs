@@ -180,7 +180,7 @@ public class ProductSellingWebModule : AbpModule
         ConfigureUrls(configuration);
         ConfigureHealthChecks(context);
         ConfigureAuthentication(context);
-        ConfigureAutoMapper(services);
+        //ConfigureAutoMapper(services);
         ConfigureVirtualFileSystem(hostingEnvironment);
         ConfigureNavigationServices();
         ConfigureAutoApiControllers();

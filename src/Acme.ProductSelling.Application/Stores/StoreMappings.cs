@@ -1,8 +1,6 @@
 ﻿using Acme.ProductSelling.Stores.Dtos;
 using Riok.Mapperly.Abstractions;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Volo.Abp.Mapperly;
 
 namespace Acme.ProductSelling.Stores;
@@ -36,7 +34,7 @@ public partial class CreateUpdateStoreDtoToStoreMapper : MapperBase<CreateUpdate
         Map(source, entity);
 
         return entity;
-    }    
+    }
     // Ignore properties already handled by Constructor in the update method prevents accidental overwrites or redundant checks,
     // though for strings it usually doesn't hurt. strictly enforcing ignores below:
     [MapperIgnoreTarget(nameof(Store.Id))]

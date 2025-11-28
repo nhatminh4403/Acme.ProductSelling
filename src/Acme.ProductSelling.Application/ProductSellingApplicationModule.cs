@@ -33,7 +33,7 @@ public class ProductSellingApplicationModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-        context.Services.AddMapperlyObjectMapper();
+        //context.Services.AddMapperlyObjectMapper();
 
         context.Services.AddSingleton<IHtmlSanitizer>(provider =>
             {

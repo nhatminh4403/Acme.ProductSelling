@@ -65,7 +65,7 @@ namespace Acme.ProductSelling.Products
             _caseMaterialRepository = caseMaterialRepository;
             _caseSpecificationRepository = caseSpecificationRepository;
             _cpuCoolerSpecificationRepository = cpuCoolerSpecificationRepository;
-            _specificationService = specificationService;            
+            _specificationService = specificationService;
             _storeInventoryRepository = storeInventoryRepository;
             _storeRepository = storeRepository;
             _backgroundJobManager = backgroundJobManager;
@@ -76,7 +76,7 @@ namespace Acme.ProductSelling.Products
             _productToProductDtoMapper = productToProductDtoMapper;
             _productDtoToCreateUpdateProductDtoMapper = productDtoToCreateUpdateProductDtoMapper;
             _createUpdateProductDtoToProductMapper = createUpdateProductDtoToProductMapper;
-            
+
             ConfigurePolicies();
         }
         private void ConfigurePolicies()

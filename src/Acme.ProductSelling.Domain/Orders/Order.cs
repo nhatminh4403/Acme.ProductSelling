@@ -48,16 +48,20 @@ namespace Acme.ProductSelling.Orders
 
         public OrderType OrderType { get; protected set; } // Online or InStore
 
-        // Staff tracking for in-store orders
         public Guid? SellerId { get; protected set; }
+        [CanBeNull]
+        [StringLength(128)]
         public string SellerName { get; protected set; }
 
         public Guid? CashierId { get; protected set; }
+        [CanBeNull]
+        [StringLength(128)]
         public string CashierName { get; protected set; }
 
         public Guid? FulfillerId { get; protected set; }
+        [CanBeNull]
+        [StringLength(128)]
         public string FulfillerName { get; protected set; }
-
         // Timestamps for in-store workflow
         public DateTime? CompletedAt { get; protected set; } // When cashier processed payment
         public DateTime? FulfilledAt { get; protected set; } // When warehouse gave items

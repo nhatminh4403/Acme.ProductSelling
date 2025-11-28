@@ -1,8 +1,6 @@
 ﻿using Acme.ProductSelling.Specifications.Lookups.DTOs;
 using Riok.Mapperly.Abstractions;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Volo.Abp.Mapperly;
 
 namespace Acme.ProductSelling.Products.Lookups;

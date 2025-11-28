@@ -1,12 +1,13 @@
-﻿using PayPal.Api;
+﻿using PaypalServerSdk.Standard.Models;
+using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
 
 namespace Acme.ProductSelling.PaymentGateway.PayPal
 {
     public interface IPayPalService : ITransientDependency
     {
-        string CreatePayment(decimal amount, string currency, string returnUrl, string cancelUrl);
-        Payment ExecutePayment(string paymentId, string payerId);
+        Task<string> CreatePaymentAsync(decimal amount, string currency, string returnUrl, string cancelUrl);
+        Task<Order> ExecutePaymentAsync(string orderId);
 
         PayPalOption GetPayPalOption();
     }

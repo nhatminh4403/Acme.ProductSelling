@@ -24,7 +24,7 @@ namespace Acme.ProductSelling.Products.Specification.Lookups.Services
 
         protected override ProductLookupDto<Guid> MapToLookupDto(PanelType entity)
         {
-           return  _mapper.Map(entity);
+            return _mapper.Map(entity);
         }
 
         protected override void UpdateEntity(PanelType entity, ProductLookupDto<Guid> updateInput)

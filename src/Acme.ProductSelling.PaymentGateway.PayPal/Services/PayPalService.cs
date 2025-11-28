@@ -1,8 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using PayPal.Api;
+using PaypalServerSdk.Standard;
+using PaypalServerSdk.Standard.Authentication;
+using PaypalServerSdk.Standard.Controllers;
+using PaypalServerSdk.Standard.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Volo.Abp;
 
 namespace Acme.ProductSelling.PaymentGateway.PayPal
@@ -11,6 +16,8 @@ namespace Acme.ProductSelling.PaymentGateway.PayPal
     {
         private readonly PayPalOption _options;
         private readonly ILogger<PayPalService> _logger;
+        private readonly PaypalServerSdkClient _paypalClient;
+        private readonly OrdersController _ordersController;
 
         public PayPalService(IOptions<PayPalOption> options, ILogger<PayPalService> logger)
         {
@@ -18,6 +25,8 @@ namespace Acme.ProductSelling.PaymentGateway.PayPal
             _logger = logger;
 
             ValidateConfiguration();
+            _paypalClient = InitializePayPalClient();
+            _ordersController = _paypalClient.OrdersController;
         }
 
         private void ValidateConfiguration()
@@ -32,37 +41,38 @@ namespace Acme.ProductSelling.PaymentGateway.PayPal
                 throw new AbpException("PayPal Environment is not configured");
         }
 
-        private APIContext GetAPIContext()
+        private PaypalServerSdkClient InitializePayPalClient()
         {
             try
             {
-                var config = new Dictionary<string, string>
-                {
-                    {"mode", _options.Environment.ToLower()},
-                    {"clientId", _options.ClientId},
-                    {"clientSecret", _options.ClientSecret}
-                };
+                var environment = _options.Environment.ToLower() == "sandbox"
+                    ? PaypalServerSdk.Standard.Environment.Sandbox
+                    : PaypalServerSdk.Standard.Environment.Production;
 
-                var accessToken = new OAuthTokenCredential(
-                    _options.ClientId,
-                    _options.ClientSecret,
-                    config
-                ).GetAccessToken();
+                var config = new PaypalServerSdkClient.Builder()
+                    .ClientCredentialsAuth(
+                        new ClientCredentialsAuthModel.Builder(
+                            _options.ClientId,
+                            _options.ClientSecret
+                        ).Build()
+                    )
+                    .Environment(environment)
+                    .Build();
 
-                return new APIContext(accessToken) { Config = config };
+                return config;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating PayPal APIContext");
+                _logger.LogError(ex, "Error initializing PayPal client");
                 throw new UserFriendlyException("Không thể kết nối với PayPal");
             }
         }
 
-        public string CreatePayment(decimal amount, string currency, string returnUrl, string cancelUrl)
+        public async Task<string> CreatePaymentAsync(decimal amount, string currency, string returnUrl, string cancelUrl)
         {
             try
             {
-                // IMPROVEMENT: Validate inputs
+                // Validate inputs
                 if (amount <= 0)
                     throw new UserFriendlyException("Số tiền thanh toán phải lớn hơn 0");
 
@@ -73,52 +83,67 @@ namespace Acme.ProductSelling.PaymentGateway.PayPal
                     throw new ArgumentException("CancelUrl is required", nameof(cancelUrl));
 
                 _logger.LogInformation(
-                    "Creating PayPal payment. Amount: {Amount} {Currency}, ReturnUrl: {ReturnUrl}",
+                    "Creating PayPal order. Amount: {Amount} {Currency}, ReturnUrl: {ReturnUrl}",
                     amount, currency, returnUrl
                 );
 
-                var apiContext = GetAPIContext();
-
-                var payment = new Payment
+                // Build the order request using the new SDK
+                var orderRequest = new OrderRequest
                 {
-                    intent = "sale",
-                    payer = new Payer { payment_method = "paypal" },
-                    transactions = new List<Transaction>
+                    Intent = CheckoutPaymentIntent.Capture,
+                    PurchaseUnits = new List<PurchaseUnitRequest>
                     {
-                        new Transaction
+                        new PurchaseUnitRequest
                         {
-                            amount = new Amount
+                            Amount = new AmountWithBreakdown
                             {
-                                currency = currency,
-                                total = amount.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
+                                CurrencyCode = currency,
+                                MValue = amount.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
                             },
-                            description = "Thanh toan don hang" // IMPROVEMENT: Make this configurable
+                            Description = "Thanh toan don hang" // IMPROVEMENT: Make this configurable
                         }
                     },
-                    redirect_urls = new RedirectUrls
+                    ApplicationContext = new OrderApplicationContext
                     {
-                        return_url = returnUrl,
-                        cancel_url = cancelUrl
+                        ReturnUrl = returnUrl,
+                        CancelUrl = cancelUrl,
+                        UserAction = OrderApplicationContextUserAction.PayNow
                     }
                 };
 
-                var createdPayment = payment.Create(apiContext);
-
-                // Find approval URL
-                foreach (var link in createdPayment.links)
-                {
-                    if (link.rel.Equals("approval_url", StringComparison.OrdinalIgnoreCase))
+                // Create the order
+                var response = await _ordersController.CreateOrderAsync(
+                    new CreateOrderInput
                     {
-                        _logger.LogInformation(
-                            "PayPal payment created successfully. PaymentId: {PaymentId}",
-                            createdPayment.id
-                        );
-                        return link.href;
+                        Body = orderRequest,
+                        PaypalRequestId = Guid.NewGuid().ToString(), // Idempotency key
+                        //PayPalRequestId = Guid.NewGuid().ToString() // Idempotency key
                     }
+                );
+
+                if (response.Data == null)
+                {
+                    _logger.LogError("PayPal order creation failed - no data returned");
+                    throw new Exception("Không thể tạo thanh toán PayPal");
                 }
 
-                _logger.LogError("PayPal payment created but no approval_url found. PaymentId: {PaymentId}", createdPayment.id);
-                throw new Exception("Không thể tạo thanh toán PayPal - không tìm thấy approval URL");
+                // Find the approval URL
+                var approvalUrl = response.Data.Links?
+                    .FirstOrDefault(l => l.Rel?.Equals("approve", StringComparison.OrdinalIgnoreCase) == true)
+                    ?.Href;
+
+                if (string.IsNullOrWhiteSpace(approvalUrl))
+                {
+                    _logger.LogError("PayPal order created but no approval URL found. OrderId: {OrderId}", response.Data.Id);
+                    throw new Exception("Không thể tạo thanh toán PayPal - không tìm thấy approval URL");
+                }
+
+                _logger.LogInformation(
+                    "PayPal order created successfully. OrderId: {OrderId}",
+                    response.Data.Id
+                );
+
+                return approvalUrl;
             }
             catch (UserFriendlyException)
             {
@@ -126,42 +151,48 @@ namespace Acme.ProductSelling.PaymentGateway.PayPal
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating PayPal payment. Amount: {Amount}, Currency: {Currency}", amount, currency);
+                _logger.LogError(ex, "Error creating PayPal order. Amount: {Amount}, Currency: {Currency}", amount, currency);
                 throw new UserFriendlyException("Đã có lỗi xảy ra khi tạo thanh toán PayPal");
             }
         }
 
-        public Payment ExecutePayment(string paymentId, string payerId)
+        public async Task<Order> ExecutePaymentAsync(string orderId)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(paymentId))
-                    throw new ArgumentException("PaymentId is required", nameof(paymentId));
-
-                if (string.IsNullOrWhiteSpace(payerId))
-                    throw new ArgumentException("PayerId is required", nameof(payerId));
+                if (string.IsNullOrWhiteSpace(orderId))
+                    throw new ArgumentException("OrderId is required", nameof(orderId));
 
                 _logger.LogInformation(
-                    "Executing PayPal payment. PaymentId: {PaymentId}, PayerId: {PayerId}",
-                    paymentId, payerId
+                    "Capturing PayPal order. OrderId: {OrderId}",
+                    orderId
                 );
 
-                var apiContext = GetAPIContext();
-                var paymentExecution = new PaymentExecution { payer_id = payerId };
-                var payment = new Payment { id = paymentId };
+                // Capture the order (replaces Execute from old SDK)
+                var response = await _ordersController.CaptureOrderAsync(
+                    new CaptureOrderInput
+                    {
+                        Id = orderId,
+                        PaypalRequestId = Guid.NewGuid().ToString() // Idempotency key
+                    }
+                );
 
-                var executedPayment = payment.Execute(apiContext, paymentExecution);
+                if (response.Data == null)
+                {
+                    _logger.LogError("PayPal order capture failed. OrderId: {OrderId}", orderId);
+                    throw new Exception("Đã có lỗi xảy ra khi thực thi thanh toán PayPal");
+                }
 
                 _logger.LogInformation(
-                    "PayPal payment executed successfully. PaymentId: {PaymentId}, State: {State}",
-                    paymentId, executedPayment.state
+                    "PayPal order captured successfully. OrderId: {OrderId}, Status: {Status}",
+                    orderId, response.Data.Status
                 );
 
-                return executedPayment;
+                return response.Data;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error executing PayPal payment. PaymentId: {PaymentId}", paymentId);
+                _logger.LogError(ex, "Error capturing PayPal order. OrderId: {OrderId}", orderId);
                 throw new UserFriendlyException("Đã có lỗi xảy ra khi thực thi thanh toán PayPal");
             }
         }

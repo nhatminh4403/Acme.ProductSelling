@@ -1,9 +1,7 @@
 ﻿using Acme.ProductSelling.Products.Dtos;
 using Riok.Mapperly.Abstractions;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Volo.Abp.Mapperly;
 
 namespace Acme.ProductSelling.Products;

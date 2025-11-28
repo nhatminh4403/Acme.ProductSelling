@@ -1,5 +1,4 @@
-﻿using Acme.ProductSelling.Categories;
-using Acme.ProductSelling.Categories.Services;
+﻿using Acme.ProductSelling.Categories.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Volo.Abp.AspNetCore.Mvc;
