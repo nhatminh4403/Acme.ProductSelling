@@ -354,10 +354,14 @@ public class ProductSellingWebModule : AbpModule
                 "Main.Global",
                 bundle =>
                 {
-                    bundle.AddFiles("/js/global/cart/cart.js");
                     bundle.AddFiles("/global-scripts.js");
+
                     bundle.AddFiles("/js/global/main.js");
                     bundle.AddFiles("/js/global/header-sidebar.js");
+                    bundle.AddFiles("/js/global/cart/cart.utils.js");
+                    bundle.AddFiles("/js/global/cart/cart.widget.js");
+                    bundle.AddFiles("/js/global/cart/cart.actions.js");
+
                 }
             );
 

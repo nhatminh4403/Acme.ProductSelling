@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Volo.Abp;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Entities.Auditing;
 using Volo.Abp.Guids;
 
@@ -41,6 +42,11 @@ namespace Acme.ProductSelling.Carts
             if (itemToRemove != null)
             {
                 Items.Remove(itemToRemove);
+                // This is important for EF Core to track the change
+            }
+            else
+            {
+                throw new EntityNotFoundException(typeof(CartItem), cartItemId);
             }
         }
 

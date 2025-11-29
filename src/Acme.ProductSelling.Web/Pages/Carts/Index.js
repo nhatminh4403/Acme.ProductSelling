@@ -1,134 +1,195 @@
 ﻿$(function () {
-    var cartService = acme.productSelling.carts.cart;
-    var localizationResource = abp.localization.getResource('ProductSelling');
-
-    $('body').on('click', '.add-to-cart-button', function (e) {
+    // Handle quantity increase
+    $('.btn-increase').on('click', function (e) {
         e.preventDefault();
-        var $button = $(this); // Lưu trữ đối tượng jQuery của nút
-        console.log("abp.currentUser.isAuthenticated: " + abp.currentUser.isAuthenticated)
-        if (!abp.currentUser.isAuthenticated) {
-            var returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
-            window.location.href = abp.appPath + 'Account/Login?ReturnUrl=' + returnUrl;
-            return;
+        var itemId = $(this).data('item-id');
+        var input = $(`.quantity-input[data-item-id="${itemId}"]`);
+        var currentVal = parseInt(input.val()) || 1;
+        var maxVal = parseInt(input.attr('max')) || 100;
 
-        }
-
-        var productId = $button.data('product-id');
-
-        var quantityInputId = '#quantity-for-' + productId;
-        var $quantityInput = $(quantityInputId);
-
-        if ($quantityInput.length === 0) {
-            $quantityInput = $button.closest('.product-item, .product-detail').find('input[type="number"]');
-        }
-
-        var quantity = 1;
-        if ($quantityInput.length > 0) {
-            quantity = parseInt($quantityInput.val() || '1');
-        }
-
-        if (!productId || quantity <= 0) {
-            abp.notify.warn(localizationResource('Cart:InvalidProductOrQuantity') || 'Invalid product or quantity');
-            return;
-        }
-
-        $button.prop('disabled', true).addClass('disabled');
-        var originalButtonHtml = $button.html();
-        $button.html('<i class="fas fa-spinner fa-spin me-1"></i>' + (localizationResource('Cart:AddingToCart') || 'Adding...'));
-
-        // Log để debug
-
-
-        try {
-            if (typeof cartService.addItem !== 'function') {
-                console.error("cartService.addItem is not a function", cartService);
-                abp.notify.error("Cart service not available");
-                $button.prop('disabled', false).removeClass('disabled');
-                $button.html(originalButtonHtml);
-                return;
-            }
-
-            cartService.addItem({
-                productId: productId,
-                quantity: quantity
-            }, {
-                success: function () {
-                    abp.notify.success(localizationResource('Cart:ItemAddedToCart') || 'Item added to cart');
-                    updateCartWidgetCount();
-                },
-                error: function (error) {
-                    abp.notify.error(error.message || localizationResource('Cart:CouldNotAddItemToCart') || 'Could not add item to cart');
-                    console.error("Add to cart error:", error);
-                },
-                complete: function () {
-                    $button.prop('disabled', false).removeClass('disabled');
-                    $button.html(originalButtonHtml);
-                }
-            });
-        } catch (error) {
-            console.error("Exception in add to cart:", error);
-            abp.notify.error("Error adding item to cart");
-            $button.prop('disabled', false).removeClass('disabled');
-            $button.html(originalButtonHtml);
+        if (currentVal < maxVal) {
+            input.val(currentVal + 1);
+            updateCartItem(itemId, currentVal + 1);
         }
     });
 
+    // Handle quantity decrease
+    $('.btn-decrease').on('click', function (e) {
+        e.preventDefault();
+        var itemId = $(this).data('item-id');
+        var input = $(`.quantity-input[data-item-id="${itemId}"]`);
+        var currentVal = parseInt(input.val()) || 1;
+        var minVal = parseInt(input.attr('min')) || 1;
 
-    function updateCartWidgetCount() {
-        var $cartButton = $('a[href="/cart"]');
-        var $countElement = $cartButton.find('.badge');
-
-        if ($cartButton.length === 0) {
-            console.warn("Cart button element not found");
-            return;
+        if (currentVal > minVal) {
+            input.val(currentVal - 1);
+            updateCartItem(itemId, currentVal - 1);
         }
-        if ($countElement.length === 0) {
-            console.warn("Cart count badge element not found");
-            // Create a badge element if it doesn't exist
-            $countElement = $('<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>');
-            $cartButton.append($countElement);
+    });
+
+    // Handle manual quantity input
+    $('.quantity-input').on('change', function () {
+        var itemId = $(this).data('item-id');
+        var newQuantity = parseInt($(this).val());
+        var minVal = parseInt($(this).attr('min')) || 1;
+        var maxVal = parseInt($(this).attr('max')) || 100;
+
+        // Validate quantity
+        if (isNaN(newQuantity) || newQuantity < minVal) {
+            $(this).val(minVal);
+            newQuantity = minVal;
+        } else if (newQuantity > maxVal) {
+            $(this).val(maxVal);
+            newQuantity = maxVal;
         }
 
+        updateCartItem(itemId, newQuantity);
+    });
 
-        // Chỉ gọi API nếu đã đăng nhập
-        if (abp.currentUser.isAuthenticated) {
-            try {
-                // Kiểm tra xem có phương thức getItemCount không
-                if (typeof cartService.getItemCount !== 'function') {
-                    console.error("cartService.getItemCount is not a function", cartService);
-                    return;
+    // Handle remove item
+    $('.btn-remove-item').on('click', function (e) {
+        e.preventDefault();
+        var itemId = $(this).data('item-id');
+        var productName = $(this).data('product-name');
+
+        // Show confirmation dialog
+        abp.message.confirm(
+            'Are you sure you want to remove "' + productName + '" from your cart?',
+            'Remove Item',
+            function (confirmed) {
+                if (confirmed) {
+                    removeCartItem(itemId);
                 }
-
-                cartService.getItemCount({
-                    success: function (count) {
-                        console.log("Cart count updated:", count);
-                        $countElement.text(count);
-                        if (count > 0) {
-                            $countElement.removeClass('d-none');
-                        } else {
-                            $countElement.addClass('d-none');
-                        }
-                    },
-                    error: function (error) {
-                        console.error("Error updating cart widget count:", error);
-                        $countElement.addClass('d-none');
-                    }
-                });
-            } catch (error) {
-                console.error("Exception in update cart count:", error);
             }
-        } else {
-            $countElement.text('0').addClass('d-none');
-        }
+        );
+    });
+
+    // Handle clear cart
+    $('#btnClearCart').on('click', function (e) {
+        e.preventDefault();
+
+        // Show confirmation dialog
+        abp.message.confirm(
+            'Are you sure you want to clear your entire cart?',
+            'Clear Cart',
+            function (confirmed) {
+                if (confirmed) {
+                    clearCart();
+                }
+            }
+        );
+    });
+
+    // Debounce timer
+    var updateTimer;
+
+    // Function to update cart item quantity
+    function updateCartItem(cartItemId, quantity) {
+        // Clear previous timer
+        clearTimeout(updateTimer);
+
+        // Set new timer to avoid too many requests
+        updateTimer = setTimeout(function () {
+            // Create form data
+            var formData = new FormData();
+            formData.append('cartItemId', cartItemId);
+            formData.append('quantity', quantity);
+
+            // Get anti-forgery token
+            var token = $('input[name="__RequestVerificationToken"]').val();
+
+            // Show loading state
+            var input = $(`.quantity-input[data-item-id="${cartItemId}"]`);
+            input.prop('disabled', true);
+
+            // Send AJAX request
+            $.ajax({
+                url: '?handler=UpdateItem',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'RequestVerificationToken': token
+                },
+                success: function (response) {
+                    // Reload page to show updated totals
+                    location.reload();
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error updating cart:', error);
+                    abp.message.error('Failed to update cart item. Please try again.');
+                    input.prop('disabled', false);
+                },
+                complete: function () {
+                    input.prop('disabled', false);
+                }
+            });
+        }, 800); // Wait 800ms after user stops typing
     }
 
-    // Gọi hàm cập nhật widget lần đầu khi trang tải
-    try {
-        if (abp.currentUser.isAuthenticated) {
-            console.log("Initializing cart widget...");
-            updateCartWidgetCount();
-        }
-    } catch (error) {
-        console.error("Error initializing cart widget:", error);
+    // Function to remove cart item
+    function removeCartItem(cartItemId) {
+        // Create form data
+        var formData = new FormData();
+        formData.append('cartItemId', cartItemId);
+
+        // Get anti-forgery token
+        var token = $('input[name="__RequestVerificationToken"]').val();
+
+        // Show loading
+        abp.ui.setBusy();
+
+        // Send AJAX request
+        $.ajax({
+            url: '?handler=RemoveItem',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'RequestVerificationToken': token
+            },
+            success: function (response) {
+                abp.notify.success('Item removed from cart');
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                console.error('Error removing item:', error);
+                abp.message.error('Failed to remove item. Please try again.');
+            },
+            complete: function () {
+                abp.ui.clearBusy();
+            }
+        });
+    }
+
+    // Function to clear entire cart
+    function clearCart() {
+        // Get anti-forgery token
+        var token = $('input[name="__RequestVerificationToken"]').val();
+
+        // Show loading
+        abp.ui.setBusy();
+
+        // Send AJAX request
+        $.ajax({
+            url: '?handler=ClearCart',
+            type: 'POST',
+            headers: {
+                'RequestVerificationToken': token
+            },
+            success: function (response) {
+                abp.notify.success('Cart cleared successfully');
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                console.error('Error clearing cart:', error);
+                abp.message.error('Failed to clear cart. Please try again.');
+            },
+            complete: function () {
+                abp.ui.clearBusy();
+            }
+        });
     }
 });

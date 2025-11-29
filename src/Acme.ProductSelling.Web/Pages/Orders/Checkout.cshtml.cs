@@ -31,7 +31,7 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
 
         public async Task<IActionResult> OnGetAsync()
         {
-            CurrentCart = await _cartAppService.GetAsync();
+            CurrentCart = await _cartAppService.GetUserCartAsync();
             if (CurrentCart == null || !CurrentCart.CartItems.Any())
             {
                 return RedirectToPage("/" + "Cart".ToLower());
@@ -48,7 +48,7 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
         public async Task<IActionResult> OnPostAsync()
         {
             // Step 1: Reload cart to verify it's not empty
-            CurrentCart = await _cartAppService.GetAsync();
+            CurrentCart = await _cartAppService.GetUserCartAsync();
             if (CurrentCart == null || !CurrentCart.CartItems.Any())
             {
                 Alerts.Warning(L["ShoppingCartIsEmptyCannotPlaceOrder"]);
@@ -77,7 +77,7 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
                     }
                 }
                 // IMPORTANT: Reload cart before returning to page
-                CurrentCart = await _cartAppService.GetAsync();
+                CurrentCart = await _cartAppService.GetUserCartAsync();
                 Logger.LogWarning("--- KẾT THÚC KIỂM TRA MODELSTATE LỖI ---");
                 return Page();
             }
@@ -95,7 +95,7 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
                 {
                     Logger.LogError("CreateAsync returned null result");
                     Alerts.Danger(L["Order:CreationFailed"]);
-                    CurrentCart = await _cartAppService.GetAsync();
+                    CurrentCart = await _cartAppService.GetUserCartAsync();
                     return Page();
                 }
 
@@ -103,7 +103,7 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
                 {
                     Logger.LogError("Order creation failed, createdOrder.Order is null");
                     Alerts.Danger(L["Order:CreationFailed"]);
-                    CurrentCart = await _cartAppService.GetAsync();
+                    CurrentCart = await _cartAppService.GetUserCartAsync();
                     return Page();
                 }
 
@@ -119,7 +119,7 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
 
                 // Step 7: For COD orders, clear cart and redirect to confirmation
                 Logger.LogInformation("Clearing cart and redirecting to order confirmation");
-                await _cartAppService.ClearAsync();
+                await _cartAppService.ClearCartAsync();
 
                 return RedirectToPage("/Orders/OrderConfirmation",
                     new { orderId = createdOrder.Order.Id, orderNumber = createdOrder.Order.OrderNumber });
@@ -129,7 +129,7 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
                 Logger.LogWarning(ex, "User friendly exception during order creation: {Message}", ex.Message);
                 Alerts.Warning(ex.Message);
                 // Reload cart before returning to page
-                CurrentCart = await _cartAppService.GetAsync();
+                CurrentCart = await _cartAppService.GetUserCartAsync();
                 return Page();
             }
             catch (Exception ex)
@@ -137,7 +137,7 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
                 Logger.LogError(ex, "Unexpected error creating order: {Message}", ex.Message);
                 Alerts.Danger(L["Order:UnexpectedError"]);
                 // Reload cart before returning to page
-                CurrentCart = await _cartAppService.GetAsync();
+                CurrentCart = await _cartAppService.GetUserCartAsync();
                 return Page();
             }
         }

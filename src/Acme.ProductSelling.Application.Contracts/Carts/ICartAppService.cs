@@ -5,11 +5,11 @@ namespace Acme.ProductSelling.Carts
 {
     public interface ICartAppService : IApplicationService
     {
-        Task<CartDto> GetAsync();
-        Task AddItemAsync(AddToCartInput input);
-        Task UpdateItemAsync(UpdateCartItemInput input);
-        Task RemoveItemAsync(Guid cartItemId);
+        Task<CartDto> GetUserCartAsync();
+        Task<CartDto> AddItemToCartAsync(AddToCartInput input);
+        Task<CartDto> UpdateCartItemAsync(UpdateCartItemInput input);
+        Task<CartDto> RemoveCartItemAsync(Guid cartItemId);
         Task<int> GetItemCountAsync();
-        Task ClearAsync();
+        Task ClearCartAsync();
     }
 }

@@ -15,10 +15,11 @@ namespace Acme.ProductSelling.Web.Pages.Carts
     public class CartModel : AbpPageModel
     {
         public CartDto Cart { get; set; }
-
         private readonly ICartAppService _cartAppService;
+
         public List<CartItemDto> CartItems { get; set; } = new List<CartItemDto>();
         public decimal TotalPrice { get; set; }
+        public int TotalItemCount { get; set; }
 
         public CartModel(ICartAppService cartAppService)
         {
@@ -27,55 +28,105 @@ namespace Acme.ProductSelling.Web.Pages.Carts
         }
         public async Task<IActionResult> OnGetAsync()
         {
-            var cart = await _cartAppService.GetAsync();
-            CartItems = cart.CartItems.ToList();
+            try
+            {
+                var cart = await _cartAppService.GetUserCartAsync();
+                Cart = cart;
+                CartItems = cart.CartItems.ToList();
+                TotalPrice = cart.TotalPrice;
+                TotalItemCount = cart.TotalItemCount;
 
-            TotalPrice = cart.TotalPrice;
-            Cart = cart;
-            return Page();
+                return Page();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error loading cart");
+                Alerts.Danger(L["Cart:LoadError"]);
+                return Page();
+            }
         }
         public async Task<IActionResult> OnPostUpdateItemAsync(Guid cartItemId, int quantity)
         {
-            // Tạo Input DTO
+            if (!ModelState.IsValid)
+            {
+                Logger.LogWarning("Invalid ModelState for UpdateItem");
+                Alerts.Warning(L["Cart:InvalidInput"]);
+                return await OnGetAsync();
+            }
+
             var input = new UpdateCartItemInput
             {
                 CartItemId = cartItemId,
                 Quantity = quantity
             };
 
+            Logger.LogInformation($"Updating cart item: {cartItemId}, Quantity: {quantity}");
+
             try
             {
-                // Gọi service để cập nhật
-                await _cartAppService.UpdateItemAsync(input);
+                await _cartAppService.UpdateCartItemAsync(input);
+                Alerts.Success(L["Cart:ItemUpdated"]);
                 return RedirectToPage();
             }
             catch (UserFriendlyException ex)
             {
-
+                Logger.LogWarning(ex, "User friendly error updating cart item");
                 Alerts.Warning(ex.Message);
-                return RedirectToPage();
+                return await OnGetAsync();
             }
-            catch (Exception ex) // Lỗi không mong muốn
+            catch (Exception ex)
             {
-                Logger.LogError(ex, "Error updating cart item.");
-                Alerts.Danger("An error occurred while updating your cart.");
-                return RedirectToPage();
+                Logger.LogError(ex, "Error updating cart item");
+                Alerts.Danger(L["Cart:GenericError"]);
+                return await OnGetAsync();
             }
         }
 
         public async Task<IActionResult> OnPostRemoveItemAsync(Guid cartItemId)
         {
+            Logger.LogInformation($"Attempting to remove cart item: {cartItemId}");
+
+            if (cartItemId == Guid.Empty)
+            {
+                Logger.LogWarning("CartItemId is empty");
+                Alerts.Warning(L["Cart:InvalidInput"]);
+                return await OnGetAsync();
+            }
+
             try
             {
-                await _cartAppService.RemoveItemAsync(cartItemId);
-                Alerts.Success("Item removed from cart.");
+                await _cartAppService.RemoveCartItemAsync(cartItemId);
+                Alerts.Success(L["Cart:ItemRemoved"]);
+                return RedirectToPage();
+            }
+            catch (UserFriendlyException ex)
+            {
+                Logger.LogWarning(ex, "User friendly error removing cart item");
+                Alerts.Warning(ex.Message);
+                return await OnGetAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, $"Error removing cart item {cartItemId}");
+                Alerts.Danger(L["Cart:GenericError"]);
+                return await OnGetAsync();
+            }
+        }
+        public async Task<IActionResult> OnPostClearCartAsync()
+        {
+            Logger.LogInformation("Attempting to clear cart");
+
+            try
+            {
+                await _cartAppService.ClearCartAsync();
+                Alerts.Success(L["Cart:CartCleared"]);
                 return RedirectToPage();
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Error removing cart item.");
-                Alerts.Danger("An error occurred while removing the item.");
-                return RedirectToPage();
+                Logger.LogError(ex, "Error clearing cart");
+                Alerts.Danger(L["Cart:GenericError"]);
+                return await OnGetAsync();
             }
         }
     }
