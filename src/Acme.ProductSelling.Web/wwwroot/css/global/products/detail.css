@@ -12,12 +12,48 @@
     border: 8px solid white;
     margin: 1.5rem 0;
 }
+
 .sticky-sidebar {
     position: sticky;
-    top: 0px;
+    top: calc(var(--header-height, 70px) + 4px);
     padding: 15px;
     border-radius: 5px;
     background-color: #f8f9fa;
     border: 1px solid #dee2e6;
     align-self: start;
+    max-height: calc(100vh - var(--header-height, 70px) - 40px);
+    overflow-y: auto;
 }
+
+/* If you know the exact header height, use this instead: */
+/* For example, if header is 80px tall: */
+.modern-header {
+    /* Add this to your existing header styles */
+    height: 80px; /* or whatever your actual height is */
+}
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sticky-sidebar {
+        position: relative;
+        top: 0;
+        max-height: none;
+    }
+}
+
+/* Scrollbar styling for sidebar if content overflows */
+.sticky-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sticky-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sticky-sidebar::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+}
+
+    .sticky-sidebar::-webkit-scrollbar-thumb:hover {
+        background: #9ca3af;
+    }

@@ -53,7 +53,8 @@ namespace Acme.ProductSelling.Web.Pages.Products
                 var product = await _productAppService.GetProductBySlug(Slug);
                 Product = product;
 
-                //Blogs = await _blogAppService.GetListAsync(input);
+                Blogs = await _blogAppService.GetPublicLatestBlogsAsync(4);
+                //Blogs = blogs.shuff;
 
                 return Page();
             }

@@ -3,6 +3,7 @@
 @using Acme.ProductSelling.Categories
 @using Acme.ProductSelling.Web.Helpers
 @using Acme.ProductSelling.Web.Pages.Components.RecentlyViewed
+@using Acme.ProductSelling.Web.Pages.Components.RelatedBlogs
 @{
     ViewData["Title"] = Model.Product?.ProductName ?? L["Product:ProductDetail"];
     Layout = "/Views/Shared/_Layout.cshtml";
@@ -13,6 +14,8 @@
     <link href="~/css/global/products/recently-viewed.css" rel="stylesheet" />
 }
 @section scripts {
+    @* <script src="~/js/global/cart/add-to-cart-handler.js"></script> *@
+
     <script>
         $(function () {
             RecentlyViewedManager.trackView('@Model.Product.Id');
@@ -29,15 +32,20 @@
                 <div class="col-md-7 text-center">
                     @if (!string.IsNullOrWhiteSpace(Model.Product.ImageUrl))
                     {
-                        <img src="@(await HelperMethods.IsImageUrlValidAsync(Model.Product.ImageUrl) ? Model.Product.ImageUrl : $"https://placehold.co/80x80?text={Model.Product.ProductName.Substring(0, 1)}")"
-                             class="img-fluid rounded border" style="max-width: 250px;" alt="@Model.Product.ProductName">
+                        <img src="@Model.Product.ImageUrl"
+                             class="img-fluid rounded border" 
+                             loading="lazy" style="max-width: 250px;"
+                             alt="@Model.Product.ProductName"
+                             onerror="this.onerror=null;this.src='/images/placeholder.png';">
                     }
                     else
                     {
-                        <div class="text-center p-5 border rounded bg-light" style="max-width: 250px; margin: auto;">
-                            <i class="fas fa-image fa-5x text-secondary"></i>
-                        </div>
+                        <img src="~/images/placeholder.png"                
+                             class="product-image"
+                             loading="lazy"
+                             alt="@Model.Product.ProductName">
                     }
+                   
                 </div>
                 <div class="col-md-5">
                     <h2>@Model.Product.ProductName</h2>
@@ -88,8 +96,6 @@
                 <div class="card h-100" id="leftCard">
                     <div class="card-header bg-light"><h2>@L["Product:Specification"]</h2></div>
                     <div class="card-body">
-                        <p>Debug Type: @Model.Product.CategorySpecificationType</p>
-                        <p>Debug MOuse Null?: @(Model.Product.MouseSpecification==null)</p>
                         <div>
                             @switch (Model.Product.CategorySpecificationType)
                             {
@@ -297,9 +303,12 @@
 
             <!-- Sidebar -->
             <div class="col-lg-4">
-                <div class="sticky-sidebar shadow" id="rightSidebar">
-                    <h5>@L["UI:Title:RelatedBlogs"]</h5>
-                    <p>This sidebar stays visible while scrolling the expanded content on the left.</p>
+                <div class="sticky-sidebar" id="rightSidebar">
+                    @await Component.InvokeAsync(typeof(RelatedBlogsViewComponent), new {
+                    blogs = Model.Blogs?.Items?.ToList(),
+                                title = L["UI:Title:RelatedBlogs"].Value,
+                                count = 4
+                                })
                 </div>
             </div>
         </div>

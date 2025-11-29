@@ -55,11 +55,6 @@ namespace Acme.ProductSelling.Blogs
             DeletePolicyName = ProductSellingPermissions.Blogs.Delete;
             GetListPolicyName = ProductSellingPermissions.Blogs.Default;
         }
-        [AllowAnonymous]
-        public override Task<PagedResultDto<BlogDto>> GetListAsync(PagedAndSortedResultRequestDto input)
-        {
-            return base.GetListAsync(input);
-        }
 
         [AllowAnonymous]
         public virtual async Task<BlogDto> GetBlogBySlug(string slug)
@@ -272,6 +267,22 @@ namespace Acme.ProductSelling.Blogs
             return new PagedResultDto<BlogDto>(
                 totalCount,
                  ObjectMapper.Map<List<Blog>, List<BlogDto>>(blogs)
+            );
+        }
+
+        [AllowAnonymous]
+        public async Task<PagedResultDto<BlogDto>> GetPublicLatestBlogsAsync(int count)
+        {
+            var query = await Repository.GetQueryableAsync();
+
+            // Sort by creation time descending
+            query = query.OrderByDescending(x => x.CreationTime).Take(count);
+
+            var blogs = await AsyncExecuter.ToListAsync(query);
+            blogs = blogs.Shuffle().ToList();
+            return new PagedResultDto<BlogDto>(
+                blogs.Count,
+                ObjectMapper.Map<List<Blog>, List<BlogDto>>(blogs)
             );
         }
     }

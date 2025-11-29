@@ -71,38 +71,34 @@ const RecentlyViewedManager = (function () {
         if (product.discountedPrice && product.discountedPrice < product.originalPrice) {
             priceHtml = `
             <div class="rv-price-group">
-                
-                <span class="rv-price-old">
-                    ${formatCurrency(product.originalPrice)}
-                </span>
-                    <span class="rv-price-current">
-                    ${formatCurrency(product.discountedPrice)}
-                </span>
-                <span class="rv-discount-badge">
-                    -${product.discountPercent}%
-                </span>
+                <span class="rv-price-old">${formatCurrency(product.originalPrice)}</span>
+                <span class="rv-price-current">${formatCurrency(product.discountedPrice)}</span>
+                <span class="rv-discount-badge">-${product.discountPercent}%</span>
             </div>`;
         } else {
             priceHtml = `        
             <div class="rv-price-group">
-                <span class="rv-price-current text-primary">
-                    ${formatCurrency(product.originalPrice)}
-                </span>
+                <span class="rv-price-current text-primary">${formatCurrency(product.originalPrice)}</span>
             </div>`;
         }
         const stockHtml = product.isAvailableForPurchase
             ? ''
             : '<div class="rv-stock-badge">Hết hàng</div>';
 
+        // SAFETY FIX: Prevent Infinite Image Loop
+        // We use a safe one-time handler.
+        // Also assuming you have a default '/images/no-image.png' or similar on your server.
+        const safeImgSrc = product.imageUrl || '/images/placeholder.png';
+
         return `
         <div class="col-12 col-md-6 col-lg-3">
             <a href="/products/${product.urlSlug}" class="rv-card" title="${escapeHtml(product.productName)}">
                 <div class="rv-img-wrapper">
                     ${stockHtml}
-                    <img src="${product.imageUrl || '/images/placeholder.png'}" 
+                    <img src="${safeImgSrc}" 
                          alt="${escapeHtml(product.productName)}"
                          loading="lazy"
-                         onerror="this.src='/images/placeholder.png'">
+                         onerror="this.onerror=null; this.src='/images/placeholder.png';"> 
                 </div>
                 <div class="rv-content">
                     <div class="rv-title">

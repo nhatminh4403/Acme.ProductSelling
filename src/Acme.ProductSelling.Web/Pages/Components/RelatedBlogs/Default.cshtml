@@ -1,0 +1,86 @@
+﻿@using Acme.ProductSelling.Web.Pages.Components.RelatedBlogs
+@model RelatedBlogsViewModel
+
+<style>
+    /* Custom CSS for this component to ensure clean text truncation */
+    .blog-card-hover {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .blog-card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+        }
+
+    /* Limits title to 2 lines */
+    .text-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+
+<div class="related-blogs-wrapper">
+    <!-- Header -->
+    <h5 class="mb-3 fw-bold text-secondary text-uppercase fs-6 ls-1">
+        @L[Model.Title]
+    </h5>
+
+    @if (Model.Blogs != null && Model.Blogs.Any())
+    {
+        <div class="d-flex flex-column gap-3">
+            @foreach (var blog in Model.Blogs)
+            {
+                <a href="/blogs/@blog.UrlSlug" class="card border-0 shadow-sm text-decoration-none text-dark blog-card-hover overflow-hidden h-100">
+                    <div class="d-flex h-100">
+
+                        <!-- Left: Image Section -->
+                        <!-- Fixed width container for image consistency -->
+                        <div class="flex-shrink-0 position-relative bg-light border-end" style="width: 100px; min-height: 80px;">
+                            @if (!string.IsNullOrEmpty(blog.MainImageUrl))
+                            {
+                                <img src="@blog.MainImageUrl"
+                                     alt="@blog.Title"
+                                     class="w-100 h-100"
+                                     style="object-fit: cover; object-position: center;"
+                                     loading="lazy" />
+                            }
+                            else
+                            {
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
+                                    <i class="fas fa-image fa-lg"></i>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Right: Content Section -->
+                        <div class="flex-grow-1 p-2 d-flex flex-column justify-content-center">
+
+                            <!-- Title -->
+                            <h6 class="mb-1 fw-bold lh-sm text-clamp-2" title="@blog.Title">
+                                @blog.Title
+                            </h6>
+
+                            <!-- Date / Meta -->
+                            <div class="mt-auto pt-1">
+                                <small class="text-muted" style="font-size: 0.75rem;">
+                                    <i class="far fa-clock me-1"></i>
+                                    @blog.CreationTime.ToString("MMM dd, yyyy")
+                                </small>
+                            </div>
+                        </div>
+
+                    </div>
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-light text-center border text-muted">
+            <small>@L["UI:NoRelatedBlogsFound"]</small>
+        </div>
+    }
+</div>
