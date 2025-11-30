@@ -1,0 +1,72 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy ASP.Net Core with MVC to Azure Web App
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.x'
+          include-prerelease: true
+
+      - name: Install ABP CLI
+        run: |
+          dotnet tool install -g Volo.Abp.Cli
+          abp install-libs
+        shell: bash
+    
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
+
+      - name: Run migrations
+        run: dotnet run -- "${{ secrets.CONNECTION_STRING }}" # Set your connection string as a secret in your repository settings
+        working-directory: ./src/Acme.ProductSelling.DbMigrator # Replace with your project name
+
+      - name: dotnet publish
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/xcomputer
+        working-directory: ./src/Acme.ProductSelling.Web # Replace with your project name
+
+      - name: Generate openiddict.pfx
+        run: dotnet dev-certs https -v -ep ${{env.DOTNET_ROOT}}/xcomputer/openiddict.pfx -p 061ebb66-ca81-4cf3-9b06-09065eb6cf4c # Replace with your password
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: .net-app
+          # Fixed path: Changed from 'myapp' to 'xcomputer' to match your publish step
+          path: ${{env.DOTNET_ROOT}}/xcomputer
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: .net-app
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'xcomputer' # Replace with your azure web app name
+          slot-name: 'Production'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }} 
+          package: .
