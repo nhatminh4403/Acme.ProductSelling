@@ -580,7 +580,9 @@ public class ProductSellingDbContext :
             b.HasMany(c => c.Items)
              .WithOne()
              .HasForeignKey(ci => ci.CartId)
-             .IsRequired();
+             .IsRequired().OnDelete(DeleteBehavior.Cascade);
+
+
         });
 
         builder.Entity<CartItem>(b =>

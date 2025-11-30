@@ -14,5 +14,6 @@ namespace Acme.ProductSelling.Blogs
         string GenerateUrlSlug(string title);
 
         Task<PagedResultDto<BlogDto>> GetBlogByBloggerAsync(PagedAndSortedResultRequestDto input);
+        Task<PagedResultDto<BlogDto>> GetPublicLatestBlogsAsync(int count);
     }
 }

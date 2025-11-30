@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories.Dtos;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products.BackgroundJobs.ProductRelease;
 using Acme.ProductSelling.Products.Dtos;
@@ -22,6 +23,8 @@ using Volo.Abp.Application.Services;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
+using static Acme.ProductSelling.Permissions.ProductSellingPermissions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace Acme.ProductSelling.Products
 {
     public class ProductAppService :
@@ -91,7 +94,10 @@ namespace Acme.ProductSelling.Products
         public override async Task<PagedResultDto<ProductDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
             var query = await Repository.GetQueryableAsync();
-            query = query.AsNoTracking().IncludeAllRelations();
+            query = query.AsNoTracking()
+                .Include(p => p.Category)
+                .Include(p => p.Manufacturer)
+                .Include(p => p.StoreInventories);
             var totalCount = await AsyncExecuter.CountAsync(query);
             query = query.OrderBy(input.Sorting ?? nameof(Product.ProductName));
             query = query.PageBy(input);
@@ -197,6 +203,7 @@ namespace Acme.ProductSelling.Products
             }
             return await GetAsync(product.Id);
         }
+
         private async Task ScheduleProductReleaseJobAsync(Product product)
         {
             if (!product.ReleaseDate.HasValue || product.ReleaseDate.Value <= DateTime.Now)
@@ -278,26 +285,80 @@ namespace Acme.ProductSelling.Products
         }
         private async Task PopulateStoreInventoryAsync(ProductDto productDto, Guid productId)
         {
-            var inventories = await _storeInventoryRepository.GetByProductAsync(productId);
-
+            //var inventories = await _storeInventoryRepository.GetByProductAsync(productId);
+            var inventoryQuery = await _storeInventoryRepository.GetQueryableAsync();
+            var storeQuery = await _storeRepository.GetQueryableAsync();
+            var availability = await (from inv in inventoryQuery
+                                      join store in storeQuery on inv.StoreId equals store.Id
+                                      where inv.ProductId == productId
+                                      select new { inv, store.Name })
+                          .ToListAsync();
             productDto.StoreAvailability = new List<ProductStoreAvailabilityDto>();
             productDto.TotalStockAcrossAllStores = 0;
 
-            foreach (var inventory in inventories)
-            {
-                var store = await _storeRepository.GetAsync(inventory.StoreId);
 
+            foreach (var item in availability)
+            {
                 productDto.StoreAvailability.Add(new ProductStoreAvailabilityDto
                 {
-                    StoreId = inventory.StoreId,
-                    StoreName = store.Name,
-                    Quantity = inventory.Quantity,
-                    IsAvailableForSale = inventory.IsAvailableForSale,
-                    NeedsReorder = inventory.NeedsReorder()
+                    StoreId = item.inv.StoreId,
+                    StoreName = item.Name, // We got this via Join, no extra DB call
+                    Quantity = item.inv.Quantity,
+                    IsAvailableForSale = item.inv.IsAvailableForSale,
+                    NeedsReorder = item.inv.NeedsReorder()
                 });
 
-                productDto.TotalStockAcrossAllStores += inventory.Quantity;
+                productDto.TotalStockAcrossAllStores += item.inv.Quantity;
             }
+        }
+
+        public async Task<List<FeaturedCategoryProductsDto>> GetFeaturedProductCarouselsAsync()
+        {
+            var result = new List<FeaturedCategoryProductsDto>();
+
+            // 1. Define the Spec Types we want
+            var featuredSpecTypes = new[]
+            {
+                SpecificationType.Mouse,
+                SpecificationType.Laptop,
+                SpecificationType.Monitor,
+                SpecificationType.Keyboard
+            };
+            var categories = await _categoryRepository.GetListAsync(c => featuredSpecTypes.Contains(c.SpecificationType));
+
+            var categoriesToFeature = categories.Take(4).ToList();
+
+            // 2. Get Categories (Lightweight query)
+            foreach (var category in categoriesToFeature)
+            {
+                var query = await _productRepository.GetQueryableAsync();
+
+                // OPTIMIZATION: Select only what is needed for the card to reduce SQL payload.
+                // Using New Guid() works in SQL Server for Random sort.
+                var rawProducts = await query
+                    .AsNoTracking()
+                    .Where(p => p.CategoryId == category.Id && p.StockCount > 0)
+                    .OrderBy(p => Guid.NewGuid()) // SQL Random
+                    .Take(10)                    // Only fetch 10 rows from DB
+                    //.Shuffle()               // In-memory shuffle for better randomness
+                    .Include(p => p.Category)
+                    .Include(p => p.Manufacturer)
+                    .Include(p => p.StoreInventories) // Only if you strictly need stock status on carousel
+                    .ToListAsync();
+                rawProducts = rawProducts.Shuffle().ToList();
+                if (!rawProducts.Any()) continue;
+
+                // Map to DTO
+                var productDtos = rawProducts.Select(p => _productToProductDtoMapper.Map(p)).ToList();
+
+                result.Add(new FeaturedCategoryProductsDto
+                {
+                    Category = ObjectMapper.Map<Category, CategoryDto>(category), // Or your specific mapper
+                    Products = productDtos
+                });
+            }
+            return result;
+
         }
     }
 }
