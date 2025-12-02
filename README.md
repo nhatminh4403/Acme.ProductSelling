@@ -1,4 +1,5 @@
-﻿# Acme.ProductSelling - This project is still a work-in-progress. openiddict.pfx key displayed in this README is allowed to use.
+﻿# Acme.ProductSelling
+ This project is still a work-in-progress. openiddict.pfx key displayed in this README is allowed to use.
 
 ## About this solution
 
