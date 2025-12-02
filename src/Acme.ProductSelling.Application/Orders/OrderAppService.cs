@@ -52,7 +52,8 @@ namespace Acme.ProductSelling.Orders
         private readonly IIdentityUserRepository _userRepository;
         private readonly IStoreRepository _storeRepository;
         private readonly IStoreInventoryRepository _storeInventoryRepository;
-
+        private readonly OrderToOrderDtoMapper _orderMapper;
+        //private readonly OrderListMapper _orderListMapper;
         public OrderAppService(
             IOrderRepository orderRepository,
             IRepository<Product, Guid> productRepository,
@@ -68,7 +69,9 @@ namespace Acme.ProductSelling.Orders
             IDataFilter<ISoftDelete> softDeleteFilter,
             IIdentityUserRepository userRepository,
             IStoreRepository storeRepository,
-            IStoreInventoryRepository storeInventoryRepository)
+            IStoreInventoryRepository storeInventoryRepository,
+            OrderToOrderDtoMapper orderMapper)
+            //OrderListMapper orderListMapper)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
@@ -85,6 +88,8 @@ namespace Acme.ProductSelling.Orders
             _userRepository = userRepository;
             _storeRepository = storeRepository;
             _storeInventoryRepository = storeInventoryRepository;
+            _orderMapper = orderMapper;
+            //_orderListMapper = orderListMapper;
         }
 
         [Authorize]
@@ -131,7 +136,7 @@ namespace Acme.ProductSelling.Orders
             {
                 Logger.LogWarning("[ConfirmPayPal] SKIP - Order not in Pending state. OrderId: {OrderId}, CurrentStatus: {PaymentStatus}",
                     order.Id, order.PaymentStatus);
-                return ObjectMapper.Map<Order, OrderDto>(order);
+                return _orderMapper.Map(order);
             }
         }
 
@@ -217,7 +222,7 @@ namespace Acme.ProductSelling.Orders
 
                 return new PagedResultDto<OrderDto>(
                     totalCount,
-                    ObjectMapper.Map<List<Order>, List<OrderDto>>(items)
+                    _orderMapper.MapList(items)
                 );
             }
         }
@@ -248,7 +253,7 @@ namespace Acme.ProductSelling.Orders
             if (cart == null || !cart.Items.Any())
             {
                 Logger.LogWarning("[CreateOrder] FAILED - Cart is empty. UserId: {UserId}", customerId);
-                throw new UserFriendlyException(L["Cart:ShoppingCartIsEmpty"]);
+                throw new UserFriendlyException(L["Cart:IsEmpty"]);
             }
 
             Logger.LogInformation("[CreateOrder] Cart retrieved - CartId: {CartId}, ItemCount: {ItemCount}, TotalItems: {TotalQuantity}",
@@ -374,7 +379,8 @@ namespace Acme.ProductSelling.Orders
             {
                 await _backgroundJobManager.EnqueueAsync<SetOrderBackgroundJobArgs>(
                     new SetOrderBackgroundJobArgs { OrderId = orderToProcess.Id },
-                    delay: TimeSpan.FromSeconds(30)
+                    //delay: TimeSpan.FromSeconds(30)\
+                    delay: TimeSpan.FromHours(1)
                 );
                 Logger.LogInformation("[CreateOrder] Background job scheduled - OrderId: {OrderId}, Delay: 30s",
                     orderToProcess.Id);
@@ -392,7 +398,8 @@ namespace Acme.ProductSelling.Orders
                 orderToProcess.OrderStatus,
                 PaymentStatus.Unpaid,
                 orderToProcess.PaymentStatus,
-                "Order created"
+                //"Order created"
+                _localizer["Order:Created"]
             );
             Logger.LogDebug("[CreateOrder] Order history logged");
 
@@ -401,7 +408,7 @@ namespace Acme.ProductSelling.Orders
 
             return new CreateOrderResultDto
             {
-                Order = ObjectMapper.Map<Order, OrderDto>(orderToProcess),
+                Order = _orderMapper.Map(orderToProcess),
                 RedirectUrl = gatewayResult.RedirectUrl
             };
         }
@@ -423,7 +430,7 @@ namespace Acme.ProductSelling.Orders
             Logger.LogInformation("[GetOrder] COMPLETED - OrderId: {OrderId}, OrderNumber: {OrderNumber}, Status: {Status}, ItemCount: {ItemCount}",
                 order.Id, order.OrderNumber, order.OrderStatus, order.OrderItems.Count);
 
-            return ObjectMapper.Map<Order, OrderDto>(order);
+            return _orderMapper.Map(order);
         }
 
         [Authorize(ProductSellingPermissions.Orders.Edit)]
@@ -461,7 +468,7 @@ namespace Acme.ProductSelling.Orders
 
             Logger.LogInformation("[UpdateStatus] COMPLETED - OrderId: {OrderId}", id);
 
-            return ObjectMapper.Map<Order, OrderDto>(order);
+            return _orderMapper.Map(order);
         }
 
         [Authorize(ProductSellingPermissions.Orders.Edit)]
@@ -847,6 +854,20 @@ namespace Acme.ProductSelling.Orders
             return await MapToOrderDtoAsync(order);
         }
 
+        /*
+                    var order = await _orderRepository.GetAsync(id, includeDetails: true);
+                    if (order.CustomerId != CurrentUser.Id) throw new AbpAuthorizationException(L["Account:Unauthorized"]);
+                    order.CancelByUser(_localizer);
+                    order.OrderItems.ForEach(async item =>
+                    {
+                        var product = await _productRepository.GetAsync(item.ProductId);
+                        product.StockCount += item.Quantity;
+                        await _productRepository.UpdateAsync(product, autoSave: true);
+                    });
+                    await _orderRepository.UpdateAsync(order);
+                    await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
+
+        */
         [Authorize]
         public async Task DeleteAsync(Guid id)
         {
@@ -865,31 +886,47 @@ namespace Acme.ProductSelling.Orders
             }
 
             var oldStatus = order.OrderStatus;
+            var oldPaymentStatus = order.PaymentStatus;
+
             order.CancelByUser(_localizer);
 
             Logger.LogInformation("[DeleteOrder] Order cancelled - OrderId: {OrderId}, OldStatus: {OldStatus}, NewStatus: {NewStatus}",
                 id, oldStatus, order.OrderStatus);
 
             var stockRestored = 0;
-            order.OrderItems.ForEach(async item =>
+            foreach (var item in order.OrderItems)
             {
                 var product = await _productRepository.GetAsync(item.ProductId);
                 var oldStock = product.StockCount;
                 product.StockCount += item.Quantity;
-                await _productRepository.UpdateAsync(product, autoSave: true);
-                stockRestored++;
+                await _productRepository.UpdateAsync(product, autoSave: false); // Save at the end
 
                 Logger.LogDebug("[DeleteOrder] Stock restored - ProductId: {ProductId}, Quantity: {Quantity}, OldStock: {OldStock}, NewStock: {NewStock}",
                     item.ProductId, item.Quantity, oldStock, product.StockCount);
-            });
+            }
 
             Logger.LogInformation("[DeleteOrder] Stock restoration completed - ItemsProcessed: {ItemsProcessed}", stockRestored);
 
-            await _orderRepository.UpdateAsync(order);
+            await _orderRepository.UpdateAsync(order, autoSave: true);
             Logger.LogDebug("[DeleteOrder] Order updated in database");
 
+            if (order.OrderStatus != OrderStatus.Placed && order.OrderStatus != OrderStatus.Pending)
+            {
+                throw new UserFriendlyException("Cannot cancel this order.");
+            }
+            await _orderHistoryAppService.LogOrderChangeAsync(
+                id,
+                oldStatus,
+                order.OrderStatus,     
+                oldPaymentStatus,
+                order.PaymentStatus,    
+                _localizer["Order:CancelledByUser"] 
+            );
             await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
             Logger.LogDebug("[DeleteOrder] Notification sent");
+
+            
+
 
             Logger.LogInformation("[DeleteOrder] COMPLETED - OrderId: {OrderId}", id);
         }
@@ -1035,7 +1072,7 @@ namespace Acme.ProductSelling.Orders
         {
             Logger.LogDebug("[MapToOrderDto] START - OrderId: {OrderId}", order.Id);
 
-            var dto = ObjectMapper.Map<Order, OrderDto>(order);
+            var dto = _orderMapper.Map(order);
 
             if (order.StoreId.HasValue)
             {
@@ -1066,7 +1103,7 @@ namespace Acme.ProductSelling.Orders
             Logger.LogInformation("[GetByOrderNumber] COMPLETED - OrderId: {OrderId}, OrderNumber: {OrderNumber}",
                 order.Id, order.OrderNumber);
 
-            return ObjectMapper.Map<Order, OrderDto>(order);
+            return _orderMapper.Map(order);
         }
 
         [DisableAuditing]
@@ -1100,7 +1137,7 @@ namespace Acme.ProductSelling.Orders
 
             return new PagedResultDto<OrderDto>(
                 totalCount,
-                 ObjectMapper.Map<List<Order>, List<OrderDto>>(orders)
+                _orderMapper.MapList(orders)
             );
         }
 
@@ -1151,7 +1188,7 @@ namespace Acme.ProductSelling.Orders
 
             return new PagedResultDto<OrderDto>(
                 totalCount,
-                ObjectMapper.Map<List<Order>, List<OrderDto>>(items)
+                _orderMapper.MapList(items)
             );
         }
 
@@ -1185,7 +1222,7 @@ namespace Acme.ProductSelling.Orders
 
             return new PagedResultDto<OrderDto>(
                 totalCount,
-                ObjectMapper.Map<List<Order>, List<OrderDto>>(items)
+                _orderMapper.MapList(items)
             );
         }
 

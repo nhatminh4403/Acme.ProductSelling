@@ -14,9 +14,9 @@
   </PropertyGroup>
   <ItemGroup Condition="Exists('./openiddict.pfx')">
     <None Remove="openiddict.pfx" />
-    <EmbeddedResource Include="openiddict.pfx">
+    <Content Include="openiddict.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Data\**" />

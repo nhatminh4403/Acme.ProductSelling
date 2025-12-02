@@ -1,7 +1,10 @@
-﻿using Acme.ProductSelling.Orders.Dtos;
+﻿using Acme.ProductSelling.Orders;
+using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Orders.Services;
+using Acme.ProductSelling.Payments;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -44,7 +47,49 @@ namespace Acme.ProductSelling.Web.Pages.Orders
 
             return Page();
         }
-        // ... trong class OrderDetailModel
+        public async Task<IActionResult> OnPostCancelOrderAjaxAsync([FromBody] CancelOrderRequest request)
+        {
+            try
+            {
+                Logger.LogInformation("[CancelOrderAjax] START - OrderId: {OrderId}, UserId: {UserId}",
+                    request.OrderId, CurrentUser.Id);
+
+                await _orderAppService.DeleteAsync(request.OrderId);
+
+                Logger.LogInformation("[CancelOrderAjax] SUCCESS - OrderId: {OrderId}", request.OrderId);
+
+                return new JsonResult(new
+                {
+                    success = true,
+                    message = L["Order:OrderCancelledSuccessfully"].Value
+                });
+            }
+            catch (UserFriendlyException ex)
+            {
+                Logger.LogWarning(ex, "[CancelOrderAjax] UserFriendlyException - OrderId: {OrderId}, Message: {Message}",
+                    request.OrderId, ex.Message);
+
+                return new JsonResult(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "[CancelOrderAjax] ERROR - OrderId: {OrderId}", request.OrderId);
+
+                return new JsonResult(new
+                {
+                    success = false,
+                    message = L["Error:GeneralError"].Value
+                });
+            }
+        }
+        public class CancelOrderRequest
+        {
+            public Guid OrderId { get; set; }
+        }
         public async Task<IActionResult> OnPostCancelAsync(Guid orderId)
         {
             try
@@ -65,28 +110,56 @@ namespace Acme.ProductSelling.Web.Pages.Orders
         {
             return orderStatus switch
             {
-                "Placed" => "bg-info text-white",
-                "Pending" => "bg-light text-dark",
-                "Confirmed" => "bg-primary text-white",
-                "Processing" => "bg-warning text-dark",
-                "Shipped" => "bg-success text-white",
-                "Delivered" => "bg-dark text-white",
-                "Cancelled" => "bg-danger text-white",
-                _ => "bg-secondary text-white"
+                "Placed" => "bg-primary",
+                "Pending" => "bg-warning",
+                "Confirmed" => "bg-info",
+                "Processing" => "bg-info",
+                "Shipped" => "bg-success",
+                "Delivered" => "bg-success",
+                "Cancelled" => "bg-danger ",
+                _ => "bg-secondary"
+            };
+        }
+        public string GetOrderStatusBadgeClass(OrderStatus status)
+        {
+            return status switch
+            {
+                OrderStatus.Placed => "bg-primary",
+                OrderStatus.Pending => "bg-warning",
+                OrderStatus.Confirmed => "bg-info",
+                OrderStatus.Processing => "bg-info",
+                OrderStatus.Shipped => "bg-primary",
+                OrderStatus.Delivered => "bg-success",
+                OrderStatus.Cancelled => "bg-danger",
+                _ => "bg-secondary"
+            };
+        }
+        public string GetPaymentStatusBadgeClass(PaymentStatus paymentStatus)
+        {
+            return paymentStatus switch
+            {
+                PaymentStatus.Unpaid => "bg-warning",
+                PaymentStatus.Pending => "bg-info",
+                PaymentStatus.PendingOnDelivery => "bg-info",
+                PaymentStatus.Paid => "bg-success",
+                PaymentStatus.Failed => "bg-danger",
+                PaymentStatus.Refunded => "bg-secondary",
+                PaymentStatus.Cancelled => "bg-danger",
+                _ => "secondary"
             };
         }
         public string GetPaymentStatusBadgeClass(string paymentStatus)
         {
             return paymentStatus switch
             {
-                "Unpaid" => "bg-secondary text-white",
-                "PendingOnDelivery" => "bg-info text-white",
-                "Pending" => "bg-warning text-dark",
-                "Paid" => "bg-success text-white",
-                "Failed" => "bg-danger text-white",
-                "Refunded" => "bg-dark text-white",
-                "Cancelled" => "bg-secondary text-white",
-                _ => "bg-dark text-white"
+                "Unpaid" => "bg-warning",
+                "PendingOnDelivery" => "bg-info",
+                "Pending" => "bg-warning",
+                "Paid" => "bg-success",
+                "Failed" => "bg-danger",
+                "Refunded" => "bg-dark",
+                "Cancelled" => "bg-secondary",
+                _ => "bg-dark"
             };
         }
     }

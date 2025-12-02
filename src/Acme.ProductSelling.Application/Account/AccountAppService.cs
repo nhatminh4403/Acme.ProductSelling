@@ -108,7 +108,7 @@ namespace Acme.ProductSelling.Account
                 input.Name,
                 input.Surname,
                 user.Email,
-                user.PhoneNumber,
+                phoneNumber: null,
                 shippingAddress: null, // Initially null
                 dateOfBirth: null,
                 gender: UserGender.NONE

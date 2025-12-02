@@ -4,6 +4,7 @@ using Acme.ProductSelling.Orders.Services;
 using Acme.ProductSelling.Payments;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using Volo.Abp;
@@ -20,8 +21,8 @@ namespace Acme.ProductSelling.Web.Pages.Orders
         [BindProperty(SupportsGet = true)]
         public int CurrentPage { get; set; } = 1;
 
-        [BindProperty(SupportsGet = true)]
-        public string Sorting { get; set; }
+        //[BindProperty(SupportsGet = true)]
+        public string Sorting = "OrderDate DESC";
 
         public int PageSize { get; set; } = 10;
         public PagerModel PagerModel { get; set; }
@@ -46,20 +47,51 @@ namespace Acme.ProductSelling.Web.Pages.Orders
 
             PagerModel = new PagerModel(Orders.TotalCount, 3, CurrentPage, PageSize, "/");
         }
-
-        public async Task<IActionResult> OnPostCancelOrderAsync(Guid orderId)
+        public async Task<IActionResult> OnPostCancelOrderAjaxAsync([FromBody] CancelOrderRequest request)
         {
             try
             {
-                await _orderAppService.DeleteAsync(orderId);
-                Alerts.Success(L["Order:OrderCancelledSuccessfully"]);
+                Logger.LogInformation("[CancelOrderAjax] START - OrderId: {OrderId}, UserId: {UserId}",
+                    request.OrderId, CurrentUser.Id);
+
+                await _orderAppService.DeleteAsync(request.OrderId);
+
+                Logger.LogInformation("[CancelOrderAjax] SUCCESS - OrderId: {OrderId}", request.OrderId);
+
+                return new JsonResult(new
+                {
+                    success = true,
+                    message = L["Order:OrderCancelledSuccessfully"].Value
+                });
             }
             catch (UserFriendlyException ex)
             {
-                Alerts.Warning(ex.Message);
+                Logger.LogWarning(ex, "[CancelOrderAjax] UserFriendlyException - OrderId: {OrderId}, Message: {Message}",
+                    request.OrderId, ex.Message);
+
+                return new JsonResult(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
             }
-            return RedirectToPage(); // Tải lại trang lịch sử
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "[CancelOrderAjax] ERROR - OrderId: {OrderId}", request.OrderId);
+
+                return new JsonResult(new
+                {
+                    success = false,
+                    message = L["Error:GeneralError"].Value
+                });
+            }
         }
+        public class CancelOrderRequest
+        {
+            public Guid OrderId { get; set; }
+        }
+
+
         public string GetStatusBadgeClass(OrderStatus status)
         {
             return status switch

@@ -1,4 +1,5 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
@@ -43,6 +44,7 @@ public class ProductSellingEntityFrameworkCoreModule : AbpModule
             /* Remove "includeAllEntities: true" to create
              * default repositories only for aggregate roots */
             options.AddDefaultRepositories(includeAllEntities: true);
+
         });
 
         if (AbpStudioAnalyzeHelper.IsInAnalyzeMode)
@@ -56,7 +58,15 @@ public class ProductSellingEntityFrameworkCoreModule : AbpModule
              * See also ProductSellingDbContextFactory for EF Core tooling. */
 
             options.UseSqlServer();
-
+            //options.UseSqlServer(sqlServerOptions =>
+            //{
+            //    // THIS is the specific fix for Azure SQL
+            //    sqlServerOptions.EnableRetryOnFailure(
+            //        maxRetryCount: 5,
+            //        maxRetryDelay: TimeSpan.FromSeconds(30),
+            //        errorNumbersToAdd: null
+            //    );
+            //});
         });
 
     }

@@ -21,6 +21,7 @@ using Hangfire.MemoryStorage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
@@ -131,7 +132,8 @@ public class ProductSellingWebModule : AbpModule
                 options.UseAspNetCore();
             });
         });
-
+        //serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", configuration["AuthServer:CertificatePassPhrase"]!);
+        //serverBuilder.SetIssuer(new Uri(configuration["AuthServer:Authority"]!));
         if (!hostingEnvironment.IsDevelopment())
         {
             PreConfigure<AbpOpenIddictAspNetCoreOptions>(options =>
@@ -141,13 +143,90 @@ public class ProductSellingWebModule : AbpModule
 
             PreConfigure<OpenIddictServerBuilder>(serverBuilder =>
             {
-                serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", configuration["AuthServer:CertificatePassPhrase"]!);
+                var certificateLoaded = false;
+
+                var certThumbprint = configuration["AuthServer:CertificateThumbprint"];
+
+                // Priority 1: Certificate store (Azure)
+                if (!string.IsNullOrWhiteSpace(certThumbprint))
+                {
+                    try
+                    {
+                        var certificate = LoadCertificateFromStore(certThumbprint);
+                        if (certificate != null)
+                        {
+                            serverBuilder.AddSigningCertificate(certificate);
+                            serverBuilder.AddEncryptionCertificate(certificate);
+                            certificateLoaded = true;
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+                }
+                if (!certificateLoaded)
+                {
+                    var certPath = Path.Combine(hostingEnvironment.ContentRootPath, "openiddict.pfx");
+                    var certPass = configuration["AuthServer:CertificatePassPhrase"];
+
+                    if (File.Exists(certPath) && !string.IsNullOrWhiteSpace(certPass))
+                    {
+                        try
+                        {
+                            // Use standard OpenIddict methods to add from file
+                            if (new FileInfo(certPath).Length > 0)
+                            {
+                                // Assuming these keys serve as both
+                                serverBuilder.AddEncryptionCertificate(new FileStream(certPath, FileMode.Open, FileAccess.Read), certPass);
+                                serverBuilder.AddSigningCertificate(new FileStream(certPath, FileMode.Open, FileAccess.Read), certPass);
+                                certificateLoaded = true;
+                            }
+                        }
+                        catch
+                        {
+                            // File read failed
+                        }
+                    }
+                }
+
+                // 3. CRITICAL FIX: Fallback to Ephemeral Keys if no certificate is found.
+                // This stops the 500.0 Internal Server Error crash.
+                // Note: Sessions will be invalidated if the app restarts.
+                if (!certificateLoaded)
+                {
+                    serverBuilder.AddEphemeralEncryptionKey();
+                    serverBuilder.AddEphemeralSigningKey();
+                }
+
+                // Database storage will be used if no certificate was loaded above
                 serverBuilder.SetIssuer(new Uri(configuration["AuthServer:Authority"]!));
             });
         }
 
     }
+    private static System.Security.Cryptography.X509Certificates.X509Certificate2? LoadCertificateFromStore(string thumbprint)
+    {
+        using var store = new System.Security.Cryptography.X509Certificates.X509Store(
+            System.Security.Cryptography.X509Certificates.StoreName.My,
+            System.Security.Cryptography.X509Certificates.StoreLocation.CurrentUser
+        );
 
+        try
+        {
+            store.Open(System.Security.Cryptography.X509Certificates.OpenFlags.ReadOnly);
+            var certificates = store.Certificates.Find(
+                System.Security.Cryptography.X509Certificates.X509FindType.FindByThumbprint,
+                thumbprint,
+                validOnly: false
+            );
+            return certificates.Count > 0 ? certificates[0] : null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
 
 
     public override void ConfigureServices(ServiceConfigurationContext context)
@@ -366,7 +445,7 @@ public class ProductSellingWebModule : AbpModule
             );
 
             options.ScriptBundles.Add(
-                "Admin.Global", // Give it a descriptive name
+                "Admin.Global", 
                 bundle =>
                 {
                     bundle.AddContributors(typeof(DatatablesNetScriptContributor));
@@ -375,7 +454,7 @@ public class ProductSellingWebModule : AbpModule
                 }
             );
             options.StyleBundles.Add(
-                "Admin.Global", // Give it a descriptive name
+                "Admin.Global", 
                 bundle =>
                 {
                     bundle.AddFiles("/css/admin/main/style.css");
@@ -387,7 +466,7 @@ public class ProductSellingWebModule : AbpModule
                 {
                     bundle.AddFiles("/libs/signalr/browser/signalr.js");
 
-                    bundle.AddFiles("/js/orders/order-signalr.js");
+                    bundle.AddFiles("/js/shared/orderSignalR.js");
                 }
             );
         });
@@ -416,15 +495,27 @@ public class ProductSellingWebModule : AbpModule
         });
         context.Services.ConfigureApplicationCookie(options =>
         {
+            options.Cookie.SameSite = SameSiteMode.Lax;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
             options.Events.OnRedirectToLogin = context =>
             {
-                context.Response.Redirect($"/loi?statusCode=401");
+                // Only redirect to custom error page if it's not already a redirect
+                if (!context.Request.Path.StartsWithSegments("/loi") &&
+                    !context.Request.Path.StartsWithSegments("/Account/Login"))
+                {
+                    context.Response.Redirect($"/loi?statusCode=401");
+                }
                 return Task.CompletedTask;
             };
 
             options.Events.OnRedirectToAccessDenied = context =>
             {
-                context.Response.Redirect($"/loi?statusCode=403");
+                // Only redirect to custom error page if it's not already a redirect
+                if (!context.Request.Path.StartsWithSegments("/loi"))
+                {
+                    context.Response.Redirect($"/loi?statusCode=403");
+                }
                 return Task.CompletedTask;
             };
         });

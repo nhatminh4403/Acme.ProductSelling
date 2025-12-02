@@ -7,13 +7,40 @@
     ViewData["Title"] = L["UI:Title:MyOrderHistory"];
     Layout = "/Views/Shared/_Layout.cshtml";
 }
-<style>
-    .status-updated-highlight {
-        background-color: #fff3cd; /* A light yellow, adjust as needed */
-        transition: background-color 0.5s ease-out;
-    }
-</style>
+
+@section styles {
+    <style>
+        .status-updated-highlight {
+            background-color: #fff3cd;
+            transition: background-color 0.5s ease-out;
+        }
+
+        .order-row-cancelled {
+            opacity: 0.6;
+            background-color: #f8f9fa;
+        }
+
+        .btn-cancel-order:disabled {
+            cursor: not-allowed;
+        }
+
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+            border-width: 0.15em;
+        }
+    </style>
+}
+
 <div class="container mt-4">
+    <!-- Alert Container -->
+    <div id="alert-container" style="display: none;">
+        <div class="alert alert-dismissible fade show" role="alert" id="alert-message">
+            <span id="alert-text"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+
     <abp-card>
         <abp-card-header>
             <abp-row>
@@ -21,7 +48,9 @@
                     <h2>@L["Order:MyHistory"]</h2>
                 </abp-column>
                 <abp-column size-md="_6" class="text-end">
-                    @* Optional: Add any actions like "Refresh" or "Filter" later *@
+                    <button class="btn btn-secondary" onclick="location.reload()">
+                        <i class="fas fa-sync-alt"></i> @L["Refresh"]
+                    </button>
                 </abp-column>
             </abp-row>
         </abp-card-header>
@@ -31,7 +60,7 @@
                 <abp-table striped-rows="true" id="OrderHistoryTable">
                     <thead>
                         <tr>
-                            <th>@L["Order:OrderNumber"]</th>
+                            <th>@L["Order:Number"]</th>
                             <th>@L["Order:OrderDate"]</th>
                             <th>@L["Order:CustomerName"]</th>
                             <th>@L["Order:TotalAmount"]</th>
@@ -43,38 +72,38 @@
                     <tbody>
                         @foreach (var order in Model.Orders.Items)
                         {
-                            <tr data-order-id="@order.Id">
+                            <tr data-order-id="@order.Id"
+                                class="order-row @(order.OrderStatus == Acme.ProductSelling.Orders.OrderStatus.Cancelled ? "order-row-cancelled" : "")">
                                 <td>@order.OrderNumber</td>
-                                <td>
-                                    @order.OrderDate.ToString("dd/MM/yyyy HH:mm")
-                                </td>
-
+                                <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
                                 <td>@order.CustomerName</td>
                                 <td>@order.TotalAmount.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</td>
                                 <td class="order-status-cell">
                                     <span class="badge bg-@Model.GetStatusBadgeClass(order.OrderStatus)">
-                                        @L[order.OrderStatus.ToString()]
+                                        @Html.Raw(L[$"Enum:OrderStatus.{order.OrderStatus}"])
                                     </span>
                                 </td>
                                 <td class="payment-status-cell">
                                     <span class="badge bg-@Model.GetPaymentStatusBadgeClass(order.PaymentStatus)">
-                                        @L[order.PaymentStatus.ToString()]
+                                        @L[$"Enum:PaymentStatus.{order.PaymentStatus}"]
                                     </span>
                                 </td>
                                 <td class="order-actions-cell">
                                     <a class="btn btn-sm btn-info" href="@Url.Page("/Orders/OrderDetail", new { id = order.Id })">
                                         @L["ViewDetails"]
                                     </a>
-                                    @if (order.OrderStatus == Acme.ProductSelling.Orders.OrderStatus.Placed)
+
+                                    @if ((order.OrderStatus == Acme.ProductSelling.Orders.OrderStatus.Placed ||
+                                                                order.OrderStatus == Acme.ProductSelling.Orders.OrderStatus.Pending) &&
+                                                                order.PaymentStatus != Acme.ProductSelling.Payments.PaymentStatus.Paid)
                                     {
-                                        <form method="post" asp-page-handler="CancelOrder"
-                                              class="d-inline cancel-order-form"
-                                              onsubmit="return confirm('@L["Order:AreYouSureYouWantToCancelOrder"]')">
-                                            <input type="hidden" name="orderId" value="@order.Id" />
-                                            <button type="submit" class="btn btn-sm btn-danger">
-                                                @L["Cancel"]
-                                            </button>
-                                        </form>
+                                        <button type="button"
+                                                class="btn btn-sm btn-danger btn-cancel-order"
+                                                data-order-id="@order.Id"
+                                                data-order-number="@order.OrderNumber">
+                                            <span class="btn-text">@L["Cancel"]</span>
+                                            <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                        </button>
                                     }
                                 </td>
                             </tr>
@@ -83,46 +112,157 @@
                 </abp-table>
 
                 <div class="mt-4">
-                    <abp-paginator asp-page="/" show-info="true" model="Model.PagerModel" class="mb-4">
+                    <abp-paginator asp-page="/history-order" show-info="true" model="Model.PagerModel" class="mb-4">
                     </abp-paginator>
                 </div>
             }
             else
             {
-
                 <div class="alert alert-info">
                     @L["Order:NoOrdersFound"]
-
                 </div>
                 <div class="text-center">
                     <a asp-page="/Index" class="btn btn-primary">@L["ContinueShopping"]</a>
-
                 </div>
-
             }
         </abp-card-body>
     </abp-card>
 </div>
 
-@functions {
+<!-- Confirmation Modal -->
+<div class="modal fade" id="cancelOrderModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@L["Order:ConfirmCancellation"]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>@L["Order:AreYouSureYouWantToCancelOrder"]</p>
+                <p><strong>@L["Order:Number"]:</strong> <span id="cancel-order-number"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@L["No"]</button>
+                <button type="button" class="btn btn-danger" id="confirm-cancel-btn">
+                    <span class="btn-text">@L["Yes:Cancel"]</span>
+                    <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
-    string GetStatusBadgeClass(Acme.ProductSelling.Orders.OrderStatus status)
-    {
-        return status switch
-        {
-            Acme.ProductSelling.Orders.OrderStatus.Placed => "bg-info",
-            Acme.ProductSelling.Orders.OrderStatus.Pending => "bg-light text-dark border-1",
-            Acme.ProductSelling.Orders.OrderStatus.Confirmed => "bg-primary",
-            Acme.ProductSelling.Orders.OrderStatus.Processing => "bg-warning",
-            Acme.ProductSelling.Orders.OrderStatus.Shipped => "bg-success",
-            Acme.ProductSelling.Orders.OrderStatus.Delivered => "bg-dark",
-            Acme.ProductSelling.Orders.OrderStatus.Cancelled => "bg-danger",
-            _ => "bg-secondary"
-        };
-    }
-}
 @section scripts {
-    <abp-script-bundle>
+    <abp-script-bundle name="Shared.Order.SignalR" />
+    <script>
+        $(document).ready(function() {
+            let currentOrderId = null;
+            let currentOrderRow = null;
+            const cancelModal = new bootstrap.Modal(document.getElementById('cancelOrderModal'));
 
-    </abp-script-bundle>
+            // Show alert function
+            function showAlert(message, type = 'success') {
+                const alertContainer = $('#alert-container');
+                const alertMessage = $('#alert-message');
+                const alertText = $('#alert-text');
+
+                alertMessage.removeClass('alert-success alert-danger alert-warning alert-info');
+                alertMessage.addClass(`alert-${type}`);
+                alertText.text(message);
+                alertContainer.fadeIn();
+
+                // Auto hide after 5 seconds
+                setTimeout(() => {
+                    alertContainer.fadeOut();
+                }, 5000);
+
+                // Scroll to top to show alert
+                $('html, body').animate({ scrollTop: 0 }, 300);
+            }
+
+            // Open cancel modal
+            $(document).on('click', '.btn-cancel-order', function(e) {
+                e.preventDefault();
+                currentOrderId = $(this).data('order-id');
+                currentOrderRow = $(this).closest('tr');
+                const orderNumber = $(this).data('order-number');
+
+                $('#cancel-order-number').text(orderNumber);
+                cancelModal.show();
+            });
+
+            // Confirm cancellation
+            $('#confirm-cancel-btn').on('click', async function() {
+                if (!currentOrderId) return;
+
+                const btn = $(this);
+                const btnText = btn.find('.btn-text');
+                const spinner = btn.find('.spinner-border');
+                const modalCloseBtn = $('.modal-footer .btn-secondary');
+
+                // Disable buttons and show loading
+                btn.prop('disabled', true);
+                modalCloseBtn.prop('disabled', true);
+                btnText.addClass('d-none');
+                spinner.removeClass('d-none');
+
+                try {
+                    const response = await fetch('?handler=CancelOrderAjax', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        body: JSON.stringify({ orderId: currentOrderId })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Update UI
+                        const statusCell = currentOrderRow.find('.order-status-cell .badge');
+                        statusCell.removeClass('bg-primary bg-warning bg-info')
+                                  .addClass('bg-danger')
+                                  .text('@L["Enum:OrderStatus.Cancelled"]');
+
+                        // Remove cancel button
+                        currentOrderRow.find('.btn-cancel-order').remove();
+
+                        // Add cancelled styling
+                        currentOrderRow.addClass('order-row-cancelled');
+
+                        // Show success message
+                        showAlert(data.message, 'success');
+
+                        // Close modal
+                        cancelModal.hide();
+
+                        console.log('[CancelOrder] SUCCESS - Order cancelled successfully');
+                    } else {
+                        showAlert(data.message, 'danger');
+                        console.error('[CancelOrder] FAILED - Server returned error:', data.message);
+                    }
+                } catch (error) {
+                    console.error('[CancelOrder] ERROR - Exception occurred:', error);
+                    showAlert('@L["Error:GeneralError"]', 'danger');
+                } finally {
+                    // Re-enable buttons and hide loading
+                    btn.prop('disabled', false);
+                    modalCloseBtn.prop('disabled', false);
+                    btnText.removeClass('d-none');
+                    spinner.addClass('d-none');
+                    currentOrderId = null;
+                    currentOrderRow = null;
+                }
+            });
+
+            // Reset modal on close
+            $('#cancelOrderModal').on('hidden.bs.modal', function() {
+                currentOrderId = null;
+                currentOrderRow = null;
+            });
+
+            console.log('[OrderHistory] Page initialized with AJAX cancel functionality');
+        });
+    </script>
 }

@@ -1,6 +1,8 @@
-﻿using Acme.ProductSelling.Orders.Dtos;
+﻿using Acme.ProductSelling.Localization;
+using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Orders.Services;
 using Acme.ProductSelling.Payments;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +19,16 @@ namespace Acme.ProductSelling.Orders.History
         private readonly IRepository<OrderHistory, Guid> _historyRepository;
         private readonly IGuidGenerator _guidGenerator;
         private readonly ICurrentUser _currentUser;
+        private readonly IStringLocalizer<ProductSellingResource> _localizer;
+        private readonly OrderHistoryToOrderHistoryDtoMapper _historyMapper;
 
-        public OrderHistoryAppService(IRepository<OrderHistory, Guid> historyRepository, IGuidGenerator guidGenerator, ICurrentUser currentUser)
+        public OrderHistoryAppService(IRepository<OrderHistory, Guid> historyRepository, IGuidGenerator guidGenerator, ICurrentUser currentUser, OrderHistoryToOrderHistoryDtoMapper historyMapper, IStringLocalizer<ProductSellingResource> localizer)
         {
             _historyRepository = historyRepository;
             _guidGenerator = guidGenerator;
             _currentUser = currentUser;
+            _historyMapper = historyMapper;
+            _localizer = localizer;
         }
 
         public async Task<List<OrderHistoryDto>> GetOrderHistoryAsync(Guid orderId)
@@ -35,18 +41,12 @@ namespace Acme.ProductSelling.Orders.History
                             .ToList();
 
 
-            return orderHistories.Select(h => new OrderHistoryDto
+            var result = new List<OrderHistoryDto>();
+            foreach (var history in orderHistories)
             {
-                Id = h.Id,
-                OrderId = h.OrderId,
-                OldStatus = h.OldStatus.ToString(),
-                NewStatus = h.NewStatus.ToString(),
-                OldPaymentStatus = h.OldPaymentStatus.ToString(),
-                NewPaymentStatus = h.NewPaymentStatus.ToString(),
-                ChangeDescription = h.ChangeDescription,
-                ChangedBy = h.ChangedBy,
-                CreationTime = h.CreationTime
-            }).ToList();
+                result.Add(_historyMapper.Map(history));
+            }
+            return result;
         }
 
         public async Task LogOrderChangeAsync(Guid orderId, OrderStatus oldStatus, OrderStatus newStatus, PaymentStatus oldPaymentStatus, PaymentStatus newPaymentStatus, string description)
@@ -63,7 +63,7 @@ namespace Acme.ProductSelling.Orders.History
                 newStatus,
                 oldPaymentStatus,
                 newPaymentStatus,
-                description ?? "Order updated",
+                description ?? _localizer["Order:HistoryUpdated"],
                 _currentUser.UserName ?? "System"
             );
 

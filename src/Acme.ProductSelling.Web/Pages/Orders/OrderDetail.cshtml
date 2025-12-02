@@ -1,17 +1,27 @@
-﻿@page "/Orders/OrderDetail/{id:Guid}"
+﻿@page "/Orders/Details/{id:Guid}"
 @using Acme.ProductSelling.Orders.Dtos
 @model Acme.ProductSelling.Web.Pages.Orders.OrderDetailModel
+@using System.Globalization
 
 @{
-    ViewData["Title"] = L["UI:Titles:OrderDetails"];
+    ViewData["Title"] = L["UI:Title:OrderDetails"];
     Layout = "/Views/Shared/_Layout.cshtml";
 }
+
 <div class="container mt-4">
+    <!-- Alert Container -->
+    <div id="alert-container" style="display: none;">
+        <div class="alert alert-dismissible fade show" role="alert" id="alert-message">
+            <span id="alert-text"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+
     <abp-card>
         <abp-card-header>
             <abp-row>
                 <abp-column size-md="_6">
-                    <h2>@L["Order:OrderDetails"]</h2>
+                    <h2>@L["Order:Details"]</h2>
                 </abp-column>
                 <abp-column size-md="_6" class="text-end">
                     <a href="@Url.Page("/Orders/OrderHistory")" class="btn btn-secondary">
@@ -28,8 +38,8 @@
                         <h4>@L["Order:OrderInformation"]</h4>
                         <table class="table table-borderless" style="table-layout: fixed;">
                             <tr>
-                                <th>@L["Order:OrderNumber"]:</th>
-                                <td>@Model.Order.OrderNumber</td>
+                                <th>@L["Order:Number"]:</th>
+                                <td><span id="display-order-number">@Model.Order.OrderNumber</span></td>
                             </tr>
                             <tr>
                                 <th>@L["Order:OrderDate"]:</th>
@@ -38,18 +48,20 @@
                             <tr>
                                 <th>@L["Order:OrderStatus"]:</th>
                                 <td>
-                                    <span class="badge bg-@(Model.GetOrderStatusBadgeClass(Model.Order.OrderStatusText))"
+                                    @* FIX: Used Html.Raw to render symbols like Đ correctly *@
+                                    <span class="badge @(Model.GetOrderStatusBadgeClass(Model.Order.OrderStatus)) text-white"
                                           id="orderStatusBadge">
-                                        @L[Model.Order.OrderStatus.ToString()]
+                                        @Html.Raw(L[$"Enum:OrderStatus.{Model.Order.OrderStatus}"])
                                     </span>
                                 </td>
                             </tr>
                             <tr>
                                 <th>@L["Order:PaymentStatus"]:</th>
                                 <td>
-                                    <span class="badge bg-@(Model.GetPaymentStatusBadgeClass(Model.Order.PaymentStatusText))"
+                                    @* FIX: Used Html.Raw *@
+                                    <span class="badge @(Model.GetPaymentStatusBadgeClass(Model.Order.PaymentStatus)) text-white"
                                           id="paymentStatusBadge">
-                                        @L[Model.Order.PaymentStatus.ToString()]
+                                        @Html.Raw(L[$"Enum:PaymentStatus.{Model.Order.PaymentStatus}"])
                                     </span>
                                 </td>
                             </tr>
@@ -61,7 +73,7 @@
                             </tr>
                             <tr>
                                 <th>@L["Order:PaymentMethod"]:</th>
-                                <td>@L[$"PaymentMethod:{Model.Order.PaymentMethod}"]</td>
+                                <td>@L[$"Enum:PaymentMethod:{Model.Order.PaymentMethod}"]</td>
                             </tr>
                         </table>
                     </div>
@@ -82,21 +94,22 @@
                                 <td>@Model.Order.ShippingAddress</td>
                             </tr>
                         </table>
-                        @if (Model.Order.OrderStatus == Acme.ProductSelling.Orders.OrderStatus.Placed)
+
+                        @* LOGIC UPDATE: Switch from FORM to AJAX Button *@
+                        @if (Model.Order.OrderStatus == Acme.ProductSelling.Orders.OrderStatus.Placed ||
+                                            Model.Order.OrderStatus == Acme.ProductSelling.Orders.OrderStatus.Pending)
                         {
-                            <div id="cancelOrderContainer">
+                            <div id="cancelOrderContainer" class="mt-3">
                                 <div class="alert alert-info d-flex justify-content-between align-items-center">
                                     <span>@L["Order:YouCanCancel"]</span>
-                                    <form method="post" asp-page-handler="Cancel"
-                                          onsubmit="return confirm('@L["Order:AreYouSureYouWantToCancel"]')">
-                                        <input type="hidden" name="orderId" value="@Model.Order.Id" />
-                                        <button type="submit" class="btn btn-danger">
-                                            <i class="fa fa-times"></i> @L["Order:Cancel"]
-                                        </button>
-                                    </form>
+                                    <button type="button"
+                                            class="btn btn-danger btn-cancel-order"
+                                            data-order-id="@Model.Order.Id"
+                                            data-order-number="@Model.Order.OrderNumber">
+                                        <i class="fa fa-times"></i> @L["Order:Cancel"]
+                                    </button>
                                 </div>
                             </div>
-
                         }
                     </div>
                 </div>
@@ -119,11 +132,10 @@
                                 <td>@item.Price.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</td>
                                 <td>@item.Quantity</td>
                                 <td>
-                                    @((item.Price * item.Quantity)
-                                                                .ToString("C0", CultureInfo.GetCultureInfo("vi-VN")))
+                                    @((item.Price * item.Quantity).ToString("C0", CultureInfo.GetCultureInfo("vi-VN")))
                                 </td>
                             </tr>
-                         }
+                        }
                     </tbody>
                     <tfoot>
                         <tr>
@@ -159,7 +171,7 @@
                         <div class="timeline-item">
                             <div class="timeline-marker @GetHistoryMarkerClass(history)"></div>
                             <div class="timeline-content">
-                                <div class="d-flex justify-content-between align-items-start">
+                                <div class="d-flex gap-3 align-items-start">
                                     <div>
                                         <h6 class="mb-1">@history.ChangeDescription</h6>
                                         <p class="text-muted mb-1">
@@ -175,13 +187,13 @@
                                         @if (history.OldStatus != history.NewStatus)
                                         {
                                             <div class="mb-2">
-                                                <small class="text-muted d-block">Order Status:</small>
-                                                <span class="badge @Model.GetOrderStatusBadgeClass(history.OldStatus)">
-                                                    @L[$"Enum:OrderStatus.{history.OldStatus}"]
+                                                <small class="text-muted d-block">@L["Order:OrderStatus"]</small>
+                                                <span class="badge @Model.GetOrderStatusBadgeClass(history.OldStatus) text-white">
+                                                    @Html.Raw(L[$"Enum:OrderStatus.{history.OldStatus}"])
                                                 </span>
                                                 <i class="bi bi-arrow-right mx-1"></i>
-                                                <span class="badge @Model.GetOrderStatusBadgeClass(history.NewStatus)">
-                                                    @L[$"Enum:OrderStatus.{history.NewStatus}"]
+                                                <span class="badge @Model.GetOrderStatusBadgeClass(history.NewStatus) text-white">
+                                                    @Html.Raw(L[$"Enum:OrderStatus.{history.NewStatus}"])
                                                 </span>
                                             </div>
                                         }
@@ -189,12 +201,12 @@
                                         {
                                             <div>
                                                 <small class="text-muted d-block">Payment Status:</small>
-                                                <span class="badge @Model.GetPaymentStatusBadgeClass(history.OldPaymentStatus)">
-                                                    @L[$"Enum:PaymentStatus.{history.OldPaymentStatus}"]
+                                                <span class="badge @Model.GetPaymentStatusBadgeClass(history.OldPaymentStatus) text-white">
+                                                    @Html.Raw(L[$"Enum:PaymentStatus.{history.OldPaymentStatus}"])
                                                 </span>
                                                 <i class="bi bi-arrow-right mx-1"></i>
-                                                <span class="badge @Model.GetPaymentStatusBadgeClass(history.NewPaymentStatus)">
-                                                    @L[$"Enum:PaymentStatus.{history.NewPaymentStatus}"]
+                                                <span class="badge @Model.GetPaymentStatusBadgeClass(history.NewPaymentStatus) text-white">
+                                                    @Html.Raw(L[$"Enum:PaymentStatus.{history.NewPaymentStatus}"])
                                                 </span>
                                             </div>
                                         }
@@ -216,30 +228,42 @@
     </abp-card>
 
 </div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="cancelOrderModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@L["Order:ConfirmCancellation"]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>@L["Order:AreYouSureYouWantToCancelOrder"]</p>
+                <p><strong>@L["Order:Number"]:</strong> <span id="cancel-order-number"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@L["No"]</button>
+                <button type="button" class="btn btn-danger" id="confirm-cancel-btn">
+                    <span class="btn-text">@L["Yes:Cancel"]</span>
+                    <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @functions {
-    // Helper để lấy class màu cho badge
-    string GetPaymentMethodLocalization(string paymentMethod)
-    {
-        string localization = "Order:PaymentMethod:" + paymentMethod;
-        return L[localization] ?? paymentMethod;
-    }
     string GetHistoryMarkerClass(OrderHistoryDto history)
     {
-        // Different colors based on the change type
-        if (history.NewStatus == "Delivered")
-            return "bg-success";
-        if (history.NewStatus == "Shipped")
-            return "bg-primary";
-        if (history.NewStatus == "Cancelled")
-            return "bg-danger";
-        if (history.NewPaymentStatus == "Paid")
-            return "bg-success";
-        if (history.NewPaymentStatus == "Failed")
-            return "bg-danger";
-
+        if (history.NewStatus == "Delivered") return "bg-success";
+        if (history.NewStatus == "Shipped") return "bg-primary";
+        if (history.NewStatus == "Cancelled") return "bg-danger";
+        if (history.NewPaymentStatus == "Paid") return "bg-success";
+        if (history.NewPaymentStatus == "Failed") return "bg-danger";
         return "bg-info";
     }
 }
+
 @section styles {
     <style>
         .th-middle th {
@@ -248,6 +272,101 @@
     </style>
     <link href="~/css/shared/order-timeline.css" rel="stylesheet" />
 }
+
 @section scripts {
     <abp-script-bundle name="Shared.Order.SignalR" />
+    <script>
+        $(document).ready(function() {
+            let currentOrderId = null;
+            const cancelModal = new bootstrap.Modal(document.getElementById('cancelOrderModal'));
+
+            // Show alert function
+            function showAlert(message, type = 'success') {
+                const alertContainer = $('#alert-container');
+                const alertMessage = $('#alert-message');
+                const alertText = $('#alert-text');
+
+                alertMessage.removeClass('alert-success alert-danger alert-warning alert-info');
+                alertMessage.addClass(`alert-${type}`);
+                alertText.text(message);
+                alertContainer.fadeIn();
+
+                setTimeout(() => { alertContainer.fadeOut(); }, 5000);
+                $('html, body').animate({ scrollTop: 0 }, 300);
+            }
+
+            // Open cancel modal
+            $(document).on('click', '.btn-cancel-order', function(e) {
+                e.preventDefault();
+                currentOrderId = $(this).data('order-id');
+                const orderNumber = $(this).data('order-number');
+
+                $('#cancel-order-number').text(orderNumber);
+                cancelModal.show();
+            });
+
+            // Confirm cancellation via AJAX
+            $('#confirm-cancel-btn').on('click', async function() {
+                if (!currentOrderId) return;
+
+                const btn = $(this);
+                const btnText = btn.find('.btn-text');
+                const spinner = btn.find('.spinner-border');
+                const modalCloseBtn = $('.modal-footer .btn-secondary');
+
+                // UI: Loading state
+                btn.prop('disabled', true);
+                modalCloseBtn.prop('disabled', true);
+                btnText.addClass('d-none');
+                spinner.removeClass('d-none');
+
+                try {
+                    // Note: Ensure your PageModel has OnPostCancelOrderAjaxAsync method
+                    const response = await fetch('?handler=CancelOrderAjax', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        body: JSON.stringify({ orderId: currentOrderId })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Success Logic for Detail Page:
+
+                        // 1. Update Badge
+                        $('#orderStatusBadge')
+                            .removeClass('bg-primary bg-warning bg-info bg-success')
+                            .addClass('bg-danger')
+                            .html('@Html.Raw(L["Enum:OrderStatus.Cancelled"])');
+
+                        // 2. Remove Cancel Option
+                        $('#cancelOrderContainer').remove();
+
+                        // 3. Show Success
+                        showAlert(data.message, 'success');
+                        cancelModal.hide();
+
+                        // Optional: Reload after 1.5 seconds to refresh Timeline
+                        setTimeout(() => location.reload(), 1500);
+
+                    } else {
+                        showAlert(data.message, 'danger');
+                    }
+                } catch (error) {
+                    console.error('[CancelOrder] ERROR:', error);
+                    showAlert('@L["Error:GeneralError"]', 'danger');
+                } finally {
+                    // Reset UI
+                    btn.prop('disabled', false);
+                    modalCloseBtn.prop('disabled', false);
+                    btnText.removeClass('d-none');
+                    spinner.addClass('d-none');
+                    currentOrderId = null;
+                }
+            });
+        });
+    </script>
 }

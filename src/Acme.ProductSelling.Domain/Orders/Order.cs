@@ -296,13 +296,23 @@ namespace Acme.ProductSelling.Orders
 
         public void CancelByUser(IStringLocalizer<ProductSellingResource> localizer = null)
         {
-            if (OrderStatus != OrderStatus.Placed)
+            if (OrderStatus != OrderStatus.Placed && OrderStatus != OrderStatus.Pending)
             {
-                throw new UserFriendlyException(localizer["Order:OrderCanOnlyBeCancelledWhenPlaced"]);
+                throw new UserFriendlyException(
+                    localizer != null
+                        ? localizer["Order:OrderCanOnlyBeCancelledWhenPlacedOrPending"]
+                        : "Order can only be cancelled when status is Placed or Pending."
+                );
             }
+
+            // Still prevent cancelling if already PAID (for online orders)
             if (PaymentStatus == PaymentStatus.Paid)
             {
-                throw new UserFriendlyException(localizer["Order:CannotCancelPaidOrder"]);
+                throw new UserFriendlyException(
+                    localizer != null
+                        ? localizer["Order:CannotCancelPaidOrder"]
+                        : "Cannot cancel a paid order."
+                );
             }
 
             SetStatus(OrderStatus.Cancelled);

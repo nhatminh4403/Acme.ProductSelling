@@ -2,6 +2,7 @@
 using Acme.ProductSelling.Payments;
 using Riok.Mapperly.Abstractions;
 using System;
+using System.Collections.Generic;
 using Volo.Abp.Mapperly;
 
 namespace Acme.ProductSelling.Orders;
@@ -25,7 +26,40 @@ public partial class OrderToOrderDtoMapper : MapperBase<Order, OrderDto>
         destination.OrderStatusText = source.OrderStatus.ToString();
         destination.PaymentStatusText = source.PaymentStatus.ToString();
     }
+    public partial List<OrderDto> MapList(List<Order> orders);
+
 }
+[Mapper]
+public partial class OrderListMapper
+{
+    private readonly OrderToOrderDtoMapper _orderMapper;
+
+    public OrderListMapper(OrderToOrderDtoMapper orderMapper)
+    {
+        _orderMapper = orderMapper;
+    }
+
+    public List<OrderDto> MapList(List<Order> orders)
+    {
+        var result = new List<OrderDto>();
+        foreach (var order in orders)
+        {
+            result.Add(_orderMapper.Map(order));
+        }
+        return result;
+    }
+
+    // Alternative if you want partial method
+     //public partial List<OrderDto> MapList(List<Order> orders);
+}
+[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
+public partial class OrderItemToOrderItemDtoMapper : MapperBase<OrderItem, OrderItemDto>
+{
+    public override partial OrderItemDto Map(OrderItem source);
+    public override partial void Map(OrderItem source, OrderItemDto destination);
+}
+
+
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public partial class CreateOrderDtoToOrderMapper : MapperBase<CreateOrderDto, Order>
@@ -77,17 +111,35 @@ public partial class CreateOrderDtoToOrderMapper : MapperBase<CreateOrderDto, Or
     [MapperIgnoreTarget(nameof(Order.OrderType))]
     public override partial void Map(CreateOrderDto source, Order destination);
 }
+
+
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public partial class OrderHistoryToOrderHistoryDtoMapper : MapperBase<OrderHistory, OrderHistoryDto>
 {
-    // Auto convert enums to string if name matches and types differ? 
-    // Mapperly does strictly type safe. Need AfterMap for Enum->String unless naming convention allows.
-    // Assuming simple mapping for now.
     public override partial OrderHistoryDto Map(OrderHistory source);
+
     public override partial void Map(OrderHistory source, OrderHistoryDto destination);
 
-    // Assuming string properties in DTO match Enums in Entity, manual map might be needed
-    // if types differ (Enum vs String). 
     private string MapStatus(OrderStatus status) => status.ToString();
     private string MapPayStatus(PaymentStatus status) => status.ToString();
+}
+[Mapper]
+public partial class OrderHistoryListMapper
+{
+    private readonly OrderHistoryToOrderHistoryDtoMapper _historyMapper;
+
+    public OrderHistoryListMapper(OrderHistoryToOrderHistoryDtoMapper historyMapper)
+    {
+        _historyMapper = historyMapper;
+    }
+
+    public List<OrderHistoryDto> MapList(List<OrderHistory> histories)
+    {
+        var result = new List<OrderHistoryDto>();
+        foreach (var history in histories)
+        {
+            result.Add(_historyMapper.Map(history));
+        }
+        return result;
+    }
 }

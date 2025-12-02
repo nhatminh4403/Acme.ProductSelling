@@ -302,7 +302,8 @@
     "Order:Items": "Order Items",
     "Order:Number": "Order Number",
     "Order:OrderNumber": "Order Number",
-
+    "Order:Created": "Order Created",
+    "Order:HistoryUpdated": "History Updated",
     "Order:Date": "Order Date",
     "Order:OrderDate": "Order Date",
     "Order:TotalAmount": "Total Amount",
@@ -322,6 +323,7 @@
     "Order:CustomerPhone": "Phone Number",
     "Order:CustomerInformation": "Customer Information",
     "Order:PhoneNumber": "Phone Number",
+    "Order:CancelledByUser": "Cancelled by Customer",
     "Order:ShippingAddress": "Shipping Address",
     "Order:PaymentMethod:Default": "Payment Method",
     "Order:PaymentMethod:COD": "Cash on Delivery",
@@ -360,6 +362,7 @@
     "Order:OrderUpdatedSuccessfully": "Order updated successfully.",
     "Order:AreYouSureYouWantToConfirmCodPaymentForOrder": "Are you sure you want to confirm COD payment for order {0}?",
     "Order:OrderCancelledSuccessfully": "Order Successfully Cancelled",
+    "Order:OrderCanOnlyBeCancelledWhenPlacedOrPending": "Orders can only be cancelled when in Placed or Pending status.",
 
 
     "Order:OrderDetail": "Order Details",

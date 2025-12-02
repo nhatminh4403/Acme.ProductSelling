@@ -143,7 +143,7 @@
                     }
                 },
                 {
-                    title: l('Order:OrderNumber'),
+                    title: l('Order:Number'),
                     data: "orderNumber",
                     render: function (data, type, row) {
                         return `<a href="/${window.rolePrefix}/orders/details/${data}">${data}</a>`;

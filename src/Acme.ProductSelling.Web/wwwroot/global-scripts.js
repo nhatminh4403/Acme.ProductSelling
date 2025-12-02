@@ -373,15 +373,15 @@ const L = function (key, resourceName) {
         'Login:Processing': 'Đang xử lý đăng nhập...',
         'Login:Initiated': 'Bắt đầu đăng nhập',
         'Login:Success': 'Đăng nhập thành công!',
-        'Login:ErrorDefault': 'Đăng nhập thất bại. Vui lòng kiểm tra thông tin và thử lại.',
-        'Login:ErrorTitle': 'Lỗi đăng nhập',
-        'Login:ButtonDefault': 'Đăng nhập',
+        'Login:Error': 'Đăng nhập thất bại. Vui lòng kiểm tra thông tin và thử lại.',
+
+        'Login:Default': 'Đăng nhập',
         // Register
         'Register:Processing': 'Đang xử lý đăng ký...',
         'Register:Initiated': 'Bắt đầu đăng ký',
         'Register:SuccessAndLoggingIn': 'Đăng ký thành công! Đang đăng nhập...',
         'Register:ErrorDefault': 'Đăng ký thất bại. Vui lòng kiểm tra thông tin và thử lại.',
-        'Register:ButtonDefault': 'Đăng ký',
+        'Register:Button': 'Đăng ký',
         'Register:PasswordsDoNotMatch': 'Mật khẩu không khớp.',
         // Logout
         'Logout:Processing': 'Đang đăng xuất...',
@@ -389,9 +389,8 @@ const L = function (key, resourceName) {
         'Logout:Success': 'Bạn đã đăng xuất thành công!',
         'Logout:Complete': 'Đăng xuất hoàn tất',
         // Validation
-        'Validation:ErrorTitle': 'Lỗi xác thực',
         // Auto Login
-        'AutoLogin:ErrorDefault': 'Đăng ký thành công nhưng tự động đăng nhập thất bại. Vui lòng đăng nhập thủ công.',
+        'AutoLogin:Error': 'Tự động đăng nhập thất bại. Vui lòng đăng nhập thủ công.',
         'AutoLogin:WarnTitle': 'Cảnh báo tự động đăng nhập'
     };
 
@@ -739,7 +738,7 @@ $(function () {
             }
         }
 
-        errorMessage = errorMessage || L('Login:ErrorDefault');
+        errorMessage = errorMessage || L('Login:Error');
         showNotification(errorMessage, L('Login:ErrorTitle'), 'error');
     }
 
@@ -760,7 +759,7 @@ $(function () {
                 loginForm[0].reset();
             }
             if (loginButton) {
-                loginButton.prop('disabled', false).html(originalLoginButtonText || L('Login:ButtonDefault'));
+                loginButton.prop('disabled', false).html(originalLoginButtonText || L('Login:Default'));
             }
         });
     }
@@ -791,9 +790,11 @@ $(function () {
         const surname = $('#registerSurname').val().trim();
         const email = $('#registerEmail').val().trim();
         const password = $('#registerPassword').val();
+        const phoneNumber = $('#registerPhone').val();
+
         const confirmPassword = $('#registerConfirmPassword').val();
 
-        if (!name || !surname || !email || !password || !confirmPassword) {
+        if (!name || !surname || !email || !password || !confirmPassword || !phoneNumber) {
             showNotification('Vui lòng điền đầy đủ thông tin bắt buộc.', 'Lỗi xác thực', 'error');
             return;
         }
@@ -819,7 +820,8 @@ $(function () {
             password: password,
             surname: surname,
             name: name,
-            appName: "ProductSelling"
+            appName: "ProductSelling",
+            phoneNumber: phoneNumber
         };
 
         showNotification(L('Register:Processing'), L('Register:Initiated'), 'info', { timeOut: 1000 });
@@ -961,7 +963,7 @@ $(function () {
                 }
             },
             error: function (xhr) {
-                let errorMessage = L('AutoLogin:ErrorDefault');
+                let errorMessage = L('AutoLogin:Error');
                 try {
                     const errorData = JSON.parse(xhr.responseText);
                     if (errorData?.error?.message) {
@@ -993,7 +995,7 @@ $(function () {
                 registerForm[0].reset();
             }
             if (registerButton) {
-                registerButton.prop('disabled', false).html(originalRegisterButtonText || L('Register:ButtonDefault'));
+                registerButton.prop('disabled', false).html(originalRegisterButtonText || L('Register:Button'));
             }
         });
     }

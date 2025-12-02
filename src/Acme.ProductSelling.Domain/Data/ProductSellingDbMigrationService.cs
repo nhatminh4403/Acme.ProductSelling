@@ -13,6 +13,7 @@ using Volo.Abp.DependencyInjection;
 using Volo.Abp.Identity;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.TenantManagement;
+using Volo.Abp.Uow;
 
 namespace Acme.ProductSelling.Data;
 
@@ -24,12 +25,14 @@ public class ProductSellingDbMigrationService : ITransientDependency
     private readonly IEnumerable<IProductSellingDbSchemaMigrator> _dbSchemaMigrators;
     private readonly ITenantRepository _tenantRepository;
     private readonly ICurrentTenant _currentTenant;
-
+    //private readonly IUnitOfWorkManager _unitOfWorkManager;
     public ProductSellingDbMigrationService(
         IDataSeeder dataSeeder,
         ITenantRepository tenantRepository,
         ICurrentTenant currentTenant,
-        IEnumerable<IProductSellingDbSchemaMigrator> dbSchemaMigrators)
+        IEnumerable<IProductSellingDbSchemaMigrator> dbSchemaMigrators
+        //,IUnitOfWorkManager unitOfWorkManager
+        )
     {
         _dataSeeder = dataSeeder;
         _tenantRepository = tenantRepository;
@@ -37,6 +40,7 @@ public class ProductSellingDbMigrationService : ITransientDependency
         _dbSchemaMigrators = dbSchemaMigrators;
 
         Logger = NullLogger<ProductSellingDbMigrationService>.Instance;
+        //_unitOfWorkManager = unitOfWorkManager;
     }
 
     public async Task MigrateAsync()
@@ -105,6 +109,19 @@ public class ProductSellingDbMigrationService : ITransientDependency
     {
         Logger.LogInformation($"Executing {(tenant == null ? "host" : tenant.Name + " tenant")} database seed...");
 
+        //using (_currentTenant.Change(tenant?.Id))
+        //{
+        //    using (var uow = _unitOfWorkManager.Begin(requiresNew: true, isTransactional: false))
+        //    {
+        //        await _dataSeeder.SeedAsync(new DataSeedContext(tenant?.Id)
+        //                               .WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName,
+        //                                   ProductSellingConsts.AdminEmailDefaultValue)
+        //                               .WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName,
+        //                                   ProductSellingConsts.AdminPasswordDefaultValue)
+        //                           );
+        //        await uow.CompleteAsync();
+        //    }
+        //}
         await _dataSeeder.SeedAsync(new DataSeedContext(tenant?.Id)
             .WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName,
                 ProductSellingConsts.AdminEmailDefaultValue)

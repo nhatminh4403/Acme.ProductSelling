@@ -661,8 +661,10 @@ public class ProductSellingDbContext :
             b.ConfigureByConvention();
             b.Property(u => u.DateOfBirth).IsRequired(false);
             b.Property(u => u.Gender).IsRequired().HasDefaultValue(UserGender.NONE);
-
+            b.Property(u => u.PhoneNumber).IsRequired(false);
+            b.Property(u => u.ShippingAddress).IsRequired(false);
             b.HasIndex(c => c.AppUserId).IsUnique();
+            
         });
         #endregion
     }

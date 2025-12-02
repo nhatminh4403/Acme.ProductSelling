@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Orders.Dtos;
+using Acme.ProductSelling.Payments;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -27,5 +28,13 @@ namespace Acme.ProductSelling.Orders.Services
         Task<OrderDto> CompleteInStorePaymentAsync(Guid orderId, CompleteInStorePaymentDto input);
         Task<OrderDto> FulfillInStoreOrderAsync(Guid orderId);
         Task<PagedResultDto<OrderDto>> GetStoreOrdersAsync(GetOrderListInput input);
+        //Task LogOrderChangeAsync(
+        //    Guid orderId,
+        //    OrderStatus oldStatus,
+        //    OrderStatus newStatus,
+        //    PaymentStatus oldPaymentStatus,
+        //    PaymentStatus newPaymentStatus,
+        //    string description);
+        //Task<List<OrderHistoryDto>> GetOrderHistoryAsync(Guid orderId);
     }
 }

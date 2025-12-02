@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp;
+using Volo.Abp.Users;
 
 namespace Acme.ProductSelling.Web.Pages.Checkout
 {
@@ -21,12 +22,14 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
 
         private readonly ICartAppService _cartAppService;
         private readonly IOrderAppService _orderAppService;
+        private readonly ICurrentUser _currentUser;
 
-        public CheckoutModel(IOrderAppService orderAppService, ICartAppService cartService)
+        public CheckoutModel(IOrderAppService orderAppService, ICartAppService cartService, ICurrentUser currentUser)
         {
             _orderAppService = orderAppService;
             _cartAppService = cartService;
             OrderInput = new CreateOrderDto();
+            _currentUser = currentUser;
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -51,7 +54,7 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
             CurrentCart = await _cartAppService.GetUserCartAsync();
             if (CurrentCart == null || !CurrentCart.CartItems.Any())
             {
-                Alerts.Warning(L["ShoppingCartIsEmptyCannotPlaceOrder"]);
+                Alerts.Warning(L["IsEmptyCannotOrder"]);
                 return RedirectToPage("/Cart");
             }
 

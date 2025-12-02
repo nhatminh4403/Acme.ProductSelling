@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using Volo.Abp.Domain.Entities.Auditing;
 
 namespace Acme.ProductSelling.Users
@@ -10,6 +11,7 @@ namespace Acme.ProductSelling.Users
         public virtual AppUser AppUser { get; protected set; }
 
         // Customer-specific information
+        [CanBeNull]
         public string ShippingAddress { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public UserGender Gender { get; set; }
@@ -19,6 +21,7 @@ namespace Acme.ProductSelling.Users
         public string Surname { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
+        [CanBeNull]
         public string PhoneNumber { get; set; }
 
         protected Customer() { }

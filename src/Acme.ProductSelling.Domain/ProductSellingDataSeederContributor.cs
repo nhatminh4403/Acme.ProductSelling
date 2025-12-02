@@ -2283,6 +2283,18 @@ namespace Acme.ProductSelling
                 ProductSellingPermissions.Orders.Create,    // Create orders for customers
                 ProductSellingPermissions.Orders.Edit,      // Edit pending orders
             });
+
+            await GrantPermissionsToRoleAsync(customerRole.Name, new[]
+            {
+                ProductSellingPermissions.Products.Default, // View products
+                ProductSellingPermissions.Orders.Default,   // View own orders
+                ProductSellingPermissions.Orders.Create,    // Create orders
+                ProductSellingPermissions.Orders.Edit,      // Edit own pending orders
+                ProductSellingPermissions.Carts.Default,    // View own cart
+                ProductSellingPermissions.Carts.Delete,    // View own cart
+                ProductSellingPermissions.Comments.Create, // Create comments/reviews
+                ProductSellingPermissions.Comments.Delete, // Delete own comments/reviews
+            });
             #endregion
         }
 
