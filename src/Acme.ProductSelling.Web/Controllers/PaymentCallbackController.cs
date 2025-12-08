@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 namespace Acme.ProductSelling.Web.Controllers
 {
     [Route("api/payment")]
-    [ApiController] // IMPROVEMENT: Add ApiController attribute for better model binding
-    public class PaymentCallbackController : ControllerBase // IMPROVEMENT: Use ControllerBase for API controllers
+    [ApiController] 
+    public class PaymentCallbackController : ControllerBase 
     {
         private readonly IPaymentCallbackAppService _callbackAppService;
         private readonly IOrderAppService _orderAppService;

@@ -358,7 +358,15 @@ namespace Acme.ProductSelling.Orders
             }
             else
             {
-                orderToProcess.SetPaymentStatus(PaymentStatus.Pending);
+                if (orderToProcess.PaymentStatus != PaymentStatus.Pending)
+                {
+                    orderToProcess.SetPaymentStatus(PaymentStatus.Pending);
+                    Logger.LogInformation("[CreateOrder] Online payment - PaymentStatus set to Pending");
+                }
+                else
+                {
+                    Logger.LogInformation("[CreateOrder] Online payment - PaymentStatus already Pending, skipping status change");
+                }
                 orderToProcess.SetStatus(OrderStatus.Placed);
                 Logger.LogInformation("[CreateOrder] Online payment - Status set to Placed, PaymentStatus set to Pending");
             }
@@ -884,7 +892,24 @@ namespace Acme.ProductSelling.Orders
                     id, order.CustomerId, CurrentUser.Id);
                 throw new AbpAuthorizationException(L["Account:Unauthorized"]);
             }
+            if (order.OrderStatus != OrderStatus.Placed && order.OrderStatus != OrderStatus.Pending)
+            {
+                Logger.LogWarning("[DeleteOrder] FAILED - Invalid status. OrderId: {OrderId}, Status: {Status}",
+                    id, order.OrderStatus);
+                throw new UserFriendlyException(
+                    L["Order:CannotCancelOrderInCurrentStatus"],
+                    $"Cannot cancel order in status: {order.OrderStatus}"
+                );
+            }
 
+            if (order.PaymentStatus == PaymentStatus.Paid)
+            {
+                Logger.LogWarning("[DeleteOrder] FAILED - Order already paid. OrderId: {OrderId}", id);
+                throw new UserFriendlyException(
+                    L["Order:CannotCancelPaidOrder"],
+                    "Cannot cancel a paid order."
+                );
+            }
             var oldStatus = order.OrderStatus;
             var oldPaymentStatus = order.PaymentStatus;
 
@@ -910,10 +935,7 @@ namespace Acme.ProductSelling.Orders
             await _orderRepository.UpdateAsync(order, autoSave: true);
             Logger.LogDebug("[DeleteOrder] Order updated in database");
 
-            if (order.OrderStatus != OrderStatus.Placed && order.OrderStatus != OrderStatus.Pending)
-            {
-                throw new UserFriendlyException("Cannot cancel this order.");
-            }
+
             await _orderHistoryAppService.LogOrderChangeAsync(
                 id,
                 oldStatus,

@@ -594,12 +594,12 @@ public class ProductSellingWebModule : AbpModule
 
         if (!env.IsDevelopment())
         {
-            //app.UseErrorPage();
-            app.UseExceptionHandler("/loi");
+            app.UseErrorPage();
+            //app.UseExceptionHandler("/loi");
 
             app.UseHsts();
         }
-        app.UseStatusCodePagesWithReExecute("/loi", "?statusCode={0}");
+        //app.UseStatusCodePagesWithReExecute("/loi", "?statusCode={0}");
 
         app.UseMiddleware<QueryStringFilterMiddleware>();
 

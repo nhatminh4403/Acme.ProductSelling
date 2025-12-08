@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Acme.ProductSelling.Web.Controllers
 {
-    [Route("thanh-toan")]
+    [Route("/thanh-toan")]
     public class PaymentReturnController : Controller
     {
         private readonly IOrderAppService _orderAppService;

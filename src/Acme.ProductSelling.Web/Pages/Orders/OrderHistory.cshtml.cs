@@ -2,6 +2,7 @@
 using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Orders.Services;
 using Acme.ProductSelling.Payments;
+using Acme.ProductSelling.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -28,6 +29,7 @@ namespace Acme.ProductSelling.Web.Pages.Orders
         public PagerModel PagerModel { get; set; }
 
         public PagedResultDto<OrderDto> Orders { get; set; }
+        public PaginationViewModel Pagination { get; set; }
 
         public OrderHistoryModel(IOrderAppService orderAppService)
         {
@@ -45,7 +47,20 @@ namespace Acme.ProductSelling.Web.Pages.Orders
             };
             Orders = await _orderAppService.GetListForCurrentUserAsync(input);
 
-            PagerModel = new PagerModel(Orders.TotalCount, 3, CurrentPage, PageSize, "/");
+            Pagination = new PaginationViewModel(
+                            currentPage: CurrentPage,
+                            totalCount: (int)Orders.TotalCount,
+                            pageSize: PageSize,
+                            baseUrl: "/history-order"
+                        )
+            {
+                ShowInfo = true,
+                ShowFirstLast = true,
+                ShowPrevNext = true,
+                ShowPageNumbers = true,
+                MaxVisiblePages = 5,
+                AdditionalQueryParams = !string.IsNullOrEmpty(Sorting) ? $"sorting={Sorting}" : null
+            };
         }
         public async Task<IActionResult> OnPostCancelOrderAjaxAsync([FromBody] CancelOrderRequest request)
         {

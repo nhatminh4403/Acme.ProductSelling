@@ -264,8 +264,8 @@ namespace Acme.ProductSelling.PaymentGateway.MoMo.Services
             if (request.Amount < 1000)
                 throw new UserFriendlyException("Số tiền thanh toán tối thiểu là 1,000 VNĐ");
 
-            if (request.Amount > 20000000)
-                throw new UserFriendlyException("Số tiền thanh toán vượt quá giới hạn 20,000,000 VNĐ");
+            //if (request.Amount > 20000000)
+            //    throw new UserFriendlyException("Số tiền thanh toán vượt quá giới hạn 20,000,000 VNĐ");
 
             if (string.IsNullOrWhiteSpace(request.RedirectUrl))
                 throw new UserFriendlyException("RedirectUrl is required");

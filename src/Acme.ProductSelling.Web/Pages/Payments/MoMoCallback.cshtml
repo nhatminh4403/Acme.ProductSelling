@@ -1,14 +1,37 @@
 ﻿@page "/thanh-toan/momo-callback"
 @model Acme.ProductSelling.Web.Pages.Payments.MoMoCallbackModel
 @{
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Thanh toán MoMo";
 }
 
-@if(Model.IsSuccess)
+@if (Model.IsSuccess)
 {
     <div class="container mt-4">
         <h1>Thanh toán thành công</h1>
         <p>@Model.OutputMessage</p>
+        @if (Model.OrderGuid != Guid.Empty)
+        {
 
+            <p>Xem chi tiết đơn hàng</p>
+
+        }
+        else
+        {
+
+
+            @* Thanh toán thất bại *@
+            @Model.OutputMessage
+
+
+            @if (Model.OrderGuid != Guid.Empty)
+            {
+
+                <p>Quay lại đơn hàng</p>
+
+            }
+
+        }
         <a class="btn btn-primary" asp-page="/">Quay lại trang chủ</a>
 
     </div>

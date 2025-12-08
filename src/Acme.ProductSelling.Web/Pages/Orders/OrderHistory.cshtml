@@ -1,6 +1,7 @@
 ﻿@page "/history-order"
 @model Acme.ProductSelling.Web.Pages.Orders.OrderHistoryModel
 @using Volo.Abp.AspNetCore.Mvc.UI.Packages.SignalR
+@using Acme.ProductSelling.Web.Pages.Components.Pagination
 
 @inject Volo.Abp.Users.ICurrentUser CurrentUser
 @{
@@ -112,8 +113,13 @@
                 </abp-table>
 
                 <div class="mt-4">
-                    <abp-paginator asp-page="/history-order" show-info="true" model="Model.PagerModel" class="mb-4">
-                    </abp-paginator>
+                    @* <abp-paginator asp-page="/history-order" show-info="true" model="Model.PagerModel" class="mb-4">
+                    </abp-paginator> *@
+                    <!-- NEW: Use custom pagination component -->
+                    <div class="mt-4">
+                        @await Component.InvokeAsync(typeof(PaginationViewComponent), new { model = Model.Pagination })
+                    </div>
+                    
                 </div>
             }
             else

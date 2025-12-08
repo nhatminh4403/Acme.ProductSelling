@@ -60,7 +60,7 @@ namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
 
                 var baseUrl = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}";
                 var returnUrl = $"{baseUrl}{_options.PaymentBackReturnUrl}";
-
+                _logger.LogInformation("BaseUrl: {BaseUrl}, ReturnUrl: {ReturnUrl}", baseUrl, returnUrl);
                 _logger.LogInformation(
                     "Creating VNPay payment URL. OrderId: {OrderId}, Amount: {Amount}, ReturnUrl: {ReturnUrl}",
                     model.OrderId, model.Price, returnUrl

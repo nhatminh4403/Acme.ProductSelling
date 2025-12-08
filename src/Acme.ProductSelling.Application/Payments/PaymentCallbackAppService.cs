@@ -465,53 +465,7 @@ namespace Acme.ProductSelling.Payments
                 throw new UserFriendlyException("Đã có lỗi xảy ra khi xử lý IPN từ MoMo.");
             }
         }
-        /*   public async Task ProcessMoMoIpnAsync(MomoIPNRequest request)
-           {
-               // MoMo sẽ gửi dữ liệu IPN qua query string
-               bool isValid = await _moMoService.ValidateIPNRequest(request);
-               try
-               {
-                   if (!isValid)
-                   {
-                       _logger.LogWarning("Xác thực IPN MoMo thất bại. Dữ liệu: {Data}", request);
-                       throw new UserFriendlyException("Dữ liệu IPN từ MoMo không hợp lệ.");
-                   }
-
-                   _logger.LogInformation("Xác thực IPN MoMo thành công cho OrderId: {OrderId}", request.orderId);
-
-                   if (!Guid.TryParse(request.orderId, out var orderId))
-                   {
-                       _logger.LogError("Mã tham chiếu (orderId) không phải là một Guid hợp lệ: {OrderId}", request.orderId);
-                       throw new UserFriendlyException("Mã tham chiếu không hợp lệ.");
-                   }
-
-                   var order = await _orderRepository.FindAsync(orderId);
-                   if (order == null)
-                   {
-                       _logger.LogWarning("Không tìm thấy đơn hàng với Id: {OrderId}", orderId);
-                       throw new UserFriendlyException("Không tìm thấy đơn hàng.");
-                   }
-                   // Bước 4: Kiểm tra trạng thái giao dịch và trạng thái đơn hàng để tránh xử lý lặp lại.
-
-                   if (request.resultCode == 0 && order.PaymentStatus == PaymentStatus.Pending)
-                   {
-                       order.MarkAsPaidOnline();
-                       await _orderRepository.UpdateAsync(order, autoSave: true);
-                       await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
-                       _logger.LogInformation("Cập nhật trạng thái đơn hàng thành công cho OrderId: {OrderId}", order.Id);
-                   }
-                   else
-                   {
-                       _logger.LogWarning("Bỏ qua xử lý MoMo IPN cho OrderId: {OrderId}. ResultCode: {resultCode}, OrderStatus: {status}", order.Id, request.resultCode, order.OrderStatus);
-                   }
-               }
-               catch (Exception ex)
-               {
-                   _logger.LogError(ex, "Lỗi khi xử lý IPN từ MoMo: {Message}", ex.Message);
-                   throw new UserFriendlyException("Đã có lỗi xảy ra khi xử lý IPN từ MoMo.");
-               }
-           }
-      */
+      
     }
 }
 

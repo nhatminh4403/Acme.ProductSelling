@@ -122,10 +122,10 @@ namespace Acme.ProductSelling.Payments
                 throw new UserFriendlyException("Số tiền thanh toán tối thiểu là 1,000 VNĐ.");
             }
 
-            if (order.TotalAmount > 20000000) // 20 million VND
-            {
-                throw new UserFriendlyException("Số tiền thanh toán vượt quá giới hạn cho phép của MoMo.");
-            }
+            //if (order.TotalAmount > 20000000) // 20 million VND
+            //{
+            //    throw new UserFriendlyException("Số tiền thanh toán vượt quá giới hạn cho phép của MoMo.");
+            //}
 
             if (order.PaymentStatus == PaymentStatus.Paid)
             {

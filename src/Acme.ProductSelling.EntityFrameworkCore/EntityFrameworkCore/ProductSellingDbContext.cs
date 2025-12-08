@@ -217,6 +217,8 @@ public class ProductSellingDbContext :
                 .WithMany()
                 .HasForeignKey(x => x.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
+            b.HasQueryFilter(x => !x.Product.IsDeleted);
+
         });
 
         builder.Entity<StoreInventory>(b =>

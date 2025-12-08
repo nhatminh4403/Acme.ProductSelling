@@ -62,8 +62,8 @@ namespace Acme.ProductSelling.Payments
                 {
                     totalPriceUSD = await _exchangeCurrencyService.ConvertCurrencyAsync(
                         (long)order.TotalAmount,
-                        "USD",
-                        "VND"
+                        
+                        "VND", "USD"
                     );
                 }
                 catch (Exception ex)
