@@ -49,7 +49,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
             }
 
             // Tạo input cho service
-            var input = new Categories.Dtos.GetProductsByCategoryInput
+            var input = new GetProductsByCategoryInput
             {
                 CategoryId = category.Id,
                 MaxResultCount = PageSize,

@@ -19,8 +19,14 @@ namespace Acme.ProductSelling.Categories.Dtos
         public string UrlSlug { get; set; }
         public SpecificationType SpecificationType { get; set; }
         public List<ManufacturerDto> Manufacturers { get; set; }
-    }
+        public List<PriceMenuLinkDto> PriceRanges { get; set; } = new List<PriceMenuLinkDto>();
 
+    }
+    public class PriceMenuLinkDto
+    {
+        public string DisplayText { get; set; } // The localized string (e.g., "Under 15 Million")
+        public string UrlValue { get; set; }    // The enum value (e.g., "Low")
+    }
 
     public class GroupedCategoriesResultDto
     {

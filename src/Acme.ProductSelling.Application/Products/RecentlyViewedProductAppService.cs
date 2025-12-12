@@ -41,10 +41,8 @@ namespace Acme.ProductSelling.Products
 
                 orderedProductIds.AddRange(dbHistory.Select(x => x.ProductId));
             }
-            // Add guest IDs avoiding duplicates
             if (input.GuestProductIds?.Any() == true)
             {
-                // Create HashSet for O(1) lookups to avoid n^2 complexity if lists are large
                 var existingIds = orderedProductIds.ToHashSet();
                 foreach (var guestId in input.GuestProductIds)
                 {

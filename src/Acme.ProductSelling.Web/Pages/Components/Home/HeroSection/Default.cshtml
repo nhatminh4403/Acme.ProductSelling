@@ -104,36 +104,29 @@
                                             </div>
                                         </div>
 
-                                        @* Price Ranges Column *@
-                                        @if (category.SpecificationType != SpecificationType.Services)
+                                        @if (category.PriceRanges != null && category.PriceRanges.Any())
                                         {
-                                         <div class="col-md-3">
-                                            <div class="subcategory">
-                                                <h5 class="subcategory-title">@L["UI:ByPrice"]</h5>
-                                                <div class="subcategory-links">
-                                                    <a asp-page="/Products/ProductsByPrice"
-                                                       asp-route-slug="@category.UrlSlug"
-                                                       asp-route-PriceRangeAlias="@L["PriceRange:Under1Million"].Value">
-                                                        @L["PriceRange:Under1Million"]
-                                                    </a>
-                                                    <a asp-page="/Products/ProductsByPrice"
-                                                       asp-route-slug="@category.UrlSlug"
-                                                       asp-route-PriceRangeAlias="@L["PriceRange:From1MillionTo5Million"].Value">
-                                                        @L["PriceRange:From1MillionTo5Million"]
-                                                    </a>
-                                                    <a asp-page="/Products/ProductsByPrice"
-                                                       asp-route-slug="@category.UrlSlug"
-                                                       asp-route-PriceRangeAlias="@L["PriceRange:From5MillionTo20Million"].Value">
-                                                        @L["PriceRange:From5MillionTo20Million"]
-                                                    </a>
-                                                    <a asp-page="/Products/ProductsByPrice"
-                                                       asp-route-slug="@category.UrlSlug"
-                                                       asp-route-PriceRangeAlias="@L["PriceRange:Over20Million"].Value">
-                                                        @L["PriceRange:Over20Million"]
-                                                    </a>
+                                            <div class="col-md-3">
+                                                <div class="subcategory">
+                                                    <h5 class="subcategory-title">@L["UI:ByPrice"]</h5>
+                                                    <div class="subcategory-links">
+                                                        @foreach (var range in category.PriceRanges)
+                                                        {
+                                                            @* 
+                        NOTICE: 
+                        1. asp-route-priceRange matches the Input property in your Products page 
+                        2. range.UrlValue will be "Low", "Medium", etc.
+                    *@
+                                                            <a asp-page="/Products/ProductsByCategory"
+                                                               asp-route-slug="@category.UrlSlug"
+                                                               asp-route-priceRange="@range.UrlValue">
+                                                                @range.DisplayText
+                                                            </a>
+                                                        }
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        }
 
                                         }
                                     </div>
@@ -192,32 +185,32 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @if (category.PriceRanges != null && category.PriceRanges.Any())
+                                            {
+                                                <div class="col-md-3">
+                                                    <div class="subcategory">
+                                                        <h5 class="subcategory-title">@L["UI:ByPrice"]</h5>
+                                                        <div class="subcategory-links">
+                                                            @foreach (var range in category.PriceRanges)
+                                                            {
+                                                                @* 
+                        NOTICE: 
+                        1. asp-route-priceRange matches the Input property in your Products page 
+                        2. range.UrlValue will be "Low", "Medium", etc.
+                    *@
+                                                                <a asp-page="/Products/ProductsByCategory"
+                                                                   asp-route-slug="@category.UrlSlug"
+                                                                   asp-route-priceRange="@range.UrlValue">
+                                                                    @range.DisplayText
+                                                                </a>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
                                         }
 
-                                        @* Add price column for the entire group *@
-                                        <div class="col-md-3">
-                                            <div class="subcategory">
-                                                <h5 class="subcategory-title">@L["UI:ByPrice"]</h5>
-                                                <div class="subcategory-links">
-                                                    <a asp-page="/Products/ProductsByPrice"
-                                                       asp-route-PriceRangeAlias="@L["PriceRange:Under1Million"].Value">
-                                                        @L["PriceRange:Under1Million"]
-                                                    </a>
-                                                    <a asp-page="/Products/ProductsByPrice"
-                                                       asp-route-PriceRangeAlias="@L["PriceRange:From1MillionTo5Million"].Value">
-                                                        @L["PriceRange:From1MillionTo5Million"]
-                                                    </a>
-                                                    <a asp-page="/Products/ProductsByPrice"
-                                                       asp-route-PriceRangeAlias="@L["PriceRange:From5MillionTo20Million"].Value">
-                                                        @L["PriceRange:From5MillionTo20Million"]
-                                                    </a>
-                                                    <a asp-page="/Products/ProductsByPrice"
-                                                       asp-route-PriceRangeAlias="@L["PriceRange:Over20Million"].Value">
-                                                        @L["PriceRange:Over20Million"]
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
+
                                     </div>
                                 </div>
                             </div>

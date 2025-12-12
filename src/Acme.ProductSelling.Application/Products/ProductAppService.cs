@@ -127,14 +127,17 @@ namespace Acme.ProductSelling.Products
             var productDto = _productToProductDtoMapper.Map(product);
 
             await PopulateStoreInventoryAsync(productDto, id);
-            try
+            _ = Task.Run(async () =>
             {
-                await _recentlyViewedService.TrackProductViewAsync(id);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Failed to track product view for ProductId: {ProductId}", id);
-            }
+                try
+                {
+                    await _recentlyViewedService.TrackProductViewAsync(id);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to track product view for ProductId: {ProductId}", id);
+                }
+            });
             return productDto;
         }
 
@@ -333,19 +336,31 @@ namespace Acme.ProductSelling.Products
             {
                 var query = await _productRepository.GetQueryableAsync();
 
-                // OPTIMIZATION: Select only what is needed for the card to reduce SQL payload.
-                // Using New Guid() works in SQL Server for Random sort.
                 var rawProducts = await query
                     .AsNoTracking()
                     .Where(p => p.CategoryId == category.Id && p.StockCount > 0)
-                    .OrderBy(p => Guid.NewGuid()) // SQL Random
-                    .Take(10)                    // Only fetch 10 rows from DB
-                    //.Shuffle()               // In-memory shuffle for better randomness
+                    .OrderBy(p => Guid.NewGuid())
+                    .Take(20) // Get 20, then shuffle and take 10
+                              //.Select(p => new  // Project only needed fields
+                              //{
+                              //    p.Id,
+                              //    p.ProductName,
+                              //    p.UrlSlug,
+                              //    p.ImageUrl,
+                              //    p.OriginalPrice,
+                              //    p.DiscountedPrice,
+                              //    p.DiscountPercent,
+                              //    CategoryName = p.Category.Name,
+                              //    ManufacturerName = p.Manufacturer.Name,
+                              //    p.StockCount
+                              //})
                     .Include(p => p.Category)
                     .Include(p => p.Manufacturer)
-                    .Include(p => p.StoreInventories) // Only if you strictly need stock status on carousel
+                    .Include(p => p.StoreInventories)
                     .ToListAsync();
-                rawProducts = rawProducts.Shuffle().ToList();
+
+
+                rawProducts = rawProducts.OrderBy(x => Guid.NewGuid()).Shuffle().ToList();
                 if (!rawProducts.Any()) continue;
 
                 // Map to DTO
@@ -353,7 +368,7 @@ namespace Acme.ProductSelling.Products
 
                 result.Add(new FeaturedCategoryProductsDto
                 {
-                    Category = ObjectMapper.Map<Category, CategoryDto>(category), // Or your specific mapper
+                    Category = ObjectMapper.Map<Category, CategoryDto>(category),
                     Products = productDtos
                 });
             }

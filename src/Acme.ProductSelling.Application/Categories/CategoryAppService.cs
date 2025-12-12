@@ -1,4 +1,5 @@
-﻿using Acme.ProductSelling.Categories.Dtos;
+﻿using Acme.ProductSelling.Categories.Configurations;
+using Acme.ProductSelling.Categories.Dtos;
 using Acme.ProductSelling.Categories.Services;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Manufacturers;
@@ -207,15 +208,36 @@ namespace Acme.ProductSelling.Categories
             var manufacturers = manufacturersByCategory.TryGetValue(category.Id, out var manufs)
                 ? manufs
                 : new List<Manufacturer>();
-            return new CategoryInGroupDto
+            var dto = new CategoryInGroupDto
             {
                 Id = category.Id,
                 Name = category.Name,
                 UrlSlug = category.UrlSlug,
                 SpecificationType = category.SpecificationType,
-                Manufacturers = manufacturers.Select(m => _manufacturerToDtoMapper.Map(m)).ToList()
-
+                Manufacturers = manufacturers.Select(m => _manufacturerToDtoMapper.Map(m)).ToList(),
+                PriceRanges = new List<PriceMenuLinkDto>()
             };
+
+            var activeRanges = PriceCategoryStrategy.GetRangesForCategory(category.SpecificationType);
+            foreach (var range in activeRanges)
+            {
+                // Dynamic Key Generation: "Enum:PriceRange.Laptop.Low", "Enum:PriceRange.Mouse.Low"
+                string key = $"Enum:PriceRange.{category.SpecificationType}.{range}";
+
+                // Fallback Key if specific not found: "Enum:PriceRange.Low"
+                var localizedText = _localizer[key];
+                if (localizedText.Name == key) // if translation missing
+                {
+                    localizedText = _localizer[$"Enum:PriceRange.{range}"];
+                }
+
+                dto.PriceRanges.Add(new PriceMenuLinkDto
+                {
+                    UrlValue = range.ToString(),
+                    DisplayText = localizedText.Value
+                });
+            }
+            return dto;
         }
 
         private CategoryWithManufacturersDto MapToCategoryWithManufacturers(

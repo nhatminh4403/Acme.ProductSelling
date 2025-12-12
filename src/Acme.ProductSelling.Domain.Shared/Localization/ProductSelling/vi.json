@@ -21,7 +21,7 @@
     "Menu:Home": "Trang chủ",
     "Menu:AppName": "XComputer",
     "MinPrice": "Giá tối thiểu",
-    "MaxPrice": "Giá tối đa",
+    "MaxPrice": "Giá cao nhất",
     "CategoryName": "Danh mục",
     "Expand": "Mở rộng",
     "Collapse": "Thu gọn",
@@ -415,10 +415,7 @@
     "UI:Brands": "Thương hiệu",
     "UI:ByPrice": "Theo giá",
     "UI:CategoryList": "Danh sách danh mục",
-    "UI:PriceRanges:Under1Million": "Dưới 1 triệu",
-    "UI:PriceRanges:From1To5Million": "Từ 1 - 5 triệu",
-    "UI:PriceRanges:From5To20Million": "Từ 5 - 20 triệu",
-    "UI:PriceRanges:Over20Million": "Trên 20 triệu",
+
     "UI:AllProductsByCategory": "Tất cả sản phẩm theo danh mục {0}",
     "UI:AllProductsByName": "Tất cả sản phẩm theo {0}",
     "UI:ProductsByManufacturer": "Sản phẩm theo hãng sản xuất",
@@ -1052,8 +1049,48 @@
     "User:UserName": "User Name",
     "User:Email": "Email",
     "User:Name": "Name",
-    "User:Roles": "Roles"
+    "User:Roles": "Roles",
+    "Enum:PriceRange.Low": "Giá rẻ",
+    "Enum:PriceRange.LowToMedium": "Phổ thông",
+    "Enum:PriceRange.Medium": "Tầm trung",
+    "Enum:PriceRange.MediumToHigh": "Cận cao cấp",
+    "Enum:PriceRange.High": "Cao cấp",
+    "Enum:PriceRange.Premium": "Siêu cao cấp",
 
+    "Category:CategoryName": "Danh mục:",
+
+    "Enum:PriceRange.Laptop.Low": "Dưới 15 triệu (Văn phòng)",
+    "Enum:PriceRange.Laptop.LowToMedium": "15 - 20 Triệu (Sinh viên)",
+    "Enum:PriceRange.Laptop.Medium": "20 - 25 Triệu (Kỹ thuật)",
+    "Enum:PriceRange.Laptop.High": "25 - 40 Triệu (Gaming)",
+    "Enum:PriceRange.Laptop.Premium": "Trên 40 Triệu (Workstation)",
+
+    "Enum:PriceRange.Monitor.Low": "Dưới 4 Triệu",
+    "Enum:PriceRange.Monitor.LowToMedium": "4 - 8 Triệu",
+    "Enum:PriceRange.Monitor.Medium": "8 - 15 Triệu",
+    "Enum:PriceRange.Monitor.High": "15 - 25 Triệu (Đồ họa)",
+    "Enum:PriceRange.Monitor.Premium": "Trên 25 Triệu (High-end)",
+
+    "Enum:PriceRange.GPU.Low": "Dưới 5 Triệu",
+    "Enum:PriceRange.GPU.LowToMedium": "5 - 10 Triệu",
+    "Enum:PriceRange.GPU.Medium": "10 - 20 Triệu",
+    "Enum:PriceRange.GPU.High": "20 - 35 Triệu",
+    "Enum:PriceRange.GPU.Premium": "Trên 35 Triệu",
+
+    "Enum:PriceRange.Mouse.Low": "Dưới 500k",
+    "Enum:PriceRange.Mouse.LowToMedium": "500k - 1.5 Triệu",
+    "Enum:PriceRange.Mouse.Medium": "1.5 - 3 Triệu",
+    "Enum:PriceRange.Mouse.High": "Trên 3 Triệu",
+
+    "Enum:PriceRange.Keyboard.Low": "Dưới 1 Triệu",
+    "Enum:PriceRange.Keyboard.LowToMedium": "1 - 2.5 Triệu",
+    "Enum:PriceRange.Keyboard.Medium": "2.5 - 5 Triệu",
+    "Enum:PriceRange.Keyboard.High": "Trên 5 Triệu (Custom)",
+
+    "Enum:PriceRange.Cable.Low": "Dưới 300k",
+    "Enum:PriceRange.Cable.LowToMedium": "300k - 800k",
+    "Enum:PriceRange.Cable.Medium": "800k - 2 Triệu",
+    "Enum:PriceRange.Cable.High": "Trên 2 Triệu"
   }
   
 }

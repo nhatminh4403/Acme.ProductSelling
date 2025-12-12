@@ -1092,6 +1092,52 @@
     "User:UserName": "User Name",
     "User:Email": "Email",
     "User:Name": "Name",
-    "User:Roles": "Roles"
+    "User:Roles": "Roles",
+
+    "Price:LowToHigh": "Price: Low to High",
+
+    "AllPrices": "All Prices",
+
+    "Enum:PriceRange.Low": "Budget Friendly",
+    "Enum:PriceRange.LowToMedium": "Entry Level",
+    "Enum:PriceRange.Medium": "Standard",
+    "Enum:PriceRange.MediumToHigh": "High Performance",
+    "Enum:PriceRange.High": "High End",
+    "Enum:PriceRange.Premium": "Premium / Enthusiast",
+
+    "Category:CategoryName": "Category:",
+
+    "Enum:PriceRange.Laptop.Low": "Under 15 Million (Office)",
+    "Enum:PriceRange.Laptop.LowToMedium": "15 - 20 Million (Student)",
+    "Enum:PriceRange.Laptop.Medium": "20 - 25 Million (Performance)",
+    "Enum:PriceRange.Laptop.High": "25 - 40 Million (Gaming)",
+    "Enum:PriceRange.Laptop.Premium": "Over 40 Million (Workstation)",
+
+    "Enum:PriceRange.Monitor.Low": "Under 4 Million",
+    "Enum:PriceRange.Monitor.LowToMedium": "4 - 8 Million",
+    "Enum:PriceRange.Monitor.Medium": "8 - 15 Million",
+    "Enum:PriceRange.Monitor.High": "15 - 25 Million",
+    "Enum:PriceRange.Monitor.Premium": "Over 25 Million",
+
+    "Enum:PriceRange.GPU.Low": "Under 5 Million",
+    "Enum:PriceRange.GPU.LowToMedium": "5 - 10 Million",
+    "Enum:PriceRange.GPU.Medium": "10 - 20 Million",
+    "Enum:PriceRange.GPU.High": "20 - 35 Million",
+    "Enum:PriceRange.GPU.Premium": "Over 35 Million",
+
+    "Enum:PriceRange.Mouse.Low": "Budget (Under 500k)",
+    "Enum:PriceRange.Mouse.LowToMedium": "Standard (500k - 1.5M)",
+    "Enum:PriceRange.Mouse.Medium": "Esports (1.5M - 3M)",
+    "Enum:PriceRange.Mouse.High": "Pro / Collector (> 3M)",
+
+    "Enum:PriceRange.Keyboard.Low": "Under 1 Million",
+    "Enum:PriceRange.Keyboard.LowToMedium": "1 - 2.5 Million",
+    "Enum:PriceRange.Keyboard.Medium": "2.5 - 5 Million",
+    "Enum:PriceRange.Keyboard.High": "Over 5 Million",
+
+    "Enum:PriceRange.Cable.Low": "Standard (< 300k)",
+    "Enum:PriceRange.Cable.LowToMedium": "Certified (300k - 800k)",
+    "Enum:PriceRange.Cable.Medium": "High Quality (800k - 2M)",
+    "Enum:PriceRange.Cable.High": "Audiophile (> 2M)"
   }
 }

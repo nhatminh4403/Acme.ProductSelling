@@ -2,7 +2,9 @@
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Localization;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
@@ -12,37 +14,26 @@ public class IndexModel : ProductSellingPageModel
 {
     private readonly IStringLocalizer<ProductSellingResource> _localizer;
     private readonly IProductAppService _productAppService;
-    private int CurrentPage { get; set; } = 1;
-    private int PageSize { get; set; } = 24;
-    public PagedResultDto<ProductDto> ProductList { get; set; }
-    public PagedResultDto<ManufacturerDto> ManufacturerList { get; set; }
-    public List<FeaturedCategoryProductsDto> FeaturedProductCarousels { get; set; }
 
+    public List<FeaturedCategoryProductsDto> FeaturedProductCarousels { get; set; }
+    private readonly IDistributedCache _cache;
     public IndexModel(IProductAppService productAppService,
-                      IStringLocalizer<ProductSellingResource> localizer)
+                      IStringLocalizer<ProductSellingResource> localizer,
+                      IDistributedCache cache)
     {
         _productAppService = productAppService;
         _localizer = localizer;
+        _cache = cache;
     }
 
     public async Task OnGetAsync()
     {
-        var input = new PagedAndSortedResultRequestDto
-        {
-            MaxResultCount = PageSize,
-            SkipCount = (CurrentPage - 1) * PageSize,
-            Sorting = "ProductName",
-
-        };
-        ViewData["Title"] = _localizer["Menu:Home"];
-
-        var productList = await _productAppService.GetListAsync(input);
-        ProductList = new PagedResultDto<ProductDto>
-        {
-            Items = productList.Items,
-            TotalCount = productList.TotalCount
-        };
-
+        //var cacheKey = "home:featured-carousels";
+        //FeaturedProductCarousels = await _cache.GetOrCreateAsync(
+        //    cacheKey,
+        //    async () => await _productAppService.GetFeaturedProductCarouselsAsync(),
+        //    TimeSpan.FromHours(1)
+        //);
         FeaturedProductCarousels = await _productAppService.GetFeaturedProductCarouselsAsync();
     }
 }

@@ -311,7 +311,12 @@ public class ProductSellingWebModule : AbpModule
             config.UseMemoryStorage(); // For development only
             // config.UseRedisStorage("localhost:6379"); // For production
         });
-        services.AddHangfireServer();
+        services.AddHangfireServer(options =>
+        {
+            options.WorkerCount = 1;
+            options.SchedulePollingInterval = TimeSpan.FromHours(6); // From 15 seconds
+            options.HeartbeatInterval = TimeSpan.FromMinutes(5);
+        });
     }
     private void ConfigureAdminPages(IServiceCollection services)
     {
@@ -445,7 +450,7 @@ public class ProductSellingWebModule : AbpModule
             );
 
             options.ScriptBundles.Add(
-                "Admin.Global", 
+                "Admin.Global",
                 bundle =>
                 {
                     bundle.AddContributors(typeof(DatatablesNetScriptContributor));
@@ -454,7 +459,7 @@ public class ProductSellingWebModule : AbpModule
                 }
             );
             options.StyleBundles.Add(
-                "Admin.Global", 
+                "Admin.Global",
                 bundle =>
                 {
                     bundle.AddFiles("/css/admin/main/style.css");
@@ -594,12 +599,12 @@ public class ProductSellingWebModule : AbpModule
 
         if (!env.IsDevelopment())
         {
-            app.UseErrorPage();
-            //app.UseExceptionHandler("/loi");
+            //app.UseErrorPage();
+            app.UseExceptionHandler("/loi");
 
             app.UseHsts();
         }
-        //app.UseStatusCodePagesWithReExecute("/loi", "?statusCode={0}");
+        app.UseStatusCodePagesWithReExecute("/loi", "?statusCode={0}");
 
         app.UseMiddleware<QueryStringFilterMiddleware>();
 
@@ -647,7 +652,7 @@ public class ProductSellingWebModule : AbpModule
                 "recently-viewed-cleanup",
                 job => job.ExecuteAsync(new RecentlyViewedCleanupArgs
                 { DaysToKeep = RecentlyViewedConsts.CleanupDaysToKeep }),
-                Cron.Daily(3, 0)
+                Cron.Daily(0, 30)
         );
         app.UseConfiguredEndpoints(endpoints =>
         {

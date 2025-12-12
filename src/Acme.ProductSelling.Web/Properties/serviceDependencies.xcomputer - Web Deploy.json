@@ -1,8 +1,10 @@
 {
   "dependencies": {
     "mssql1": {
-      "ignored": "true",
-      "type": "mssql",
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('serviceConnectorResourceGroupName')]/providers/Microsoft.Web/sites/xcomputer/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsDefault_16D6D9EDA5",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/dacnwebsite/databases/ProductSelling",
+      "type": "mssql.azure",
       "connectionId": "ConnectionStrings:Default"
     }
   }

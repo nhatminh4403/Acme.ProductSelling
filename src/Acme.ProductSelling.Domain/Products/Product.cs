@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories.Configurations;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Specifications.Models;
 using Acme.ProductSelling.StoreInventories;
@@ -51,6 +52,9 @@ namespace Acme.ProductSelling.Products
         public Category Category { get; set; }
         public Guid ManufacturerId { get; set; }
         public bool IsActive { get; set; }
+
+        
+
         public virtual Manufacturer Manufacturer { get; set; }
         public virtual ICollection<StoreInventory> StoreInventories { get; set; } = new HashSet<StoreInventory>();
 

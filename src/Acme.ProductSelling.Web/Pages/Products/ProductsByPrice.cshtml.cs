@@ -1,5 +1,6 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Localization;
+using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -29,100 +30,73 @@ namespace Acme.ProductSelling.Web.Pages.Products
             _productLookupAppService = productLookupAppService;
         }
         public PagedResultDto<ProductDto> Products { get; set; }
-        public decimal MinPrice { get; set; }
-        public decimal MaxPrice { get; set; }
-        public string Filter { get; set; }
-        public string Sorting { get; set; } = "ProductName";
+        public string CategoryName { get; set; }
+        public string DisplayPriceRangeName { get; set; } // Use for Page Title
+        public PagerModel PagerModel { get; set; }
+
+        // INPUTS
         [BindProperty(SupportsGet = true)]
         public string Slug { get; set; }
-        public string CategoryName { get; set; }
-        public int PageSize = 6;
-        public int CurrentPage { get; set; } = 1;
+
+        // Automatically matches "Low", "Medium", etc. from URL
         [BindProperty(SupportsGet = true)]
-        public string PriceRangeAlias { get; set; }
-        public PagerModel PagerModel { get; set; }
-        public string DisplayPriceRangeName { get; set; }
+        public PriceRangeEnum? PriceRange { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string Sorting { get; set; } = "ProductName";
+
+        public int PageSize = 10;
+        [BindProperty(SupportsGet = true)]
+        public int CurrentPage { get; set; } = 1;
 
         public async Task<IActionResult> OnGetAsync()
         {
+            if (string.IsNullOrEmpty(Slug)) return NotFound();
             try
             {
-                string incomingAliasLower = this.PriceRangeAlias?.ToLowerInvariant();
-                var cultureEn = new CultureInfo("en");
-                var cultureVi = new CultureInfo("vi");
-
-                var aliasUnder1M_en = GetLocalizedString("PriceRangeAlias:Under1Million", cultureEn).ToLowerInvariant();
-                var aliasUnder1M_vi = GetLocalizedString("PriceRangeAlias:Under1Million", cultureVi).ToLowerInvariant();
-
-                var alias1Mto5M_en = GetLocalizedString("PriceRangeAlias:From1MillionTo5Million", cultureEn).ToLowerInvariant();
-                var alias1Mto5M_vi = GetLocalizedString("PriceRangeAlias:From1MillionTo5Million", cultureVi).ToLowerInvariant();
-
-                var alias5Mto20M_en = GetLocalizedString("PriceRangeAlias:From5MillionTo20Million", cultureEn).ToLowerInvariant();
-                var alias5Mto20M_vi = GetLocalizedString("PriceRangeAlias:From5MillionTo20Million", cultureVi).ToLowerInvariant();
-
-                var aliasOver20M_en = GetLocalizedString("PriceRangeAlias:Over20Million", cultureEn).ToLowerInvariant();
-                var aliasOver20M_vi = GetLocalizedString("PriceRangeAlias:Over20Million", cultureVi).ToLowerInvariant();
-                bool matched = false;
-
-                if (incomingAliasLower == aliasUnder1M_en || incomingAliasLower == aliasUnder1M_vi)
-                {
-                    MinPrice = 0; MaxPrice = 999999;
-                    DisplayPriceRangeName = _localizer["PriceRangeAlias:Under1Million"];
-                    matched = true;
-                }
-                else if (incomingAliasLower == alias1Mto5M_en || incomingAliasLower == alias1Mto5M_vi)
-                {
-                    MinPrice = 1000000; MaxPrice = 4999999;
-                    DisplayPriceRangeName = _localizer["PriceRangeAlias:From1MillionTo5Million"];
-                    matched = true;
-                }
-                else if (incomingAliasLower == alias5Mto20M_en || incomingAliasLower == alias5Mto20M_vi)
-                {
-                    MinPrice = 5000000; MaxPrice = 19999999;
-                    DisplayPriceRangeName = _localizer["PriceRangeAlias:From5MillionTo20Million"];
-                    matched = true;
-                }
-                else if (incomingAliasLower == aliasOver20M_en || incomingAliasLower == aliasOver20M_vi)
-                {
-                    MinPrice = 20000000; MaxPrice = decimal.MaxValue;
-                    DisplayPriceRangeName = _localizer["PriceRangeAlias:Over20Million"];
-                    matched = true;
-                }
-                else
-                {
-                    DisplayPriceRangeName = this.PriceRangeAlias;
-                    if (!string.IsNullOrEmpty(this.PriceRangeAlias))
-                    {
-                        Logger.LogWarning($"Unknown PriceRangeAlias: {this.PriceRangeAlias}");
-                    }
-                }
-
-                if (string.IsNullOrEmpty(Slug))
-                {
-                    return NotFound("Category slug is required.");
-                }
-
                 var category = await _categoryRepository.GetBySlugAsync(Slug);
                 CategoryName = category.Name;
+
+                // 1. Prepare Request DTO
                 var input = new GetProductsByPriceDto
                 {
-                    MinPrice = MinPrice,
-                    MaxPrice = MaxPrice,
-                    Filter = Filter,
-                    Sorting = Sorting,
                     CategoryId = category.Id,
+                    PriceRange = PriceRange, // Pass the Enum directly
+                    Sorting = Sorting,
                     MaxResultCount = PageSize,
                     SkipCount = (CurrentPage - 1) * PageSize,
                 };
+
+                // 2. Execute
+                Products = await _productLookupAppService.GetListByProductPrice(input);
+
+                // 3. Set Display Name (Logic: "Category: Monitor" + "Enum: Price.Low")
+                if (PriceRange.HasValue)
+                {
+                    // Construct the dynamic localization key based on Category type
+                    // e.g., "Enum:PriceRange.Monitor.Low"
+                    string key = $"Enum:PriceRange.{category.SpecificationType}.{PriceRange}";
+
+                    var localizedText = _localizer[key];
+                    // Fallback to generic if specific not found
+                    DisplayPriceRangeName = localizedText.ResourceNotFound
+                        ? _localizer[$"Enum:PriceRange.{PriceRange}"]
+                        : localizedText;
+                }
+                else
+                {
+                    DisplayPriceRangeName = L["AllPrices"];
+                }
+
+                // 4. Setup Pager
                 var routeValues = new Dictionary<string, string>
                 {
                     { "slug", Slug },
-                    { "priceRangeAlias", PriceRangeAlias }
+                    { "priceRange", PriceRange?.ToString() }, // Puts "Low" in URL
+                    { "sorting", Sorting }
                 };
 
-                Products = await _productLookupAppService.GetListByProductPrice(input);
-
-                PagerModel = new PagerModel(Products.TotalCount, 3, CurrentPage, PageSize, Url.Page("./ProductByPrice", routeValues), Sorting);
+                PagerModel = new PagerModel(Products.TotalCount, PageSize, CurrentPage, PageSize, Url.Page("./ProductByPrice", routeValues));
 
                 return Page();
             }

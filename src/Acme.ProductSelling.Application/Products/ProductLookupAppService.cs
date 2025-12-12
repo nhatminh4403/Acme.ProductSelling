@@ -1,9 +1,12 @@
-﻿using Acme.ProductSelling.Categories.Dtos;
+﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories.Configurations;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
@@ -16,16 +19,19 @@ namespace Acme.ProductSelling.Products
     {
         private readonly IProductRepository _productRepository;
         private readonly ProductToProductDtoMapper _productMapper;
+        private readonly ICategoryRepository _categoryRepository; // Inject This
 
-        public ProductLookupAppService(IProductRepository productRepository, ProductToProductDtoMapper productMapper)
+        public ProductLookupAppService(IProductRepository productRepository, ProductToProductDtoMapper productMapper, ICategoryRepository categoryRepository)
         {
             _productRepository = productRepository;
             _productMapper = productMapper;
+            _categoryRepository = categoryRepository;
         }
 
         public virtual async Task<PagedResultDto<ProductDto>> GetListByCategoryAsync(GetProductsByCategoryInput input)
         {
-            return await ExecutePagedQueryAsync(
+
+             return await ExecutePagedQueryAsync(
                  query => query.Where(p => p.CategoryId == input.CategoryId),
                  input
              );
@@ -33,11 +39,38 @@ namespace Acme.ProductSelling.Products
 
         public virtual async Task<PagedResultDto<ProductDto>> GetListByProductPrice(GetProductsByPriceDto input)
         {
+            var category = await _categoryRepository.GetAsync(input.CategoryId);
+
+            // 2. Get the hardcoded limits based on Spec Type and Enum
+            decimal? min = null;
+            decimal? max = null;
+
+            if (input.PriceRange.HasValue)
+            {
+                var limits = ProductPriceConfiguration.GetLimits(category.SpecificationType, input.PriceRange.Value);
+                min = limits.Min;
+                max = limits.Max;
+            }
+
             return await ExecutePagedQueryAsync(
-                query => query
-                    .Where(p => p.CategoryId == input.CategoryId)
-                    .Where(p => (p.DiscountedPrice ?? p.OriginalPrice) >= input.MinPrice &&
-                               (p.DiscountedPrice ?? p.OriginalPrice) <= input.MaxPrice),
+                query =>
+                {
+                    // Filter Category
+                    query = query.Where(p => p.CategoryId == input.CategoryId);
+
+                    // Filter Price (Priority: DiscountedPrice -> OriginalPrice)
+                    if (min.HasValue)
+                    {
+                        query = query.Where(p => (p.DiscountedPrice ?? p.OriginalPrice) >= min.Value);
+                    }
+
+                    if (max.HasValue)
+                    {
+                        query = query.Where(p => (p.DiscountedPrice ?? p.OriginalPrice) <= max.Value);
+                    }
+
+                    return query;
+                },
                 input
             );
         }
@@ -74,8 +107,7 @@ namespace Acme.ProductSelling.Products
         }
 
         private async Task<PagedResultDto<ProductDto>> ExecutePagedQueryAsync<TInput>(
-            Expression<Func<IQueryable<Product>,
-            IQueryable<Product>>> filterExpression,
+            Func<IQueryable<Product>, IQueryable<Product>> queryBuilder,
             TInput input)
             where TInput : PagedAndSortedResultRequestDto
         {
@@ -86,22 +118,24 @@ namespace Acme.ProductSelling.Products
                 .Include(p => p.Manufacturer)
                 .AsNoTracking();
 
-            queryable = filterExpression.Compile()(queryable);
+            queryable = queryBuilder(queryable);
 
             var totalCount = await AsyncExecuter.CountAsync(queryable);
 
-            var sortProperty = input.Sorting ?? nameof(Product.ProductName);
-            var products = await AsyncExecuter.ToListAsync(
-                queryable
-                    .OrderBy(p => EF.Property<object>(p, sortProperty))
-                    .PageBy(input)
-            );
+            
+            if (string.IsNullOrWhiteSpace(input.Sorting))
+            {
+                input.Sorting = nameof(Product.ProductName);
+            }
 
-            // Using Mapperly in Projection
+            queryable = queryable.OrderBy(input.Sorting).PageBy(input);
+
+            var products = await AsyncExecuter.ToListAsync(queryable);
             var productDtos = products.Select(p => _productMapper.Map(p)).ToList();
 
             return new PagedResultDto<ProductDto>(totalCount, productDtos);
         }
 
+        
     }
 }
