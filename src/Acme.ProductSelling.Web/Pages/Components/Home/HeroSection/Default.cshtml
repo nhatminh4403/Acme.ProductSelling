@@ -112,12 +112,7 @@
                                                     <div class="subcategory-links">
                                                         @foreach (var range in category.PriceRanges)
                                                         {
-                                                            @* 
-                        NOTICE: 
-                        1. asp-route-priceRange matches the Input property in your Products page 
-                        2. range.UrlValue will be "Low", "Medium", etc.
-                    *@
-                                                            <a asp-page="/Products/ProductsByCategory"
+                                                            <a asp-page="/Products/ProductsByPrice"
                                                                asp-route-slug="@category.UrlSlug"
                                                                asp-route-priceRange="@range.UrlValue">
                                                                 @range.DisplayText
@@ -128,7 +123,7 @@
                                             </div>
                                         }
 
-                                        }
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -193,12 +188,8 @@
                                                         <div class="subcategory-links">
                                                             @foreach (var range in category.PriceRanges)
                                                             {
-                                                                @* 
-                        NOTICE: 
-                        1. asp-route-priceRange matches the Input property in your Products page 
-                        2. range.UrlValue will be "Low", "Medium", etc.
-                    *@
-                                                                <a asp-page="/Products/ProductsByCategory"
+                                                                
+                                                                <a asp-page="/Products/ProductsByPrice"
                                                                    asp-route-slug="@category.UrlSlug"
                                                                    asp-route-priceRange="@range.UrlValue">
                                                                     @range.DisplayText

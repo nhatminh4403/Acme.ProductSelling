@@ -1,0 +1,76 @@
+﻿@model IEnumerable<Acme.ProductSelling.Products.Dtos.ProductDto>
+
+@if (Model != null && Model.Any())
+{
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+        @foreach (var product in Model)
+        {
+            <div class="col">
+                <div class="card product-card h-100 shadow-sm">
+                    @if (!string.IsNullOrWhiteSpace(product.ImageUrl))
+                    {
+                        <a asp-page="/Products/ProductDetail" asp-route-slug="@product.UrlSlug">
+                            <img src="@($"https://placehold.co/200x200?text={product.ProductName.Substring(0, 1)}")"
+                                 class="card-img-top p-3"
+                                 loading="lazy"
+                                 alt="@product.ProductName"
+                                 style="max-height: 180px; object-fit: contain;">
+                        </a>
+                    }
+                    else
+                    {
+                        <div class="text-center p-5 bg-light">
+                            <i class="fas fa-image fa-3x text-secondary"></i>
+                        </div>
+                    }
+
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="card-title mb-2" style="min-height: 40px;">
+                            <a asp-page="/Products/ProductDetail"
+                               class="text-decoration-none text-dark"
+                               asp-route-slug="@product.UrlSlug"
+                               title="@product.ProductName">
+                                @(product.ProductName.Length > 50 ? product.ProductName.Substring(0, 47) + "..." : product.ProductName)
+                            </a>
+                        </h6>
+
+                        <div class="mt-auto">
+                            @if (product.DiscountPercent > 0 && product.DiscountedPrice.HasValue)
+                            {
+                                <div class="text-muted text-decoration-line-through small mb-1">
+                                    @product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fw-bold text-danger">
+                                        @product.DiscountedPrice.Value.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
+                                    </span>
+                                    <span class="badge bg-danger small">-@product.DiscountPercent%</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="fw-bold text-danger">
+                                    @product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-transparent border-0 text-center pb-2">
+                        <a asp-page="/Products/ProductDetail"
+                           asp-route-slug="@product.UrlSlug"
+                           class="btn btn-sm btn-primary w-100">
+                            <i class="bi bi-eye me-1"></i>@L["ViewDetails"]
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle me-2"></i>@L["Product:NoProductsFound"]
+    </div>
+}

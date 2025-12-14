@@ -18,6 +18,7 @@ using Acme.ProductSelling.Web.Middleware;
 using Acme.ProductSelling.Web.Routing;
 using Hangfire;
 using Hangfire.MemoryStorage;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
@@ -189,10 +190,6 @@ public class ProductSellingWebModule : AbpModule
                         }
                     }
                 }
-
-                // 3. CRITICAL FIX: Fallback to Ephemeral Keys if no certificate is found.
-                // This stops the 500.0 Internal Server Error crash.
-                // Note: Sessions will be invalidated if the app restarts.
                 if (!certificateLoaded)
                 {
                     serverBuilder.AddEphemeralEncryptionKey();
@@ -306,16 +303,15 @@ public class ProductSellingWebModule : AbpModule
     {
         services.AddHangfire(config =>
         {
-            //config.UseSqlServerStorage(configuration.GetConnectionString("Default"));
-            // Or use other storage options:
-            config.UseMemoryStorage(); // For development only
-            // config.UseRedisStorage("localhost:6379"); // For production
+            config.UseMemoryStorage();
         });
         services.AddHangfireServer(options =>
         {
             options.WorkerCount = 1;
             options.SchedulePollingInterval = TimeSpan.FromHours(6); // From 15 seconds
             options.HeartbeatInterval = TimeSpan.FromMinutes(5);
+            options.ServerCheckInterval = TimeSpan.FromMinutes(5); // Add this
+            options.ServerTimeout = TimeSpan.FromMinutes(10);
         });
     }
     private void ConfigureAdminPages(IServiceCollection services)

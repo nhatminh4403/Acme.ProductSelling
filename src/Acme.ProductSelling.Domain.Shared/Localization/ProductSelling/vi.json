@@ -28,7 +28,7 @@
     "Checkout": "Thanh toán",
     "StartShopping": "Bắt đầu mua sắm",
     "Dashboard": "Bảng quản trị",
-
+    "Loading": "Đang Tải",
     "Enum:OrderStatus.Placed": "Đã đặt hàng",
     "Enum:OrderStatus.Pending": "Chờ xác nhận",
     "Enum:OrderStatus.Confirmed": "Đã xác nhận",
@@ -192,6 +192,8 @@
     "Product:ProductDetail": "Chi tiết sản phẩm",
     "Product:No": "Không",
     "Product:ProductsByName": "Sản phẩm theo tên",
+    "Product:NoProductsFound": "Không Tìm Thấy Sản Phẩm",
+
     "Product:NoProductsFoundInCategory": "Không tìm thấy sản phẩm nào trong danh mục này.",
     "Product:NoProductsFoundWithKeyword": "Không tìm thấy sản phẩm nào với từ khóa {0}",
     "Product:NoProductsFoundForThisManufacturer": "Không tìm thấy sản phẩm nào của hãng này.",
@@ -415,7 +417,10 @@
     "UI:Brands": "Thương hiệu",
     "UI:ByPrice": "Theo giá",
     "UI:CategoryList": "Danh sách danh mục",
-
+    "UI:Title:ProductByPrice": "Sản Phẩm Theo Khoảng Giá",
+    "UI:FilterByPrice": "Lọc Theo Giá",
+    "UI:ClearFilter": "Xóa Bộ Lọc",
+    "UI:ViewAllProducts": "Xem Tất Cả Sản Phẩm",
     "UI:AllProductsByCategory": "Tất cả sản phẩm theo danh mục {0}",
     "UI:AllProductsByName": "Tất cả sản phẩm theo {0}",
     "UI:ProductsByManufacturer": "Sản phẩm theo hãng sản xuất",
@@ -446,7 +451,6 @@
     "UI:Title:Admin:AllCategories": "Tất cả danh mục",
     "UI:Title:Admin:AllBlogs": "Tất cả bài viết",
     "UI:Title:Admin:Blogs": "Quản lý Bài viết",
-    "UI:Title:ProductByPrice": "Sản phẩm theo giá",
     "UI:Title:ProductByManufacturer": "Sản phẩm theo {0}",
     "UI:Title:PaymentCallback": "Kết quả thanh toán",
     "UI:Title:MyOrderHistory": "Lịch sử mua hàng",
@@ -460,6 +464,14 @@
     "UI:MyOrders": "Đơn hàng của tôi",
     "UI:AdminPanel": "Trang quản trị",
     "UI:WelcomeGuest": "Xin chào, vui lòng đăng nhập",
+    "UI:RefineByPrice": "Tinh Chỉnh Giá",
+    "UI:SelectedRange": "Khoảng Giá Đã Chọn",
+    "UI:ActualRange": "Khoảng Giá Thực Tế",
+    "UI:SwitchPriceRange": "Chuyển Khoảng Giá Khác",
+    "UI:FineTunePrice": "Tùy Chỉnh Giá",
+    "UI:ViewResults": "Xem Kết Quả",
+    "UI:ResetSlider": "Đặt Lại Thanh Trượt",
+    "UI:ClearAllFilters": "Xóa Tất Cả Bộ Lọc",
 
     "Footer:AboutUs": "VỀ CHÚNG TÔI",
     "Footer:Introduction": "Giới thiệu",
@@ -821,7 +833,7 @@
     "CategoryGroup:Furniture": "Ghế - Bàn",
     "CategoryGroup:SoftwareNetwork": "Phần mềm, mạng",
     "CategoryGroup:HandheldConsole": "Handheld, Console",
-    "CategoryGroup:Accessories": "Phụ kiện",
+    "CategoryGroup:Accessories": "Phụ Kiện & Cáp",
     "Admin:Menu:Products:LowStock": "Cảnh báo tồn kho thấp",
 
     "Register": "Processing",
@@ -1050,47 +1062,16 @@
     "User:Email": "Email",
     "User:Name": "Name",
     "User:Roles": "Roles",
-    "Enum:PriceRange.Low": "Giá rẻ",
-    "Enum:PriceRange.LowToMedium": "Phổ thông",
-    "Enum:PriceRange.Medium": "Tầm trung",
-    "Enum:PriceRange.MediumToHigh": "Cận cao cấp",
-    "Enum:PriceRange.High": "Cao cấp",
-    "Enum:PriceRange.Premium": "Siêu cao cấp",
-
+    "PriceRange:Low": "Dưới {0}",
+    "PriceRange:LowToMedium": "{0} - {1}",
+    "PriceRange:Medium": "{0} - {1}",
+    "PriceRange:MediumToHigh": "{0} - {1}",
+    "PriceRange:High": "{0} - {1}",
+    "PriceRange:Premium": "Trên {0}",
     "Category:CategoryName": "Danh mục:",
-
-    "Enum:PriceRange.Laptop.Low": "Dưới 15 triệu (Văn phòng)",
-    "Enum:PriceRange.Laptop.LowToMedium": "15 - 20 Triệu (Sinh viên)",
-    "Enum:PriceRange.Laptop.Medium": "20 - 25 Triệu (Kỹ thuật)",
-    "Enum:PriceRange.Laptop.High": "25 - 40 Triệu (Gaming)",
-    "Enum:PriceRange.Laptop.Premium": "Trên 40 Triệu (Workstation)",
-
-    "Enum:PriceRange.Monitor.Low": "Dưới 4 Triệu",
-    "Enum:PriceRange.Monitor.LowToMedium": "4 - 8 Triệu",
-    "Enum:PriceRange.Monitor.Medium": "8 - 15 Triệu",
-    "Enum:PriceRange.Monitor.High": "15 - 25 Triệu (Đồ họa)",
-    "Enum:PriceRange.Monitor.Premium": "Trên 25 Triệu (High-end)",
-
-    "Enum:PriceRange.GPU.Low": "Dưới 5 Triệu",
-    "Enum:PriceRange.GPU.LowToMedium": "5 - 10 Triệu",
-    "Enum:PriceRange.GPU.Medium": "10 - 20 Triệu",
-    "Enum:PriceRange.GPU.High": "20 - 35 Triệu",
-    "Enum:PriceRange.GPU.Premium": "Trên 35 Triệu",
-
-    "Enum:PriceRange.Mouse.Low": "Dưới 500k",
-    "Enum:PriceRange.Mouse.LowToMedium": "500k - 1.5 Triệu",
-    "Enum:PriceRange.Mouse.Medium": "1.5 - 3 Triệu",
-    "Enum:PriceRange.Mouse.High": "Trên 3 Triệu",
-
-    "Enum:PriceRange.Keyboard.Low": "Dưới 1 Triệu",
-    "Enum:PriceRange.Keyboard.LowToMedium": "1 - 2.5 Triệu",
-    "Enum:PriceRange.Keyboard.Medium": "2.5 - 5 Triệu",
-    "Enum:PriceRange.Keyboard.High": "Trên 5 Triệu (Custom)",
-
-    "Enum:PriceRange.Cable.Low": "Dưới 300k",
-    "Enum:PriceRange.Cable.LowToMedium": "300k - 800k",
-    "Enum:PriceRange.Cable.Medium": "800k - 2 Triệu",
-    "Enum:PriceRange.Cable.High": "Trên 2 Triệu"
+    "PriceRange:Under": "Dưới {0}",
+    "PriceRange:Over": "Trên {0}",
+    "PriceRange:Between": "{0} - {1}"
   }
   
 }

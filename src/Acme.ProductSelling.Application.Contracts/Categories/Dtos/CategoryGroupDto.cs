@@ -19,7 +19,7 @@ namespace Acme.ProductSelling.Categories.Dtos
         public string UrlSlug { get; set; }
         public SpecificationType SpecificationType { get; set; }
         public List<ManufacturerDto> Manufacturers { get; set; }
-        public List<PriceMenuLinkDto> PriceRanges { get; set; } = new List<PriceMenuLinkDto>();
+        public List<PriceRangeDto> PriceRanges { get; set; } = new();
 
     }
     public class PriceMenuLinkDto
