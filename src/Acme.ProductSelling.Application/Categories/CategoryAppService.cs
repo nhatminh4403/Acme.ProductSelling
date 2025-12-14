@@ -206,38 +206,21 @@ namespace Acme.ProductSelling.Categories
             Dictionary<Guid, List<Manufacturer>> manufacturersByCategory)
         {
             var manufacturers = manufacturersByCategory.TryGetValue(category.Id, out var manufs)
-                ? manufs
-                : new List<Manufacturer>();
-            var dto = new CategoryInGroupDto
+           ? manufs
+           : new List<Manufacturer>();
+
+            // Generate price ranges for this category
+            var priceRanges = GeneratePriceRangesForCategory(category.SpecificationType);
+
+            return new CategoryInGroupDto
             {
                 Id = category.Id,
                 Name = category.Name,
                 UrlSlug = category.UrlSlug,
                 SpecificationType = category.SpecificationType,
                 Manufacturers = manufacturers.Select(m => _manufacturerToDtoMapper.Map(m)).ToList(),
-                PriceRanges = new List<PriceMenuLinkDto>()
+                PriceRanges = priceRanges
             };
-
-            var activeRanges = PriceCategoryStrategy.GetRangesForCategory(category.SpecificationType);
-            foreach (var range in activeRanges)
-            {
-                // Dynamic Key Generation: "Enum:PriceRange.Laptop.Low", "Enum:PriceRange.Mouse.Low"
-                string key = $"Enum:PriceRange.{category.SpecificationType}.{range}";
-
-                // Fallback Key if specific not found: "Enum:PriceRange.Low"
-                var localizedText = _localizer[key];
-                if (localizedText.Name == key) // if translation missing
-                {
-                    localizedText = _localizer[$"Enum:PriceRange.{range}"];
-                }
-
-                dto.PriceRanges.Add(new PriceMenuLinkDto
-                {
-                    UrlValue = range.ToString(),
-                    DisplayText = localizedText.Value
-                });
-            }
-            return dto;
         }
 
         private CategoryWithManufacturersDto MapToCategoryWithManufacturers(
@@ -275,6 +258,124 @@ namespace Acme.ProductSelling.Categories
                 CategoryGroup.Individual => "CategoryGroup:Individual",
                 _ => group.ToString()
             };
+        }
+
+
+        /// <summary>
+        /// Generates localized price range DTOs for a category based on its configuration
+        /// </summary>
+        private List<PriceRangeDto> GeneratePriceRangesForCategory(SpecificationType specificationType)
+        {
+            if (!CategoryPriceRangeConfiguration.HasPriceRanges(specificationType))
+            {
+                return new List<PriceRangeDto>();
+            }
+
+            var ranges = CategoryPriceRangeConfiguration.GetPriceRangesForCategory(specificationType);
+
+            return ranges.Select(kvp => new PriceRangeDto
+            {
+                Range = kvp.Key,
+                MinPrice = kvp.Value.Min,
+                MaxPrice = kvp.Value.Max,
+                LocalizationKey = $"PriceRange:{kvp.Key}",
+                DisplayText = GetLocalizedPriceRangeText(kvp.Key, kvp.Value.Min, kvp.Value.Max),
+                UrlValue = GetUrlValueForPriceRange(kvp.Key, kvp.Value.Min, kvp.Value.Max)
+            }).ToList();
+        }
+
+        /// <summary>
+        /// Gets localized display text for price range with formatted values
+        /// </summary>
+        private string GetLocalizedPriceRangeText(PriceRangeEnum range, decimal min, decimal max)
+        {
+            var formattedMin = FormatPriceForDisplay(min);
+            var formattedMax = FormatPriceForDisplay(max);
+
+            if (CategoryPriceRangeConfiguration.IsOpenEndedRange(max))
+            {
+                // Open-ended range: "Over 20M"
+                return _localizer["PriceRange:Over", formattedMin];
+            }
+            else if (min == 0)
+            {
+                // Start-bounded range: "Under 5M"
+                return _localizer["PriceRange:Under", formattedMax];
+            }
+            else
+            {
+                // Bounded range: "5M - 10M"
+                return _localizer["PriceRange:Between", formattedMin, formattedMax];
+            }
+        }
+
+        /// <summary>
+        /// Formats price value for display (e.g., 5000000 -> "5M")
+        /// </summary>
+        private string FormatPriceForDisplay(decimal price)
+        {
+            if (price >= 1000000)
+            {
+                var millions = price / 1000000;
+                return millions % 1 == 0
+                    ? $"{(int)millions}M"
+                    : $"{millions:0.#}M";
+            }
+            else if (price >= 1000)
+            {
+                var thousands = price / 1000;
+                return thousands % 1 == 0
+                    ? $"{(int)thousands}K"
+                    : $"{thousands:0.#}K";
+            }
+            return price.ToString("N0");
+        }
+
+        /// <summary>
+        /// Generates URL-friendly string for price range routing
+        /// </summary>
+        private string GetUrlValueForPriceRange(PriceRangeEnum range, decimal min, decimal max)
+        {
+            // Create semantic URL values based on the range
+            // This could also be stored in localization resources for multi-language support
+
+            if (CategoryPriceRangeConfiguration.IsOpenEndedRange(max))
+            {
+                // Open-ended ranges (e.g., "over-20m")
+                return $"over-{FormatPriceForUrl(min)}";
+            }
+            else if (min == 0)
+            {
+                // Start-bounded ranges (e.g., "under-5m")
+                return $"under-{FormatPriceForUrl(max + 1)}";
+            }
+            else
+            {
+                // Bounded ranges (e.g., "5m-to-10m")
+                return $"{FormatPriceForUrl(min)}-to-{FormatPriceForUrl(max)}";
+            }
+        }
+
+        /// <summary>
+        /// Formats price value for URL (e.g., 5000000 -> "5m")
+        /// </summary>
+        private string FormatPriceForUrl(decimal price)
+        {
+            if (price >= 1000000)
+            {
+                var millions = price / 1000000;
+                return millions % 1 == 0
+                    ? $"{(int)millions}m"
+                    : $"{millions:0.#}m";
+            }
+            else if (price >= 1000)
+            {
+                var thousands = price / 1000;
+                return thousands % 1 == 0
+                    ? $"{(int)thousands}k"
+                    : $"{thousands:0.#}k";
+            }
+            return price.ToString();
         }
     }
 }
