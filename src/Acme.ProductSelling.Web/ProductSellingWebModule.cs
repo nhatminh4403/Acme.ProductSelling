@@ -271,7 +271,6 @@ public class ProductSellingWebModule : AbpModule
             options.Filters.AddService<AuthenticatedRedirectFilter>();
         });
         context.Services.AddSignalR();
-        context.Services.AddTransient<ISpecificationService, SpecificationService>();
 
         Configure<AbpSignalROptions>(options =>
         {
@@ -290,13 +289,13 @@ public class ProductSellingWebModule : AbpModule
 
         ConfigureRequestLocalization(services);
         context.Services.AddTransient<CultureAwareAnchorTagHelper>();
-
         ConfigureAdminPages(services);
         ConfigureRouting(services);
         Configure<AbpBackgroundJobOptions>(options =>
         {
             options.IsJobExecutionEnabled = true;
         });
+        ConfigureHangfireServer(services);
     }
 
     private void ConfigureHangfire(IServiceCollection services, IConfiguration configuration)
@@ -305,6 +304,10 @@ public class ProductSellingWebModule : AbpModule
         {
             config.UseMemoryStorage();
         });
+
+    }
+    private void ConfigureHangfireServer(IServiceCollection services)
+    {
         services.AddHangfireServer(options =>
         {
             options.WorkerCount = 1;
@@ -325,9 +328,9 @@ public class ProductSellingWebModule : AbpModule
             options.Conventions.AddPageRoute("/Account/Manage", "/admin/Account/Manage");
 
 
-            //options.Conventions.AddPageRoute("/Admin/Blogs/Index", "/{prefix:regex(^(admin|blogger|manager)$)}/blogs");
-            //options.Conventions.AddPageRoute("/Admin/Products/Index", "/{prefix:regex(^(admin|manager|seller|cashier|warehouse)$)}/products");
-            //options.Conventions.AddPageRoute("/Admin/Orders/Index", "/{prefix:regex(^(admin|manager|seller|cashier|warehouse)$)}/orders");
+            options.Conventions.AddPageRoute("/Admin/Blogs/Index", "/{prefix:regex(^(admin|blogger|manager)$)}/blogs");
+            options.Conventions.AddPageRoute("/Admin/Products/Index", "/{prefix:regex(^(admin|manager|seller|cashier|warehouse)$)}/products");
+            options.Conventions.AddPageRoute("/Admin/Orders/Index", "/{prefix:regex(^(admin|manager|seller|cashier|warehouse)$)}/orders");
 
             // Add more routes as needed
         });
@@ -601,6 +604,7 @@ public class ProductSellingWebModule : AbpModule
             app.UseHsts();
         }
         app.UseStatusCodePagesWithReExecute("/loi", "?statusCode={0}");
+        app.UseMiddleware<DatabaseLimitMiddleware>();
 
         app.UseMiddleware<QueryStringFilterMiddleware>();
 
