@@ -29,6 +29,7 @@
     "StartShopping": "Bắt đầu mua sắm",
     "Dashboard": "Bảng quản trị",
     "Loading": "Đang Tải",
+    "Deselect": "Bỏ chọn",
     "Enum:OrderStatus.Placed": "Đã đặt hàng",
     "Enum:OrderStatus.Pending": "Chờ xác nhận",
     "Enum:OrderStatus.Confirmed": "Đã xác nhận",
@@ -459,6 +460,8 @@
     "UI:Title:Checkout": "Thanh toán",
     "UI:Title:AllProductsByCategory": "Tất cả sản phẩm theo danh mục {0}",
     "UI:Title:AllProductsByName": "Tất cả sản phẩm theo {0}",
+    "UI:Price": "Giá",
+
     "UI:Hotline": "Hotline",
     "UI:ManageProfile": "Quản lý tài khoản",
     "UI:MyOrders": "Đơn hàng của tôi",

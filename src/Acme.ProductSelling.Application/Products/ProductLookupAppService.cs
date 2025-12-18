@@ -52,7 +52,8 @@ namespace Acme.ProductSelling.Products
             );
         }
 
-        public virtual async Task<PagedResultDto<ProductDto>> GetProductByManufacturer(GetProductsByManufacturerDto input)
+        //public virtual async 
+        public virtual async Task<PagedResultDto<ProductDto>> GetProductsByManufacturer(GetProductsByManufacturerDto input)
         {
             return await ExecutePagedQueryAsync(
                  query => query
@@ -105,5 +106,27 @@ namespace Acme.ProductSelling.Products
             return new PagedResultDto<ProductDto>(totalCount, productDtos);
         }
 
+        public virtual async Task<PagedResultDto<ProductDto>> GetProductsByNameWithPrice(GetProductByNameWithPriceDto input)
+        {
+            return await ExecutePagedQueryAsync(
+                    query => query
+                        .Where(p => p.ProductName.Contains(input.Filter))
+                        .Where(p => (p.DiscountedPrice ?? p.OriginalPrice) >= input.MinPrice &&
+                                   (p.DiscountedPrice ?? p.OriginalPrice) <= input.MaxPrice),
+                    input
+                );
+        }
+
+        public virtual async Task<PagedResultDto<ProductDto>> GetProductsByManufacturerWithPrice(GetProductsByManufacturerWithPriceDto input)
+        {
+            return await ExecutePagedQueryAsync(
+         query => query
+             .Where(p => p.CategoryId == input.CategoryId &&
+                        p.ManufacturerId == input.ManufacturerId)
+             .Where(p => (p.DiscountedPrice ?? p.OriginalPrice) >= input.MinPrice &&
+                        (p.DiscountedPrice ?? p.OriginalPrice) <= input.MaxPrice),
+         input
+     );
+        }
     }
 }

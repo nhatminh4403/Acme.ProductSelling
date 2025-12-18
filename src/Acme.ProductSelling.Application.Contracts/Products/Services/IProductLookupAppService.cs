@@ -10,9 +10,12 @@ namespace Acme.ProductSelling.Products.Services
     {
         Task<PagedResultDto<ProductDto>> GetListByCategoryAsync(GetProductsByCategoryInput input);
         Task<PagedResultDto<ProductDto>> GetListByProductPrice(GetProductsByPriceDto input);
-        Task<PagedResultDto<ProductDto>> GetProductsByName(GetProductByNameDto input);
         Task<ProductDto> GetProductBySlug(string slug);
-        Task<PagedResultDto<ProductDto>> GetProductByManufacturer(GetProductsByManufacturerDto input);
+        Task<PagedResultDto<ProductDto>> GetProductsByName(GetProductByNameDto input);
+        Task<PagedResultDto<ProductDto>> GetProductsByManufacturer(GetProductsByManufacturerDto input);
+        Task<PagedResultDto<ProductDto>> GetProductsByNameWithPrice(GetProductByNameWithPriceDto input);
+        Task<PagedResultDto<ProductDto>> GetProductsByManufacturerWithPrice(GetProductsByManufacturerWithPriceDto input);
+
 
     }
 }

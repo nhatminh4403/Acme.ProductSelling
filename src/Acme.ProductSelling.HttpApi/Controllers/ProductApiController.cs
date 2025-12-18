@@ -1,12 +1,12 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Categories.Configurations;
+using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.AspNetCore.Mvc;
 
@@ -18,12 +18,22 @@ namespace Acme.ProductSelling.Controllers
     {
         private readonly IProductLookupAppService _productLookupAppService;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IManufacturerRepository _manufacturerRepository;
 
-        public ProductApiController(IProductLookupAppService productLookupAppService, ICategoryRepository categoryRepository)
+        public ProductApiController(
+            IProductLookupAppService productLookupAppService,
+            ICategoryRepository categoryRepository,
+            IManufacturerRepository manufacturerRepository)
         {
             _productLookupAppService = productLookupAppService;
             _categoryRepository = categoryRepository;
+            _manufacturerRepository = manufacturerRepository;
         }
+
+        /// <summary>
+        /// Filter products by price for a category
+        /// Used by: ProductsByCategory, ProductByPrice pages
+        /// </summary>
         [HttpGet("filter-by-price")]
         public async Task<IActionResult> FilterByPrice(
            [FromQuery] string categorySlug,
@@ -37,26 +47,22 @@ namespace Acme.ProductSelling.Controllers
             {
                 if (string.IsNullOrEmpty(categorySlug))
                 {
-                    return BadRequest(new { error = "Category slug is required" });
+                    return BadRequest(new { success = false, error = "Category slug is required" });
                 }
 
                 var category = await _categoryRepository.GetBySlugAsync(categorySlug);
                 if (category == null)
                 {
-                    return NotFound(new { error = "Category not found" });
-                }
-
-                // Validate price range against category configuration
-                if (!ValidatePriceRange(category.SpecificationType, minPrice, maxPrice))
-                {
-                    return BadRequest(new { error = "Invalid price range for this category" });
+                    return NotFound(new { success = false, error = "Category not found" });
                 }
 
                 var input = new GetProductsByPriceDto
                 {
                     CategoryId = category.Id,
                     MinPrice = minPrice,
-                    MaxPrice = maxPrice == decimal.MaxValue ? 999999999 : maxPrice,
+                    MaxPrice = CategoryPriceRangeConfiguration.IsOpenEndedRange(maxPrice)
+                        ? CategoryPriceRangeConfiguration.GetOpenEndedMaxValue()
+                        : maxPrice,
                     MaxResultCount = pageSize,
                     SkipCount = (page - 1) * pageSize,
                     Sorting = sortBy
@@ -76,9 +82,142 @@ namespace Acme.ProductSelling.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = ex.Message });
+                Logger.LogError(ex, "Error filtering products by price");
+                return StatusCode(500, new { success = false, error = "An error occurred while filtering products" });
             }
         }
+
+        /// <summary>
+        /// Filter products by price for search results
+        /// Used by: ProductsByName page (search)
+        /// </summary>
+        [HttpGet("search-with-price")]
+        public async Task<IActionResult> SearchWithPrice(
+            [FromQuery] string searchKeyword,
+            [FromQuery] decimal minPrice,
+            [FromQuery] decimal maxPrice,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 12,
+            [FromQuery] string sortBy = "ProductName")
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(searchKeyword))
+                {
+                    return BadRequest(new { success = false, error = "Search keyword is required" });
+                }
+
+                var input = new GetProductByNameWithPriceDto
+                {
+                    Filter = searchKeyword,
+                    MinPrice = minPrice,
+                    MaxPrice = maxPrice,
+                    MaxResultCount = pageSize,
+                    SkipCount = (page - 1) * pageSize,
+                    Sorting = sortBy
+                };
+
+                var products = await _productLookupAppService.GetProductsByNameWithPrice(input);
+
+                return Ok(new
+                {
+                    success = true,
+                    data = products.Items,
+                    totalCount = products.TotalCount,
+                    currentPage = page,
+                    pageSize = pageSize,
+                    totalPages = (int)Math.Ceiling(products.TotalCount / (double)pageSize)
+                });
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error searching products with price filter");
+                return StatusCode(500, new { success = false, error = "An error occurred while searching products" });
+            }
+        }
+
+        /// <summary>
+        /// Filter products by price for manufacturer
+        /// Used by: ProductsByManufacturer page
+        /// </summary>
+        [HttpGet("manufacturer-with-price")]
+        public async Task<IActionResult> ManufacturerWithPrice(
+            [FromQuery] string categorySlug,
+            [FromQuery] string manufacturerSlug,
+            [FromQuery] decimal minPrice,
+            [FromQuery] decimal maxPrice,
+            [FromQuery] Guid? manufacturerId = null,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 12,
+            [FromQuery] string sortBy = "ProductName")
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(categorySlug))
+                {
+                    return BadRequest(new { success = false, error = "Category slug is required" });
+                }
+
+                if (string.IsNullOrEmpty(manufacturerSlug) && manufacturerId == null)
+                {
+                    return BadRequest(new { success = false, error = "Manufacturer slug or ID is required" });
+                }
+
+                var category = await _categoryRepository.GetBySlugAsync(categorySlug);
+                if (category == null)
+                {
+                    return NotFound(new { success = false, error = "Category not found" });
+                }
+
+                Guid finalManufacturerId;
+
+                if (manufacturerId.HasValue)
+                {
+                    finalManufacturerId = manufacturerId.Value;
+                }
+                else
+                {
+                    var manufacturer = await _manufacturerRepository.GetBySlugAsync(manufacturerSlug);
+                    if (manufacturer == null)
+                    {
+                        return NotFound(new { success = false, error = "Manufacturer not found" });
+                    }
+                    finalManufacturerId = manufacturer.Id;
+                }
+
+                var input = new GetProductsByManufacturerWithPriceDto
+                {
+                    CategoryId = category.Id,
+                    ManufacturerId = finalManufacturerId,
+                    MinPrice = minPrice,
+                    MaxPrice = maxPrice,
+                    MaxResultCount = pageSize,
+                    SkipCount = (page - 1) * pageSize,
+                    Sorting = sortBy
+                };
+
+                var products = await _productLookupAppService.GetProductsByManufacturerWithPrice(input);
+
+                return Ok(new
+                {
+                    success = true,
+                    data = products.Items,
+                    totalCount = products.TotalCount,
+                    currentPage = page,
+                    pageSize = pageSize,
+                    totalPages = (int)Math.Ceiling(products.TotalCount / (double)pageSize)
+                });
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error filtering manufacturer products by price");
+                return StatusCode(500, new { success = false, error = "An error occurred while filtering products" });
+            }
+        }
+
+        /// <summary>
+        /// Get price bounds for a specific category and optional price range
+        /// </summary>
         [HttpGet("price-bounds/{categorySlug}")]
         public async Task<IActionResult> GetPriceBounds(
             string categorySlug,
@@ -89,7 +228,7 @@ namespace Acme.ProductSelling.Controllers
                 var category = await _categoryRepository.GetBySlugAsync(categorySlug);
                 if (category == null)
                 {
-                    return NotFound(new { error = "Category not found" });
+                    return NotFound(new { success = false, error = "Category not found" });
                 }
 
                 var bounds = GetPriceBoundsForRange(category.SpecificationType, priceRange);
@@ -105,27 +244,12 @@ namespace Acme.ProductSelling.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = ex.Message });
+                Logger.LogError(ex, "Error getting price bounds for category");
+                return StatusCode(500, new { success = false, error = "An error occurred while getting price bounds" });
             }
         }
 
-        private bool ValidatePriceRange(SpecificationType specType, decimal min, decimal max)
-        {
-            if (!CategoryPriceRangeConfiguration.HasPriceRanges(specType))
-            {
-                return false;
-            }
-
-            var ranges = CategoryPriceRangeConfiguration.GetPriceRangesForCategory(specType);
-            var allBounds = ranges.Values.ToList();
-
-            var absoluteMin = allBounds.Min(b => b.Min);
-            var absoluteMax = allBounds.Where(b => b.Max != decimal.MaxValue).DefaultIfEmpty().Max(b => b.Max);
-
-            if (absoluteMax == 0) absoluteMax = 999999999;
-
-            return min >= absoluteMin && max <= absoluteMax && min < max;
-        }
+        #region Private Helper Methods
 
         private (decimal Min, decimal Max) GetPriceBoundsForRange(
             SpecificationType specType,
@@ -133,7 +257,7 @@ namespace Acme.ProductSelling.Controllers
         {
             if (!CategoryPriceRangeConfiguration.HasPriceRanges(specType))
             {
-                return (0, 999_999_999);
+                return (0, CategoryPriceRangeConfiguration.GetOpenEndedMaxValue());
             }
 
             var ranges = CategoryPriceRangeConfiguration.GetPriceRangesForCategory(specType);
@@ -146,7 +270,10 @@ namespace Acme.ProductSelling.Controllers
                     var urlValue = FormatPriceRangeUrl(kvp.Value.Min, kvp.Value.Max);
                     if (urlValue.Equals(priceRangeUrl, StringComparison.OrdinalIgnoreCase))
                     {
-                        return (kvp.Value.Min, kvp.Value.Max == decimal.MaxValue ? 999999999 : kvp.Value.Max);
+                        var maxValue = CategoryPriceRangeConfiguration.IsOpenEndedRange(kvp.Value.Max)
+                            ? CategoryPriceRangeConfiguration.GetOpenEndedMaxValue()
+                            : kvp.Value.Max;
+                        return (kvp.Value.Min, maxValue);
                     }
                 }
             }
@@ -154,16 +281,20 @@ namespace Acme.ProductSelling.Controllers
             // Return overall bounds for category
             var allBounds = ranges.Values.ToList();
             var min = allBounds.Min(b => b.Min);
-            var max = allBounds.Where(b => b.Max != decimal.MaxValue).DefaultIfEmpty().Max(b => b.Max);
+            var max = allBounds
+                .Where(b => !CategoryPriceRangeConfiguration.IsOpenEndedRange(b.Max))
+                .DefaultIfEmpty()
+                .Max(b => b.Max);
 
-            if (max == 0) max = 999999999;
+            if (max == 0)
+                max = CategoryPriceRangeConfiguration.GetOpenEndedMaxValue();
 
             return (min, max);
         }
 
         private string FormatPriceRangeUrl(decimal min, decimal max)
         {
-            if (max == decimal.MaxValue)
+            if (CategoryPriceRangeConfiguration.IsOpenEndedRange(max))
             {
                 return $"over-{FormatPriceForUrl(min)}";
             }
@@ -191,5 +322,7 @@ namespace Acme.ProductSelling.Controllers
             }
             return price.ToString();
         }
+
+        #endregion
     }
 }

@@ -1,0 +1,305 @@
+﻿.price-filter-button {
+    padding: 10px 20px;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    position: relative;
+}
+
+    .price-filter-button:hover {
+        border-color: #0d6efd;
+        color: #0d6efd;
+    }
+
+    .price-filter-button.active {
+        border-color: #0d6efd;
+        background: #e7f1ff;
+        color: #0d6efd;
+    }
+
+.price-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    width: 400px;
+    z-index: 1000;
+    padding: 20px;
+}
+
+    .price-dropdown.show {
+        display: block;
+    }
+
+.dropdown-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+}
+
+    .dropdown-backdrop.show {
+        display: block;
+    }
+
+.price-dropdown-header {
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+    .price-dropdown-header h6 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 600;
+        color: #212529;
+    }
+
+/* Slider Styles */
+#priceSlider {
+    margin: 8px 10px 0px;
+}
+
+.noUi-target {
+    background: #e9ecef;
+    border: none;
+    box-shadow: none;
+    height: 6px;
+}
+
+.noUi-connect {
+    background: #0d6efd;
+}
+
+.noUi-handle {
+    width: 20px;
+    height: 20px;
+    border: 3px solid #0d6efd;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    top: -8px;
+}
+
+    .noUi-handle:before,
+    .noUi-handle:after {
+        display: none;
+    }
+
+    .noUi-handle:active {
+        box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+    }
+
+.noUi-tooltip {
+    display: none;
+}
+
+.noUi-horizontal .noUi-handle {
+    width: 20px;
+    height: 20px;
+}
+
+/* Price Input Fields */
+.price-inputs {
+    display: flex;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.price-input-wrapper {
+    flex: 1;
+}
+
+    .price-input-wrapper label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 12px;
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .price-input-wrapper input {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #212529;
+    }
+
+        .price-input-wrapper input:focus {
+            outline: none;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+        }
+
+/* Manufacturer Filter Section (Optional) */
+.manufacturer-filter-section {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #e9ecef;
+}
+
+.manufacturer-list {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 5px 0;
+}
+
+    .manufacturer-list .form-check {
+        padding: 5px 0;
+    }
+
+    .manufacturer-list .form-check-label {
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+    .manufacturer-list .form-check-input {
+        cursor: pointer;
+    }
+
+        .manufacturer-list .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+/* Dropdown Footer */
+.price-dropdown-footer {
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    gap: 10px;
+    padding-top: 15px;
+    margin-top: 15px;
+}
+
+    .price-dropdown-footer button {
+        flex: 1;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+.btn-reset {
+    background: white;
+    border: 1px solid #dee2e6;
+    color: #6c757d;
+}
+
+    .btn-reset:hover {
+        background: #f8f9fa;
+    }
+
+.btn-apply {
+    background: #0d6efd;
+    border: 1px solid #0d6efd;
+    color: white;
+}
+
+    .btn-apply:hover {
+        background: #0b5ed7;
+    }
+
+    .btn-apply:disabled {
+        background: #6c757d;
+        border-color: #6c757d;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+/* Filter Bar */
+.filter-bar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+/* Active Filters Badge */
+.active-filters {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #e7f1ff;
+    border: 1px solid #0d6efd;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #0d6efd;
+    font-weight: 500;
+}
+
+    .active-filters.show {
+        display: inline-flex;
+    }
+
+    .active-filters .clear-btn {
+        background: none;
+        border: none;
+        color: #0d6efd;
+        cursor: pointer;
+        padding: 0;
+        margin-left: 8px;
+        font-size: 16px;
+    }
+
+        .active-filters .clear-btn:hover {
+            color: #0b5ed7;
+        }
+
+/* Loading Overlay */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+    .loading-overlay.active {
+        display: flex;
+    }
+
+/* Products Grid */
+#productsGrid {
+    position: relative;
+    min-height: 300px;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .price-dropdown {
+        width: calc(100vw - 40px);
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .manufacturer-list {
+        max-height: 150px;
+    }
+}

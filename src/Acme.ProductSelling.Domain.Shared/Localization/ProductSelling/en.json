@@ -58,7 +58,7 @@
     "Cashier": "Cashier",
     "Fulfiller": "Fulfiller",
     "WarehouseStaff": "Warehouse Staff",
-
+    "Deselect": "Deselect",
     "Menu:Home": "Home",
     "Menu:AppName": "XComputer",
     "Menu:Stores": "Stores",
@@ -555,10 +555,7 @@
     "UI:Brands": "Brands",
     "UI:ByPrice": "By Price",
     "UI:CategoryList": "Category List",
-    "UI:PriceRanges:Under1Million": "Under 1 Million",
-    "UI:PriceRanges:From1To5Million": "From 1 to 5 Million",
-    "UI:PriceRanges:From5To20Million": "From 5 to 20 Million",
-    "UI:PriceRanges:Over20Million": "Over 20 Million",
+    "UI:Price": "Price",
     "UI:AllProductsByCategory": "All Products by {0} Category",
     "UI:AllProductsByName": "All Products by {0}",
     "UI:ProductsByManufacturer": "Products by Manufacturer",
@@ -654,7 +651,6 @@
     "PriceRange:From5MillionTo20Million": "From 5 Million to 20 Million",
     "PriceRange:Over20Million": "Over 20 Million",
 
-    "ViewDetails": "View Details",
     "Error:GeneralTryAgain": "An error occurred. Please try again later.",
     "Error:ConfigurationIssue": "Configuration issue detected. Please check settings.",
     "ErrorOccurred": "An error has occurred!",
