@@ -2,8 +2,9 @@
 using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Categories.Configurations;
 using Acme.ProductSelling.Categories.Dtos;
+using Acme.ProductSelling.Categories.Services;
 using Acme.ProductSelling.Localization;
-using Acme.ProductSelling.Products;
+using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -25,40 +26,41 @@ namespace Acme.ProductSelling.Web.Pages.Products
         private readonly ICategoryRepository _categoryRepository;
         private readonly IStringLocalizer<ProductSellingResource> _localizer;
         private readonly IProductLookupAppService _productLookupAppService;
-        private readonly IRepository<Product, Guid> _productRepository;
+        private readonly IProductRepository _productRepository;
+        private readonly ICategoryAppService _categoryAppService;
 
         public ProductsByCategoryModel(
             ICategoryRepository categoryRepository,
             IStringLocalizer<ProductSellingResource> localizer,
             IProductLookupAppService productLookupAppService,
-            IRepository<Product, Guid> productRepository)
+            IProductRepository productRepository,
+            ICategoryAppService categoryAppService)
         {
             _categoryRepository = categoryRepository;
             _localizer = localizer;
             _productLookupAppService = productLookupAppService;
             _productRepository = productRepository;
+            _categoryAppService = categoryAppService;
         }
 
         [BindProperty(SupportsGet = true)]
         public string Slug { get; set; }
 
-        [BindProperty(SupportsGet = true)]
-        public string PriceRange { get; set; }
+        //[BindProperty(SupportsGet = true)]
+        //public string PriceRange { get; set; }
 
         public PagedResultDto<ProductDto> Products { get; set; }
         public string CategoryName { get; set; }
         public SpecificationType CategorySpecType { get; set; }
         public Guid CategoryId { get; set; }
-
-        // ACTUAL price bounds from products in this category
         public decimal MinPriceBound { get; set; }
         public decimal MaxPriceBound { get; set; }
 
-        // Current filter values (if any)
         public decimal CurrentMinPrice { get; set; }
         public decimal CurrentMaxPrice { get; set; }
-
+        public bool ShowManufacturerFilter { get; set; } = true;
         public List<PriceRangeDto> AvailablePriceRanges { get; set; } = new();
+        public List<ManufacturerLookupDto> AvailableManufacturers { get; set; }
 
         public int PageSize { get; set; } = 12;
         public int CurrentPage { get; set; } = 1;
@@ -70,6 +72,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
             {
                 return NotFound("Category slug is required.");
             }
+            
 
             var category = await _categoryRepository.GetBySlugAsync(Slug);
             if (category == null)
@@ -81,7 +84,6 @@ namespace Acme.ProductSelling.Web.Pages.Products
             CategorySpecType = category.SpecificationType;
             CategoryId = category.Id;
 
-            // Calculate ACTUAL price bounds from products in this category
             await CalculateActualPriceBoundsAsync(CategoryId);
 
             // Check if this category supports price filtering
@@ -90,10 +92,13 @@ namespace Acme.ProductSelling.Web.Pages.Products
                 AvailablePriceRanges = GeneratePriceRangesForCategory(CategorySpecType);
             }
 
-            // Set current filter values (initially same as bounds)
             CurrentMinPrice = MinPriceBound;
             CurrentMaxPrice = MaxPriceBound;
 
+            if (ShowManufacturerFilter)
+            {
+                AvailableManufacturers = await _categoryAppService.GetManufacturersInCategoryAsync(CategoryId);
+            }
             // Fetch products
             var input = new GetProductsByCategoryInput
             {
@@ -125,12 +130,9 @@ namespace Acme.ProductSelling.Web.Pages.Products
             );
 
             return Page();
-        }
 
-        /// <summary>
-        /// Calculate the actual minimum and maximum prices from products in this category
-        /// This gives us the real price range for the slider
-        /// </summary>
+
+        }
         private async Task CalculateActualPriceBoundsAsync(Guid categoryId)
         {
             try
@@ -156,7 +158,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
                 {
                     // No products in category - use reasonable defaults
                     MinPriceBound = 0;
-                    MaxPriceBound = 10_000_000; // 10M default
+                    MaxPriceBound = 10000000; // 10M default
                     Logger.LogWarning($"No products found in category {categoryId}, using default bounds");
                 }
             }
@@ -165,63 +167,54 @@ namespace Acme.ProductSelling.Web.Pages.Products
                 Logger.LogError(ex, "Error calculating price bounds for category {CategoryId}", categoryId);
                 // Fallback to safe defaults
                 MinPriceBound = 0;
-                MaxPriceBound = 100_000_000;
+                MaxPriceBound = 100000000;
             }
         }
 
-        /// <summary>
-        /// Round down to nearest thousand for cleaner min values
-        /// Examples: 2,290,000 → 2,000,000 or 5,450,000 → 5,000,000
-        /// </summary>
         private decimal RoundDownToNearestThousand(decimal value)
         {
-            if (value >= 1_000_000)
+            if (value >= 1000000)
             {
                 // Round down to nearest million for values >= 1M
-                return Math.Floor(value / 1_000_000) * 1_000_000;
+                return Math.Floor(value / 1000000) * 1000000;
             }
-            else if (value >= 100_000)
+            else if (value >= 100000)
             {
                 // Round down to nearest 100K for values >= 100K
-                return Math.Floor(value / 100_000) * 100_000;
+                return Math.Floor(value / 100000) * 100000;
             }
-            else if (value >= 10_000)
+            else if (value >= 10000)
             {
                 // Round down to nearest 10K for values >= 10K
-                return Math.Floor(value / 10_000) * 10_000;
+                return Math.Floor(value / 10000) * 10000;
             }
             else
             {
                 // Round down to nearest 1K for smaller values
-                return Math.Floor(value / 1_000) * 1_000;
+                return Math.Floor(value / 1000) * 1000;
             }
         }
-
-        /// <summary>
-        /// Round up to nearest thousand for cleaner max values
-        /// Examples: 6,580,000 → 7,000,000 or 15,200,000 → 16,000,000
-        /// </summary>
         private decimal RoundUpToNearestThousand(decimal value)
         {
-            if (value >= 1_000_000)
+            if (value >= 1000000)
             {
                 // Round up to nearest million for values >= 1M
-                return Math.Ceiling(value / 1_000_000) * 1_000_000;
+                return Math.Ceiling(value / 1000000) * 1000000;
             }
-            else if (value >= 100_000)
+            else if (value >= 100000)
             {
                 // Round up to nearest 100K for values >= 100K
-                return Math.Ceiling(value / 100_000) * 100_000;
+                return Math.Ceiling(value / 100000) * 100000;
             }
-            else if (value >= 10_000)
+            else if (value >= 10000)
             {
                 // Round up to nearest 10K for values >= 10K
-                return Math.Ceiling(value / 10_000) * 10_000;
+                return Math.Ceiling(value / 10000) * 10000;
             }
             else
             {
                 // Round up to nearest 1K for smaller values
-                return Math.Ceiling(value / 1_000) * 1_000;
+                return Math.Ceiling(value / 1000) * 1000;
             }
         }
 

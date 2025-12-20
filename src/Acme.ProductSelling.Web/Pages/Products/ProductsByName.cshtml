@@ -1,8 +1,8 @@
 ﻿@page "/products/search/{Name?}"
 @model Acme.ProductSelling.Web.Pages.Products.ProductsByNameModel
 @using Acme.ProductSelling.Web.Helpers
-@using Acme.ProductSelling.Web.Pages.Components.PriceFilter
-@using System.Globalization
+@using Acme.ProductSelling.Web.Pages.Components.Filter
+@using Acme.ProductSelling.Web.Models
 
 @section styles {
     <link href="~/css/shared/products/product-item.css" rel="stylesheet" />
@@ -30,23 +30,24 @@
 
 <div class="container mb-4 mt-1 py-3 bg-light rounded">
     <h4 class="mb-3">
-        @L["Product:ProductsByName"]: "@Model.Name"
+        @L["Product:ProductsByName", @Model.Name]
         @if (Model.ProductList != null)
         {
-            <span class="badge bg-secondary">@Model.ProductList.TotalCount @L["Results"]</span>
+            <span class="badge" style="background-color: var(--primary-color);">@Model.ProductList.TotalCount @L["UI:Results"]</span>
         }
     </h4>
 
     @* Price Filter Component *@
     @if (Model.ProductList != null && Model.ProductList.TotalCount > 0)
     {
-        @await Component.InvokeAsync("PriceFilter", new PriceFilterViewModel
+        @await Component.InvokeAsync("PriceFilter", new FilterViewModel
         {
             MinPriceBound = Model.MinPriceBound,
-        MaxPriceBound = Model.MaxPriceBound,
-        SearchKeyword = Model.Name,
-        PageSize = Model.PageSize,
-        ShowManufacturerFilter = false
+            MaxPriceBound = Model.MaxPriceBound,
+            SearchKeyword = Model.Name,
+            PageSize = Model.PageSize,
+            ShowManufacturerFilter = true,
+            Manufacturers = Model.AvailableManufacturers
         })
         }
 
@@ -160,18 +161,15 @@
     <script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.0/dist/nouislider.min.js"></script>
     <script src="~/js/global/products/price-filter.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.priceFilterConfig) {
-                // Custom API endpoint for search results
-                window.priceFilterConfig.apiEndpoint = '/api/products/search-with-price';
-
-                const priceFilter = new PriceFilter(window.priceFilterConfig);
-
-                console.log('Search page price filter initialized:', {
-                    searchKeyword: window.priceFilterConfig.searchKeyword,
-                    bounds: [window.priceFilterConfig.minBound, window.priceFilterConfig.maxBound]
-                });
-            }
+         document.addEventListener('DOMContentLoaded', function() {
+            const priceFilter = new PriceFilter({
+                minBound: @Model.MinPriceBound,
+                maxBound: @Model.MaxPriceBound,
+                pageSize: @Model.PageSize,
+                searchKeyword: '@Model.Name',
+                showManufacturerFilter: @Model.ShowManufacturerFilter.ToString().ToLower(),
+                apiEndpoint: '/api/products/search-with-price'
+            });
         });
     </script>
 }

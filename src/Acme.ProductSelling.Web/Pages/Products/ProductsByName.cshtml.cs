@@ -1,4 +1,7 @@
-﻿using Acme.ProductSelling.Products;
+﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories.Configurations;
+using Acme.ProductSelling.Categories.Dtos;
+using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
@@ -19,9 +23,10 @@ namespace Acme.ProductSelling.Web.Pages.Products
     {
         private readonly IProductLookupAppService _productLookupAppService;
         private readonly IProductRepository _productRepository;
+        private readonly IManufacturerAppService _manufacturerAppService;
 
         [BindProperty(SupportsGet = true)]
-        [FromQuery(Name = "name")]
+        //[FromQuery(Name = "name")]
         public string Name { get; set; }
 
         public PagedResultDto<ProductDto> ProductList { get; set; }
@@ -31,11 +36,16 @@ namespace Acme.ProductSelling.Web.Pages.Products
         public decimal MinPriceBound { get; set; }
         public decimal MaxPriceBound { get; set; }
         public int PageSize { get; set; } = 12;
-        public ProductsByNameModel(IProductLookupAppService productLookupAppService, IProductRepository productRepository)
+        public decimal CurrentMinPrice { get; set; }
+        public decimal CurrentMaxPrice { get; set; }
+        public bool ShowManufacturerFilter { get; set; } = true;
+        public List<ManufacturerLookupDto> AvailableManufacturers { get; set; }
+        public ProductsByNameModel(IProductLookupAppService productLookupAppService, IProductRepository productRepository, IManufacturerAppService manufacturerAppService)
         {
             ProductList = new PagedResultDto<ProductDto>();
             _productLookupAppService = productLookupAppService;
             _productRepository = productRepository;
+            _manufacturerAppService = manufacturerAppService;
         }
 
 
@@ -43,7 +53,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
         {
             if (string.IsNullOrWhiteSpace(Name))
             {
-                ProductList = new PagedResultDto<ProductDto>(0, new System.Collections.Generic.List<ProductDto>());
+                ProductList = new PagedResultDto<ProductDto>(0, new List<ProductDto>());
                 return;
             }
 
@@ -57,10 +67,13 @@ namespace Acme.ProductSelling.Web.Pages.Products
                 SkipCount = skipCount,
                 Sorting = "ProductName"
             });
-
+            
             // Calculate price bounds for search results
             await CalculateSearchPriceBoundsAsync(Name);
-
+            if (ShowManufacturerFilter && ProductList.TotalCount > 0)
+            {
+                AvailableManufacturers = await _manufacturerAppService.GetManufacturersByKeywordAsync(Name);
+            }
             // Setup pagination
             PagerModel = new PagerModel(
                 ProductList.TotalCount,
@@ -99,31 +112,31 @@ namespace Acme.ProductSelling.Web.Pages.Products
                 else
                 {
                     MinPriceBound = 0;
-                    MaxPriceBound = 10_000_000;
+                    MaxPriceBound = 10000000;
                 }
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Error calculating price bounds for search: {SearchKeyword}", searchKeyword);
                 MinPriceBound = 0;
-                MaxPriceBound = 100_000_000;
+                MaxPriceBound = 100000000;
             }
         }
 
         private decimal RoundDownToNearestThousand(decimal value)
         {
-            if (value >= 1_000_000) return Math.Floor(value / 1_000_000) * 1_000_000;
-            if (value >= 100_000) return Math.Floor(value / 100_000) * 100_000;
-            if (value >= 10_000) return Math.Floor(value / 10_000) * 10_000;
+            if (value >= 1_000000) return Math.Floor(value / 1000000) * 1000000;
+            if (value >= 100000) return Math.Floor(value / 100000) * 100000;
+            if (value >= 10000) return Math.Floor(value / 10000) * 10000;
             return Math.Floor(value / 1_000) * 1_000;
         }
 
         private decimal RoundUpToNearestThousand(decimal value)
         {
-            if (value >= 1_000_000) return Math.Ceiling(value / 1_000_000) * 1_000_000;
-            if (value >= 100_000) return Math.Ceiling(value / 100_000) * 100_000;
-            if (value >= 10_000) return Math.Ceiling(value / 10_000) * 10_000;
-            return Math.Ceiling(value / 1_000) * 1_000;
+            if (value >= 1_000000) return Math.Ceiling(value / 1000000) * 1000000;
+            if (value >= 100000) return Math.Ceiling(value / 100000) * 100000;
+            if (value >= 10000) return Math.Ceiling(value / 10000) * 10000;
+            return Math.Ceiling(value / 1000) * 1000;
         }
     }
 }

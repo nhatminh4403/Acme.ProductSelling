@@ -31,7 +31,7 @@ namespace Acme.ProductSelling.Controllers
         }
 
         /// <summary>
-        /// Filter products by price for a category
+        /// Filter products by price for a category (with optional manufacturer filter)
         /// Used by: ProductsByCategory, ProductByPrice pages
         /// </summary>
         [HttpGet("filter-by-price")]
@@ -39,6 +39,7 @@ namespace Acme.ProductSelling.Controllers
            [FromQuery] string categorySlug,
            [FromQuery] decimal minPrice,
            [FromQuery] decimal maxPrice,
+           [FromQuery] Guid? manufacturerId = null, 
            [FromQuery] int page = 1,
            [FromQuery] int pageSize = 12,
            [FromQuery] string sortBy = "ProductName")
@@ -56,33 +57,65 @@ namespace Acme.ProductSelling.Controllers
                     return NotFound(new { success = false, error = "Category not found" });
                 }
 
-                var input = new GetProductsByPriceDto
+                // ✅ If manufacturer filter is provided, use manufacturer-specific filtering
+                if (manufacturerId.HasValue && manufacturerId.Value != Guid.Empty)
                 {
-                    CategoryId = category.Id,
-                    MinPrice = minPrice,
-                    MaxPrice = CategoryPriceRangeConfiguration.IsOpenEndedRange(maxPrice)
-                        ? CategoryPriceRangeConfiguration.GetOpenEndedMaxValue()
-                        : maxPrice,
-                    MaxResultCount = pageSize,
-                    SkipCount = (page - 1) * pageSize,
-                    Sorting = sortBy
-                };
+                    var input = new GetProductsByManufacturerWithPriceDto
+                    {
+                        CategoryId = category.Id,
+                        ManufacturerId = manufacturerId.Value,
+                        MinPrice = minPrice,
+                        MaxPrice = CategoryPriceRangeConfiguration.IsOpenEndedRange(maxPrice)
+                            ? CategoryPriceRangeConfiguration.GetOpenEndedMaxValue()
+                            : maxPrice,
+                        MaxResultCount = pageSize,
+                        SkipCount = (page - 1) * pageSize,
+                        Sorting = sortBy
+                    };
 
-                var products = await _productLookupAppService.GetListByProductPrice(input);
+                    var products = await _productLookupAppService.GetProductsByManufacturerWithPrice(input);
 
-                return Ok(new
+                    return Ok(new
+                    {
+                        success = true,
+                        data = products.Items,
+                        totalCount = products.TotalCount,
+                        currentPage = page,
+                        pageSize = pageSize,
+                        totalPages = (int)Math.Ceiling(products.TotalCount / (double)pageSize)
+                    });
+                }
+                else
                 {
-                    success = true,
-                    data = products.Items,
-                    totalCount = products.TotalCount,
-                    currentPage = page,
-                    pageSize = pageSize,
-                    totalPages = (int)Math.Ceiling(products.TotalCount / (double)pageSize)
-                });
+                    // No manufacturer filter - get all products in category
+                    var input = new GetProductsByPriceDto
+                    {
+                        CategoryId = category.Id,
+                        MinPrice = minPrice,
+                        MaxPrice = CategoryPriceRangeConfiguration.IsOpenEndedRange(maxPrice)
+                            ? CategoryPriceRangeConfiguration.GetOpenEndedMaxValue()
+                            : maxPrice,
+                        MaxResultCount = pageSize,
+                        SkipCount = (page - 1) * pageSize,
+                        Sorting = sortBy
+                    };
+
+                    var products = await _productLookupAppService.GetListByProductPrice(input);
+
+                    return Ok(new
+                    {
+                        success = true,
+                        data = products.Items,
+                        totalCount = products.TotalCount,
+                        currentPage = page,
+                        pageSize = pageSize,
+                        totalPages = (int)Math.Ceiling(products.TotalCount / (double)pageSize)
+                    });
+                }
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Error filtering products by price");
+                Logger.LogError(ex, "Error filtering products by price. ManufacturerId: {ManufacturerId}", manufacturerId);
                 return StatusCode(500, new { success = false, error = "An error occurred while filtering products" });
             }
         }
@@ -98,6 +131,7 @@ namespace Acme.ProductSelling.Controllers
             [FromQuery] decimal maxPrice,
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 12,
+            [FromQuery] Guid? manufacturerId = null, 
             [FromQuery] string sortBy = "ProductName")
         {
             try
@@ -107,15 +141,16 @@ namespace Acme.ProductSelling.Controllers
                     return BadRequest(new { success = false, error = "Search keyword is required" });
                 }
 
-                var input = new GetProductByNameWithPriceDto
-                {
-                    Filter = searchKeyword,
-                    MinPrice = minPrice,
-                    MaxPrice = maxPrice,
-                    MaxResultCount = pageSize,
-                    SkipCount = (page - 1) * pageSize,
-                    Sorting = sortBy
-                };
+                    var input = new GetProductByNameWithPriceDto
+                    {
+                        Filter = searchKeyword,
+                        MinPrice = minPrice,
+                        MaxPrice = maxPrice,
+                        MaxResultCount = pageSize,
+                        SkipCount = (page - 1) * pageSize,
+                        Sorting = sortBy,
+                        ManufacturerId = manufacturerId
+                    };
 
                 var products = await _productLookupAppService.GetProductsByNameWithPrice(input);
 

@@ -263,7 +263,7 @@
     "Product:Yes": "Yes",
     "Product:ProductDetail": "Product Detail",
     "Product:No": "No",
-    "Product:ProductsByName": "Products by Name",
+    "Product:SearchByName": "Products by {0}",
     "Product:NoProductsFound": "No Products Found",
 
     "Product:NoProductsFoundInCategory": "No products found in this category.",
@@ -576,6 +576,8 @@
     "UI:NoFeaturedProductsFound": "No featured products found.",
     "UI:GoBack": "Go back",
     "UI:OrGoHome": "Or go to home page",
+    "UI:Manufacturers": "Brands",
+    "UI:ViewDetails": "View Details",
     "UI:Title:Admin:Products": "Products Management",
     "UI:Title:Admin:AllProducts": "All Products",
     "UI:Title:Admin:AllOrders": "Orders Management",
@@ -599,6 +601,13 @@
     "UI:Title:Checkout": "Checkout",
     "UI:Title:AllProductsByCategory": "All Products by {0} Category",
     "UI:Title:AllProductsByName": "All Products by {0}",
+
+    "UI:Sort:Featured": "Featured",
+    "UI:Sort:NameAZ": "Name: A-Z",
+    "UI:Sort:NameZA": "Name: Z-A",
+    "UI:Sort:PriceLowHigh": "Price: Low to High",
+    "UI:Sort:PriceHighLow": "Price: High to Low",
+
     "UI:Hotline": "Hotline",
     "UI:ManageProfile": "Manage Your Profile",
     "UI:MyOrders": "My Orders",
@@ -620,7 +629,7 @@
     "UI:ViewResults": "View Results",
     "UI:ResetSlider": "Reset to Range Bounds",
     "UI:ClearAllFilters": "Clear All Filters",
-
+    "UI:Results": "Results",
     "ViewDetails": "View Details",
     "Footer:AboutUs": "ABOUT US",
     "Footer:Introduction": "Introduction",

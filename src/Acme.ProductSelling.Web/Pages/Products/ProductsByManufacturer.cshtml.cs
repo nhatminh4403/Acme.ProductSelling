@@ -1,8 +1,9 @@
 ﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories.Dtos;
+using Acme.ProductSelling.Categories.Services;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
-using Acme.ProductSelling.Web.Pages.Components.PriceFilter;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -21,6 +22,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
         private readonly IManufacturerRepository _manufacturerRepository;
         private readonly IProductLookupAppService _productLookupAppService;
         private readonly IProductRepository _productRepository;
+        private readonly ICategoryAppService _categoryAppService;
         [BindProperty(SupportsGet = true)]
         public string CategoryUrlSlug { get; set; }
 
@@ -42,7 +44,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
 
         // Manufacturer filter (optional - for multi-manufacturer categories)
         public bool ShowManufacturerFilter { get; set; } = false;
-        public List<ManufacturerFilterDto> AvailableManufacturers { get; set; }
+        public List<ManufacturerLookupDto> AvailableManufacturers { get; set; }
         public Guid? SelectedManufacturerId { get; set; }
 
         //
@@ -50,12 +52,14 @@ namespace Acme.ProductSelling.Web.Pages.Products
             ICategoryRepository categoryRepository,
             IManufacturerRepository manufacturerRepository,
             IProductLookupAppService productLookupAppService,
-            IProductRepository productRepository)
+            IProductRepository productRepository,
+            ICategoryAppService categoryAppService)
         {
             _categoryRepository = categoryRepository;
             _manufacturerRepository = manufacturerRepository;
             _productLookupAppService = productLookupAppService;
             _productRepository = productRepository;
+            _categoryAppService = categoryAppService;
         }
 
 
@@ -93,7 +97,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
             // Get other manufacturers in this category (optional)
             if (ShowManufacturerFilter)
             {
-                await LoadAvailableManufacturersAsync(CategoryId);
+                AvailableManufacturers = await _categoryAppService.GetManufacturersInCategoryAsync(CategoryId);
             }
 
             // Get products
@@ -172,58 +176,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
             }
         }
 
-        /// <summary>
-        /// Load all manufacturers in this category for the filter
-        /// </summary>
-        private async Task LoadAvailableManufacturersAsync(Guid categoryId)
-        {
-            try
-            {
-                var queryable = await _productRepository.GetQueryableAsync();
 
-                var manufacturerCounts = await queryable
-                    .Where(p => p.CategoryId == categoryId && p.IsActive)
-                    .GroupBy(p => p.ManufacturerId)
-                    .Select(g => new
-                    {
-                        ManufacturerId = g.Key,
-                        Count = g.Count()
-                    })
-                    .ToListAsync();
-
-                if (manufacturerCounts.Any())
-                {
-                    var manufacturerIds = manufacturerCounts.Select(m => m.ManufacturerId).ToList();
-                    var manufacturers = await _manufacturerRepository
-                        .GetListAsync(m => manufacturerIds.Contains(m.Id));
-
-                    AvailableManufacturers = manufacturers
-                        .Select(m => new ManufacturerFilterDto
-                        {
-                            Id = m.Id,
-                            Name = m.Name,
-                            UrlSlug = m.UrlSlug,
-                            ProductCount = manufacturerCounts
-                                .FirstOrDefault(c => c.ManufacturerId == m.Id)?.Count ?? 0
-                        })
-                        .OrderByDescending(m => m.ProductCount)
-                        .ToList();
-                }
-                else
-                {
-                    AvailableManufacturers = new List<ManufacturerFilterDto>();
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(
-                    ex,
-                    "Error loading manufacturers for category {CategoryId}",
-                    categoryId
-                );
-                AvailableManufacturers = new List<ManufacturerFilterDto>();
-            }
-        }
 
         private decimal RoundDownToNearestThousand(decimal value)
         {

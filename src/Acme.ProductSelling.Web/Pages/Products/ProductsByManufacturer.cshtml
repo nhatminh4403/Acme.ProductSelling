@@ -1,10 +1,9 @@
 ﻿@page "/collections/{CategoryUrlSlug}/{ManufacturerUrlSlug}"
 @model Acme.ProductSelling.Web.Pages.Products.ProductsByManufacturerModel
 @using Acme.ProductSelling.Web.Helpers
-@using Acme.ProductSelling.Web.Pages.Components.PriceFilter
+@using Acme.ProductSelling.Web.Pages.Components.Filter
 @using Acme.ProductSelling.Categories
-@using System.Globalization
-
+@using Acme.ProductSelling.Web.Models
 @section styles {
     <link href="~/css/shared/products/product-item.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.7.0/dist/nouislider.min.css">
@@ -46,16 +45,17 @@
     @* Price Filter Component with Manufacturer Filter *@
     @if (Model.Products != null && Model.Products.TotalCount > 0)
     {
-        @await Component.InvokeAsync("PriceFilter", new PriceFilterViewModel
+        @await Component.InvokeAsync("PriceFilter", new FilterViewModel
         {
             MinPriceBound = Model.MinPriceBound,
-        MaxPriceBound = Model.MaxPriceBound,
-        CategorySlug = Model.CategoryUrlSlug,
-        ManufacturerSlug = Model.ManufacturerUrlSlug,
-        PageSize = Model.PageSize,
-        ShowManufacturerFilter = Model.ShowManufacturerFilter,
-        Manufacturers = Model.AvailableManufacturers,
-        SelectedManufacturerId = Model.SelectedManufacturerId
+            MaxPriceBound = Model.MaxPriceBound,
+            CategorySlug = Model.CategoryUrlSlug,
+            ManufacturerSlug = Model.ManufacturerUrlSlug,
+            PageSize = Model.PageSize,
+            ShowManufacturerFilter = Model.ShowManufacturerFilter,
+            Manufacturers = Model.AvailableManufacturers,
+            SelectedManufacturerId = Model.SelectedManufacturerId,
+            
         })
         }
 

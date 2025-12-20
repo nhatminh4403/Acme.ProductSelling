@@ -5,5 +5,7 @@ namespace Acme.ProductSelling.Manufacturers
     public class ManufacturerLookupDto : EntityDto<Guid>
     {
         public string Name { get; set; }
+        public string UrlSlug { get; set; }
+
     }
 }

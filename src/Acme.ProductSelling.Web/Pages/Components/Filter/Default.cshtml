@@ -1,0 +1,147 @@
+﻿@model Acme.ProductSelling.Web.Models.FilterViewModel
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Acme.ProductSelling.Localization.ProductSellingResource> L
+
+<div class="filter-bar">
+    @* Price Filter Button with Dropdown *@
+    <div class="filter-wrapper">
+        <button type="button" class="filter-button" id="priceFilterToggle">
+            <i class="bi bi-funnel"></i>
+            <span>@L["UI:Price"]</span>
+            <i class="bi bi-chevron-down ms-1" style="font-size: 12px;"></i>
+        </button>
+
+        @* Price Filter Dropdown *@
+        <div class="filter-dropdown price-dropdown" id="priceDropdown">
+            <div id="priceSlider"></div>
+            <div class="price-inputs">
+                <div class="price-input-wrapper">
+                    <input type="text"
+                           id="minPriceInput"
+                           class="form-control"
+                           readonly>
+                </div>
+                <div class="price-input-wrapper">
+                    <input type="text"
+                           id="maxPriceInput"
+                           class="form-control"
+                           readonly>
+                </div>
+            </div>
+
+            <div class="dropdown-footer">
+                <button type="button" class="btn-reset" id="resetFilter">
+                    <i class="bi bi-arrow-clockwise me-1"></i>@L["Deselect"]
+                </button>
+                <button type="button" class="btn-apply" id="applyFilter" disabled>
+                    @L["UI:ViewResults"]
+                </button>
+            </div>
+        </div>
+    </div>
+
+    @* Manufacturer Filter Button with Dropdown *@
+    @if (Model.ShowManufacturerFilter && Model.Manufacturers != null && Model.Manufacturers.Any())
+    {
+        <div class="filter-wrapper">
+            <button type="button" class="filter-button" id="manufacturerFilterToggle">
+                <i class="bi bi-building"></i>
+                <span>@L["UI:Manufacturer"]</span>
+                <i class="bi bi-chevron-down ms-1" style="font-size: 12px;"></i>
+            </button>
+
+            @* Manufacturer Filter Dropdown *@
+            <div class="filter-dropdown manufacturer-dropdown" id="manufacturerDropdown">
+                <div class="manufacturer-filter-section">
+                    <div class="manufacturer-grid">
+                        <button type="button"
+                                class="manufacturer-pill active"
+                                data-manufacturer-id=""
+                                data-manufacturer-name="">
+                            @L["UI:AllManufacturers"]
+                        </button>
+                        @foreach (var manufacturer in Model.Manufacturers)
+                        {
+                            <button type="button"
+                                    class="manufacturer-pill"
+                                    data-manufacturer-id="@manufacturer.Id"
+                                    data-manufacturer-name="@manufacturer.Name">
+                                @manufacturer.Name
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                <div class="dropdown-footer">
+                    <button type="button" class="btn-reset" id="resetManufacturerFilter">
+                        <i class="bi bi-arrow-clockwise me-1"></i>@L["Deselect"]
+                    </button>
+                    <button type="button" class="btn-apply" id="applyManufacturerFilter" disabled>
+                        @L["UI:ViewResults"]
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+
+    @* Sort Filter Button with Dropdown *@
+    <div class="filter-wrapper">
+        <button type="button" class="filter-button" id="sortFilterToggle">
+            <i class="bi bi-sort-down"></i>
+            <span id="sortButtonText">@L["UI:Sort:Featured"]</span>
+            <i class="bi bi-chevron-down ms-1" style="font-size: 12px;"></i>
+        </button>
+
+        @* Sort Filter Dropdown *@
+        <div class="filter-dropdown sort-dropdown" id="sortDropdown">
+            <div class="sort-options">
+                <button type="button" class="sort-option active" data-sort-value="featured" data-sort-label="@L["UI:Sort:Featured"]">
+                    <i class="bi bi-star me-2"></i>
+                    <span>@L["UI:Sort:Featured"]</span>
+                    <i class="bi bi-check2 ms-auto sort-check"></i>
+                </button>
+                <button type="button" class="sort-option" data-sort-value="name-asc" data-sort-label="@L["UI:Sort:NameAZ"]">
+                    <i class="bi bi-sort-alpha-down me-2"></i>
+                    <span>@L["UI:Sort:NameAZ"]</span>
+                    <i class="bi bi-check2 ms-auto sort-check"></i>
+                </button>
+                <button type="button" class="sort-option" data-sort-value="name-desc" data-sort-label="@L["UI:Sort:NameZA"]">
+                    <i class="bi bi-sort-alpha-up me-2"></i>
+                    <span>@L["UI:Sort:NameZA"]</span>
+                    <i class="bi bi-check2 ms-auto sort-check"></i>
+                </button>
+                <button type="button" class="sort-option" data-sort-value="price-asc" data-sort-label="@L["UI:Sort:PriceLowHigh"]">
+                    <i class="bi bi-sort-numeric-down me-2"></i>
+                    <span>@L["UI:Sort:PriceLowHigh"]</span>
+                    <i class="bi bi-check2 ms-auto sort-check"></i>
+                </button>
+                <button type="button" class="sort-option" data-sort-value="price-desc" data-sort-label="@L["UI:Sort:PriceHighLow"]">
+                    <i class="bi bi-sort-numeric-up me-2"></i>
+                    <span>@L["UI:Sort:PriceHighLow"]</span>
+                    <i class="bi bi-check2 ms-auto sort-check"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    @* Active Price Filter Badge *@
+    <div class="active-filter-badge" id="activeFilters">
+        <i class="bi bi-tag"></i>
+        <span id="currentPriceRange"></span>
+        <button type="button" class="clear-btn" id="clearPriceFilter" title="@L["UI:ClearFilter"]">
+            <i class="bi bi-x-circle"></i>
+        </button>
+    </div>
+
+    @* Active Manufacturer Filter Badge *@
+    <div class="active-filter-badge" id="activeManufacturerFilter">
+        <i class="bi bi-building"></i>
+        <span id="currentManufacturer"></span>
+        <button type="button" class="clear-btn" id="clearManufacturerFilter" title="@L["UI:ClearFilter"]">
+            <i class="bi bi-x-circle"></i>
+        </button>
+    </div>
+
+    @* Backdrop *@
+    <div class="dropdown-backdrop" id="dropdownBackdrop"></div>
+</div>

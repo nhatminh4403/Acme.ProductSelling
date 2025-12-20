@@ -1,7 +1,7 @@
 ﻿@page "/collections/{slug}"
 @using Acme.ProductSelling.Web.Helpers
-@using System.Globalization
-@using Acme.ProductSelling.Web.Pages.Components.PriceFilter
+@using Acme.ProductSelling.Web.Pages.Components.Filter
+@using Acme.ProductSelling.Web.Models
 @model Acme.ProductSelling.Web.Pages.Products.ProductsByCategoryModel
 
 @section styles {
@@ -34,17 +34,18 @@
 
     @if (Model.AvailablePriceRanges != null && Model.AvailablePriceRanges.Any())
     {
-        @await Component.InvokeAsync(typeof(PriceFilterViewComponent),
-        new PriceFilterViewModel
+        @await Component.InvokeAsync(typeof(FilterViewComponent),
+        new FilterViewModel
         {
             MinPriceBound = Model.MinPriceBound,
             MaxPriceBound = Model.MaxPriceBound,
             CategorySlug = Model.Slug,
             PageSize = Model.PageSize,
-            ShowManufacturerFilter = false
+            ShowManufacturerFilter = true,
+            Manufacturers = Model.AvailableManufacturers
         }
         )
-    }
+        }
 
     <div id="productsGrid">
         @* Loading Overlay *@
@@ -81,15 +82,13 @@
                                     </div>
                                 }
 
-                            <div class="card-body d-flex flex-column">
-                                <h6 class="card-title mb-2 fs-6" style="min-height: 40px;">
-                                    <a asp-page="/Products/ProductDetail"
-                                       class="text-decoration-none text-dark"
-                                       asp-route-slug="@product.UrlSlug"
-                                       title="@product.ProductName">
-                                        @(product.ProductName.Length > 50
-                                                                            ? product.ProductName.Substring(0, 47) + "..."
-                                                                            : product.ProductName)
+                                <div class="card-body d-flex flex-column">
+                                    <h6 class="card-title mb-2 fs-6" style="min-height: 40px;">
+                                        <a asp-page="/Products/ProductDetail"
+                                           class="text-decoration-none text-dark"
+                                           asp-route-slug="@product.UrlSlug"
+                                           title="@product.ProductName">
+                                            @(product.ProductName.Length > 50 ? product.ProductName.Substring(0, 47) + "..." : product.ProductName)
                                         </a>
                                     </h6>
 
@@ -119,7 +118,7 @@
                                     <a asp-page="/Products/ProductDetail"
                                        asp-route-slug="@product.UrlSlug"
                                        class="btn btn-sm btn-primary w-100">
-                                        @L["ViewDetails"]
+                                        @L["UI:ViewDetails"]
                                     </a>
                                 </div>
                             </div>
@@ -139,13 +138,12 @@
             }
         </div>
 
-        @* Pagination *@
+
         <div id="paginationContainer" class="mt-4">
             @if (Model.Products.TotalCount > Model.PageSize)
             {
                 <nav>
                     <ul class="pagination justify-content-center">
-                        @* Initial pagination will be here *@
                     </ul>
                 </nav>
             }
@@ -157,12 +155,17 @@
 @section scripts {
     <script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.0/dist/nouislider.min.js"></script>
     <script src="~/js/global/products/price-filter.js"></script>
+
     <script>
-        // Initialize price filter when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.priceFilterConfig) {
-                const priceFilter = new PriceFilter(window.priceFilterConfig);
-            }
+         document.addEventListener('DOMContentLoaded', function() {
+            const priceFilter = new PriceFilter({
+                minBound: @Model.MinPriceBound,
+                maxBound: @Model.MaxPriceBound,
+                categorySlug: '@Model.Slug',
+                pageSize: @Model.PageSize,
+                showManufacturerFilter: @Model.ShowManufacturerFilter.ToString().ToLower(),
+
+            });
         });
     </script>
 }
