@@ -666,7 +666,7 @@ public class ProductSellingDbContext :
             b.Property(u => u.PhoneNumber).IsRequired(false);
             b.Property(u => u.ShippingAddress).IsRequired(false);
             b.HasIndex(c => c.AppUserId).IsUnique();
-            
+
         });
         #endregion
     }

@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
-using NUglify.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -71,7 +70,7 @@ namespace Acme.ProductSelling.Orders
             IStoreRepository storeRepository,
             IStoreInventoryRepository storeInventoryRepository,
             OrderToOrderDtoMapper orderMapper)
-            //OrderListMapper orderListMapper)
+        //OrderListMapper orderListMapper)
         {
             _orderRepository = orderRepository;
             _productRepository = productRepository;
@@ -939,15 +938,15 @@ namespace Acme.ProductSelling.Orders
             await _orderHistoryAppService.LogOrderChangeAsync(
                 id,
                 oldStatus,
-                order.OrderStatus,     
+                order.OrderStatus,
                 oldPaymentStatus,
-                order.PaymentStatus,    
-                _localizer["Order:CancelledByUser"] 
+                order.PaymentStatus,
+                _localizer["Order:CancelledByUser"]
             );
             await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
             Logger.LogDebug("[DeleteOrder] Notification sent");
 
-            
+
 
 
             Logger.LogInformation("[DeleteOrder] COMPLETED - OrderId: {OrderId}", id);

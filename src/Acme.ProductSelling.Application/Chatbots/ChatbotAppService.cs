@@ -10,11 +10,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Volo.Abp;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
 namespace Acme.ProductSelling.Chatbots
 {
+    [RemoteService(false)]
     public class ChatbotAppService : ApplicationService, IChatbotAppService
     {
         private readonly IntentClassifierService _intentClassifier;

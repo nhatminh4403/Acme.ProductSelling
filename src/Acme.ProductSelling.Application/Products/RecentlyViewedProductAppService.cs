@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Users;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Acme.ProductSelling.Products
 {

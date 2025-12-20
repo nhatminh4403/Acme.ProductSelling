@@ -1,9 +1,7 @@
-﻿using Acme.ProductSelling.Categories;
-using Acme.ProductSelling.Products.Dtos;
+﻿using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -112,7 +110,9 @@ namespace Acme.ProductSelling.Products
                     query => query
                         .Where(p => p.ProductName.Contains(input.Filter))
                         .Where(p => (p.DiscountedPrice ?? p.OriginalPrice) >= input.MinPrice &&
-                                   (p.DiscountedPrice ?? p.OriginalPrice) <= input.MaxPrice),
+                                   (p.DiscountedPrice ?? p.OriginalPrice) <= input.MaxPrice)
+                        .WhereIf(input.ManufacturerId.HasValue && input.ManufacturerId.Value != Guid.Empty, p => p.ManufacturerId == input.ManufacturerId.Value
+                    ),
                     input
                 );
         }

@@ -1,8 +1,4 @@
-﻿using Acme.ProductSelling.Categories;
-using Acme.ProductSelling.Categories.Configurations;
-using Acme.ProductSelling.Products.Services;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Acme.ProductSelling.Products.Services;
 using Volo.Abp.Domain.Services;
 
 namespace Acme.ProductSelling.Products

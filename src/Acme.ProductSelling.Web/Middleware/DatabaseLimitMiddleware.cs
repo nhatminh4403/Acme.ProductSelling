@@ -1,10 +1,10 @@
 ﻿// Create: Middleware/DatabaseLimitMiddleware.cs
 using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
 namespace Acme.ProductSelling.Web.Middleware
 {

@@ -1,5 +1,4 @@
 ﻿using Acme.ProductSelling.Orders.Dtos;
-using Acme.ProductSelling.Payments;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

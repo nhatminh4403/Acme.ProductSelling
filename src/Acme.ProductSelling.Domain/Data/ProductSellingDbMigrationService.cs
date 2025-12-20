@@ -14,7 +14,6 @@ using Volo.Abp.Identity;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.Uow;
-
 namespace Acme.ProductSelling.Data;
 
 public class ProductSellingDbMigrationService : ITransientDependency

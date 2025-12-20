@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Acme.ProductSelling.Products.Dtos
 {
@@ -8,5 +6,6 @@ namespace Acme.ProductSelling.Products.Dtos
     {
         public decimal MinPrice { get; set; }   // Min price
         public decimal MaxPrice { get; set; }
+        public Guid? ManufacturerId { get; set; }
     }
 }

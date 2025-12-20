@@ -50,7 +50,7 @@ public partial class OrderListMapper
     }
 
     // Alternative if you want partial method
-     //public partial List<OrderDto> MapList(List<Order> orders);
+    //public partial List<OrderDto> MapList(List<Order> orders);
 }
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public partial class OrderItemToOrderItemDtoMapper : MapperBase<OrderItem, OrderItemDto>

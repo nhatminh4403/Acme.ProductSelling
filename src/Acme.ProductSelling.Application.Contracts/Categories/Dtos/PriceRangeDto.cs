@@ -1,6 +1,5 @@
 ﻿// Location: Acme.ProductSelling.Application.Contracts/Categories/Dtos/PriceRangeDto.cs
 using Acme.ProductSelling.Products;
-using System;
 
 namespace Acme.ProductSelling.Categories.Dtos
 {

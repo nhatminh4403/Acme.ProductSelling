@@ -1,7 +1,5 @@
 ﻿using Acme.ProductSelling.Categories.Dtos;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Acme.ProductSelling.Products.Dtos
 {

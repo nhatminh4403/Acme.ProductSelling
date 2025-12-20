@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 namespace Acme.ProductSelling.Web.Controllers
 {
     [Route("api/payment")]
-    [ApiController] 
-    public class PaymentCallbackController : ControllerBase 
+    [ApiController]
+    public class PaymentCallbackController : ControllerBase
     {
         private readonly IPaymentCallbackAppService _callbackAppService;
         private readonly IOrderAppService _orderAppService;

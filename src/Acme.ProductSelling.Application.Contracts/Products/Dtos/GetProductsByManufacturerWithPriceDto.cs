@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Acme.ProductSelling.Products.Dtos
+﻿namespace Acme.ProductSelling.Products.Dtos
 {
     public class GetProductsByManufacturerWithPriceDto : GetProductsByManufacturerDto
     {

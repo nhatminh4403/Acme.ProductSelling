@@ -5,6 +5,7 @@ using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products;
+using Acme.ProductSelling.Products.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
@@ -13,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
@@ -23,11 +25,11 @@ namespace Acme.ProductSelling.Categories
     public class CategoryAppService : CrudAppService<Category, CategoryDto,
         Guid, PagedAndSortedResultRequestDto, CreateUpdateCategoryDto>, ICategoryAppService
     {
-        private readonly IRepository<Product, Guid> _productRepository;
+        private readonly IProductRepository _productRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IGuidGenerator _guidGenerator;
         private readonly ILogger<CategoryAppService> _logger;
-        private readonly IRepository<Manufacturer, Guid> _manufacturerRepository;
+        private readonly IManufacturerRepository _manufacturerRepository;
         private readonly IStringLocalizer<ProductSellingResource> _localizer;
 
         private readonly CategoryToCategoryDtoMapper _categoryToDtoMapper;
@@ -35,10 +37,10 @@ namespace Acme.ProductSelling.Categories
         private readonly ManufacturerToManufacturerDtoMapper _manufacturerToDtoMapper;
 
         public CategoryAppService(ICategoryRepository categoryRepository,
-                                  IRepository<Product, Guid> productRepository,
+                                  IProductRepository productRepository,
                                   IGuidGenerator guidGenerator,
                                   ILogger<CategoryAppService> logger,
-                                  IRepository<Manufacturer, Guid> manufacturerRepository,
+                                  IManufacturerRepository manufacturerRepository,
                                   IStringLocalizer<ProductSellingResource> localizer,
                                   CategoryToCategoryDtoMapper categoryToDtoMapper,
                                   CategoryToCategoryLookupDtoMapper categoryToLookupMapper,
@@ -119,6 +121,7 @@ namespace Acme.ProductSelling.Categories
         }
 
         [AllowAnonymous]
+        [RemoteService(false)]
         public async Task<ListResultDto<CategoryLookupDto>> GetCategoryLookupAsync()
         {
             var categories = await _categoryRepository.GetListAsync();
@@ -128,6 +131,7 @@ namespace Acme.ProductSelling.Categories
         }
 
         [AllowAnonymous]
+        [RemoteService(false)]
         public async Task<GroupedCategoriesResultDto> GetGroupedCategoriesAsync()
         {
             var categories = await _categoryRepository.GetListAsync();
@@ -164,6 +168,7 @@ namespace Acme.ProductSelling.Categories
             };
         }
         [AllowAnonymous]
+        [RemoteService(false)]
         public async Task<ListResultDto<CategoryWithManufacturersDto>> GetCategoriesWithManufacturersAsync()
         {
             var categories = await _categoryRepository.GetListAsync();
@@ -177,6 +182,55 @@ namespace Acme.ProductSelling.Categories
             return new ListResultDto<CategoryWithManufacturersDto>(categoryDtos);
         }
 
+        [AllowAnonymous]
+        [RemoteService(false)]
+        public virtual async Task<List<ManufacturerLookupDto>> GetManufacturersInCategoryAsync(Guid categoryId)
+        {
+            try
+            {
+                Logger.LogDebug("Loading manufacturers for category: {CategoryId}", categoryId);
+
+                var queryable = await _productRepository.GetQueryableAsync();
+
+                var manufacturerCounts = await queryable
+                    .Where(p => p.CategoryId == categoryId && p.IsActive)
+                    .GroupBy(p => p.ManufacturerId)
+                    .Select(g => new
+                    {
+                        ManufacturerId = g.Key,
+                        Count = g.Count()
+                    })
+                    .ToListAsync();
+
+                if (!manufacturerCounts.Any())
+                {
+                    Logger.LogWarning("No manufacturers found for category: {CategoryId}", categoryId);
+                    return new List<ManufacturerLookupDto>();
+                }
+
+                // Get manufacturer details
+                var manufacturerIds = manufacturerCounts.Select(m => m.ManufacturerId).ToList();
+                var manufacturers = await _manufacturerRepository
+                    .GetListAsync(m => manufacturerIds.Contains(m.Id));
+
+                // Combine and sort
+                var result = manufacturers.Select(m => new ManufacturerLookupDto
+                {
+                    Id = m.Id,
+                    Name = m.Name,
+                    UrlSlug = m.UrlSlug,
+                }).ToList();
+
+                Logger.LogInformation("Found {Count} manufacturers for category {CategoryId}", result.Count, categoryId);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error loading manufacturers for category {CategoryId}", categoryId);
+                throw;
+            }
+        }
         private async Task<Dictionary<Guid, List<Manufacturer>>> GetCategoryManufacturerLookupAsync()
         {
             var productQueryable = await _productRepository.GetQueryableAsync();
@@ -199,8 +253,6 @@ namespace Acme.ProductSelling.Categories
                              .ToList()
                    );
         }
-
-
         private CategoryInGroupDto MapToCategoryInGroup(
             Category category,
             Dictionary<Guid, List<Manufacturer>> manufacturersByCategory)
@@ -308,10 +360,6 @@ namespace Acme.ProductSelling.Categories
                 return _localizer["PriceRange:Between", formattedMin, formattedMax];
             }
         }
-
-        /// <summary>
-        /// Formats price value for display (e.g., 5000000 -> "5M")
-        /// </summary>
         private string FormatPriceForDisplay(decimal price)
         {
             if (price >= 1000000)
@@ -331,22 +379,15 @@ namespace Acme.ProductSelling.Categories
             return price.ToString("N0");
         }
 
-        /// <summary>
-        /// Generates URL-friendly string for price range routing
-        /// </summary>
         private string GetUrlValueForPriceRange(PriceRangeEnum range, decimal min, decimal max)
         {
-            // Create semantic URL values based on the range
-            // This could also be stored in localization resources for multi-language support
 
             if (CategoryPriceRangeConfiguration.IsOpenEndedRange(max))
             {
-                // Open-ended ranges (e.g., "over-20m")
                 return $"over-{FormatPriceForUrl(min)}";
             }
             else if (min == 0)
             {
-                // Start-bounded ranges (e.g., "under-5m")
                 return $"under-{FormatPriceForUrl(max + 1)}";
             }
             else
@@ -355,10 +396,6 @@ namespace Acme.ProductSelling.Categories
                 return $"{FormatPriceForUrl(min)}-to-{FormatPriceForUrl(max)}";
             }
         }
-
-        /// <summary>
-        /// Formats price value for URL (e.g., 5000000 -> "5m")
-        /// </summary>
         private string FormatPriceForUrl(decimal price)
         {
             if (price >= 1000000)

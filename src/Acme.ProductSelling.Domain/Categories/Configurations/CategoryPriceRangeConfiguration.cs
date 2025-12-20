@@ -1,8 +1,6 @@
 ﻿
 using Acme.ProductSelling.Products;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Acme.ProductSelling.Categories.Configurations
 {

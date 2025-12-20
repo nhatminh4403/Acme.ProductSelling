@@ -1,21 +1,16 @@
-﻿using Acme.ProductSelling.Permissions;
-using Acme.ProductSelling.Products;
+﻿using Acme.ProductSelling.Products.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Services;
-using Volo.Abp.Authorization;
-using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
 using Volo.Abp.Users;
-using Acme.ProductSelling.Products.Services;
-using System.Linq.Dynamic.Core;
 
 namespace Acme.ProductSelling.Carts;
 

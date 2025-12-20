@@ -23,8 +23,6 @@ using Volo.Abp.Application.Services;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
-using static Acme.ProductSelling.Permissions.ProductSellingPermissions;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace Acme.ProductSelling.Products
 {
     public class ProductAppService :
