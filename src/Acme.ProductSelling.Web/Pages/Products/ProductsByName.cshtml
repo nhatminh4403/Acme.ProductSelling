@@ -28,7 +28,7 @@
     </nav>
 </div>
 
-<div class="container mb-4 mt-1 py-3 bg-light rounded">
+<div class="container mb-4 mt-1 py-3 bg-light rounded products-wrapper">
     <h4 class="mb-3">
         @L["Product:ProductsByName", @Model.Name]
         @if (Model.ProductList != null)
@@ -36,31 +36,27 @@
             <span class="badge" style="background-color: var(--primary-color);">@Model.ProductList.TotalCount @L["UI:Results"]</span>
         }
     </h4>
-
+    <div class="loading-overlay">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">@L["Loading"]...</span>
+        </div>
+    </div>
     @* Price Filter Component *@
     @if (Model.ProductList != null && Model.ProductList.TotalCount > 0)
     {
         @await Component.InvokeAsync("PriceFilter", new FilterViewModel
         {
             MinPriceBound = Model.MinPriceBound,
-            MaxPriceBound = Model.MaxPriceBound,
-            SearchKeyword = Model.Name,
-            PageSize = Model.PageSize,
-            ShowManufacturerFilter = true,
-            Manufacturers = Model.AvailableManufacturers
+        MaxPriceBound = Model.MaxPriceBound,
+        SearchKeyword = Model.Name,
+        PageSize = Model.PageSize,
+        ShowManufacturerFilter = true,
+        Manufacturers = Model.AvailableManufacturers
         })
         }
 
     @* Products Grid *@
     <div id="productsGrid">
-        @* Loading Overlay *@
-        <div class="loading-overlay">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">@L["Loading"]...</span>
-            </div>
-        </div>
-
-        @* Products Container *@
         <div id="productsContainer">
             @if (Model.ProductList != null && Model.ProductList.Items.Any())
             {
@@ -86,16 +82,14 @@
                                     </div>
                                 }
 
-                            <div class="card-body d-flex flex-column">
-                                <div class="product-header mb-2">
-                                    <h6 class="card-title mb-1 fs-6" style="min-height: 40px;">
-                                        <a asp-page="/Products/ProductDetail"
-                                           class="text-decoration-none text-dark"
-                                           asp-route-slug="@product.UrlSlug"
-                                           title="@product.ProductName">
-                                            @(product.ProductName.Length > 50
-                                                                                    ? product.ProductName.Substring(0, 47) + "..."
-                                                                                    : product.ProductName)
+                                <div class="card-body d-flex flex-column">
+                                    <div class="product-header mb-2">
+                                        <h6 class="card-title mb-1 fs-6" style="min-height: 40px;">
+                                            <a asp-page="/Products/ProductDetail"
+                                               class="text-decoration-none text-dark"
+                                               asp-route-slug="@product.UrlSlug"
+                                               title="@product.ProductName">
+                                                @(product.ProductName.Length > 50 ? product.ProductName.Substring(0, 47) + "..." : product.ProductName)
                                             </a>
                                         </h6>
                                     </div>
@@ -168,7 +162,6 @@
                 pageSize: @Model.PageSize,
                 searchKeyword: '@Model.Name',
                 showManufacturerFilter: @Model.ShowManufacturerFilter.ToString().ToLower(),
-                apiEndpoint: '/api/products/search-with-price'
             });
         });
     </script>

@@ -1,8 +1,10 @@
 ﻿using Acme.ProductSelling.Products.Dtos;
+using Acme.ProductSelling.Products.Helpers;
 using Acme.ProductSelling.Products.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
@@ -37,7 +39,8 @@ namespace Acme.ProductSelling.Products
                 query => query
                     .Where(p => p.CategoryId == input.CategoryId)
                     .Where(p => (p.DiscountedPrice ?? p.OriginalPrice) >= input.MinPrice &&
-                               (p.DiscountedPrice ?? p.OriginalPrice) <= input.MaxPrice),
+                               (p.DiscountedPrice ?? p.OriginalPrice) <= input.MaxPrice)
+                    .WhereIf(input.HasManufacturerFilter, p => input.ManufacturerIds.Contains(p.ManufacturerId)),
                 input
             );
         }
@@ -73,6 +76,31 @@ namespace Acme.ProductSelling.Products
 
             return _productMapper.Map(product);
         }
+        public virtual async Task<PagedResultDto<ProductDto>> GetProductsByNameWithPrice(GetProductByNameWithPriceDto input)
+        {
+            return await ExecutePagedQueryAsync(
+                    query => query
+                        .Where(p => p.ProductName.Contains(input.Filter))
+                        .Where(p => (p.DiscountedPrice ?? p.OriginalPrice) >= input.MinPrice &&
+                                   (p.DiscountedPrice ?? p.OriginalPrice) <= input.MaxPrice)
+                         .WhereIf(input.HasManufacturerFilter, p => input.ManufacturerIds.Contains(p.ManufacturerId)),
+                    input
+                );
+        }
+
+        public virtual async Task<PagedResultDto<ProductDto>> GetProductsByManufacturerWithPrice(GetProductsByManufacturerWithPriceDto input)
+        {
+            return await ExecutePagedQueryAsync(
+         query => query
+             .Where(p => p.CategoryId == input.CategoryId &&
+                        p.ManufacturerId == input.ManufacturerId)
+             .Where(p => (p.DiscountedPrice ?? p.OriginalPrice) >= input.MinPrice &&
+                        (p.DiscountedPrice ?? p.OriginalPrice) <= input.MaxPrice),
+         input
+     );
+        }
+
+
 
         private async Task<PagedResultDto<ProductDto>> ExecutePagedQueryAsync<TInput>(
             Expression<Func<IQueryable<Product>,
@@ -91,10 +119,28 @@ namespace Acme.ProductSelling.Products
 
             var totalCount = await AsyncExecuter.CountAsync(queryable);
 
-            var sortProperty = input.Sorting ?? nameof(Product.ProductName);
+            if (!string.IsNullOrWhiteSpace(input.Sorting))
+            {
+                if (input.Sorting == "price-asc")
+                {
+                    queryable = queryable.OrderBy(p => p.DiscountedPrice ?? p.OriginalPrice);
+                }
+                else if (input.Sorting == "price-desc")
+                {
+                    queryable = queryable.OrderByDescending(p => p.DiscountedPrice ?? p.OriginalPrice);
+                }
+                else
+                {
+                    queryable = queryable.OrderBy(input.Sorting);
+                }
+            }
+            else
+            {
+                // Default sorting
+                queryable = queryable.OrderBy(p => p.ProductName);
+            }
             var products = await AsyncExecuter.ToListAsync(
                 queryable
-                    .OrderBy(p => EF.Property<object>(p, sortProperty))
                     .PageBy(input)
             );
 
@@ -104,29 +150,6 @@ namespace Acme.ProductSelling.Products
             return new PagedResultDto<ProductDto>(totalCount, productDtos);
         }
 
-        public virtual async Task<PagedResultDto<ProductDto>> GetProductsByNameWithPrice(GetProductByNameWithPriceDto input)
-        {
-            return await ExecutePagedQueryAsync(
-                    query => query
-                        .Where(p => p.ProductName.Contains(input.Filter))
-                        .Where(p => (p.DiscountedPrice ?? p.OriginalPrice) >= input.MinPrice &&
-                                   (p.DiscountedPrice ?? p.OriginalPrice) <= input.MaxPrice)
-                        .WhereIf(input.ManufacturerId.HasValue && input.ManufacturerId.Value != Guid.Empty, p => p.ManufacturerId == input.ManufacturerId.Value
-                    ),
-                    input
-                );
-        }
 
-        public virtual async Task<PagedResultDto<ProductDto>> GetProductsByManufacturerWithPrice(GetProductsByManufacturerWithPriceDto input)
-        {
-            return await ExecutePagedQueryAsync(
-         query => query
-             .Where(p => p.CategoryId == input.CategoryId &&
-                        p.ManufacturerId == input.ManufacturerId)
-             .Where(p => (p.DiscountedPrice ?? p.OriginalPrice) >= input.MinPrice &&
-                        (p.DiscountedPrice ?? p.OriginalPrice) <= input.MaxPrice),
-         input
-     );
-        }
     }
 }

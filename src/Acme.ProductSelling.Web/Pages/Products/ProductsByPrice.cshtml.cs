@@ -1,8 +1,9 @@
-﻿// Location: Web/Pages/Products/ProductByPrice.cshtml.cs
-using Acme.ProductSelling.Categories;
+﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Categories.Configurations;
 using Acme.ProductSelling.Categories.Dtos;
+using Acme.ProductSelling.Categories.Services;
 using Acme.ProductSelling.Localization;
+using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
@@ -25,18 +26,20 @@ namespace Acme.ProductSelling.Web.Pages.Products
         private readonly ICategoryRepository _categoryRepository;
         private readonly IStringLocalizer<ProductSellingResource> _localizer;
         private readonly IProductLookupAppService _productLookupAppService;
-        private readonly IRepository<Product, Guid> _productRepository;
-
+        private readonly IProductRepository _productRepository;
+        private readonly ICategoryAppService _categoryAppService;
         public ProductByPriceModel(
             ICategoryRepository categoryRepository,
             IStringLocalizer<ProductSellingResource> localizer,
             IProductLookupAppService productLookupAppService,
-            IRepository<Product, Guid> productRepository)
+            IProductRepository productRepository,
+            ICategoryAppService categoryAppService)
         {
             _categoryRepository = categoryRepository;
             _localizer = localizer;
             _productLookupAppService = productLookupAppService;
             _productRepository = productRepository;
+            _categoryAppService = categoryAppService;
         }
 
         [BindProperty(SupportsGet = true)]
@@ -44,25 +47,21 @@ namespace Acme.ProductSelling.Web.Pages.Products
 
         [BindProperty(SupportsGet = true)]
         public string PriceRange { get; set; }
+        public List<ManufacturerLookupDto> AvailableManufacturers { get; set; }
 
         public PagedResultDto<ProductDto> Products { get; set; }
         public string CategoryName { get; set; }
         public SpecificationType CategorySpecType { get; set; }
         public Guid CategoryId { get; set; }
 
-        // Exact price range from configuration
         public decimal MinPrice { get; set; }
         public decimal MaxPrice { get; set; }
         public string DisplayPriceRangeName { get; set; }
         public List<PriceRangeDto> AvailablePriceRanges { get; set; } = new();
 
-        // Actual price bounds from products in this range (for display info only)
         public decimal ActualMinPrice { get; set; }
         public decimal ActualMaxPrice { get; set; }
-
-        // Current slider values (removed - not needed, slider uses MinPrice/MaxPrice)
-        // public decimal CurrentMinPrice { get; set; }
-        // public decimal CurrentMaxPrice { get; set; }
+        public bool ShowManufacturerFilter { get; set; } = true;
 
         public int PageSize { get; set; } = 12;
         public int CurrentPage { get; set; } = 1;
@@ -85,41 +84,36 @@ namespace Acme.ProductSelling.Web.Pages.Products
             CategorySpecType = category.SpecificationType;
             CategoryId = category.Id;
 
-            // Check if this category supports price filtering
             if (!CategoryPriceRangeConfiguration.HasPriceRanges(CategorySpecType))
             {
                 return RedirectToPage("/Products/ProductsByCategory", new { slug = Slug });
             }
 
-            // Load available price ranges for this category
             AvailablePriceRanges = GeneratePriceRangesForCategory(CategorySpecType);
-
-            // Parse the selected price range from URL
+            if (ShowManufacturerFilter)
+            {
+                AvailableManufacturers = await _categoryAppService.GetManufacturersInCategoryAsync(CategoryId);
+            }
             var parsedRange = ParsePriceRangeFromUrl(PriceRange, CategorySpecType);
 
             if (!parsedRange.HasValue)
             {
-                // Invalid price range for this category
                 return RedirectToPage("/Products/ProductsByCategory", new { slug = Slug });
             }
 
-            // Set EXACT price range bounds from configuration
             MinPrice = parsedRange.Value.Min;
             MaxPrice = parsedRange.Value.Max;
             DisplayPriceRangeName = FormatPriceRangeDisplay(MinPrice, MaxPrice);
 
-            // For open-ended ranges (over-Xm), get the actual max price from products
             if (CategoryPriceRangeConfiguration.IsOpenEndedRange(MaxPrice))
             {
                 await SetActualMaxPriceForOpenEndedRangeAsync(CategoryId, MinPrice);
             }
             else
             {
-                // For bounded ranges, MaxPrice is already correct from configuration
                 ActualMaxPrice = MaxPrice;
             }
 
-            // Get actual min/max prices from products for display info
             await SetActualPriceBoundsAsync(CategoryId, MinPrice, MaxPrice == decimal.MaxValue ? ActualMaxPrice : MaxPrice);
 
             Logger.LogInformation(

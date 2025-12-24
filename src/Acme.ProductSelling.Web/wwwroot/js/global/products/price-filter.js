@@ -8,8 +8,13 @@
         this.searchKeyword = config.searchKeyword || '';
         this.pageSize = config.pageSize || 12;
         this.showManufacturerFilter = config.showManufacturerFilter || false;
-        this.apiEndpoint = config.apiEndpoint || '/api/products/filter-by-price';
+        this.apiEndpoint = config.apiEndpoint || '/api/products/filter';
         this.onFilter = config.onFilter;
+
+        // ✅ LOADING DELAY CONFIGURATION
+        this.minLoadingDelay = config.minLoadingDelay || 2000; // Default: 2 seconds
+        this.maxLoadingDelay = config.maxLoadingDelay || 5000; // Default: 5 seconds
+        this.enableLoadingDelay = config.enableLoadingDelay !== false; // Default: enabled
 
         // State
         this.priceSlider = null;
@@ -17,8 +22,8 @@
         this.sliderTouched = false;
         this.isPriceFiltered = false;
         this.isManufacturerFiltered = false;
-        this.selectedManufacturerId = null;
-        this.selectedManufacturerName = null;
+        this.selectedManufacturerIds = []; // ✅ Changed to array for multiple selection
+        this.selectedManufacturerNames = []; // ✅ Changed to array
         this.manufacturerTouched = false;
         this.currentSortValue = 'featured'; // ✅ ADD THIS
         this.currentSortLabel = 'Featured'; // ✅ ADD THIS
@@ -111,23 +116,41 @@
 
     initManufacturerFilter() {
         const pills = document.querySelectorAll('.manufacturer-pill');
-        pills.forEach(pill => {
-            pill.addEventListener('click', () => {
-                // Remove active class from all pills
-                pills.forEach(p => p.classList.remove('active'));
 
-                // Add active class to clicked pill
-                pill.classList.add('active');
+        // Handle pill clicks for multiple selection
+        pills.forEach((pill) => {
+            const manufacturerId = pill.dataset.manufacturerId;
+            const manufacturerName = pill.dataset.manufacturerName;
 
-                // Get manufacturer data
-                this.selectedManufacturerId = pill.dataset.manufacturerId || null;
-                this.selectedManufacturerName = pill.dataset.manufacturerName || null;
+            pill.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                // Toggle active class
+                const isActive = pill.classList.toggle('active');
+
+                // Update selected manufacturers arrays
+                if (isActive) {
+                    // Add to selection
+                    if (!this.selectedManufacturerIds.includes(manufacturerId)) {
+                        this.selectedManufacturerIds.push(manufacturerId);
+                        this.selectedManufacturerNames.push(manufacturerName);
+                    }
+                } else {
+                    // Remove from selection
+                    const idIndex = this.selectedManufacturerIds.indexOf(manufacturerId);
+                    if (idIndex > -1) {
+                        this.selectedManufacturerIds.splice(idIndex, 1);
+                        this.selectedManufacturerNames.splice(idIndex, 1);
+                    }
+                }
+
+                // Mark as touched and enable apply button
                 this.manufacturerTouched = true;
-
-                // Enable apply button
                 if (this.applyManufacturerBtn) {
                     this.applyManufacturerBtn.disabled = false;
                 }
+
+                console.log('Selected manufacturers:', this.selectedManufacturerNames);
             });
         });
 
@@ -156,7 +179,10 @@
         this.applyBtn?.addEventListener('click', () => {
             if (!this.sliderTouched) return;
             const values = this.priceSlider.get();
-            this.applyFilters(values[0], values[1], this.selectedManufacturerId, 1);
+            const manufacturerIds = this.selectedManufacturerIds.length > 0
+                ? this.selectedManufacturerIds.join(',')
+                : null;
+            this.applyFilters(values[0], values[1], manufacturerIds, 1);
             this.sliderTouched = false;
             this.closeAllDropdowns();
         });
@@ -170,7 +196,10 @@
             if (this.priceSlider) {
                 this.priceSlider.set([this.minBound, this.maxBound]);
             }
-            this.applyFilters(this.minBound, this.maxBound, this.selectedManufacturerId, 1);
+            const manufacturerIds = this.selectedManufacturerIds.length > 0
+                ? this.selectedManufacturerIds.join(',')
+                : null;
+            this.applyFilters(this.minBound, this.maxBound, manufacturerIds, 1);
             this.closeAllDropdowns();
         });
 
@@ -187,50 +216,52 @@
             if (!isOpen) this.openManufacturerDropdown();
         });
 
-        // Reset manufacturer
+        // Reset manufacturer (deselect all)
         this.resetManufacturerBtn?.addEventListener('click', () => {
-            this.manufacturerTouched = false;
-            if (this.applyManufacturerBtn) this.applyManufacturerBtn.disabled = true;
-
-            // Remove active from all pills
+            // Remove active class from all pills
             document.querySelectorAll('.manufacturer-pill').forEach(p => p.classList.remove('active'));
 
-            // Set first pill (All) as active
-            const allPill = document.querySelector('.manufacturer-pill[data-manufacturer-id=""]');
-            if (allPill) allPill.classList.add('active');
+            // Clear selection arrays
+            this.selectedManufacturerIds = [];
+            this.selectedManufacturerNames = [];
 
-            this.selectedManufacturerId = null;
-            this.selectedManufacturerName = null;
+            this.manufacturerTouched = true;
+            if (this.applyManufacturerBtn) this.applyManufacturerBtn.disabled = false;
         });
 
         // Apply manufacturer filter
         this.applyManufacturerBtn?.addEventListener('click', () => {
             if (!this.manufacturerTouched) return;
             const priceValues = this.priceSlider.get();
-            this.applyFilters(priceValues[0], priceValues[1], this.selectedManufacturerId, 1);
+
+            // If no manufacturers selected, pass null (show all)
+            const manufacturerIds = this.selectedManufacturerIds.length > 0
+                ? this.selectedManufacturerIds.join(',')
+                : null;
+
+            this.applyFilters(priceValues[0], priceValues[1], manufacturerIds, 1);
             this.manufacturerTouched = false;
             this.closeAllDropdowns();
         });
 
-        // Clear manufacturer filter
+        // Clear manufacturer filter badge
         this.clearManufacturerFilterBtn?.addEventListener('click', () => {
             this.isManufacturerFiltered = false;
             this.manufacturerTouched = false;
-            this.selectedManufacturerId = null;
-            this.selectedManufacturerName = null;
+            this.selectedManufacturerIds = [];
+            this.selectedManufacturerNames = [];
             this.activeManufacturerFilters?.classList.remove('show');
             this.manufacturerToggleBtn?.classList.remove('active');
 
-            // Reset pills
+            // Reset pills (remove active state)
             document.querySelectorAll('.manufacturer-pill').forEach(p => p.classList.remove('active'));
-            const allPill = document.querySelector('.manufacturer-pill[data-manufacturer-id=""]');
-            if (allPill) allPill.classList.add('active');
 
             const priceValues = this.priceSlider.get();
             this.applyFilters(priceValues[0], priceValues[1], null, 1);
             this.closeAllDropdowns();
         });
     }
+
 
     openPriceDropdown() {
         this.priceDropdown.classList.add('show');
@@ -254,36 +285,54 @@
     }
 
     closeAllDropdowns() {
-        // Remove 'show' class from all dropdowns using shared class
         document.querySelectorAll('.filter-dropdown').forEach(dropdown => {
             dropdown.classList.remove('show');
         });
         this.backdrop?.classList.remove('show');
     }
 
-    applyFilters(minPrice, maxPrice, manufacturerId, page = 1) {
+    applyFilters(minPrice, maxPrice, manufacturerIds, page = 1) {
         if (this.onFilter) {
-            this.onFilter(minPrice, maxPrice, page, manufacturerId);
-            this.updateActiveFilters(minPrice, maxPrice, manufacturerId);
+            this.onFilter(minPrice, maxPrice, page, manufacturerIds);
+            this.updateActiveFilters(minPrice, maxPrice, manufacturerIds);
             return;
         }
 
-        // Default AJAX implementation
         const overlay = document.querySelector('.loading-overlay');
         if (overlay) overlay.classList.add('active');
+
+        const minLoadingTime = this.enableLoadingDelay
+            ? this.minLoadingDelay + Math.random() * (this.maxLoadingDelay - this.minLoadingDelay)
+            : 0;
+        const startTime = Date.now();
 
         let url = `${this.apiEndpoint}?minPrice=${minPrice}&maxPrice=${maxPrice}&page=${page}&pageSize=${this.pageSize}`;
         if (this.categorySlug) url += `&categorySlug=${this.categorySlug}`;
         if (this.manufacturerSlug) url += `&manufacturerSlug=${this.manufacturerSlug}`;
         if (this.searchKeyword) url += `&searchKeyword=${encodeURIComponent(this.searchKeyword)}`;
-        if (manufacturerId) url += `&manufacturerId=${manufacturerId}`;
+        if (manufacturerIds) url += `&manufacturerIds=${manufacturerIds}`;
+
+        // ✅ ADD SORT PARAMETER
+        if (this.currentSortValue && this.currentSortValue !== 'featured') {
+            url += `&sortBy=${this.currentSortValue}`;
+        }
 
         fetch(url)
             .then(response => response.json())
             .then(data => {
+                // ✅ CALCULATE REMAINING TIME TO MEET MINIMUM LOADING
+                const elapsedTime = Date.now() - startTime;
+                const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
+
+                // ✅ WAIT FOR REMAINING TIME BEFORE SHOWING RESULTS
+                return new Promise(resolve => {
+                    setTimeout(() => resolve(data), remainingTime);
+                });
+            })
+            .then(data => {
                 if (data.success) {
                     this.updateProductsGrid(data.data);
-                    this.updateActiveFilters(minPrice, maxPrice, manufacturerId);
+                    this.updateActiveFilters(minPrice, maxPrice, manufacturerIds);
                     this.updatePagination(data.totalPages, data.currentPage);
                     this.currentPage = data.currentPage;
                 } else {
@@ -299,7 +348,7 @@
             });
     }
 
-    updateActiveFilters(minPrice, maxPrice, manufacturerId) {
+    updateActiveFilters(minPrice, maxPrice, manufacturerIds) {
         // Update price filter
         const isPriceDefault = Math.round(minPrice) === this.minBound && Math.round(maxPrice) === this.maxBound;
         if (isPriceDefault) {
@@ -316,16 +365,21 @@
             this.priceToggleBtn?.classList.add('active');
         }
 
-        // Update manufacturer filter
-        if (!manufacturerId) {
+        // Update manufacturer filter (supports multiple)
+        if (!manufacturerIds || manufacturerIds === '' || this.selectedManufacturerNames.length === 0) {
             this.isManufacturerFiltered = false;
             this.activeManufacturerFilters?.classList.remove('show');
             this.manufacturerToggleBtn?.classList.remove('active');
         } else {
             this.isManufacturerFiltered = true;
             const manufacturerSpan = document.getElementById('currentManufacturer');
-            if (manufacturerSpan && this.selectedManufacturerName) {
-                manufacturerSpan.textContent = this.selectedManufacturerName;
+            if (manufacturerSpan) {
+                // Show count if multiple manufacturers selected
+                if (this.selectedManufacturerNames.length === 1) {
+                    manufacturerSpan.textContent = this.selectedManufacturerNames[0];
+                } else {
+                    manufacturerSpan.textContent = `${this.selectedManufacturerNames.length} manufacturers`;
+                }
             }
             this.activeManufacturerFilters?.classList.add('show');
             this.manufacturerToggleBtn?.classList.add('active');
@@ -420,7 +474,11 @@
                 if (!link.parentElement.classList.contains('disabled') && !link.parentElement.classList.contains('active')) {
                     const page = parseInt(link.dataset.page);
                     const values = this.priceSlider.get();
-                    this.applyFilters(values[0], values[1], this.selectedManufacturerId, page);
+                    // ✅ FIX: Use array and join
+                    const manufacturerIds = this.selectedManufacturerIds.length > 0
+                        ? this.selectedManufacturerIds.join(',')
+                        : null;
+                    this.applyFilters(values[0], values[1], manufacturerIds, page);
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             });
@@ -504,9 +562,12 @@
     applySortAndFilter() {
         // Get current filter values
         const priceValues = this.priceSlider ? this.priceSlider.get() : [this.minBound, this.maxBound];
+        const manufacturerIds = this.selectedManufacturerIds.length > 0
+            ? this.selectedManufacturerIds.join(',')
+            : null;
 
-        // Sort products in the current view (frontend only)
-        this.sortProducts(this.currentSortValue);
+        // ✅ CALL API WITH SORTING (includes loading delay)
+        this.applyFilters(priceValues[0], priceValues[1], manufacturerIds, 1);
 
         console.log('Applied sort:', this.currentSortValue);
     }

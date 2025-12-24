@@ -2,10 +2,12 @@
 using Acme.ProductSelling.Categories.Configurations;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products.Dtos;
+using Acme.ProductSelling.Products.Helpers;
 using Acme.ProductSelling.Products.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.AspNetCore.Mvc;
@@ -30,25 +32,56 @@ namespace Acme.ProductSelling.Controllers
             _manufacturerRepository = manufacturerRepository;
         }
 
-        /// <summary>
-        /// Filter products by price for a category (with optional manufacturer filter)
-        /// Used by: ProductsByCategory, ProductByPrice pages
-        /// </summary>
-        [HttpGet("filter-by-price")]
-        public async Task<IActionResult> FilterByPrice(
-           [FromQuery] string categorySlug,
-           [FromQuery] decimal minPrice,
-           [FromQuery] decimal maxPrice,
-           [FromQuery] Guid? manufacturerId = null, 
-           [FromQuery] int page = 1,
-           [FromQuery] int pageSize = 12,
-           [FromQuery] string sortBy = "ProductName")
+        [HttpGet("filter")]
+        public async Task<IActionResult> GetProducts(
+     [FromQuery] string categorySlug = null,
+     [FromQuery] string manufacturerIds = null, 
+     [FromQuery] string searchKeyword = null,
+     [FromQuery] decimal? minPrice = null,
+     [FromQuery] decimal? maxPrice = null,
+     [FromQuery] string sortBy = "featured",
+     [FromQuery] int page = 1,
+     [FromQuery] int pageSize = 12)
         {
             try
             {
-                if (string.IsNullOrEmpty(categorySlug))
+                var abpSorting = ProductSortMapper.MapToAbpSorting(sortBy);
+
+                var manufacturerIdsList = ParseManufacturerIds(manufacturerIds);
+
+                // Scenario 1: Search
+                if (!string.IsNullOrWhiteSpace(searchKeyword))
                 {
-                    return BadRequest(new { success = false, error = "Category slug is required" });
+                    var searchInput = new GetProductByNameWithPriceDto
+                    {
+                        Filter = searchKeyword,
+                        MinPrice = minPrice ?? 0,
+                        MaxPrice = maxPrice ?? decimal.MaxValue,
+                        ManufacturerIds = manufacturerIdsList, // ✅ PASS LIST
+                        Sorting = abpSorting,
+                        MaxResultCount = pageSize,
+                        SkipCount = (page - 1) * pageSize
+                    };
+
+                    var searchResults = await _productLookupAppService.GetProductsByNameWithPrice(searchInput);
+
+                    return Ok(new
+                    {
+                        success = true,
+                        data = searchResults.Items,
+                        totalCount = searchResults.TotalCount,
+                        currentPage = page,
+                        pageSize = pageSize,
+                        totalPages = (int)Math.Ceiling(searchResults.TotalCount / (double)pageSize),
+                        filterType = "search",
+                        appliedManufacturers = manufacturerIdsList.Count // Debug info
+                    });
+                }
+
+                // Validate category
+                if (string.IsNullOrWhiteSpace(categorySlug))
+                {
+                    return BadRequest(new { success = false, error = "Category slug or search keyword is required" });
                 }
 
                 var category = await _categoryRepository.GetBySlugAsync(categorySlug);
@@ -57,47 +90,18 @@ namespace Acme.ProductSelling.Controllers
                     return NotFound(new { success = false, error = "Category not found" });
                 }
 
-                // ✅ If manufacturer filter is provided, use manufacturer-specific filtering
-                if (manufacturerId.HasValue && manufacturerId.Value != Guid.Empty)
+                // Scenario 2: Category + Price (with optional multiple manufacturers)
+                if (minPrice.HasValue && maxPrice.HasValue)
                 {
-                    var input = new GetProductsByManufacturerWithPriceDto
-                    {
-                        CategoryId = category.Id,
-                        ManufacturerId = manufacturerId.Value,
-                        MinPrice = minPrice,
-                        MaxPrice = CategoryPriceRangeConfiguration.IsOpenEndedRange(maxPrice)
-                            ? CategoryPriceRangeConfiguration.GetOpenEndedMaxValue()
-                            : maxPrice,
-                        MaxResultCount = pageSize,
-                        SkipCount = (page - 1) * pageSize,
-                        Sorting = sortBy
-                    };
-
-                    var products = await _productLookupAppService.GetProductsByManufacturerWithPrice(input);
-
-                    return Ok(new
-                    {
-                        success = true,
-                        data = products.Items,
-                        totalCount = products.TotalCount,
-                        currentPage = page,
-                        pageSize = pageSize,
-                        totalPages = (int)Math.Ceiling(products.TotalCount / (double)pageSize)
-                    });
-                }
-                else
-                {
-                    // No manufacturer filter - get all products in category
                     var input = new GetProductsByPriceDto
                     {
                         CategoryId = category.Id,
-                        MinPrice = minPrice,
-                        MaxPrice = CategoryPriceRangeConfiguration.IsOpenEndedRange(maxPrice)
-                            ? CategoryPriceRangeConfiguration.GetOpenEndedMaxValue()
-                            : maxPrice,
+                        MinPrice = minPrice.Value,
+                        MaxPrice = maxPrice.Value,
+                        ManufacturerIds = manufacturerIdsList, // ✅ PASS LIST
+                        Sorting = abpSorting,
                         MaxResultCount = pageSize,
-                        SkipCount = (page - 1) * pageSize,
-                        Sorting = sortBy
+                        SkipCount = (page - 1) * pageSize
                     };
 
                     var products = await _productLookupAppService.GetListByProductPrice(input);
@@ -109,150 +113,40 @@ namespace Acme.ProductSelling.Controllers
                         totalCount = products.TotalCount,
                         currentPage = page,
                         pageSize = pageSize,
-                        totalPages = (int)Math.Ceiling(products.TotalCount / (double)pageSize)
+                        totalPages = (int)Math.Ceiling(products.TotalCount / (double)pageSize),
+                        filterType = manufacturerIdsList.Any() ? "category-price-manufacturers" : "category-price",
+                        appliedManufacturers = manufacturerIdsList.Count
                     });
                 }
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, "Error filtering products by price. ManufacturerId: {ManufacturerId}", manufacturerId);
-                return StatusCode(500, new { success = false, error = "An error occurred while filtering products" });
-            }
-        }
 
-        /// <summary>
-        /// Filter products by price for search results
-        /// Used by: ProductsByName page (search)
-        /// </summary>
-        [HttpGet("search-with-price")]
-        public async Task<IActionResult> SearchWithPrice(
-            [FromQuery] string searchKeyword,
-            [FromQuery] decimal minPrice,
-            [FromQuery] decimal maxPrice,
-            [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 12,
-            [FromQuery] Guid? manufacturerId = null, 
-            [FromQuery] string sortBy = "ProductName")
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(searchKeyword))
-                {
-                    return BadRequest(new { success = false, error = "Search keyword is required" });
-                }
-
-                    var input = new GetProductByNameWithPriceDto
-                    {
-                        Filter = searchKeyword,
-                        MinPrice = minPrice,
-                        MaxPrice = maxPrice,
-                        MaxResultCount = pageSize,
-                        SkipCount = (page - 1) * pageSize,
-                        Sorting = sortBy,
-                        ManufacturerId = manufacturerId
-                    };
-
-                var products = await _productLookupAppService.GetProductsByNameWithPrice(input);
-
-                return Ok(new
-                {
-                    success = true,
-                    data = products.Items,
-                    totalCount = products.TotalCount,
-                    currentPage = page,
-                    pageSize = pageSize,
-                    totalPages = (int)Math.Ceiling(products.TotalCount / (double)pageSize)
-                });
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, "Error searching products with price filter");
-                return StatusCode(500, new { success = false, error = "An error occurred while searching products" });
-            }
-        }
-
-        /// <summary>
-        /// Filter products by price for manufacturer
-        /// Used by: ProductsByManufacturer page
-        /// </summary>
-        [HttpGet("manufacturer-with-price")]
-        public async Task<IActionResult> ManufacturerWithPrice(
-            [FromQuery] string categorySlug,
-            [FromQuery] string manufacturerSlug,
-            [FromQuery] decimal minPrice,
-            [FromQuery] decimal maxPrice,
-            [FromQuery] Guid? manufacturerId = null,
-            [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 12,
-            [FromQuery] string sortBy = "ProductName")
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(categorySlug))
-                {
-                    return BadRequest(new { success = false, error = "Category slug is required" });
-                }
-
-                if (string.IsNullOrEmpty(manufacturerSlug) && manufacturerId == null)
-                {
-                    return BadRequest(new { success = false, error = "Manufacturer slug or ID is required" });
-                }
-
-                var category = await _categoryRepository.GetBySlugAsync(categorySlug);
-                if (category == null)
-                {
-                    return NotFound(new { success = false, error = "Category not found" });
-                }
-
-                Guid finalManufacturerId;
-
-                if (manufacturerId.HasValue)
-                {
-                    finalManufacturerId = manufacturerId.Value;
-                }
-                else
-                {
-                    var manufacturer = await _manufacturerRepository.GetBySlugAsync(manufacturerSlug);
-                    if (manufacturer == null)
-                    {
-                        return NotFound(new { success = false, error = "Manufacturer not found" });
-                    }
-                    finalManufacturerId = manufacturer.Id;
-                }
-
-                var input = new GetProductsByManufacturerWithPriceDto
+                // Scenario 3: Category only
+                var categoryInput = new GetProductsByCategoryInput
                 {
                     CategoryId = category.Id,
-                    ManufacturerId = finalManufacturerId,
-                    MinPrice = minPrice,
-                    MaxPrice = maxPrice,
+                    Sorting = abpSorting,
                     MaxResultCount = pageSize,
-                    SkipCount = (page - 1) * pageSize,
-                    Sorting = sortBy
+                    SkipCount = (page - 1) * pageSize
                 };
 
-                var products = await _productLookupAppService.GetProductsByManufacturerWithPrice(input);
+                var categoryProducts = await _productLookupAppService.GetListByCategoryAsync(categoryInput);
 
                 return Ok(new
                 {
                     success = true,
-                    data = products.Items,
-                    totalCount = products.TotalCount,
+                    data = categoryProducts.Items,
+                    totalCount = categoryProducts.TotalCount,
                     currentPage = page,
                     pageSize = pageSize,
-                    totalPages = (int)Math.Ceiling(products.TotalCount / (double)pageSize)
+                    totalPages = (int)Math.Ceiling(categoryProducts.TotalCount / (double)pageSize),
+                    filterType = "category"
                 });
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Error filtering manufacturer products by price");
-                return StatusCode(500, new { success = false, error = "An error occurred while filtering products" });
+                Logger.LogError(ex, "Error getting products. ManufacturerIds: {ManufacturerIds}", manufacturerIds);
+                return StatusCode(500, new { success = false, error = "An error occurred while loading products" });
             }
         }
-
-        /// <summary>
-        /// Get price bounds for a specific category and optional price range
-        /// </summary>
         [HttpGet("price-bounds/{categorySlug}")]
         public async Task<IActionResult> GetPriceBounds(
             string categorySlug,
@@ -297,7 +191,6 @@ namespace Acme.ProductSelling.Controllers
 
             var ranges = CategoryPriceRangeConfiguration.GetPriceRangesForCategory(specType);
 
-            // If specific range provided, use those bounds
             if (!string.IsNullOrEmpty(priceRangeUrl))
             {
                 foreach (var kvp in ranges)
@@ -313,7 +206,6 @@ namespace Acme.ProductSelling.Controllers
                 }
             }
 
-            // Return overall bounds for category
             var allBounds = ranges.Values.ToList();
             var min = allBounds.Min(b => b.Min);
             var max = allBounds
@@ -342,7 +234,26 @@ namespace Acme.ProductSelling.Controllers
                 return $"{FormatPriceForUrl(min)}-to-{FormatPriceForUrl(max)}";
             }
         }
+        private List<Guid> ParseManufacturerIds(string manufacturerIdsParam)
+        {
+            if (string.IsNullOrWhiteSpace(manufacturerIdsParam))
+            {
+                return new List<Guid>();
+            }
 
+            var ids = new List<Guid>();
+            var parts = manufacturerIdsParam.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var part in parts)
+            {
+                if (Guid.TryParse(part.Trim(), out var guid))
+                {
+                    ids.Add(guid);
+                }
+            }
+
+            return ids;
+        }
         private string FormatPriceForUrl(decimal price)
         {
             if (price >= 1000000)

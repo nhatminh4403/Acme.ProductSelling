@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
-namespace Acme.ProductSelling.Products
+namespace Acme.ProductSelling.Products.Helpers
 {
 
     public static class ProductQueryableExtensions

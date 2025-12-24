@@ -3,6 +3,7 @@ using Acme.ProductSelling.Categories.Dtos;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products.BackgroundJobs.ProductRelease;
 using Acme.ProductSelling.Products.Dtos;
+using Acme.ProductSelling.Products.Helpers;
 using Acme.ProductSelling.Products.Services;
 using Acme.ProductSelling.Products.Specification;
 using Acme.ProductSelling.Specifications.Junctions;

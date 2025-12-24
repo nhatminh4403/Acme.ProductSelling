@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Volo.Abp.Application.Dtos;
 namespace Acme.ProductSelling.Products.Dtos
 {
@@ -7,7 +9,9 @@ namespace Acme.ProductSelling.Products.Dtos
         public Guid CategoryId { get; set; }
         public decimal MinPrice { get; set; }
         public decimal MaxPrice { get; set; }
-        public string Filter { get; set; }
-        public string Sorting { get; set; } = "Name";
+        public List<Guid> ManufacturerIds { get; set; } = new List<Guid>();
+
+        // Helper property for empty check
+        public bool HasManufacturerFilter => ManufacturerIds != null && ManufacturerIds.Any();
     }
 }

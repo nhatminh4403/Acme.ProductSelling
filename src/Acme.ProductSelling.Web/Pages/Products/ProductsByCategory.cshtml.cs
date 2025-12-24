@@ -1,4 +1,4 @@
-﻿// Location: Web/Pages/Products/ProductsByCategory.cshtml.cs
+﻿
 using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Categories.Configurations;
 using Acme.ProductSelling.Categories.Dtos;

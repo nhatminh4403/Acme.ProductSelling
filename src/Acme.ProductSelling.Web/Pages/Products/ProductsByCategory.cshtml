@@ -13,6 +13,22 @@
 @{
     ViewData["Title"] = HelperMethods.GetCategoryLocalizerName(Model.CategoryName, L);
     Layout = "/Views/Shared/_Layout.cshtml";
+
+    var filterVM = new FilterViewModel();
+
+    if (Model.AvailablePriceRanges != null && Model.AvailablePriceRanges.Any())
+    {
+        filterVM = new FilterViewModel
+        {
+            MinPriceBound = Model.MinPriceBound,
+            MaxPriceBound = Model.MaxPriceBound,
+            CategorySlug = Model.Slug,
+            PageSize = Model.PageSize,
+            ShowManufacturerFilter = true,
+            Manufacturers = Model.AvailableManufacturers
+        };
+
+    }
 }
 
 <div class="container my-2">
@@ -30,33 +46,21 @@
     </nav>
 </div>
 
-<div class="container mb-4 mt-1 py-3 bg-light rounded">
+<div class="container mb-4 mt-1 py-3 bg-light rounded products-wrapper">
 
+    <div class="loading-overlay">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">@L["Loading"]...</span>
+        </div>
+    </div>
     @if (Model.AvailablePriceRanges != null && Model.AvailablePriceRanges.Any())
     {
-        @await Component.InvokeAsync(typeof(FilterViewComponent),
-        new FilterViewModel
-        {
-            MinPriceBound = Model.MinPriceBound,
-            MaxPriceBound = Model.MaxPriceBound,
-            CategorySlug = Model.Slug,
-            PageSize = Model.PageSize,
-            ShowManufacturerFilter = true,
-            Manufacturers = Model.AvailableManufacturers
-        }
-        )
-        }
+        @await Component.InvokeAsync(typeof(FilterViewComponent), filterVM)
+
+    }
 
     <div id="productsGrid">
-        @* Loading Overlay *@
 
-        <div class="loading-overlay">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">@L["Loading"]...</span>
-            </div>
-        </div>
-
-        @* Products Container *@
         <div id="productsContainer">
             @if (Model.Products != null && Model.Products.Items.Any())
             {
