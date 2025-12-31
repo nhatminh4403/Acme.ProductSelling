@@ -18,12 +18,8 @@ namespace Acme.ProductSelling.Products
         public async Task<Product> FindByNameAsync(string name)
         {
             var dbSet = await GetDbSetAsync();
-            var product = await dbSet.FirstOrDefaultAsync(c => c.ProductName == name);
-            if (product == null)
-            {
-                throw new Exception($"Product with name {name} not found");
-            }
-            return product;
+            return await dbSet.FirstOrDefaultAsync(c => c.ProductName == name);
+            
         }
         public async Task<List<Product>> GetListAsync(int skipCount,
             int maxResultCount, string sorting, string filter = null)
@@ -54,6 +50,19 @@ namespace Acme.ProductSelling.Products
             {
                 throw new Exception($"Product with name {id} not found");
             }
+            return product;
+        }
+
+        public async Task<Product> GetByNameAsync(string name)
+        {
+            var dbSet = await GetDbSetAsync();
+            var product = await dbSet.FirstOrDefaultAsync(c => c.ProductName == name);
+
+            if (product == null)
+            {
+                throw new Exception($"Product with name '{name}' not found");
+            }
+
             return product;
         }
     }

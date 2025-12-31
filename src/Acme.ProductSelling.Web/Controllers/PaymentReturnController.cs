@@ -88,7 +88,7 @@ namespace Acme.ProductSelling.Web.Controllers
                     return RedirectToPage("/Error", new { message = "Order not found" });
                 }
 
-                decimal paidAmount = decimal.Parse(paymentResult.Amount);
+                decimal paidAmount = decimal.Parse(response.Amount);
                 if (order.TotalAmount != paidAmount)
                 {
                     _logger.LogCritical("Gian lận số tiền! Đơn hàng: {Total}, Thanh toán: {Paid}", order.TotalAmount, paidAmount);

@@ -44,39 +44,5 @@ namespace Acme.ProductSelling.Categories
                 iconCssClass
             );
         }
-
-        public async Task<Category> UpdateAsync(
-            Guid id,
-            string name,
-            string description,
-            CategoryGroup? categoryGroup = null,
-            int? displayOrder = null,
-            string iconCssClass = null)
-        {
-            Check.NotNullOrWhiteSpace(name, nameof(name));
-
-            // Kiểm tra xem Category đã tồn tại chưa
-            var existingCategory = await _categoryRepository.GetAsync(id);
-            if (existingCategory == null)
-            {
-                throw new Exception($"Category with id '{id}' does not exist.");
-            }
-
-            // Cập nhật Category
-            existingCategory.Name = name;
-            existingCategory.Description = description;
-            existingCategory.UrlSlug = UrlHelperMethod.RemoveDiacritics(name);
-
-            if (categoryGroup.HasValue)
-                existingCategory.CategoryGroup = categoryGroup.Value;
-
-            if (displayOrder.HasValue)
-                existingCategory.DisplayOrder = displayOrder.Value;
-
-            if (!string.IsNullOrWhiteSpace(iconCssClass))
-                existingCategory.IconCssClass = iconCssClass;
-
-            return existingCategory;
-        }
     }
 }

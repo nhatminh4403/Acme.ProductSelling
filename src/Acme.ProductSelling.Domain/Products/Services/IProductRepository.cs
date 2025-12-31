@@ -13,6 +13,6 @@ namespace Acme.ProductSelling.Products.Services
             string sorting,
             string filter = null);
         Task<Product> FindByIdAsync(Guid id);
-
+        Task<Product> GetByNameAsync(string name);
     }
 }
