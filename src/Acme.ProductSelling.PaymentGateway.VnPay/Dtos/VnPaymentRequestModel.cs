@@ -9,5 +9,6 @@ namespace Acme.ProductSelling.PaymentGateway.VnPay.Dtos
         public string Description { get; set; }
         public double Price { get; set; }
         public DateTime CreatedDate { get; set; }
+        public DateTime ExpireDate { get; set; }
     }
 }

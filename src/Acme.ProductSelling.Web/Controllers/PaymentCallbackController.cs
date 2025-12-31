@@ -45,7 +45,6 @@ namespace Acme.ProductSelling.Web.Controllers
                     correlationId, Request.Query.Count
                 );
 
-                // IMPROVEMENT: Log query parameters (excluding sensitive data)
                 foreach (var param in Request.Query)
                 {
                     if (!param.Key.Contains("SecureHash", StringComparison.OrdinalIgnoreCase))
@@ -74,8 +73,6 @@ namespace Acme.ProductSelling.Web.Controllers
                     correlationId, result.VnPayResponseCode, result.Success
                 );
 
-                // IMPROVEMENT: VNPay expects specific response format
-                // Return 200 OK with RspCode in query string format, not JSON
                 if (result.Success && result.VnPayResponseCode == "00")
                 {
                     return Ok(new { RspCode = "00", Message = "Confirm Success" });

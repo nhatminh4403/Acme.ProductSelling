@@ -17,6 +17,7 @@ using Acme.ProductSelling.Web.Middleware;
 using Acme.ProductSelling.Web.Routing;
 using Hangfire;
 using Hangfire.MemoryStorage;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
@@ -300,7 +301,13 @@ public class ProductSellingWebModule : AbpModule
     {
         services.AddHangfire(config =>
         {
-            config.UseMemoryStorage();
+            config.UseSqlServerStorage(configuration.GetConnectionString("Default"), new SqlServerStorageOptions
+            {
+                PrepareSchemaIfNecessary = true,
+                QueuePollInterval = TimeSpan.FromSeconds(30), // reduce DB load
+                CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5)
+            });
         });
 
     }
@@ -613,7 +620,7 @@ public class ProductSellingWebModule : AbpModule
         app.UseRouting();
         app.UseMiddleware<RequestCultureMiddleware>();
 
-        app.UseMiddleware<PaymentIPWhitelistMiddleware>();
+        //app.UseMiddleware<PaymentIPWhitelistMiddleware>();
 
 
         app.UseAbpRequestLocalization();
@@ -635,11 +642,14 @@ public class ProductSellingWebModule : AbpModule
         {
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "ProductSelling API");
         });
-        app.UseHangfireDashboard("/hangfire", new DashboardOptions
+        if (env.IsDevelopment())
         {
-            // Tell Hangfire to use our custom filter
-            Authorization = new[] { new HangfireDashboardPermissionFilter() }
-        });
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                // Tell Hangfire to use our custom filter
+                Authorization = new[] { new HangfireDashboardPermissionFilter() }
+            });
+        }
 
         RecurringJob.AddOrUpdate<CleanupOldOrdersJob>(
                 "cleanup-old-orders",

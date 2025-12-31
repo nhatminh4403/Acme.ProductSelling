@@ -9,6 +9,7 @@
     "Actions": "Actions",
     "Cancel": "Cancel",
     "Edit": "Edit",
+    "Yes": "Yes",
     "Delete": "Delete",
     "ContinueShopping": "Continue Shopping",
     "Name": "Name",
@@ -1132,6 +1133,14 @@
     "PriceRange:Under": "Under {0}",
     "PriceRange:Over": "Over {0}",
     "PriceRange:Between": "{0} - {1}",
-    "Category:CategoryName": "Category:"
+    "Category:CategoryName": "Category:",
+
+    "Enum:PaymentMethod:PayPal": "PayPal",
+
+    "Enum:PaymentMethod:COD": "COD",
+
+    "Enum:PaymentMethod:VnPay": "VNPay",
+
+    "Enum:PaymentMethod:MoMo": "MoMo"
   }
 }

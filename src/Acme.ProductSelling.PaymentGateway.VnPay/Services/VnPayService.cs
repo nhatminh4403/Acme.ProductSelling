@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 using Volo.Abp;
+using VNPAY;
 
 namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
 {
@@ -17,7 +18,6 @@ namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
         private readonly ILogger<VnPayService> _logger;
 
         private const int VND_TO_VNPAY_MULTIPLIER = 100;
-        private const string DEFAULT_ORDER_TYPE = "other";
 
         public VnPayService(IOptions<VnPayOptions> options, IHttpContextAccessor httpContextAccessor, ILogger<VnPayService> logger)
         {
@@ -43,12 +43,10 @@ namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
         {
             try
             {
-                // IMPROVEMENT: Validate input
                 ValidatePaymentRequest(model);
 
                 var tick = DateTime.Now.Ticks.ToString();
 
-                // IMPROVEMENT: Remove duplicate - use parameter instead of accessor
                 var httpContext = context ?? _httpContextAccessor.HttpContext;
                 if (httpContext == null)
                 {
@@ -58,15 +56,13 @@ namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
                     );
                 }
 
-                var baseUrl = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}";
-                var returnUrl = $"{baseUrl}{_options.PaymentBackReturnUrl}";
-                _logger.LogInformation("BaseUrl: {BaseUrl}, ReturnUrl: {ReturnUrl}", baseUrl, returnUrl);
                 _logger.LogInformation(
                     "Creating VNPay payment URL. OrderId: {OrderId}, Amount: {Amount}, ReturnUrl: {ReturnUrl}",
-                    model.OrderId, model.Price, returnUrl
+                    model.OrderId, model.Price, _options.PaymentBackReturnUrl
                 );
 
                 var vnpay = new VnPayLibrary();
+                var txnRef = $"{model.OrderId}_{DateTime.Now.Ticks}";
 
                 // Add request data
                 vnpay.AddRequestData("vnp_Version", _options.Version);
@@ -82,17 +78,21 @@ namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
                 vnpay.AddRequestData("vnp_Amount", vnpayAmount.ToString());
 
                 vnpay.AddRequestData("vnp_CreateDate", model.CreatedDate.ToString("yyyyMMddHHmmss"));
-                vnpay.AddRequestData("vnp_CurrCode", _options.CurrCode);
-                vnpay.AddRequestData("vnp_IpAddr", Utils.GetIpAddress(context));
+                vnpay.AddRequestData("vnp_CurrCode", _options.CurrCode); 
+                vnpay.AddRequestData("vnp_ExpireDate", model.ExpireDate.ToString("yyyyMMddHHmmss"));
+
+                vnpay.AddRequestData("vnp_IpAddr", Utils.GetIpAddress(httpContext));
                 vnpay.AddRequestData("vnp_Locale", _options.Locale);
                 vnpay.AddRequestData("vnp_OrderInfo", $"Thanh toan don hang: {model.OrderId}");
-                vnpay.AddRequestData("vnp_OrderType", DEFAULT_ORDER_TYPE);
-                vnpay.AddRequestData("vnp_ReturnUrl", returnUrl);
-                vnpay.AddRequestData("vnp_TxnRef", model.OrderId);
+                vnpay.AddRequestData("vnp_OrderType", "other");
+                vnpay.AddRequestData("vnp_ReturnUrl", _options.PaymentBackReturnUrl);
+                vnpay.AddRequestData("vnp_TxnRef", txnRef);
+                //vnpay.AddRequestData("vnp_BankCode", "VNBANK");
 
                 var paymentUrl = vnpay.CreateRequestUrl(_options.BaseUrl, _options.HashSecret);
 
-                // IMPROVEMENT: Validate generated URL
+
+
                 if (string.IsNullOrWhiteSpace(paymentUrl))
                 {
                     _logger.LogError("VNPay returned empty payment URL for OrderId: {OrderId}", model.OrderId);
@@ -121,7 +121,6 @@ namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
         {
             try
             {
-                // IMPROVEMENT: Validate query collection
                 if (collections == null || !collections.Any())
                 {
                     _logger.LogWarning("Empty query collection received in PaymentExecute");
@@ -141,7 +140,6 @@ namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
                     }
                 }
 
-                // IMPROVEMENT: Validate required fields exist
                 var vnp_orderId = vnpay.GetResponseData("vnp_TxnRef");
                 if (string.IsNullOrWhiteSpace(vnp_orderId))
                 {
@@ -155,7 +153,7 @@ namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
                 var vnp_OrderInfo = vnpay.GetResponseData("vnp_OrderInfo");
                 var vnp_AmountStr = vnpay.GetResponseData("vnp_Amount");
 
-                // IMPROVEMENT: Safe parsing with validation
+                
                 if (!long.TryParse(vnp_TransactionIdStr, out var vnp_TransactionId))
                 {
                     _logger.LogWarning(
@@ -181,12 +179,12 @@ namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
                     vnp_orderId, vnp_TransactionId, vnp_ResponseCode, vnp_Amount
                 );
 
-                // IMPROVEMENT: Validate signature with better error handling
                 bool checkSignature;
                 try
                 {
                     checkSignature = vnpay.ValidateSignature(vnp_SecureHash, _options.HashSecret);
                 }
+
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Error validating VNPay signature for Order: {OrderId}", vnp_orderId);
@@ -201,6 +199,7 @@ namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
                     );
                     return new VnPaymentResponseModel { Success = false };
                 }
+                var orderId = vnp_orderId.Contains("_") ? vnp_orderId.Split('_')[0] : vnp_orderId;
 
                 _logger.LogInformation(
                     "VNPay payment callback processed successfully. OrderId: {OrderId}, Success: {Success}",
@@ -209,10 +208,10 @@ namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
 
                 return new VnPaymentResponseModel
                 {
-                    Success = true,
+                    Success = vnp_ResponseCode == "00",
                     PaymentMethod = "VnPay",
                     OrderDescription = vnp_OrderInfo,
-                    OrderId = vnp_orderId,
+                    OrderId = orderId,
                     TransactionId = vnp_TransactionId.ToString(),
                     Token = vnp_SecureHash,
                     VnPayResponseCode = vnp_ResponseCode,

@@ -41,7 +41,7 @@
 
     @if (Model.Products != null && Model.Products.TotalCount > 0)
     {
-        @await Component.InvokeAsync("PriceFilter", new FilterViewModel
+        @await Component.InvokeAsync(typeof(FilterViewComponent), new FilterViewModel
         {
             MinPriceBound = Model.ActualMinPrice,
         MaxPriceBound = Model.ActualMaxPrice,

@@ -21,7 +21,7 @@ namespace Acme.ProductSelling.Payments
     {
         private readonly IVnPayService _vnPayService;
         private readonly IMoMoService _moMoService;
-        private readonly IRepository<Order, Guid> _orderRepository;
+        private readonly IOrderRepository _orderRepository;
         private readonly IOrderNotificationService _orderNotificationService;
         private readonly IDistributedEventBus _distributedEventBus;
         private readonly ILogger<PaymentCallbackAppService> _logger;
@@ -29,7 +29,7 @@ namespace Acme.ProductSelling.Payments
         private readonly IOrderHistoryAppService _orderHistoryService;
         public PaymentCallbackAppService(
             IVnPayService vnPayService,
-            IRepository<Order, Guid> orderRepository,
+            IOrderRepository orderRepository,
             IOrderNotificationService orderNotificationService,
             ILogger<PaymentCallbackAppService> logger,
             IDistributedEventBus distributedEventBus, IMoMoService moMoService, IUnitOfWorkManager unitOfWorkManager, IOrderHistoryAppService orderHistoryService)
@@ -71,29 +71,17 @@ namespace Acme.ProductSelling.Payments
                     "[VNPay IPN] Signature validated successfully. CorrelationId: {CorrelationId}, OrderRef: {OrderRef}, TransactionNo: {TransactionNo}",
                     correlationId, response.OrderId, response.TransactionId
                 );
-                // Step 2: Parse and validate OrderId
-                if (!Guid.TryParse(response.OrderId, out var orderId))
+
+                var rawOrderId = response.OrderId;
+                var cleanOrderIdStr = rawOrderId.Contains("_") ? rawOrderId.Split('_')[0] : rawOrderId;
+
+                if (!Guid.TryParse(cleanOrderIdStr, out var orderId))
                 {
-                    _logger.LogError(
-                        "[VNPay IPN] Invalid OrderId format. CorrelationId: {CorrelationId}, OrderRef: {OrderRef}",
-                        correlationId, response.OrderId
-                    );
-                    return new VnPaymentResponseModel
-                    {
-                        VnPayResponseCode = "01",
-                        OrderDescription = "Order not found"
-                    };
+                    _logger.LogError("[VNPay IPN] Invalid Guid format: {RawId}. Id: {CorrId}", rawOrderId, correlationId);
+                    return new VnPaymentResponseModel { VnPayResponseCode = "01", OrderDescription = "Order not found" };
                 }
-                // Step 3: Get order with pessimistic locking to prevent race conditions
-                var order = await _orderRepository
-                    .WithDetailsAsync(o => o.OrderItems)
-                    .ContinueWith(async query =>
-                    {
-                        var queryable = await query;
-                        return await AsyncExecuter.FirstOrDefaultAsync(
-                            queryable.Where(o => o.Id == orderId)
-                        );
-                    }).Unwrap();
+
+                var order = await _orderRepository.FirstOrDefaultAsync(o => o.Id == orderId);
 
                 if (order == null)
                 {
@@ -113,10 +101,19 @@ namespace Acme.ProductSelling.Payments
                     correlationId, order.OrderNumber, order.OrderStatus, order.PaymentStatus
                 );
 
-                // Step 4: Check transaction status and order state (Idempotency check)
+                if (order.PaymentStatus == PaymentStatus.Paid)
+                {
+                    _logger.LogInformation("[VNPay IPN] Order already paid. Id: {OrderId}", orderId);
+                    return new VnPaymentResponseModel
+                    {
+                        OrderId = cleanOrderIdStr,
+                        VnPayResponseCode = "00",
+                        OrderDescription = "Confirm Success"
+                    };
+                }
+
                 if (response.VnPayResponseCode == "00")
                 {
-                    // IMPROVEMENT: More robust state checking
                     if (order.PaymentStatus == PaymentStatus.Paid)
                     {
                         _logger.LogInformation(
@@ -149,7 +146,6 @@ namespace Acme.ProductSelling.Payments
                         correlationId, orderId, response.Amount
                     );
 
-                    // IMPROVEMENT: Store old status for history
                     var oldStatus = order.OrderStatus;
                     var oldPaymentStatus = order.PaymentStatus;
 
@@ -157,7 +153,6 @@ namespace Acme.ProductSelling.Payments
                     order.MarkAsPaidOnline();
                     await _orderRepository.UpdateAsync(order, autoSave: true);
 
-                    // IMPROVEMENT: Log to order history
                     await _orderHistoryService.LogOrderChangeAsync(
                         orderId,
                         oldStatus,
@@ -167,14 +162,12 @@ namespace Acme.ProductSelling.Payments
                         $"Payment confirmed via VNPay. TransactionId: {response.TransactionId}"
                     );
 
-                    // Send notifications
                     try
                     {
                         await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
                     }
                     catch (Exception notifyEx)
                     {
-                        // IMPROVEMENT: Don't fail IPN if notification fails
                         _logger.LogError(
                             notifyEx,
                             "[VNPay IPN] Notification failed but payment processed. CorrelationId: {CorrelationId}, OrderId: {OrderId}",
@@ -196,13 +189,11 @@ namespace Acme.ProductSelling.Payments
                 }
                 else
                 {
-                    // IMPROVEMENT: Log failed transactions
                     _logger.LogWarning(
                         "[VNPay IPN] Transaction failed. CorrelationId: {CorrelationId}, OrderId: {OrderId}, VnPayCode: {Code}, Message: {Message}",
                         correlationId, orderId, response.VnPayResponseCode, response.OrderDescription
                     );
 
-                    // IMPROVEMENT: Update order to Failed status
                     if (order.PaymentStatus == PaymentStatus.Pending)
                     {
                         var oldPaymentStatus = order.PaymentStatus;
@@ -240,53 +231,6 @@ namespace Acme.ProductSelling.Payments
                 };
             }
 
-
-
-            // Bước 1: Gọi service từ module VNPay để xác thực và trích xuất dữ liệu.
-            /*var response = _vnPayService.PaymentExecute(collections);
-
-            // Bước 2: Kiểm tra chữ ký (signature). Đây là bước bảo mật quan trọng nhất.
-            if (!response.Success)
-            {
-                _logger.LogWarning("Xác thực chữ ký VNPay IPN thất bại!");
-                return new VnPaymentResponseModel { VnPayResponseCode = "97", OrderDescription = "Invalid Signature" };
-            }
-
-            _logger.LogInformation("Xác thực chữ ký VNPay IPN thành công cho OrderReferenceId: {OrderRef}", response.OrderId);
-
-            if (!Guid.TryParse(response.OrderId, out var orderId))
-            {
-                _logger.LogError("Mã tham chiếu" +
-                    " (vnp_TxnRef) không phải là một Guid hợp lệ: {OrderRef}", response.OrderId);
-                return new VnPaymentResponseModel { VnPayResponseCode = "01", OrderDescription = "Order not found" };
-            }
-
-            var order = await _orderRepository.FindAsync(orderId);
-            if (order == null)
-            {
-                _logger.LogWarning("Không tìm thấy đơn hàng với Id: {OrderId}", orderId);
-                return new VnPaymentResponseModel { VnPayResponseCode = "01", OrderDescription = "Order not found" };
-            }
-
-            // Bước 4: Kiểm tra trạng thái giao dịch và trạng thái đơn hàng để tránh xử lý lặp lại.
-            if (response.VnPayResponseCode == "00" && order.PaymentStatus == PaymentStatus.Pending)
-            {
-                _logger.LogInformation("Giao dịch thành công. Cập nhật trạng thái cho OrderId: {OrderId}", order.Id);
-
-                order.MarkAsPaidOnline();
-                await _orderRepository.UpdateAsync(order, autoSave: true);
-                await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
-
-                return new VnPaymentResponseModel { OrderId = orderId.ToString(), VnPayResponseCode = "00", OrderDescription = "Confirm Success" };
-            }
-
-            // Các trường hợp khác: Đơn hàng đã được xử lý trước đó hoặc giao dịch thất bại.
-            _logger.LogWarning("Bỏ qua xử lý IPN cho OrderId:" +
-                " {OrderId}. Lý do: Giao dịch không thành công" +
-                " (Code: {VnpCode}) hoặc đơn hàng không ở trạng thái PendingPayment (Trạng thái thực tế: {Status}).",
-                order.Id, response.VnPayResponseCode, order.OrderStatus);
-
-            return new VnPaymentResponseModel { VnPayResponseCode = "02", OrderDescription = "Order already confirmed" };*/
         }
 
         [UnitOfWork]

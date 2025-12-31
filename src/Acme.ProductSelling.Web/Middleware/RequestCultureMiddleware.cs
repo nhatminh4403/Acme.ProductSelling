@@ -25,7 +25,7 @@ namespace Acme.ProductSelling.Web.Middleware
             "/api", "/_framework", "/css", "/js", "/lib", "/images",
             "/swagger", "/signalr", "/favicon.ico", "/_vs/","/health-status",
             "/signalr-hubs","/admin", "/identity", "/Account", "/TenantManagement",
-            "/SettingManagement","/abp","/abp-web-resources", "/swagger-ui", "/swagger/v1/swagger.json",
+            "/SettingManagement","/abp","/abp-web-resources", "/swagger-ui", "/swagger/v1/swagger.json","/thanh-toan",
             "/Abp","/libs","/.well-known", "/connect","/hangfire","/blogger","/manager","/seller","/cashier","/warehouse",
         };
 

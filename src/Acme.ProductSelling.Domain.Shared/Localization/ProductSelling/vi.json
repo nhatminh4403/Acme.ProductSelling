@@ -8,6 +8,7 @@
     "CloseButton": "Đóng",
     "Actions": "Hành động",
     "Cancel": "Hủy",
+    "Yes":  "Có",
     "Edit": "Sửa",
     "Delete": "Xóa",
     "ContinueShopping": "Tiếp tục mua sắm",
@@ -1080,7 +1081,15 @@
     "Category:CategoryName": "Danh mục:",
     "PriceRange:Under": "Dưới {0}",
     "PriceRange:Over": "Trên {0}",
-    "PriceRange:Between": "{0} - {1}"
+    "PriceRange:Between": "{0} - {1}",
+
+    "Enum:PaymentMethod:PayPal": "PayPal",
+
+    "Enum:PaymentMethod:COD": "COD",
+
+    "Enum:PaymentMethod:VnPay": "VNPay",
+
+    "Enum:PaymentMethod:MoMo": "MoMo"
   }
   
 }

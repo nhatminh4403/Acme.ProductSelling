@@ -2643,7 +2643,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Store");
+                    b.ToTable("Store", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Users.Customer", b =>

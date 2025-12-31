@@ -1,9 +1,11 @@
 ﻿using Acme.ProductSelling.Orders.Services;
+using Acme.ProductSelling.PaymentGateway.VnPay.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
+using VNPAY.Models;
 
 namespace Acme.ProductSelling.Web.Controllers
 {
@@ -12,36 +14,71 @@ namespace Acme.ProductSelling.Web.Controllers
     {
         private readonly IOrderAppService _orderAppService;
         private readonly ILogger<PaymentReturnController> _logger;
-
+        private readonly IVnPayService _vnPayService;
         public PaymentReturnController(
             IOrderAppService orderAppService,
-            ILogger<PaymentReturnController> logger)
+            ILogger<PaymentReturnController> logger,
+            IVnPayService vnPayService)
         {
             _orderAppService = orderAppService;
             _logger = logger;
+            _vnPayService = vnPayService;
         }
 
-        /// <summary>
-        /// VNPay return URL - where user is redirected after payment
-        /// This is DIFFERENT from IPN
-        /// </summary>
         [HttpGet("vnpay-return")]
         [Authorize]
         public async Task<IActionResult> VnPayReturn()
         {
             try
             {
-                var vnp_ResponseCode = Request.Query["vnp_ResponseCode"].ToString();
-                var vnp_TxnRef = Request.Query["vnp_TxnRef"].ToString();
+
+                //var vnp_ResponseCode = Request.Query["vnp_ResponseCode"].ToString();
+
+                //var getTxnRef = Request.Query["vnp_TxnRef"].ToString();
+
+                //var getOrderId = getTxnRef.Contains("_") ? getTxnRef.Split('_')[0] : getTxnRef;
+                //var vnp_TxnRef = getTxnRef.Contains("_") ? getTxnRef.Split('_')[1] : getTxnRef; 
+
+                //_logger.LogInformation(
+                //    "User returned from VNPay. OrderId: {OrderId}, ResponseCode: {Code}",
+                //    vnp_TxnRef, vnp_ResponseCode
+                //);
+                //if (string.IsNullOrEmpty(vnp_TxnRef) || !Guid.TryParse(vnp_TxnRef, out var orderId))
+                //{
+                //    return RedirectToPage("/Error", new { message = "Invalid order reference" });
+                //}
+
+                //var order = await _orderAppService.GetAsync(orderId);
+
+                //if (order == null)
+                //{
+                //    return RedirectToPage("/Error", new { message = "Order not found" });
+                //}
+
+                var response = _vnPayService.PaymentExecute(Request.Query);
 
                 _logger.LogInformation(
-                    "User returned from VNPay. OrderId: {OrderId}, ResponseCode: {Code}",
-                    vnp_TxnRef, vnp_ResponseCode
+                     "User returned from VNPay. TxnRef: {TxnRef}, ResponseCode: {Code}, Success: {Success}",
+                     Request.Query["vnp_TxnRef"], response.VnPayResponseCode, response.Success
                 );
-
-                if (string.IsNullOrEmpty(vnp_TxnRef) || !Guid.TryParse(vnp_TxnRef, out var orderId))
+                
+                if (!response.Success)
                 {
-                    return RedirectToPage("/Error", new { message = "Invalid order reference" });
+                    // Có thể sai chữ ký hoặc code != 00
+                    _logger.LogWarning("Thanh toán thất bại hoặc Chữ ký không hợp lệ. Mã lỗi: {Code}", response.VnPayResponseCode);
+
+                    // Xử lý lấy OrderId để redirect đúng trang (nếu parse được)
+                    Guid.TryParse(response.OrderId, out var failOrderId);
+
+                    return RedirectToPage("/Orders/PaymentFailed", new
+                    {
+                        orderId = failOrderId,
+                        errorCode = response.VnPayResponseCode
+                    });
+                }
+                if (string.IsNullOrEmpty(response.OrderId) || !Guid.TryParse(response.OrderId, out var orderId))
+                {
+                    return RedirectToPage("/Error", new { message = "Invalid order ID format" });
                 }
 
                 var order = await _orderAppService.GetAsync(orderId);
@@ -50,6 +87,15 @@ namespace Acme.ProductSelling.Web.Controllers
                 {
                     return RedirectToPage("/Error", new { message = "Order not found" });
                 }
+
+                decimal paidAmount = decimal.Parse(paymentResult.Amount);
+                if (order.TotalAmount != paidAmount)
+                {
+                    _logger.LogCritical("Gian lận số tiền! Đơn hàng: {Total}, Thanh toán: {Paid}", order.TotalAmount, paidAmount);
+                    return RedirectToPage("/Error", new { message = "Số tiền thanh toán không khớp" });
+                }
+
+                var vnp_ResponseCode = response.VnPayResponseCode;
 
                 if (vnp_ResponseCode == "00")
                 {
@@ -77,9 +123,6 @@ namespace Acme.ProductSelling.Web.Controllers
             }
         }
 
-        /// <summary>
-        /// MoMo return URL - where user is redirected after payment
-        /// </summary>
         [HttpGet("momo-callback")]
         [Authorize]
         public async Task<IActionResult> MoMoCallback()
@@ -132,9 +175,6 @@ namespace Acme.ProductSelling.Web.Controllers
             }
         }
 
-        /// <summary>
-        /// PayPal success callback
-        /// </summary>
         [HttpGet("paypal-success")]
         [Authorize]
         public async Task<IActionResult> PayPalSuccess([FromQuery] string paymentId, [FromQuery] string PayerID, [FromQuery] Guid orderId)
@@ -172,9 +212,6 @@ namespace Acme.ProductSelling.Web.Controllers
             }
         }
 
-        /// <summary>
-        /// PayPal cancel callback
-        /// </summary>
         [HttpGet("paypal-cancel")]
         [Authorize]
         public async Task<IActionResult> PayPalCancel([FromQuery] Guid orderId)

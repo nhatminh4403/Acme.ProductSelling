@@ -7,7 +7,7 @@
 @section styles {
     <link href="~/css/shared/products/product-item.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.7.0/dist/nouislider.min.css">
-    <link href="~/css/components/price-filter.css" rel="stylesheet" />
+    <link href="~/css/global/products/priceFilter.css" rel="stylesheet" />
 }
 
 @{
@@ -44,7 +44,7 @@
     @* Price Filter Component with Manufacturer Filter *@
     @if (Model.Products != null && Model.Products.TotalCount > 0)
     {
-        @await Component.InvokeAsync("PriceFilter", new FilterViewModel
+        @await Component.InvokeAsync(typeof(FilterViewComponent), new FilterViewModel
         {
             MinPriceBound = Model.MinPriceBound,
         MaxPriceBound = Model.MaxPriceBound,
@@ -158,21 +158,17 @@
 
 @section scripts {
     <script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.0/dist/nouislider.min.js"></script>
-    <script src="~/js/components/price-filter.js"></script>
+    <script src="~/js/global/products/price-filter.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.priceFilterConfig) {
-                window.priceFilterConfig.apiEndpoint = '/api/products/filter';
+          document.addEventListener('DOMContentLoaded', function() {
+            const priceFilter = new PriceFilter({
+                minBound: @Model.MinPriceBound,
+                maxBound: @Model.MaxPriceBound,
+                categorySlug: '@Model.CategoryUrlSlug',
+                pageSize: @Model.PageSize,
+                showManufacturerFilter: @Model.ShowManufacturerFilter.ToString().ToLower(),
 
-                const priceFilter = new PriceFilter(window.priceFilterConfig);
-
-                console.log('Manufacturer page price filter initialized:', {
-                    categorySlug: window.priceFilterConfig.categorySlug,
-                    manufacturerSlug: window.priceFilterConfig.manufacturerSlug,
-                    bounds: [window.priceFilterConfig.minBound, window.priceFilterConfig.maxBound],
-                    showManufacturerFilter: window.priceFilterConfig.showManufacturerFilter
-                });
-            }
+            });
         });
     </script>
 }

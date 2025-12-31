@@ -34,64 +34,93 @@ namespace Acme.ProductSelling.PaymentGateway.VnPay.Helpers
             return hash.ToString();
         }
 
-        // IMPROVEMENT: Better IP address extraction
+        // có chế biến cho .NET Core MVC
         public static string GetIpAddress(HttpContext context)
         {
-            if (context == null)
-                return "127.0.0.1";
+            var ipAddress = string.Empty;
 
             try
             {
-                // Check X-Forwarded-For header first (for proxies/load balancers)
-                var forwardedFor = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
-                if (!string.IsNullOrWhiteSpace(forwardedFor))
-                {
-                    // Take the first IP if multiple IPs are present
-                    var firstIp = forwardedFor.Split(',')[0].Trim();
-                    if (IPAddress.TryParse(firstIp, out var parsedIp))
-                    {
-                        return parsedIp.ToString();
-                    }
-                }
-
-                // Check X-Real-IP header
-                var realIp = context.Request.Headers["X-Real-IP"].FirstOrDefault();
-                if (!string.IsNullOrWhiteSpace(realIp) && IPAddress.TryParse(realIp, out var parsedRealIp))
-                {
-                    return parsedRealIp.ToString();
-                }
-
-                // Fall back to RemoteIpAddress
                 var remoteIpAddress = context.Connection.RemoteIpAddress;
                 if (remoteIpAddress != null)
                 {
-                    // Convert IPv6 localhost to IPv4
+
                     if (remoteIpAddress.AddressFamily == AddressFamily.InterNetworkV6)
                     {
-                        if (remoteIpAddress.Equals(IPAddress.IPv6Loopback))
-                        {
-                            return "127.0.0.1";
-                        }
-
-                        // Try to get IPv4 address
-                        var ipv4 = Dns.GetHostEntry(remoteIpAddress).AddressList
+                        remoteIpAddress = Dns.GetHostEntry(remoteIpAddress).AddressList
                             .FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
-
-                        if (ipv4 != null)
-                        {
-                            return ipv4.ToString();
-                        }
                     }
 
-                    return remoteIpAddress.ToString();
+                    if (remoteIpAddress != null) ipAddress = remoteIpAddress.ToString();
+
+                    return ipAddress;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Log if needed, but don't expose exception details
+                return "Invalid IP:" + ex.Message;
             }
 
-            return "127.0.0.1"; // Default fallback
+            return "127.0.0.1";
         }
+
+        //public static string GetIpAddress(HttpContext context)
+        //{
+        //    if (context == null)
+        //        return "127.0.0.1";
+
+        //    try
+        //    {
+        //        // Check X-Forwarded-For header first (for proxies/load balancers)
+        //        var forwardedFor = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+        //        if (!string.IsNullOrWhiteSpace(forwardedFor))
+        //        {
+        //            // Take the first IP if multiple IPs are present
+        //            var firstIp = forwardedFor.Split(',')[0].Trim();
+        //            if (IPAddress.TryParse(firstIp, out var parsedIp))
+        //            {
+        //                return parsedIp.ToString();
+        //            }
+        //        }
+
+        //        // Check X-Real-IP header
+        //        var realIp = context.Request.Headers["X-Real-IP"].FirstOrDefault();
+        //        if (!string.IsNullOrWhiteSpace(realIp) && IPAddress.TryParse(realIp, out var parsedRealIp))
+        //        {
+        //            return parsedRealIp.ToString();
+        //        }
+
+        //        // Fall back to RemoteIpAddress
+        //        var remoteIpAddress = context.Connection.RemoteIpAddress;
+        //        if (remoteIpAddress != null)
+        //        {
+        //            // Convert IPv6 localhost to IPv4
+        //            if (remoteIpAddress.AddressFamily == AddressFamily.InterNetworkV6)
+        //            {
+        //                if (remoteIpAddress.Equals(IPAddress.IPv6Loopback))
+        //                {
+        //                    return "127.0.0.1";
+        //                }
+
+        //                // Try to get IPv4 address
+        //                var ipv4 = Dns.GetHostEntry(remoteIpAddress).AddressList
+        //                    .FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
+
+        //                if (ipv4 != null)
+        //                {
+        //                    return ipv4.ToString();
+        //                }
+        //            }
+
+        //            return remoteIpAddress.ToString();
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        // Log if needed, but don't expose exception details
+        //    }
+
+        //    return "127.0.0.1"; // Default fallback
+        //}
     }
 }

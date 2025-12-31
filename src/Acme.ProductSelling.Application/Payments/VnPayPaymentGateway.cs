@@ -36,13 +36,13 @@ namespace Acme.ProductSelling.Payments
                     throw new UserFriendlyException("Không thể khởi tạo thanh toán. Vui lòng thử lại.");
                 }
 
-                // IMPROVEMENT 2: Add more detailed payment description
                 var model = new VnPaymentRequestModel
                 {
                     OrderId = order.Id.ToString(),
                     Price = (double)order.TotalAmount,
                     Description = $"Thanh toan don hang {order.OrderNumber} - {order.CustomerName}",
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.Now,
+                    ExpireDate = DateTime.Now.AddHours(1) 
                 };
 
                 _logger.LogInformation(
@@ -72,24 +72,6 @@ namespace Acme.ProductSelling.Payments
                 _logger.LogError(ex, "Lỗi khi xử lý thanh toán VnPay cho đơn hàng {OrderId}", order.Id);
                 throw;
             }
-            //if (httpContext == null)
-            //{
-            //    throw new UserFriendlyException("Không thể truy cập HttpContext. Vui lòng kiểm tra cấu hình.");
-            //}
-            //var model = new VnPaymentRequestModel
-            //{
-            //    OrderId = order.Id.ToString(),
-            //    Price = (double)order.TotalAmount,
-            //    Description = $"Thanh toan don hang {order.OrderNumber}",
-            //    CreatedDate = DateTime.Now
-            //};
-
-
-            //var paymentUrl = _vnPayService.CreatePaymentUrl(httpContext, model);
-            //return Task.FromResult(new PaymentGatewayResult
-            //{
-            //    RedirectUrl = paymentUrl,
-            //});
         }
         private void ValidateOrder(Order order)
         {
