@@ -1,6 +1,6 @@
 ﻿# Acme.ProductSelling
 This project is still a work-in-progress. openiddict.pfx key displayed in this README is allowed to use.  
-This README is auto-generated when creating the project using ABP Studio App, you can check it [here](https://apps.microsoft.com/detail/xp9mgbqv4xprjd)
+This README is auto-generated when creating the project using ABP Studio App, you can check it [here](https://apps.microsoft.com/detail/xp9mgbqv4xprjd).
 ## About this solution
 
 This is a layered startup solution based on [Domain Driven Design (DDD)](https://abp.io/docs/latest/framework/architecture/domain-driven-design) practises. All the fundamental ABP modules are already installed. Check the [Application Startup Template](https://abp.io/docs/latest/solution-templates/layered-web-application) documentation for more info.
