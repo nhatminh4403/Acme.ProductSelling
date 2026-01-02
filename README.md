@@ -1,5 +1,5 @@
 ﻿# Acme.ProductSelling
-This project is still a work-in-progress. openiddict.pfx key displayed in this README is allowed to use.
+This project is still a work-in-progress. openiddict.pfx key displayed in this README is allowed to use.  
 This README is auto-generated when creating the project using ABP Studio App, you can check it [here](https://apps.microsoft.com/detail/xp9mgbqv4xprjd)
 ## About this solution
 
