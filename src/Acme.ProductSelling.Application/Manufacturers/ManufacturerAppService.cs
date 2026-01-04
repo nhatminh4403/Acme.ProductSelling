@@ -1,5 +1,4 @@
 ﻿using Acme.ProductSelling.Permissions;
-using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +10,6 @@ using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
-using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 
 namespace Acme.ProductSelling.Manufacturers

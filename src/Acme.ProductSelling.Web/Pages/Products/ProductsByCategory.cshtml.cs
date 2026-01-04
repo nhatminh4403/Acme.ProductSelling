@@ -72,7 +72,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
             {
                 return NotFound("Category slug is required.");
             }
-            
+
 
             var category = await _categoryRepository.GetBySlugAsync(Slug);
             if (category == null)

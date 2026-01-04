@@ -314,11 +314,11 @@
         </div>
 
         <!-- Recently Viewed Products -->
-        @* @await Component.InvokeAsync(typeof(RecentlyViewedViewComponent), new {
+        @await Component.InvokeAsync(typeof(RecentlyViewedViewComponent), new {
         maxCount = 6,
         excludeProductId = Model.Product.Id,
         title = L["UI:OtherRecentlyViewed"].Value.ToString(),
-        }) *@
+        })
 
     </div>
 }

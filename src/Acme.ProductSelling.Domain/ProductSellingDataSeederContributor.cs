@@ -5,30 +5,10 @@ using Acme.ProductSelling.Data.Lookups;
 using Acme.ProductSelling.Data.Manufacturers;
 using Acme.ProductSelling.Data.Products;
 using Acme.ProductSelling.Data.Stores;
-using Acme.ProductSelling.Manufacturers;
-using Acme.ProductSelling.Permissions;
-using Acme.ProductSelling.Products;
-using Acme.ProductSelling.Products.Lookups;
 using Acme.ProductSelling.Products.Services;
-using Acme.ProductSelling.Specifications.Junctions;
-using Acme.ProductSelling.Specifications.Models;
-using Acme.ProductSelling.StoreInventories;
-using Acme.ProductSelling.Stores;
-using Acme.ProductSelling.Users;
-using Acme.ProductSelling.Utils;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
-using Volo.Abp.Domain.Repositories;
-using Volo.Abp.Guids;
-using Volo.Abp.Identity;
-using Volo.Abp.PermissionManagement;
 namespace Acme.ProductSelling
 {
     public class ProductSellingDataSeederContributor : IDataSeedContributor, ITransientDependency

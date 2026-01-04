@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using VNPAY.Models;
 
 namespace Acme.ProductSelling.Web.Controllers
 {
@@ -61,7 +60,7 @@ namespace Acme.ProductSelling.Web.Controllers
                      "User returned from VNPay. TxnRef: {TxnRef}, ResponseCode: {Code}, Success: {Success}",
                      Request.Query["vnp_TxnRef"], response.VnPayResponseCode, response.Success
                 );
-                
+
                 if (!response.Success)
                 {
                     // Có thể sai chữ ký hoặc code != 00

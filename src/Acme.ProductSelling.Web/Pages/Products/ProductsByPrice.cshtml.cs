@@ -4,7 +4,6 @@ using Acme.ProductSelling.Categories.Dtos;
 using Acme.ProductSelling.Categories.Services;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Manufacturers;
-using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
 using Microsoft.AspNetCore.Mvc;

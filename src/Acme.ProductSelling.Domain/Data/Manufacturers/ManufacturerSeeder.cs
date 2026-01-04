@@ -1,10 +1,7 @@
 ﻿using Acme.ProductSelling.Data.BaseSeeder;
 using Acme.ProductSelling.Manufacturers;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using Volo.Abp.Data;
 
 namespace Acme.ProductSelling.Data.Manufacturers
 {

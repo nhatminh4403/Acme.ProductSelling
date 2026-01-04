@@ -35,7 +35,7 @@ namespace Acme.ProductSelling.Controllers
         [HttpGet("filter")]
         public async Task<IActionResult> GetProducts(
      [FromQuery] string categorySlug = null,
-     [FromQuery] string manufacturerIds = null, 
+     [FromQuery] string manufacturerIds = null,
      [FromQuery] string searchKeyword = null,
      [FromQuery] decimal? minPrice = null,
      [FromQuery] decimal? maxPrice = null,

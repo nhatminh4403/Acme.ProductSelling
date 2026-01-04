@@ -19,7 +19,7 @@ namespace Acme.ProductSelling.Products
         {
             var dbSet = await GetDbSetAsync();
             return await dbSet.FirstOrDefaultAsync(c => c.ProductName == name);
-            
+
         }
         public async Task<List<Product>> GetListAsync(int skipCount,
             int maxResultCount, string sorting, string filter = null)

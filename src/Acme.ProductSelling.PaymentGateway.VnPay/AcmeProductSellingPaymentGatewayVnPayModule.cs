@@ -1,7 +1,6 @@
 ﻿using Acme.ProductSelling.PaymentGateway.VnPay.Configurations;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Modularity;
-using VNPAY.Extensions.Options;
 namespace Acme.ProductSelling.PaymentGateway.VnPay;
 
 public class AcmeProductSellingPaymentGatewayVnPayModule : AbpModule

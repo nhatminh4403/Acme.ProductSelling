@@ -42,7 +42,7 @@ namespace Acme.ProductSelling.Payments
                     Price = (double)order.TotalAmount,
                     Description = $"Thanh toan don hang {order.OrderNumber} - {order.CustomerName}",
                     CreatedDate = DateTime.Now,
-                    ExpireDate = DateTime.Now.AddHours(1) 
+                    ExpireDate = DateTime.Now.AddHours(1)
                 };
 
                 _logger.LogInformation(

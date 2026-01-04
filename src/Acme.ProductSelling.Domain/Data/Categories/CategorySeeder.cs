@@ -1,8 +1,6 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Data.BaseSeeder;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Acme.ProductSelling.Data.Categories

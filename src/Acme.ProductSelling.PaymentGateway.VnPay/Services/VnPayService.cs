@@ -7,7 +7,6 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 using Volo.Abp;
-using VNPAY;
 
 namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
 {
@@ -78,7 +77,7 @@ namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
                 vnpay.AddRequestData("vnp_Amount", vnpayAmount.ToString());
 
                 vnpay.AddRequestData("vnp_CreateDate", model.CreatedDate.ToString("yyyyMMddHHmmss"));
-                vnpay.AddRequestData("vnp_CurrCode", _options.CurrCode); 
+                vnpay.AddRequestData("vnp_CurrCode", _options.CurrCode);
                 vnpay.AddRequestData("vnp_ExpireDate", model.ExpireDate.ToString("yyyyMMddHHmmss"));
 
                 vnpay.AddRequestData("vnp_IpAddr", Utils.GetIpAddress(httpContext));
@@ -153,7 +152,7 @@ namespace Acme.ProductSelling.PaymentGateway.VnPay.Services
                 var vnp_OrderInfo = vnpay.GetResponseData("vnp_OrderInfo");
                 var vnp_AmountStr = vnpay.GetResponseData("vnp_Amount");
 
-                
+
                 if (!long.TryParse(vnp_TransactionIdStr, out var vnp_TransactionId))
                 {
                     _logger.LogWarning(

@@ -1,7 +1,4 @@
-﻿using Acme.ProductSelling.Categories;
-using Acme.ProductSelling.Categories.Configurations;
-using Acme.ProductSelling.Categories.Dtos;
-using Acme.ProductSelling.Manufacturers;
+﻿using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -67,7 +64,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
                 SkipCount = skipCount,
                 Sorting = "ProductName"
             });
-            
+
             // Calculate price bounds for search results
             await CalculateSearchPriceBoundsAsync(Name);
             if (ShowManufacturerFilter && ProductList.TotalCount > 0)

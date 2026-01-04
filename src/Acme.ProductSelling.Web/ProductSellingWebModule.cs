@@ -8,6 +8,7 @@ using Acme.ProductSelling.PaymentGateway.MoMo;
 using Acme.ProductSelling.PaymentGateway.PayPal;
 using Acme.ProductSelling.PaymentGateway.VnPay;
 using Acme.ProductSelling.Products;
+using Acme.ProductSelling.Products.BackgroundJobs.ProductRelease;
 using Acme.ProductSelling.Products.BackgroundJobs.RecentlyViewed;
 using Acme.ProductSelling.Web.Filters;
 using Acme.ProductSelling.Web.Hangfire;
@@ -16,7 +17,6 @@ using Acme.ProductSelling.Web.Menus;
 using Acme.ProductSelling.Web.Middleware;
 using Acme.ProductSelling.Web.Routing;
 using Hangfire;
-using Hangfire.MemoryStorage;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
@@ -223,8 +223,6 @@ public class ProductSellingWebModule : AbpModule
             return null;
         }
     }
-
-
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         var hostingEnvironment = context.Services.GetHostingEnvironment();
@@ -296,18 +294,22 @@ public class ProductSellingWebModule : AbpModule
         });
         ConfigureHangfireServer(services);
     }
-
     private void ConfigureHangfire(IServiceCollection services, IConfiguration configuration)
     {
         services.AddHangfire(config =>
         {
-            config.UseSqlServerStorage(configuration.GetConnectionString("Default"), new SqlServerStorageOptions
-            {
-                PrepareSchemaIfNecessary = true,
-                QueuePollInterval = TimeSpan.FromSeconds(30), // reduce DB load
-                CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5)
-            });
+            config.UseSqlServerStorage(configuration.GetConnectionString("Default"),
+                new SqlServerStorageOptions
+                {
+
+                    QueuePollInterval = TimeSpan.FromSeconds(30), // Good as-is
+
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                    CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                });
         });
 
     }
@@ -316,9 +318,9 @@ public class ProductSellingWebModule : AbpModule
         services.AddHangfireServer(options =>
         {
             options.WorkerCount = 1;
-            options.SchedulePollingInterval = TimeSpan.FromHours(6); // From 15 seconds
+            options.SchedulePollingInterval = TimeSpan.FromMinutes(30);
             options.HeartbeatInterval = TimeSpan.FromMinutes(5);
-            options.ServerCheckInterval = TimeSpan.FromMinutes(5); // Add this
+            options.ServerCheckInterval = TimeSpan.FromMinutes(5);
             options.ServerTimeout = TimeSpan.FromMinutes(10);
         });
     }
@@ -403,7 +405,6 @@ public class ProductSellingWebModule : AbpModule
         context.Services.AddHealthChecks().AddCheck<MoMoHealthCheck>("MoMo");
         context.Services.AddHealthChecks().AddCheck<PayPalHealthCheck>("PayPal");
     }
-
     private void ConfigureBundles()
     {
         Configure<AbpBundlingOptions>(options =>
@@ -494,7 +495,6 @@ public class ProductSellingWebModule : AbpModule
             options.Applications["MVC"].RootUrl = configuration["App:SelfUrl"];
         });
     }
-
     private void ConfigureAuthentication(ServiceConfigurationContext context)
     {
         context.Services.ForwardIdentityAuthenticationForBearer(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
@@ -529,12 +529,10 @@ public class ProductSellingWebModule : AbpModule
             };
         });
     }
-
     private void ConfigureAutoMapper(IServiceCollection services)
     {
         services.AddMapperlyObjectMapper();
     }
-
     private void ConfigureVirtualFileSystem(IWebHostEnvironment hostingEnvironment)
     {
         Configure<AbpVirtualFileSystemOptions>(options =>
@@ -553,7 +551,6 @@ public class ProductSellingWebModule : AbpModule
             }
         });
     }
-
     private void ConfigureNavigationServices()
     {
         Configure<AbpNavigationOptions>(options =>
@@ -566,7 +563,6 @@ public class ProductSellingWebModule : AbpModule
             options.Contributors.Add(new ProductSellingToolbarContributor());
         });
     }
-
     private void ConfigureAutoApiControllers()
     {
         Configure<AbpAspNetCoreMvcOptions>(options =>
@@ -574,7 +570,6 @@ public class ProductSellingWebModule : AbpModule
             options.ConventionalControllers.Create(typeof(ProductSellingApplicationModule).Assembly);
         });
     }
-
     private void ConfigureSwaggerServices(IServiceCollection services)
     {
         services.AddAbpSwaggerGen(
@@ -586,8 +581,6 @@ public class ProductSellingWebModule : AbpModule
             }
         );
     }
-
-
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
         var app = context.GetApplicationBuilder();
@@ -650,17 +643,35 @@ public class ProductSellingWebModule : AbpModule
                 Authorization = new[] { new HangfireDashboardPermissionFilter() }
             });
         }
-
         RecurringJob.AddOrUpdate<CleanupOldOrdersJob>(
-                "cleanup-old-orders",
-                job => job.ExecuteAsync(new CleanupOldOrdersJobArgs { MonthsOld = 6 }),
-                Cron.Monthly(1, 2)
+            "cleanup-old-orders",
+            job => job.ExecuteAsync(new CleanupOldOrdersJobArgs { MonthsOld = 6 }),
+            Cron.Monthly(1, 2), // First day of month at 2 AM
+            new RecurringJobOptions
+            {
+                TimeZone = TimeZoneInfo.Local // Use server's timezone
+            }
         );
         RecurringJob.AddOrUpdate<RecentlyViewedCleanupJob>(
-                "recently-viewed-cleanup",
-                job => job.ExecuteAsync(new RecentlyViewedCleanupArgs
-                { DaysToKeep = RecentlyViewedConsts.CleanupDaysToKeep }),
-                Cron.Daily(0, 30)
+            "recently-viewed-cleanup",
+            job => job.ExecuteAsync(new RecentlyViewedCleanupArgs
+            {
+                DaysToKeep = RecentlyViewedConsts.CleanupDaysToKeep
+            }),
+            Cron.Daily(3, 0), // 3:00 AM local time (after order cleanup)
+            new RecurringJobOptions
+            {
+                TimeZone = TimeZoneInfo.Local
+            }
+        );
+        RecurringJob.AddOrUpdate<ProductReleaseScannerJob>(
+            "product-release-scanner",
+            job => job.ExecuteAsync(new ProductReleaseScannerArgs { BatchSize = 25 }),
+            Cron.Hourly(), 
+            new RecurringJobOptions
+            {
+                TimeZone = TimeZoneInfo.Local
+            }
         );
         app.UseConfiguredEndpoints(endpoints =>
         {

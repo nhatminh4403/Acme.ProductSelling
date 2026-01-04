@@ -8,9 +8,7 @@ using Acme.ProductSelling.Specifications.Junctions;
 using Acme.ProductSelling.Specifications.Models;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using Volo.Abp.Data;
 using Volo.Abp.Domain.Repositories;
 
 namespace Acme.ProductSelling.Data.Products

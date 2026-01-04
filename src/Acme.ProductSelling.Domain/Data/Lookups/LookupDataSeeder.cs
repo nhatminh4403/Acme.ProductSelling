@@ -2,9 +2,7 @@
 using Acme.ProductSelling.Products.Lookups;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using Volo.Abp.Data;
 using Volo.Abp.Domain.Repositories;
 
 namespace Acme.ProductSelling.Data.Lookups
