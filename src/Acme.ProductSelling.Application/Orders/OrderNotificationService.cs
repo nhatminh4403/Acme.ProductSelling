@@ -1,5 +1,4 @@
-﻿
-// ===== OrderNotificationService.cs =====
+
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Orders.Hubs;
 using Acme.ProductSelling.Orders.Services;
@@ -104,7 +103,7 @@ namespace Acme.ProductSelling.Orders
             {
                 _logger.LogError(ex, "[NotifyOrderStatus] FAILED - OrderId: {OrderId}, Error: {ErrorMessage}",
                     order.Id, ex.Message);
-                // Don't throw - notification failure shouldn't break the order flow
+                
             }
         }
     }
