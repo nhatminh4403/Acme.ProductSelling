@@ -15,6 +15,7 @@
     <ProjectReference Include="../Acme.ProductSelling.PaymentGateway.VnPay/Acme.ProductSelling.PaymentGateway.VnPay.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Google.GenAI" Version="0.10.0" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.8.22" />
     <PackageReference Include="Hangfire.MemoryStorage" Version="1.8.1.2" />
     <PackageReference Include="Hangfire.NetCore" Version="1.8.22" />

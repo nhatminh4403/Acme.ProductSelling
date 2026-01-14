@@ -13,8 +13,8 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Acme.ProductSelling.Migrations
 {
     [DbContext(typeof(ProductSellingDbContext))]
-    [Migration("20251102114039_Update-Database")]
-    partial class UpdateDatabase
+    [Migration("20260114142803_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,7 +22,7 @@ namespace Acme.ProductSelling.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("_Abp_DatabaseProvider", EfCoreDatabaseProvider.SqlServer)
-                .HasAnnotation("ProductVersion", "9.0.10")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -186,6 +186,9 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("CategoryGroup")
+                        .HasColumnType("int");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .IsRequired()
@@ -213,10 +216,17 @@ namespace Acme.ProductSelling.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
                     b.Property<string>("ExtraProperties")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ExtraProperties");
+
+                    b.Property<string>("IconCssClass")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -250,95 +260,6 @@ namespace Acme.ProductSelling.Migrations
                         .IsUnique();
 
                     b.ToTable("AppCategories", (string)null);
-                });
-
-            modelBuilder.Entity("Acme.ProductSelling.Chatbots.ChatbotMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("BotResponse")
-                        .IsRequired()
-                        .HasMaxLength(5000)
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)")
-                        .HasColumnName("ConcurrencyStamp");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("CreationTime");
-
-                    b.Property<Guid?>("CreatorId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("CreatorId");
-
-                    b.Property<string>("DetectedIntent")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ExtraProperties")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ExtraProperties");
-
-                    b.Property<float>("IntentConfidence")
-                        .HasColumnType("real");
-
-                    b.Property<bool>("IsAdminChat")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("LastModificationTime");
-
-                    b.Property<Guid?>("LastModifierId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("LastModifierId");
-
-                    b.Property<string>("SessionId")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserMessage")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ChatbotMessages", (string)null);
-                });
-
-            modelBuilder.Entity("Acme.ProductSelling.Chatbots.ChatbotTrainingData", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Intent")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<bool>("IsVerified")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ChatbotTrainingData", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Comments.Comment", b =>
@@ -499,6 +420,16 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CashierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CashierName")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .IsRequired()
@@ -540,6 +471,16 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ExtraProperties");
 
+                    b.Property<DateTime?>("FulfilledAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("FulfillerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FulfillerName")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -565,6 +506,9 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<int>("OrderStatus")
                         .HasColumnType("int");
 
+                    b.Property<int>("OrderType")
+                        .HasColumnType("int");
+
                     b.Property<string>("PaymentMethod")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -572,17 +516,39 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<int>("PaymentStatus")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("SellerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SellerName")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
                     b.Property<string>("ShippingAddress")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("StoreId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreationTime");
+
+                    b.HasIndex("CustomerId");
+
                     b.HasIndex("OrderNumber")
                         .IsUnique();
+
+                    b.HasIndex("OrderStatus");
+
+                    b.HasIndex("OrderType");
+
+                    b.HasIndex("PaymentStatus");
+
+                    b.HasIndex("StoreId");
 
                     b.ToTable("AppOrders", (string)null);
                 });
@@ -929,6 +895,9 @@ namespace Acme.ProductSelling.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -954,6 +923,9 @@ namespace Acme.ProductSelling.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<DateTime?>("ReleaseDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("StockCount")
                         .HasColumnType("int");
 
@@ -974,7 +946,163 @@ namespace Acme.ProductSelling.Migrations
                     b.ToTable("AppProducts", (string)null);
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.CaseSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Products.RecentlyViewedProduct", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ViewedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ViewedAt")
+                        .HasDatabaseName("IX_RecentlyViewed_ViewedAt");
+
+                    b.HasIndex("UserId", "ProductId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_RecentlyViewed_UserId_ProductId");
+
+                    b.HasIndex("UserId", "ViewedAt")
+                        .IsDescending(false, true)
+                        .HasDatabaseName("IX_RecentlyViewed_UserId_ViewedAt");
+
+                    b.ToTable("AppRecentlyViewedProducts", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Junctions.CaseMaterial", b =>
+                {
+                    b.Property<Guid>("CaseSpecificationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MaterialId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("CaseSpecificationId", "MaterialId");
+
+                    b.HasIndex("MaterialId");
+
+                    b.ToTable("AppCaseMaterials", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Junctions.CpuCoolerSocketSupport", b =>
+                {
+                    b.Property<Guid>("CpuCoolerSpecificationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SocketId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("CpuCoolerSpecificationId", "SocketId");
+
+                    b.HasIndex("SocketId");
+
+                    b.ToTable("AppCpuCoolerSocketSupports", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CableSpecification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CableType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Connector1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Connector2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DataTransferSpeed")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsBraided")
+                        .HasColumnType("bit");
+
+                    b.Property<float>("Length")
+                        .HasColumnType("real");
+
+                    b.Property<string>("MaxPower")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Warranty")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("AppCableSpecifications", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CaseFanSpecification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float>("Airflow")
+                        .HasColumnType("real");
+
+                    b.Property<int>("BearingType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Connector")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FanSize")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("HasRgb")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MaxRpm")
+                        .HasColumnType("int");
+
+                    b.Property<float>("NoiseLevel")
+                        .HasColumnType("real");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float>("StaticPressure")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("AppCaseFanSpecifications", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CaseSpecification", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1028,7 +1156,175 @@ namespace Acme.ProductSelling.Migrations
                     b.ToTable("AppCaseSpecifications", (string)null);
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.CpuCoolerSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.ChairSpecification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ArmrestType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BackrestAdjustment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BaseType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ChairType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HasHeadrest")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasLumbarSupport")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Material")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaxWeight")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SeatHeight")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WheelType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("AppChairSpecifications", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.ChargerSpecification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("CableIncluded")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ChargerType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FastChargingProtocols")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HasFoldablePlug")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MaxOutputPerPort")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PortCount")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Technology")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TotalWattage")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsbAPorts")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsbCPorts")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("AppChargerSpecifications", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.ConsoleSpecification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BluetoothVersion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Connectivity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Graphics")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HDRSupport")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasEthernet")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MaxFrameRate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MaxResolution")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OpticalDrive")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Processor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RAM")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Storage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WifiVersion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("AppConsoleSpecifications", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CpuCoolerSpecification", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1071,7 +1367,7 @@ namespace Acme.ProductSelling.Migrations
                     b.ToTable("AppCpuCoolerSpecifications", (string)null);
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.CpuSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CpuSpecification", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1113,7 +1409,58 @@ namespace Acme.ProductSelling.Migrations
                     b.ToTable("AppCpuSpecifications", (string)null);
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.GpuSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.DeskSpecification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Depth")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("HasCableManagement")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasCupHolder")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasHeadphoneHook")
+                        .HasColumnType("bit");
+
+                    b.Property<float>("Height")
+                        .HasColumnType("real");
+
+                    b.Property<bool>("IsHeightAdjustable")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Material")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaxWeight")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SurfaceType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Width")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("AppDeskSpecifications", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.GpuSpecification", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1153,7 +1500,66 @@ namespace Acme.ProductSelling.Migrations
                     b.ToTable("AppGpuSpecifications", (string)null);
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.HeadsetSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.HandheldSpecification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BatteryLife")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BluetoothVersion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Connectivity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Display")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Graphics")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OperatingSystem")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Processor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RAM")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Storage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Weight")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WifiVersion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("AppHandheldSpecifications", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.HeadsetSpecification", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1202,37 +1608,67 @@ namespace Acme.ProductSelling.Migrations
                     b.ToTable("AppHeadsetSpecifications", (string)null);
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.Junctions.CaseMaterial", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.HubSpecification", b =>
                 {
-                    b.Property<Guid>("CaseSpecificationId")
+                    b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("MaterialId")
+                    b.Property<bool>("AudioJack")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayPorts")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("EthernetPort")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("HdmiPorts")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HubType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaxDisplays")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MaxResolution")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PortCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PowerDelivery")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("CaseSpecificationId", "MaterialId");
+                    b.Property<bool>("SdCardReader")
+                        .HasColumnType("bit");
 
-                    b.HasIndex("MaterialId");
+                    b.Property<string>("UsbAPorts")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("AppCaseMaterials", (string)null);
+                    b.Property<string>("UsbCPorts")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("AppHubSpecifications", (string)null);
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.Junctions.CpuCoolerSocketSupport", b =>
-                {
-                    b.Property<Guid>("CpuCoolerSpecificationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SocketId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("CpuCoolerSpecificationId", "SocketId");
-
-                    b.HasIndex("SocketId");
-
-                    b.ToTable("AppCpuCoolerSocketSupports", (string)null);
-                });
-
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.KeyboardSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.KeyboardSpecification", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1267,7 +1703,7 @@ namespace Acme.ProductSelling.Migrations
                     b.ToTable("AppKeyboardSpecifications", (string)null);
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.LaptopSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.LaptopSpecification", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1319,7 +1755,104 @@ namespace Acme.ProductSelling.Migrations
                     b.ToTable("AppLaptopSpecifications", (string)null);
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.MonitorSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MemoryCardSpecification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CardType")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ReadSpeed")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Shockproof")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SpeedClass")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Warranty")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Waterproof")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("WriteSpeed")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("AppMemoryCardSpecifications", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MicrophoneSpecification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Connection")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Connectivity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Frequency")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HasPopFilter")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasRgb")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasShockMount")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MicrophoneType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PolarPattern")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SampleRate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sensitivity")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("AppMicrophoneSpecifications", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MonitorSpecification", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1366,7 +1899,7 @@ namespace Acme.ProductSelling.Migrations
                     b.ToTable("AppMonitorSpecifications", (string)null);
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.MotherboardSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MotherboardSpecification", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1417,7 +1950,52 @@ namespace Acme.ProductSelling.Migrations
                     b.ToTable("AppMotherboardSpecifications", (string)null);
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.MouseSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MousePadSpecification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BaseType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HasRgb")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Height")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsWashable")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Material")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SurfaceType")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Thickness")
+                        .HasColumnType("real");
+
+                    b.Property<int>("Width")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("AppMousePadSpecifications", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MouseSpecification", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1460,7 +2038,112 @@ namespace Acme.ProductSelling.Migrations
                     b.ToTable("AppMouseSpecifications", (string)null);
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.PsuSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.NetworkHardwareSpecification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AntennaCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Coverage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DeviceType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EthernetPorts")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Frequency")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HasUsb")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MaxSpeed")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SecurityProtocol")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("WifiStandard")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("AppNetworkHardwareSpecifications", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.PowerBankSpecification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FastChargingProtocols")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HasDisplay")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("InputPorts")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MaxOutputPerPort")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PortCount")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RechargingTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TotalWattage")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsbAPorts")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsbCPorts")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Weight")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("AppPowerBankSpecifications", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.PsuSpecification", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1491,7 +2174,7 @@ namespace Acme.ProductSelling.Migrations
                     b.ToTable("AppPsuSpecifications", (string)null);
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.RamSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.RamSpecification", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1534,7 +2217,94 @@ namespace Acme.ProductSelling.Migrations
                     b.ToTable("AppRamSpecifications", (string)null);
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.StorageSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.SoftwareSpecification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DeliveryMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsSubscription")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("LicenseType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Platform")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SoftwareType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SystemRequirements")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Version")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("AppSoftwareSpecifications", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.SpeakerSpecification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Connectivity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Frequency")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HasBluetooth")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasRemote")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("InputPorts")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SpeakerType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalWattage")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("AppSpeakerSpecifications", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.StorageSpecification", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -1570,6 +2340,312 @@ namespace Acme.ProductSelling.Migrations
                         .IsUnique();
 
                     b.ToTable("AppStorageSpecifications", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.WebcamSpecification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Connection")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Connectivity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FieldOfView")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FocusType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FrameRate")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("HasMicrophone")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasPrivacyShutter")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MountType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Resolution")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("AppWebcamSpecifications", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.StoreInventories.StoreInventory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DeleterId");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletionTime");
+
+                    b.Property<string>("ExtraProperties")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<bool>("IsAvailableForSale")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("IsDeleted");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("LastModificationTime");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LastModifierId");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReorderLevel")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(10);
+
+                    b.Property<int>("ReorderQuantity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(50);
+
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("Quantity");
+
+                    b.HasIndex("StoreId");
+
+                    b.HasIndex("StoreId", "ProductId")
+                        .IsUnique();
+
+                    b.ToTable("AppStoreInventories", (string)null);
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Stores.Store", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DeleterId");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletionTime");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExtraProperties")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("IsDeleted");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("LastModificationTime");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LastModifierId");
+
+                    b.Property<string>("ManagerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Store");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Users.Customer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AppUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)")
+                        .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DeleterId");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletionTime");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExtraProperties")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Gender")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("IsDeleted");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("LastModificationTime");
+
+                    b.Property<Guid?>("LastModifierId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LastModifierId");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShippingAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId")
+                        .IsUnique();
+
+                    b.ToTable("AppCustomers", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>
@@ -2380,8 +3456,8 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("DeviceInfo")
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("ExtraProperties")
                         .HasColumnType("nvarchar(max)")
@@ -2916,6 +3992,9 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ExtraProperties");
 
+                    b.Property<string>("FrontChannelLogoutUri")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -3139,8 +4218,8 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("nvarchar(400)");
 
                     b.Property<string>("Type")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.HasKey("Id");
 
@@ -3442,15 +4521,9 @@ namespace Acme.ProductSelling.Migrations
                 {
                     b.HasBaseType("Volo.Abp.Identity.IdentityUser");
 
-                    b.Property<DateTime?>("DateOfBirth")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Gender")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ShippingAddress")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                    b.Property<Guid?>("AssignedStoreId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("AssignedStoreId");
 
                     b.ToTable("AbpUsers", (string)null);
 
@@ -3503,71 +4576,11 @@ namespace Acme.ProductSelling.Migrations
                     b.Navigation("Manufacturer");
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.CaseSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Products.RecentlyViewedProduct", b =>
                 {
-                    b.HasOne("Acme.ProductSelling.Products.Lookups.FormFactor", "FormFactor")
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("FormFactorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
-                        .WithOne("CaseSpecification")
-                        .HasForeignKey("Acme.ProductSelling.Specifications.CaseSpecification", "ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FormFactor");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.CpuCoolerSpecification", b =>
-                {
-                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
-                        .WithOne("CpuCoolerSpecification")
-                        .HasForeignKey("Acme.ProductSelling.Specifications.CpuCoolerSpecification", "ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.CpuSpecification", b =>
-                {
-                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
-                        .WithOne("CpuSpecification")
-                        .HasForeignKey("Acme.ProductSelling.Specifications.CpuSpecification", "ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Acme.ProductSelling.Products.Lookups.CpuSocket", "Socket")
-                        .WithMany()
-                        .HasForeignKey("SocketId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("Socket");
-                });
-
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.GpuSpecification", b =>
-                {
-                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
-                        .WithOne("GpuSpecification")
-                        .HasForeignKey("Acme.ProductSelling.Specifications.GpuSpecification", "ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.HeadsetSpecification", b =>
-                {
-                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
-                        .WithOne("HeadsetSpecification")
-                        .HasForeignKey("Acme.ProductSelling.Specifications.HeadsetSpecification", "ProductId")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -3576,7 +4589,7 @@ namespace Acme.ProductSelling.Migrations
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Junctions.CaseMaterial", b =>
                 {
-                    b.HasOne("Acme.ProductSelling.Specifications.CaseSpecification", "CaseSpecification")
+                    b.HasOne("Acme.ProductSelling.Specifications.Models.CaseSpecification", "CaseSpecification")
                         .WithMany("Materials")
                         .HasForeignKey("CaseSpecificationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -3595,7 +4608,7 @@ namespace Acme.ProductSelling.Migrations
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Junctions.CpuCoolerSocketSupport", b =>
                 {
-                    b.HasOne("Acme.ProductSelling.Specifications.CpuCoolerSpecification", "CpuCoolerSpecification")
+                    b.HasOne("Acme.ProductSelling.Specifications.Models.CpuCoolerSpecification", "CpuCoolerSpecification")
                         .WithMany("SupportedSockets")
                         .HasForeignKey("CpuCoolerSpecificationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -3612,11 +4625,170 @@ namespace Acme.ProductSelling.Migrations
                     b.Navigation("Socket");
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.KeyboardSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CableSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("CableSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.CableSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CaseFanSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("CaseFanSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.CaseFanSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CaseSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Lookups.FormFactor", "FormFactor")
+                        .WithMany()
+                        .HasForeignKey("FormFactorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("CaseSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.CaseSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FormFactor");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.ChairSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("ChairSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.ChairSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.ChargerSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("ChargerSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.ChargerSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.ConsoleSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("ConsoleSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.ConsoleSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CpuCoolerSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("CpuCoolerSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.CpuCoolerSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CpuSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("CpuSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.CpuSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Acme.ProductSelling.Products.Lookups.CpuSocket", "Socket")
+                        .WithMany()
+                        .HasForeignKey("SocketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Socket");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.DeskSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("DeskSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.DeskSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.GpuSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("GpuSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.GpuSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.HandheldSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("HandheldSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.HandheldSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.HeadsetSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("HeadsetSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.HeadsetSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.HubSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("HubSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.HubSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.KeyboardSpecification", b =>
                 {
                     b.HasOne("Acme.ProductSelling.Products.Product", "Product")
                         .WithOne("KeyboardSpecification")
-                        .HasForeignKey("Acme.ProductSelling.Specifications.KeyboardSpecification", "ProductId")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.KeyboardSpecification", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -3631,18 +4803,40 @@ namespace Acme.ProductSelling.Migrations
                     b.Navigation("SwitchType");
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.LaptopSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.LaptopSpecification", b =>
                 {
                     b.HasOne("Acme.ProductSelling.Products.Product", "Product")
                         .WithOne("LaptopSpecification")
-                        .HasForeignKey("Acme.ProductSelling.Specifications.LaptopSpecification", "ProductId")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.LaptopSpecification", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.MonitorSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MemoryCardSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("MemoryCardSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.MemoryCardSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MicrophoneSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("MicrophoneSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.MicrophoneSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MonitorSpecification", b =>
                 {
                     b.HasOne("Acme.ProductSelling.Products.Lookups.PanelType", "PanelType")
                         .WithMany()
@@ -3652,7 +4846,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.HasOne("Acme.ProductSelling.Products.Product", "Product")
                         .WithOne("MonitorSpecification")
-                        .HasForeignKey("Acme.ProductSelling.Specifications.MonitorSpecification", "ProductId")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.MonitorSpecification", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -3661,7 +4855,7 @@ namespace Acme.ProductSelling.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.MotherboardSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MotherboardSpecification", b =>
                 {
                     b.HasOne("Acme.ProductSelling.Products.Lookups.Chipset", "Chipset")
                         .WithMany()
@@ -3677,7 +4871,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.HasOne("Acme.ProductSelling.Products.Product", "Product")
                         .WithOne("MotherboardSpecification")
-                        .HasForeignKey("Acme.ProductSelling.Specifications.MotherboardSpecification", "ProductId")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.MotherboardSpecification", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -3704,18 +4898,51 @@ namespace Acme.ProductSelling.Migrations
                     b.Navigation("SupportedRamTypes");
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.MouseSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MousePadSpecification", b =>
                 {
                     b.HasOne("Acme.ProductSelling.Products.Product", "Product")
-                        .WithOne("MouseSpecification")
-                        .HasForeignKey("Acme.ProductSelling.Specifications.MouseSpecification", "ProductId")
+                        .WithOne("MousepadSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.MousePadSpecification", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.PsuSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MouseSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("MouseSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.MouseSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.NetworkHardwareSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("NetworkHardwareSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.NetworkHardwareSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.PowerBankSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("PowerBankSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.PowerBankSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.PsuSpecification", b =>
                 {
                     b.HasOne("Acme.ProductSelling.Products.Lookups.FormFactor", "FormFactor")
                         .WithMany()
@@ -3725,7 +4952,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.HasOne("Acme.ProductSelling.Products.Product", "Product")
                         .WithOne("PsuSpecification")
-                        .HasForeignKey("Acme.ProductSelling.Specifications.PsuSpecification", "ProductId")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.PsuSpecification", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -3734,11 +4961,11 @@ namespace Acme.ProductSelling.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.RamSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.RamSpecification", b =>
                 {
                     b.HasOne("Acme.ProductSelling.Products.Product", "Product")
                         .WithOne("RamSpecification")
-                        .HasForeignKey("Acme.ProductSelling.Specifications.RamSpecification", "ProductId")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.RamSpecification", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -3753,15 +4980,78 @@ namespace Acme.ProductSelling.Migrations
                     b.Navigation("RamType");
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.StorageSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.SoftwareSpecification", b =>
                 {
                     b.HasOne("Acme.ProductSelling.Products.Product", "Product")
-                        .WithOne("StorageSpecification")
-                        .HasForeignKey("Acme.ProductSelling.Specifications.StorageSpecification", "ProductId")
+                        .WithOne("SoftwareSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.SoftwareSpecification", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.SpeakerSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("SpeakerSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.SpeakerSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.StorageSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("StorageSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.StorageSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.WebcamSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithOne("WebcamSpecification")
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.WebcamSpecification", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.StoreInventories.StoreInventory", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Products.Product", "Product")
+                        .WithMany("StoreInventories")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Acme.ProductSelling.Stores.Store", "Store")
+                        .WithMany()
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Store");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Users.Customer", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Users.AppUser", "AppUser")
+                        .WithOne("Customer")
+                        .HasForeignKey("Acme.ProductSelling.Users.Customer", "AppUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLogAction", b =>
@@ -3939,7 +5229,22 @@ namespace Acme.ProductSelling.Migrations
 
             modelBuilder.Entity("Acme.ProductSelling.Products.Product", b =>
                 {
+                    b.Navigation("CableSpecification")
+                        .IsRequired();
+
+                    b.Navigation("CaseFanSpecification")
+                        .IsRequired();
+
                     b.Navigation("CaseSpecification")
+                        .IsRequired();
+
+                    b.Navigation("ChairSpecification")
+                        .IsRequired();
+
+                    b.Navigation("ChargerSpecification")
+                        .IsRequired();
+
+                    b.Navigation("ConsoleSpecification")
                         .IsRequired();
 
                     b.Navigation("CpuCoolerSpecification")
@@ -3948,16 +5253,31 @@ namespace Acme.ProductSelling.Migrations
                     b.Navigation("CpuSpecification")
                         .IsRequired();
 
+                    b.Navigation("DeskSpecification")
+                        .IsRequired();
+
                     b.Navigation("GpuSpecification")
                         .IsRequired();
 
+                    b.Navigation("HandheldSpecification")
+                        .IsRequired();
+
                     b.Navigation("HeadsetSpecification")
+                        .IsRequired();
+
+                    b.Navigation("HubSpecification")
                         .IsRequired();
 
                     b.Navigation("KeyboardSpecification")
                         .IsRequired();
 
                     b.Navigation("LaptopSpecification")
+                        .IsRequired();
+
+                    b.Navigation("MemoryCardSpecification")
+                        .IsRequired();
+
+                    b.Navigation("MicrophoneSpecification")
                         .IsRequired();
 
                     b.Navigation("MonitorSpecification")
@@ -3969,22 +5289,42 @@ namespace Acme.ProductSelling.Migrations
                     b.Navigation("MouseSpecification")
                         .IsRequired();
 
+                    b.Navigation("MousepadSpecification")
+                        .IsRequired();
+
+                    b.Navigation("NetworkHardwareSpecification")
+                        .IsRequired();
+
+                    b.Navigation("PowerBankSpecification")
+                        .IsRequired();
+
                     b.Navigation("PsuSpecification")
                         .IsRequired();
 
                     b.Navigation("RamSpecification")
                         .IsRequired();
 
+                    b.Navigation("SoftwareSpecification")
+                        .IsRequired();
+
+                    b.Navigation("SpeakerSpecification")
+                        .IsRequired();
+
                     b.Navigation("StorageSpecification")
+                        .IsRequired();
+
+                    b.Navigation("StoreInventories");
+
+                    b.Navigation("WebcamSpecification")
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.CaseSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CaseSpecification", b =>
                 {
                     b.Navigation("Materials");
                 });
 
-            modelBuilder.Entity("Acme.ProductSelling.Specifications.CpuCoolerSpecification", b =>
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CpuCoolerSpecification", b =>
                 {
                     b.Navigation("SupportedSockets");
                 });
@@ -4027,6 +5367,12 @@ namespace Acme.ProductSelling.Migrations
             modelBuilder.Entity("Volo.Abp.TenantManagement.Tenant", b =>
                 {
                     b.Navigation("ConnectionStrings");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Users.AppUser", b =>
+                {
+                    b.Navigation("Customer")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

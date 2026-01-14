@@ -1,0 +1,266 @@
+﻿@page "/chat"
+@model Acme.ProductSelling.Web.Pages.Chatbot.IndexModel
+@{
+    ViewData["Title"] = L["UI:Titles:Chat"];
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <!-- Header -->
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-robot me-2"></i>
+                        AI Shopping Assistant
+                    </h4>
+                    <small id="userRoleBadge" class="badge bg-light text-dark"></small>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="card-body" style="height: 500px; overflow-y: auto;" id="chatMessages">
+                    <!-- Welcome Message -->
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        Welcome! I'm your AI shopping assistant. Ask me about products, prices, availability, or general tech questions.
+                    </div>
+                </div>
+
+                <!-- Product Cards Container (for showing related products) -->
+                <div id="productCardsContainer" class="px-3 pb-3" style="display: none;">
+                    <div class="alert alert-secondary">
+                        <strong>Related Products:</strong>
+                    </div>
+                    <div id="productCards" class="row row-cols-1 row-cols-md-2 g-3"></div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="card-footer">
+                    <form id="chatForm">
+                        <div class="input-group">
+                            <input type="text"
+                                   id="messageInput"
+                                   class="form-control"
+                                   placeholder="Ask me anything..."
+                                   autocomplete="off"
+                                   required>
+                            <button type="submit" class="btn btn-primary" id="sendButton">
+                                <i class="fas fa-paper-plane"></i> Send
+                            </button>
+                        </div>
+                        <div class="form-text mt-2">
+                            <span id="sourceIndicator"></span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="mt-3">
+                <h6>Quick Questions:</h6>
+                <div class="d-flex flex-wrap gap-2">
+                    <button class="btn btn-sm btn-outline-secondary quick-question" data-question="Show me gaming laptops">
+                        Gaming Laptops
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary quick-question" data-question="What are your best deals?">
+                        Best Deals
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary quick-question" data-question="I need a new keyboard">
+                        Keyboards
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary quick-question" data-question="What's the difference between SSD and HDD?">
+                        Storage Info
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function() {
+            const chatMessages = $('#chatMessages');
+            const messageInput = $('#messageInput');
+            const sendButton = $('#sendButton');
+            const chatForm = $('#chatForm');
+            const productCardsContainer = $('#productCardsContainer');
+            const productCards = $('#productCards');
+            const sourceIndicator = $('#sourceIndicator');
+            const userRoleBadge = $('#userRoleBadge');
+
+            let conversationHistory = [];
+
+            // Handle form submit
+            chatForm.on('submit', function(e) {
+                e.preventDefault();
+                const message = messageInput.val().trim();
+                if (message) {
+                    sendMessage(message);
+                    messageInput.val('');
+                }
+            });
+
+            // Quick question buttons
+            $('.quick-question').on('click', function() {
+                const question = $(this).data('question');
+                sendMessage(question);
+            });
+
+            function sendMessage(message) {
+                addMessageToChat('user', message);
+                const loadingId = showLoading();
+
+                toggleInput(false);
+
+                const requestData = {
+                    message: message,
+                    conversationHistory: conversationHistory
+                };
+
+                // CRITICAL CHANGE: Use abp.ajax instead of $.ajax
+                abp.ajax({
+                    url: '/api/app/chatbot/send-message',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(requestData)
+                }).then(function(response) {
+                    // Success Handler
+                    removeLoading(loadingId);
+
+                    // Logic update: response comes directly as the DTO
+                    addMessageToChat('assistant', response.response);
+
+                    conversationHistory.push({
+                        role: 'user', content: message, timestamp: new Date().toISOString()
+                    });
+                    conversationHistory.push({
+                        role: 'assistant', content: response.response, timestamp: new Date().toISOString()
+                    });
+
+                    if (conversationHistory.length > 10) conversationHistory = conversationHistory.slice(-10);
+
+                    if (response.relatedProducts && response.relatedProducts.length > 0) {
+                        displayProducts(response.relatedProducts);
+                    } else {
+                        productCardsContainer.hide();
+                    }
+
+                    updateSourceIndicator(response.source);
+                    updateRoleBadge(response.userRole);
+
+                }).catch(function(err){
+                    // Error Handler (ABP style)
+                    removeLoading(loadingId);
+                    addMessageToChat('system', 'Error: ' + (err.message || 'Something went wrong.'));
+                    console.error(err);
+                }).always(function() {
+                    toggleInput(true);
+                    messageInput.focus();
+                });
+            }
+
+            // IMPROVED: Text Formatting (Markdown)
+            function formatMessageText(text) {
+                // Escape HTML first to prevent XSS from raw text
+                let safeText = $('<div>').text(text).html();
+
+                return safeText
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold **text**
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')             // Italic *text*
+                    .replace(/^- (.*)/gm, '<li>$1</li>')              // List items "- Item"
+                    .replace(/\n/g, '<br>');                           // Newlines
+            }
+
+            function addMessageToChat(role, content) {
+                const messageDiv = $('<div>')
+                    .addClass('mb-3')
+                    .addClass(role === 'user' ? 'text-end' : 'text-start');
+
+                // Apply simple markdown formatting
+                const formattedContent = formatMessageText(content);
+
+                const bubble = $('<div>')
+                    .addClass('d-inline-block p-3 rounded text-start')
+                    .addClass(role === 'user' ? 'bg-primary text-white' : 'bg-light border')
+                    .addClass(role === 'system' ? 'bg-danger text-white' : '') // Error style
+                    .css('max-width', '80%')
+                    .html(formattedContent); // Using html() is safe only because we escaped input in formatMessageText
+
+                messageDiv.append(bubble);
+                chatMessages.append(messageDiv);
+                chatMessages.scrollTop(chatMessages[0].scrollHeight);
+            }
+
+            function toggleInput(enabled) {
+                messageInput.prop('disabled', !enabled);
+                sendButton.prop('disabled', !enabled);
+            }
+
+            function showLoading() {
+                const loadingId = 'loading-' + Date.now();
+                chatMessages.append(`<div id="${loadingId}" class="mb-3"><span class="badge bg-secondary">Typing...</span></div>`);
+                chatMessages.scrollTop(chatMessages[0].scrollHeight);
+                return loadingId;
+            }
+
+            function removeLoading(loadingId) {
+                $('#' + loadingId).remove();
+            }
+
+            function displayProducts(products) {
+                productCards.empty();
+                products.forEach(product => {
+                    const price = product.discountedPrice || product.originalPrice;
+                    const hasDiscount = product.discountPercent > 0;
+
+                    // Safety check for null images
+                    const imgSrc = product.imageUrl ? product.imageUrl : 'https://placehold.co/400x300?text=No+Image';
+
+                    const card = $('<div>').addClass('col').html(`
+                        <div class="card h-100 shadow-sm">
+                            <img src="${imgSrc}" class="card-img-top" alt="${product.productName}" style="height: 150px; object-fit: cover;">
+                            <div class="card-body p-2">
+                                <h6 class="card-title text-truncate" title="${product.productName}">${product.productName}</h6>
+                                <div class="mb-1">
+                                    ${hasDiscount ?
+                                        `<small class="text-decoration-line-through text-muted">$${product.originalPrice}</small>
+                                         <span class="text-danger fw-bold">$${price}</span>`
+                                        : `<span class="fw-bold">$${price}</span>`
+                                    }
+                                </div>
+                                <a href="/products/${product.urlSlug}" target="_blank" class="btn btn-sm btn-outline-primary w-100">View</a>
+                            </div>
+                        </div>
+                    `);
+                    productCards.append(card);
+                });
+                productCardsContainer.fadeIn();
+                // Scroll page to show products if they appear
+                $('html, body').animate({
+                    scrollTop: productCardsContainer.offset().top - 200
+                }, 500);
+            }
+
+            // Existing logic for Source and Badges remains the same...
+            function updateSourceIndicator(source) {
+                // (Your existing code here is fine)
+                 let icon = ''; let text = ''; let className = '';
+                 // Make sure to parse int if needed, but Enum returns 0,1,2 in JSON usually
+                 switch(source) {
+                    case 0: icon = '<i class="fas fa-database"></i>'; text = 'Database'; className = 'text-success'; break;
+                    case 1: icon = '<i class="fas fa-globe"></i>'; text = 'Web Search'; className = 'text-info'; break;
+                    case 2: icon = '<i class="fas fa-layer-group"></i>'; text = 'Hybrid'; className = 'text-primary'; break;
+                }
+                sourceIndicator.html(`${icon} <small class="${className}">${text}</small>`);
+            }
+
+            function updateRoleBadge(role) {
+                // (Your existing code here is fine)
+                const badges = { 'admin': 'Admin', 'staff': 'Staff', 'customer': 'Customer', 'anonymous': 'Guest' };
+                userRoleBadge.text(badges[role] || 'Unknown');
+            }
+        });
+    </script>
+}

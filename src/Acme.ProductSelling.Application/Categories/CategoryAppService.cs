@@ -311,11 +311,6 @@ namespace Acme.ProductSelling.Categories
                 _ => group.ToString()
             };
         }
-
-
-        /// <summary>
-        /// Generates localized price range DTOs for a category based on its configuration
-        /// </summary>
         private List<PriceRangeDto> GeneratePriceRangesForCategory(SpecificationType specificationType)
         {
             if (!CategoryPriceRangeConfiguration.HasPriceRanges(specificationType))
@@ -335,10 +330,6 @@ namespace Acme.ProductSelling.Categories
                 UrlValue = GetUrlValueForPriceRange(kvp.Key, kvp.Value.Min, kvp.Value.Max)
             }).ToList();
         }
-
-        /// <summary>
-        /// Gets localized display text for price range with formatted values
-        /// </summary>
         private string GetLocalizedPriceRangeText(PriceRangeEnum range, decimal min, decimal max)
         {
             var formattedMin = FormatPriceForDisplay(min);

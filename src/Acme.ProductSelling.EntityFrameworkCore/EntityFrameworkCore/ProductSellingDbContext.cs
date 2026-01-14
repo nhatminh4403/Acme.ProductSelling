@@ -1,7 +1,6 @@
 ﻿using Acme.ProductSelling.Blogs;
 using Acme.ProductSelling.Carts;
 using Acme.ProductSelling.Categories;
-using Acme.ProductSelling.Chatbots;
 using Acme.ProductSelling.Comments;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Orders;
@@ -123,8 +122,8 @@ public class ProductSellingDbContext :
     #endregion
 
     #region Chatbot
-    public DbSet<ChatbotMessage> ChatbotMessages { get; set; }
-    public DbSet<ChatbotTrainingData> ChatbotTrainingData { get; set; }
+    //public DbSet<ChatbotMessage> ChatbotMessages { get; set; }
+    //public DbSet<ChatbotTrainingData> ChatbotTrainingData { get; set; }
     #endregion
 
     public ProductSellingDbContext(DbContextOptions<ProductSellingDbContext> options)
@@ -624,22 +623,22 @@ public class ProductSellingDbContext :
         #endregion
 
         #region Chatbot
-        builder.Entity<ChatbotMessage>(b =>
-        {
-            b.ToTable(tablePrefix + "ChatbotMessages");
-            b.ConfigureByConvention();
-            b.Property(x => x.UserMessage).IsRequired().HasMaxLength(2000);
-            b.Property(x => x.BotResponse).IsRequired().HasMaxLength(5000);
-            b.Property(x => x.SessionId).HasMaxLength(100);
-        });
+        //builder.Entity<ChatbotMessage>(b =>
+        //{
+        //    b.ToTable(tablePrefix + "ChatbotMessages");
+        //    b.ConfigureByConvention();
+        //    b.Property(x => x.UserMessage).IsRequired().HasMaxLength(2000);
+        //    b.Property(x => x.BotResponse).IsRequired().HasMaxLength(5000);
+        //    b.Property(x => x.SessionId).HasMaxLength(100);
+        //});
 
-        builder.Entity<ChatbotTrainingData>(b =>
-        {
-            b.ToTable(tablePrefix + "ChatbotTrainingData");
-            b.ConfigureByConvention();
-            b.Property(x => x.Message).IsRequired().HasMaxLength(500);
-            b.Property(x => x.Intent).IsRequired().HasMaxLength(100);
-        });
+        //builder.Entity<ChatbotTrainingData>(b =>
+        //{
+        //    b.ToTable(tablePrefix + "ChatbotTrainingData");
+        //    b.ConfigureByConvention();
+        //    b.Property(x => x.Message).IsRequired().HasMaxLength(500);
+        //    b.Property(x => x.Intent).IsRequired().HasMaxLength(100);
+        //});
         #endregion
 
         #region Users
