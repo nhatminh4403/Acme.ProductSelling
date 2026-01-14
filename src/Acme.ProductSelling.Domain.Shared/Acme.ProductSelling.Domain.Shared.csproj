@@ -10,32 +10,32 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="KubernetesClient" Version="18.0.5" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.0" />
+    <PackageReference Include="KubernetesClient" Version="18.0.13" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.9" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.2" />
     <PackageReference Include="Microsoft.Build" Version="18.0.2" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="5.0.0" />
     <PackageReference Include="Microsoft.IdentityModel.Abstractions" Version="8.15.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="Volo.Abp.AspNetCore.SignalR" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.BackgroundJobs.Domain.Shared" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.AuditLogging.Domain.Shared" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.FeatureManagement.Domain.Shared" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.IdentityModel" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.PermissionManagement.Domain.Shared" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.SettingManagement.Domain.Shared" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.BlobStoring.Database.Domain.Shared" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.GlobalFeatures" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.AspNetCore.SignalR" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.BackgroundJobs.Domain.Shared" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.AuditLogging.Domain.Shared" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.FeatureManagement.Domain.Shared" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.IdentityModel" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.Domain.Shared" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Domain.Shared" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.BlobStoring.Database.Domain.Shared" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.GlobalFeatures" Version="10.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.OpenIddict.Domain.Shared" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Identity.Domain.Shared" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.TenantManagement.Domain.Shared" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.OpenIddict.Domain.Shared" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.Identity.Domain.Shared" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Domain.Shared" Version="10.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.2" />
   </ItemGroup>
 
   <ItemGroup>

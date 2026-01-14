@@ -9,28 +9,28 @@
     <ProjectReference Include="..\Acme.ProductSelling.Domain.Shared\Acme.ProductSelling.Domain.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="KubernetesClient" Version="18.0.5" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.0" />
+    <PackageReference Include="KubernetesClient" Version="18.0.13" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.2" />
     <PackageReference Include="Microsoft.Build" Version="18.0.2" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="5.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.2" />
     <PackageReference Include="Microsoft.IdentityModel.Abstractions" Version="8.15.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="Volo.Abp.AspNetCore.SignalR" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Emailing" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Caching" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.IdentityModel" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.PermissionManagement.Domain.Identity" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.PermissionManagement.Domain.OpenIddict" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.BackgroundJobs.Domain" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.AuditLogging.Domain" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.FeatureManagement.Domain" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.SettingManagement.Domain" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.BlobStoring.Database.Domain" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.AspNetCore.SignalR" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.Emailing" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.Caching" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.IdentityModel" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.Domain.Identity" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.Domain.OpenIddict" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.BackgroundJobs.Domain" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.AuditLogging.Domain" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.FeatureManagement.Domain" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Domain" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.BlobStoring.Database.Domain" Version="10.0.2" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.OpenIddict.Domain" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Identity.Domain" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.TenantManagement.Domain" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.OpenIddict.Domain" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.Identity.Domain" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Domain" Version="10.0.2" />
   </ItemGroup>
 </Project>

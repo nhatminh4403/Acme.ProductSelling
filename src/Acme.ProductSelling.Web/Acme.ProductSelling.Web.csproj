@@ -47,37 +47,37 @@
     <PackageReference Include="AspNetCore.HealthChecks.UI" Version="9.0.0" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="9.0.0" />
-    <PackageReference Include="Duende.IdentityModel" Version="7.1.0" />
+    <PackageReference Include="Duende.IdentityModel" Version="8.0.0" />
     <PackageReference Include="Google.GenAI" Version="0.10.0" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.8.22" />
     <PackageReference Include="Hangfire.MemoryStorage" Version="1.8.1.2" />
     <PackageReference Include="Hangfire.NetCore" Version="1.8.22" />
     <PackageReference Include="Hangfire.SqlServer" Version="1.8.22" />
     <PackageReference Include="HtmlSanitizer" Version="9.0.889" />
-    <PackageReference Include="KubernetesClient" Version="18.0.5" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.0" />
+    <PackageReference Include="KubernetesClient" Version="18.0.13" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.2" />
     <PackageReference Include="Microsoft.Build" Version="18.0.2" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="5.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="5.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.IdentityModel.Abstractions" Version="8.15.0" />
     <PackageReference Include="Microsoft.ML" Version="5.0.0" />
     <PackageReference Include="Microsoft.ML.FastTree" Version="5.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="OpenAI" Version="2.7.0" />
-    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageReference Include="OpenAI" Version="2.8.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageReference Include="Serilog.Sinks.Async" Version="2.1.0" />
     <PackageReference Include="VNPAY.NET" Version="2.1.0" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.BackgroundJobs.HangFire" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.IdentityModel" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.BackgroundJobs.HangFire" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.IdentityModel" Version="10.0.2" />
 		<PackageReference Include="IdentityModel" Version="7.0.0" />
 	</ItemGroup>
   <ItemGroup>
@@ -91,22 +91,22 @@
     <ProjectReference Include="../Acme.ProductSelling.PaymentGateway.VnPay/Acme.ProductSelling.PaymentGateway.VnPay.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.Autofac" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Swashbuckle" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.FeatureManagement.Web" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.Autofac" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Authentication.JwtBearer" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.Swashbuckle" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.FeatureManagement.Web" Version="10.0.2" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite" Version="5.0.0" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite" Version="5.0.2" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.Account.Web.OpenIddict" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Identity.Web" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.TenantManagement.Web" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.Account.Web.OpenIddict" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.Identity.Web" Version="10.0.2" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Web" Version="10.0.2" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.Studio.Client.AspNetCore" Version="2.0.2" />
+    <PackageReference Include="Volo.Abp.Studio.Client.AspNetCore" Version="2.1.6" />
   </ItemGroup>
   <ItemGroup>
     <None Include="wwwroot\js\admin\blogs\create.js" />
