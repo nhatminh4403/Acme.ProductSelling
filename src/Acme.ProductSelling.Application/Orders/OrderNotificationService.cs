@@ -1,4 +1,4 @@
-
+﻿
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Orders.Hubs;
 using Acme.ProductSelling.Orders.Services;
@@ -17,10 +17,9 @@ namespace Acme.ProductSelling.Orders
         private readonly IStringLocalizer<ProductSellingResource> _localizer;
         private readonly ILogger<OrderNotificationService> _logger;
 
-        public OrderNotificationService(
-         IHubContext<OrderHub, IOrderClient> orderHubContext,
-         IStringLocalizer<ProductSellingResource> localizer,
-         ILogger<OrderNotificationService> logger)
+        public OrderNotificationService(IHubContext<OrderHub, IOrderClient> orderHubContext,
+                                        IStringLocalizer<ProductSellingResource> localizer,
+                                        ILogger<OrderNotificationService> logger)
         {
             _orderHubContext = orderHubContext;
             _localizer = localizer;
@@ -103,7 +102,7 @@ namespace Acme.ProductSelling.Orders
             {
                 _logger.LogError(ex, "[NotifyOrderStatus] FAILED - OrderId: {OrderId}, Error: {ErrorMessage}",
                     order.Id, ex.Message);
-                
+
             }
         }
     }

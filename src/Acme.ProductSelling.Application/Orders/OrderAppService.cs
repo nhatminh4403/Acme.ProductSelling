@@ -1107,7 +1107,6 @@ namespace Acme.ProductSelling.Orders
             return dto;
         }
 
-        // Additional methods remain the same...
         public async Task<OrderDto> GetByOrderNumberAsync(string orderNumber)
         {
             Logger.LogInformation("[GetByOrderNumber] START - OrderNumber: {OrderNumber}", orderNumber);

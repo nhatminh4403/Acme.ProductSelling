@@ -1,7 +1,7 @@
 ﻿using Acme.ProductSelling.Orders;
 using Acme.ProductSelling.Orders.Services;
-using Acme.ProductSelling.PaymentGateway.MoMo.Models;
-using Acme.ProductSelling.PaymentGateway.MoMo.Services;
+using Acme.ProductSelling.PaymentGateway.MoMo.Configurations.Models;
+using Acme.ProductSelling.PaymentGateway.MoMo.Configurations.Services;
 using Acme.ProductSelling.PaymentGateway.VnPay.Dtos;
 using Acme.ProductSelling.PaymentGateway.VnPay.Services;
 using Microsoft.AspNetCore.Http;

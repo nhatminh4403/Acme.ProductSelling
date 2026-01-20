@@ -1,4 +1,4 @@
-using Acme.ProductSelling.EntityFrameworkCore;
+﻿//using Acme.ProductSelling.EntityFrameworkCore;
 using Acme.ProductSelling.PaymentGateway.MoMo.Configurations;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Modularity;
@@ -6,7 +6,7 @@ using Volo.Abp.Modularity;
 namespace Acme.ProductSelling.PaymentGateway.MoMo;
 
 [DependsOn(
-    typeof(ProductSellingEntityFrameworkCoreModule),
+    //typeof(ProductSellingEntityFrameworkCoreModule),
     typeof(ProductSellingDomainSharedModule),
     typeof(ProductSellingDomainModule)
 )]

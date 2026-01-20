@@ -1,5 +1,5 @@
 ﻿using Acme.ProductSelling.Orders.Services;
-using Acme.ProductSelling.PaymentGateway.MoMo.Services;
+using Acme.ProductSelling.PaymentGateway.MoMo.Configurations.Services;
 using Acme.ProductSelling.Payments;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

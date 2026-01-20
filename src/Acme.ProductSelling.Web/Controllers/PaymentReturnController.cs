@@ -12,16 +12,19 @@ namespace Acme.ProductSelling.Web.Controllers
     public class PaymentReturnController : Controller
     {
         private readonly IOrderAppService _orderAppService;
+        private readonly IOrderPublicAppService _orderPublicAppService;
         private readonly ILogger<PaymentReturnController> _logger;
         private readonly IVnPayService _vnPayService;
         public PaymentReturnController(
             IOrderAppService orderAppService,
             ILogger<PaymentReturnController> logger,
-            IVnPayService vnPayService)
+            IVnPayService vnPayService,
+            IOrderPublicAppService orderPublicAppService)
         {
             _orderAppService = orderAppService;
             _logger = logger;
             _vnPayService = vnPayService;
+            _orderPublicAppService = orderPublicAppService;
         }
 
         [HttpGet("vnpay-return")]
@@ -80,7 +83,8 @@ namespace Acme.ProductSelling.Web.Controllers
                     return RedirectToPage("/Error", new { message = "Invalid order ID format" });
                 }
 
-                var order = await _orderAppService.GetAsync(orderId);
+                //var order = await _orderAppService.GetAsync(orderId);
+                var order = await _orderPublicAppService.GetAsync(orderId);
 
                 if (order == null)
                 {
@@ -141,7 +145,8 @@ namespace Acme.ProductSelling.Web.Controllers
                     return RedirectToPage("/Error", new { message = "Invalid order reference" });
                 }
 
-                var order = await _orderAppService.GetAsync(orderIdGuid);
+                //var order = await _orderAppService.GetAsync(orderIdGuid);
+                var order  = await _orderPublicAppService.GetAsync(orderIdGuid);
 
                 if (order == null)
                 {

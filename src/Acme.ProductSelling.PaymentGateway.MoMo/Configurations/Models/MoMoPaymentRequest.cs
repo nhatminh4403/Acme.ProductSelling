@@ -1,4 +1,4 @@
-﻿namespace Acme.ProductSelling.PaymentGateway.MoMo.Models
+﻿namespace Acme.ProductSelling.PaymentGateway.MoMo.Configurations.Models
 {
     public class MoMoPaymentRequest
     {

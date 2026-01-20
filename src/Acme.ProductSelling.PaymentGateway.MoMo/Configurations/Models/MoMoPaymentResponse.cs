@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Acme.ProductSelling.PaymentGateway.MoMo.Models
+namespace Acme.ProductSelling.PaymentGateway.MoMo.Configurations.Models
 {
     public class MoMoPaymentResponse
     {

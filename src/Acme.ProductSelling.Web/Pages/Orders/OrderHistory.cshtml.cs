@@ -18,6 +18,8 @@ namespace Acme.ProductSelling.Web.Pages.Orders
     public class OrderHistoryModel : ProductSellingPageModel
     {
         private readonly IOrderAppService _orderAppService;
+        private readonly IOrderHistoryAppService _orderHistoryAppService;
+        private readonly IOrderPublicAppService _orderPublicAppService;
 
         [BindProperty(SupportsGet = true)]
         public int CurrentPage { get; set; } = 1;
@@ -31,10 +33,12 @@ namespace Acme.ProductSelling.Web.Pages.Orders
         public PagedResultDto<OrderDto> Orders { get; set; }
         public PaginationViewModel Pagination { get; set; }
 
-        public OrderHistoryModel(IOrderAppService orderAppService)
+        public OrderHistoryModel(IOrderAppService orderAppService, IOrderHistoryAppService orderHistoryAppService, IOrderPublicAppService orderPublicAppService)
         {
             _orderAppService = orderAppService;
             Orders = new PagedResultDto<OrderDto>();
+            _orderHistoryAppService = orderHistoryAppService;
+            _orderPublicAppService = orderPublicAppService;
         }
 
         public async Task OnGetAsync()
@@ -45,13 +49,13 @@ namespace Acme.ProductSelling.Web.Pages.Orders
                 MaxResultCount = PageSize,
                 Sorting = Sorting
             };
-            Orders = await _orderAppService.GetListForCurrentUserAsync(input);
-
+            //Orders = await _orderAppService.GetListForCurrentUserAsync(input);
+            Orders = await _orderPublicAppService.GetListForCurrentUserAsync(input);
             Pagination = new PaginationViewModel(
                             currentPage: CurrentPage,
                             totalCount: (int)Orders.TotalCount,
                             pageSize: PageSize,
-                            baseUrl: "/history-order"
+                            baseUrl: "/orders/history"
                         )
             {
                 ShowInfo = true,
@@ -69,8 +73,8 @@ namespace Acme.ProductSelling.Web.Pages.Orders
                 Logger.LogInformation("[CancelOrderAjax] START - OrderId: {OrderId}, UserId: {UserId}",
                     request.OrderId, CurrentUser.Id);
 
-                await _orderAppService.DeleteAsync(request.OrderId);
-
+                //await _orderAppService.DeleteAsync(request.OrderId);
+                await _orderPublicAppService.DeleteAsync(request.OrderId);
                 Logger.LogInformation("[CancelOrderAjax] SUCCESS - OrderId: {OrderId}", request.OrderId);
 
                 return new JsonResult(new

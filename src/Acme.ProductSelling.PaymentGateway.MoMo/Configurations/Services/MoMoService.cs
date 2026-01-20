@@ -1,6 +1,6 @@
 ﻿//using Newtonsoft.Json;
 using Acme.ProductSelling.PaymentGateway.MoMo.Configurations;
-using Acme.ProductSelling.PaymentGateway.MoMo.Models;
+using Acme.ProductSelling.PaymentGateway.MoMo.Configurations.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -11,7 +11,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Volo.Abp;
 
-namespace Acme.ProductSelling.PaymentGateway.MoMo.Services
+namespace Acme.ProductSelling.PaymentGateway.MoMo.Configurations.Services
 {
     public class MoMoService : IMoMoService
     {

@@ -16,16 +16,19 @@ namespace Acme.ProductSelling.Web.Pages.Orders
     public class OrderDetailModel : ProductSellingPageModel
     {
         private readonly IOrderAppService _orderAppService;
-
+        private readonly IOrderPublicAppService _orderPublicAppService;
+        private readonly IOrderHistoryAppService _orderHistoryAppService;
         [BindProperty(SupportsGet = true)]
         public Guid Id { get; set; }
         public List<OrderHistoryDto> OrderHistory { get; set; }
 
         public OrderDto Order { get; set; }
 
-        public OrderDetailModel(IOrderAppService orderAppService)
+        public OrderDetailModel(IOrderAppService orderAppService, IOrderPublicAppService orderPublicAppService, IOrderHistoryAppService orderHistoryAppService)
         {
             _orderAppService = orderAppService;
+            _orderPublicAppService = orderPublicAppService;
+            _orderHistoryAppService = orderHistoryAppService;
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -35,7 +38,8 @@ namespace Acme.ProductSelling.Web.Pages.Orders
                 return RedirectToPage("/Orders/OrderHistory");
             }
 
-            Order = await _orderAppService.GetAsync(Id);
+            //Order = await _orderAppService.GetAsync(Id);
+            Order = await _orderPublicAppService.GetAsync(Id);
             if (Order.CustomerId != CurrentUser.Id)
                 return Forbid();
 
@@ -43,7 +47,8 @@ namespace Acme.ProductSelling.Web.Pages.Orders
             {
                 return RedirectToPage("/Orders/OrderHistory");
             }
-            OrderHistory = await _orderAppService.GetOrderHistoryAsync(Id);
+            //OrderHistory = await _orderAppService.GetOrderHistoryAsync(Id);
+            OrderHistory = await _orderHistoryAppService.GetOrderHistoryAsync(Id);
 
             return Page();
         }
@@ -54,8 +59,8 @@ namespace Acme.ProductSelling.Web.Pages.Orders
                 Logger.LogInformation("[CancelOrderAjax] START - OrderId: {OrderId}, UserId: {UserId}",
                     request.OrderId, CurrentUser.Id);
 
-                await _orderAppService.DeleteAsync(request.OrderId);
-
+                //await _orderAppService.DeleteAsync(request.OrderId);
+                await _orderPublicAppService.DeleteAsync(request.OrderId);
                 Logger.LogInformation("[CancelOrderAjax] SUCCESS - OrderId: {OrderId}", request.OrderId);
 
                 return new JsonResult(new
@@ -94,7 +99,8 @@ namespace Acme.ProductSelling.Web.Pages.Orders
         {
             try
             {
-                await _orderAppService.DeleteAsync(orderId);
+                //await _orderAppService.DeleteAsync(orderId);
+                await _orderPublicAppService.DeleteAsync(orderId);
                 Alerts.Success(L["Order:OrderCancelledSuccessfully"]);
 
                 // Tải lại dữ liệu trang sau khi hủy

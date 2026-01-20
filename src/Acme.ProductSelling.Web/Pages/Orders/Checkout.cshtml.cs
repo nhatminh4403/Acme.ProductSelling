@@ -23,13 +23,14 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
         private readonly ICartAppService _cartAppService;
         private readonly IOrderAppService _orderAppService;
         private readonly ICurrentUser _currentUser;
-
-        public CheckoutModel(IOrderAppService orderAppService, ICartAppService cartService, ICurrentUser currentUser)
+        private readonly IOrderPublicAppService _orderPublicAppService;
+        public CheckoutModel(IOrderAppService orderAppService, ICartAppService cartService, ICurrentUser currentUser, IOrderPublicAppService orderPublicAppService)
         {
             _orderAppService = orderAppService;
             _cartAppService = cartService;
             OrderInput = new CreateOrderDto();
             _currentUser = currentUser;
+            _orderPublicAppService = orderPublicAppService;
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -91,10 +92,10 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
                 Logger.LogInformation("Phương thức thanh toán đã chọn: {PaymentMethod}", OrderInput.PaymentMethod);
 
                 // Step 4: Create the order
-                var createdOrder = await _orderAppService.CreateAsync(OrderInput);
-
+                //var createdOrder = await _orderAppService.CreateAsync(OrderInput);
+                var createdOrderPublic = await _orderPublicAppService.CreateAsync(OrderInput);
                 // Step 5: Validate result
-                if (createdOrder == null)
+                if (createdOrderPublic == null)
                 {
                     Logger.LogError("CreateAsync returned null result");
                     Alerts.Danger(L["Order:CreationFailed"]);
@@ -102,7 +103,7 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
                     return Page();
                 }
 
-                if (createdOrder.Order == null)
+                if (createdOrderPublic.Order == null)
                 {
                     Logger.LogError("Order creation failed, createdOrder.Order is null");
                     Alerts.Danger(L["Order:CreationFailed"]);
@@ -111,13 +112,13 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
                 }
 
                 Logger.LogInformation("Order created successfully: {OrderId}, {OrderNumber}",
-                    createdOrder.Order.Id, createdOrder.Order.OrderNumber);
+                    createdOrderPublic.Order.Id, createdOrderPublic.Order.OrderNumber);
 
                 // Step 6: Check if we need to redirect to payment gateway
-                if (!string.IsNullOrEmpty(createdOrder.RedirectUrl))
+                if (!string.IsNullOrEmpty(createdOrderPublic.RedirectUrl))
                 {
-                    Logger.LogInformation("Redirecting to payment gateway: {RedirectUrl}", createdOrder.RedirectUrl);
-                    return Redirect(createdOrder.RedirectUrl);
+                    Logger.LogInformation("Redirecting to payment gateway: {RedirectUrl}", createdOrderPublic.RedirectUrl);
+                    return Redirect(createdOrderPublic.RedirectUrl);
                 }
 
                 // Step 7: For COD orders, clear cart and redirect to confirmation
@@ -125,7 +126,7 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
                 await _cartAppService.ClearCartAsync();
 
                 return RedirectToPage("/Orders/OrderConfirmation",
-                    new { orderId = createdOrder.Order.Id, orderNumber = createdOrder.Order.OrderNumber });
+                    new { orderId = createdOrderPublic.Order.Id, orderNumber = createdOrderPublic.Order.OrderNumber });
             }
             catch (UserFriendlyException ex)
             {

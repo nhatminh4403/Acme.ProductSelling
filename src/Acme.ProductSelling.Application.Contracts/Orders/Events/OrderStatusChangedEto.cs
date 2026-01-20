@@ -8,5 +8,9 @@ namespace Acme.ProductSelling.Orders
     {
         public Guid OrderId { get; set; }
         public Guid? CustomerId { get; set; }
+        public string OrderStatus { get; set; }
+        public string PaymentStatus { get; set; }
+        public Guid? StoreId { get; set; }
+        public bool IsInStore { get; set; }
     }
 }

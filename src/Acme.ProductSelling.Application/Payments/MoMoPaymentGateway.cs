@@ -1,6 +1,6 @@
 ﻿using Acme.ProductSelling.Orders;
-using Acme.ProductSelling.PaymentGateway.MoMo.Models;
-using Acme.ProductSelling.PaymentGateway.MoMo.Services;
+using Acme.ProductSelling.PaymentGateway.MoMo.Configurations.Models;
+using Acme.ProductSelling.PaymentGateway.MoMo.Configurations.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;

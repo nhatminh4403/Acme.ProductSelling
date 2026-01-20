@@ -1,5 +1,5 @@
 ﻿using Acme.ProductSelling.Orders.Services;
-using Acme.ProductSelling.PaymentGateway.MoMo.Models;
+using Acme.ProductSelling.PaymentGateway.MoMo.Configurations.Models;
 using Acme.ProductSelling.Payments;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,16 +14,16 @@ namespace Acme.ProductSelling.Web.Controllers
     public class PaymentCallbackController : ControllerBase
     {
         private readonly IPaymentCallbackAppService _callbackAppService;
-        private readonly IOrderAppService _orderAppService;
+        //private readonly IOrderAppService _orderAppService;
         private readonly ILogger<PaymentCallbackController> _logger;
 
         public PaymentCallbackController(
             IPaymentCallbackAppService callbackAppService,
-            IOrderAppService orderAppService,
+            //IOrderAppService orderAppService,
             ILogger<PaymentCallbackController> logger)
         {
             _callbackAppService = callbackAppService;
-            _orderAppService = orderAppService;
+            //_orderAppService = orderAppService;
             _logger = logger;
         }
 

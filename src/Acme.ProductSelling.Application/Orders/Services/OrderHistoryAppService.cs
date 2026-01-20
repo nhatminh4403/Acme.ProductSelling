@@ -1,6 +1,5 @@
 ﻿using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Orders.Dtos;
-using Acme.ProductSelling.Orders.Services;
 using Acme.ProductSelling.Payments;
 using Microsoft.Extensions.Localization;
 using System;
@@ -11,7 +10,7 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
 using Volo.Abp.Users;
 
-namespace Acme.ProductSelling.Orders.History
+namespace Acme.ProductSelling.Orders.Services
 {
     public class OrderHistoryAppService : IOrderHistoryAppService
     {
