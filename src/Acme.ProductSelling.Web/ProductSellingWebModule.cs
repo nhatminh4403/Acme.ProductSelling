@@ -509,7 +509,6 @@ public class ProductSellingWebModule : AbpModule
 
             options.Events.OnRedirectToLogin = context =>
             {
-                // Only redirect to custom error page if it's not already a redirect
                 if (!context.Request.Path.StartsWithSegments("/loi") &&
                     !context.Request.Path.StartsWithSegments("/Account/Login"))
                 {
@@ -520,7 +519,6 @@ public class ProductSellingWebModule : AbpModule
 
             options.Events.OnRedirectToAccessDenied = context =>
             {
-                // Only redirect to custom error page if it's not already a redirect
                 if (!context.Request.Path.StartsWithSegments("/loi"))
                 {
                     context.Response.Redirect($"/loi?statusCode=403");
@@ -667,7 +665,7 @@ public class ProductSellingWebModule : AbpModule
         RecurringJob.AddOrUpdate<ProductReleaseScannerJob>(
             "product-release-scanner",
             job => job.ExecuteAsync(new ProductReleaseScannerArgs { BatchSize = 25 }),
-            Cron.Hourly(), 
+            Cron.Hourly(),
             new RecurringJobOptions
             {
                 TimeZone = TimeZoneInfo.Local

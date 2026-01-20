@@ -1,13 +1,10 @@
-﻿using Google.GenAI;
-using Google.GenAI.Types;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
+using Google.GenAI;
+using Google.GenAI.Types;
 using Volo.Abp.DependencyInjection;
 
 namespace Acme.ProductSelling.Chatbot

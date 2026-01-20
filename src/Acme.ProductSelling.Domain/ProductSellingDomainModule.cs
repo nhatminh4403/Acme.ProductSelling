@@ -1,4 +1,5 @@
-﻿using Acme.ProductSelling.MultiTenancy;
+﻿using Acme.ProductSelling.Chatbot;
+using Acme.ProductSelling.MultiTenancy;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Volo.Abp.AuditLogging;
@@ -39,6 +40,10 @@ public class ProductSellingDomainModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
+
+        var services = context.Services;
+        var configuration = context.Services.GetConfiguration();
+
         Configure<AbpMultiTenancyOptions>(options =>
         {
             options.IsEnabled = MultiTenancyConsts.IsEnabled;
@@ -51,7 +56,7 @@ public class ProductSellingDomainModule : AbpModule
             options.Languages.Add(new LanguageInfo("en", "en", "English"));
             //options.Languages.Add(new LanguageInfo("en-GB", "en-GB", "English (UK)"));
         });
-
+        services.Configure<ChatbotSettings>(configuration.GetSection("Gemini"));
 #if DEBUG
         context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
 #endif

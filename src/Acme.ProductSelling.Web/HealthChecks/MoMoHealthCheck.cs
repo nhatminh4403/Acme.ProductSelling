@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.PaymentGateway.MoMo.Services;
+﻿using Acme.ProductSelling.PaymentGateway.MoMo.Configurations.Services;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System;
 using System.Threading;

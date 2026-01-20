@@ -1,5 +1,4 @@
-﻿using Acme.ProductSelling.Chatbot;
-using Acme.ProductSelling.EntityFrameworkCore;
+﻿using Acme.ProductSelling.EntityFrameworkCore;
 using Acme.ProductSelling.PaymentGateway.MoMo;
 using Acme.ProductSelling.PaymentGateway.PayPal;
 using Acme.ProductSelling.PaymentGateway.VnPay;
@@ -82,9 +81,6 @@ public class ProductSellingApplicationModule : AbpModule
         //    context.Services.AddHostedService<ChatbotModelTrainingService>();
         //}
         //context.Services.AddTransient<Volo.Abp.Account.IAccountAppService, Account.AccountAppService>();
-        context.Services.AddChatbotServices(configuration);
-
-
     }
 
 }

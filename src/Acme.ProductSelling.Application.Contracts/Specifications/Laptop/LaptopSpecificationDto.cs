@@ -13,5 +13,6 @@ namespace Acme.ProductSelling.Specifications
         public string BatteryLife { get; set; }
         public string Weight { get; set; }
         public string Warranty { get; set; }
+        public bool IsForGaming { get; set; }
     }
 }

@@ -67,7 +67,8 @@ namespace Acme.ProductSelling.Data.Products
                 OperatingSystem = "Windows 11 Home",
                 BatteryLife = "Up to 5 hours",
                 Weight = "1.95 Kg",
-                Warranty = "2 years"
+                Warranty = "2 years",IsForGaming = true
+
             }, autoSave: true);
 
             var laptop2 = await CreateProductAsync(
@@ -87,7 +88,8 @@ namespace Acme.ProductSelling.Data.Products
                 OperatingSystem = "Windows 11 Pro",
                 BatteryLife = "Up to 12 hours",
                 Weight = "1.2 Kg",
-                Warranty = "1 year"
+                Warranty = "1 year",
+                IsForGaming = false
             }, autoSave: true);
         }
 

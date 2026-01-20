@@ -1,12 +1,9 @@
-using Acme.ProductSelling.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Modularity;
 
 namespace Acme.ProductSelling.PaymentGateway.PayPal;
 
-[DependsOn(
-    typeof(ProductSellingEntityFrameworkCoreModule)
-)]
+
 public class AcmeProductSellingPaymentGatewayPayPalModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

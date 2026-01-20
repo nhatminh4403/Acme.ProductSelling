@@ -5,6 +5,7 @@
     <Platform Name="x86" />
   </Configurations>
   <Folder Name="/Solution Items/">
+    <File Path="mySession.argr" />
     <File Path="README.md" />
   </Folder>
   <Folder Name="/src/">

@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.PaymentGateway.MoMo.Models;
+﻿using Acme.ProductSelling.PaymentGateway.MoMo.Configurations.Models;
 using Acme.ProductSelling.PaymentGateway.VnPay.Dtos;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;

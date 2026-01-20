@@ -49,7 +49,7 @@ namespace Acme.ProductSelling.Products.BackgroundJobs.ProductRelease
                          && p.ReleaseDate.HasValue
                          && p.ReleaseDate.Value <= now,
                     false);
-                
+
                 if (!productsToRelease.Any())
                 {
                     _logger.LogInformation(

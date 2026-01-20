@@ -1,10 +1,10 @@
 ﻿using Acme.ProductSelling.Chatbot.Dtos;
 using Acme.ProductSelling.Chatbot.Services;
+using Acme.ProductSelling.Identity;
 using Acme.ProductSelling.Products;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Users;
 
@@ -23,7 +23,7 @@ namespace Acme.ProductSelling.Chatbot
             _geminiApiService = geminiApiService;
             _currentUser = currentUser;
         }
-        
+
         public async Task<ChatMessageOutputDto> SendMessageAsync(ChatMessageInputDto input)
         {
             var userRole = DetermineUserRole();
@@ -31,6 +31,33 @@ namespace Acme.ProductSelling.Chatbot
             {
                 UserRole = userRole
             };
+            bool isReportRequest = (userRole == "admin" || userRole == "manager") &&
+                          (input.Message.ToLower().Contains("report") ||
+                           input.Message.ToLower().Contains("summary") ||
+                           input.Message.ToLower().Contains("analysis"));
+            if (isReportRequest)
+            {
+                // 1. Fetch RAW data (The "Fetch")
+                var dataJson = await _chatbotManager.GetSalesSummaryJsonAsync();
+
+                // 2. Build Analyst Prompt (The "Think")
+                var prompt = $@"
+                        ROLE: You are an Executive Data Analyst for Acme Corp.
+                        TASK: Interpret the following raw JSON database statistics and write a generic textual report for the {userRole}.
+                        CONTEXT: The user asked: '{input.Message}'
+                        RAW DATA: {dataJson}
+            
+                        GUIDANCE:
+                        - If revenue is high, be congratulatory.
+                        - If stock alerts exist, recommend ordering immediately.
+                        - Format with bold headings.
+                    ";
+
+                // 3. Send to Gemini
+                response.Response = await _geminiApiService.GenerateContentAsync(prompt);
+                response.Source = ResponseSource.Database;
+                return response;
+            }
 
             // Step 1: Search database first
             var products = await _chatbotManager.SearchProductsAsync(input.Message);
@@ -91,63 +118,55 @@ namespace Acme.ProductSelling.Chatbot
                 return "anonymous";
             }
 
-            if (_currentUser.IsInRole("admin"))
-            {
-                return "admin";
-            }
-
-            if (_currentUser.IsInRole("staff") || _currentUser.IsInRole("manager"))
-            {
-                return "staff";
-            }
+            if (_currentUser.IsInRole(IdentityRoleConsts.Admin)) return "admin";
+            if (_currentUser.IsInRole(IdentityRoleConsts.Manager)) return "manager";
+            if (_currentUser.IsInRole(IdentityRoleConsts.Blogger)) return "blogger";
+            if (_currentUser.IsInRole(IdentityRoleConsts.WarehouseStaff)) return "warehouse";
+            if (_currentUser.IsInRole(IdentityRoleConsts.Seller) || _currentUser.IsInRole(IdentityRoleConsts.Cashier)) return "sales_agent";
 
             return "customer";
         }
         private string BuildSystemContext(string userRole, List<Product> products)
         {
-            var context = "";
+            var baseContext = "You are the 'Acme AI Assistant', an intelligent enterprise tool for Acme ProductSelling.";
 
-            // Role-specific instructions
             switch (userRole)
             {
                 case "admin":
-                case "staff":
-                    context += "You are an AI assistant for Acme ProductSelling staff members. ";
-                    context += "Provide detailed technical information, inventory insights, and administrative guidance. ";
-                    context += "You can discuss internal operations, stock management, and pricing strategies. ";
+                case "manager":
+                    baseContext += " Your role: Senior Supervisor.";
+                    baseContext += " You have access to confidential insights. You help with decision making, analyzing sales trends, and spotting operational issues.";
+                    baseContext += " Tone: Professional, concise, data-driven.";
+                    break;
+
+                case "sales_agent": // Sellers and Cashiers
+                    baseContext += " Your role: In-Store POS Assistant.";
+                    baseContext += " You assist cashiers and sellers in real-time. Your priorities are speed, checking current stock, applying bulk discounts, and cross-selling.";
+                    baseContext += " Tone: Efficient, energetic, customer-focused (proxy for the agent).";
+                    break;
+
+                case "warehouse":
+                    baseContext += " Your role: Inventory & Logistics Specialist.";
+                    baseContext += " You assist warehouse staff with bin locations, restocking levels, and shipment queries. Focus on physical dimensions, weights, and SKU tracking.";
+                    baseContext += " Tone: Precise, technical, safety-oriented.";
+                    break;
+
+                case "blogger":
+                    baseContext += " Your role: Content Marketing Assistant.";
+                    baseContext += " You help write catchy product descriptions, social media posts, and SEO tags. Focus on key features, benefits, and 'selling the dream' rather than technical specs.";
+                    baseContext += " Tone: Creative, engaging, persuasive.";
                     break;
 
                 case "customer":
-                    context += "You are a helpful shopping assistant for Acme ProductSelling customers. ";
-                    context += "Provide friendly product recommendations, answer questions about purchases, and help find the best deals. ";
-                    context += "Be encouraging and focus on customer satisfaction. ";
-                    break;
-
-                case "anonymous":
                 default:
-                    context += "You are a friendly AI assistant for Acme ProductSelling. ";
-                    context += "Help visitors learn about our products and encourage them to explore our catalog. ";
-                    context += "Be welcoming and informative. ";
+                    baseContext += " Your role: Helpful Shopping Assistant. Help the user find the perfect product.";
                     break;
             }
 
-            // Add product context if available
-            if (products.Any())
-            {
-                context += "\n\n" + _chatbotManager.BuildProductContext(products);
-                context += "\n\nUse this product information to answer the user's question accurately.";
 
-                if (userRole == "admin" || userRole == "staff")
-                {
-                    context += " Include stock counts and internal details.";
-                }
-                else
-                {
-                    context += " Focus on benefits and features that matter to shoppers.";
-                }
-            }
+            baseContext += "\n\nPRODUCT DATA:\n" + _chatbotManager.BuildProductContext(products, userRole);
 
-            return context;
+            return baseContext;
         }
         private ChatbotProductDto MapToProductDto(Product product)
         {
