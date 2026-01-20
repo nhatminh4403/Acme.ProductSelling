@@ -1,5 +1,6 @@
 ﻿/* Global Scripts - Optimized Version */
 
+
 const RecentlyViewedManager = (function () {
     const STORAGE_KEY = 'Acme_RecentlyViewed_Ids';
     const MAX_GUEST_ITEMS = 10;
@@ -199,7 +200,7 @@ const RecentlyViewedManager = (function () {
 
         /**
          * Sync guest history to server after login
-         * OPTIMIZED: Added cooldown and duplicate prevention
+         * OPTIMIZED: Removed .finally() which caused crashes in older environments
          */
         syncWithServer: function () {
             // OPTIMIZATION 11: Prevent duplicate syncs
@@ -235,18 +236,17 @@ const RecentlyViewedManager = (function () {
                 .then(function () {
                     clearGuestIds();
                     console.log('Recently viewed synced successfully');
+                    isSyncing = false; // Fixed: moved from finally to then
                 })
                 .catch(function (err) {
                     console.warn('Sync failed:', err);
-                })
-                .finally(function () {
-                    isSyncing = false;
+                    isSyncing = false; // Fixed: moved from finally to catch
                 });
         },
 
         /**
          * Load and render widget
-         * OPTIMIZED: Added request deduplication and error handling
+         * OPTIMIZED: Fixed .finally error and request deduplication
          */
         loadWidget: function (containerId, maxCount, excludeProductId, callback) {
             maxCount = maxCount || 6;
@@ -305,10 +305,13 @@ const RecentlyViewedManager = (function () {
 
             pendingRequest = api.getList(requestData)
                 .then(function (products) {
-                    // Check if request was cancelled
+                    // Check if request was cancelled (pendingRequest would be null or different)
                     if (pendingRequest === null) {
                         return;
                     }
+
+                    // Cleanup: request finished successfully
+                    pendingRequest = null;
 
                     if (!products || !Array.isArray(products) || products.length === 0) {
                         if (callback) callback(false);
@@ -337,10 +340,11 @@ const RecentlyViewedManager = (function () {
                 })
                 .catch(function (err) {
                     console.warn('Failed to load recently viewed:', err);
-                    if (callback) callback(false);
-                })
-                .finally(function () {
+
+                    // Cleanup: request finished with error
                     pendingRequest = null;
+
+                    if (callback) callback(false);
                 });
         },
 
@@ -365,6 +369,8 @@ const RecentlyViewedManager = (function () {
         getGuestIds: getGuestIds
     };
 })();
+
+// ... (Rest of the file below document.addEventListener can remain the same) ...
 
 // OPTIMIZATION 17: Single initialization with safeguards
 document.addEventListener('DOMContentLoaded', function () {
@@ -428,20 +434,21 @@ document.addEventListener('DOMContentLoaded', function () {
         if (confirm('Bạn có chắc muốn xóa lịch sử sản phẩm đã xem?')) {
             clearInProgress = true;
 
+            // Notice we also handle 'finally' behavior here using basic Promises if needed, 
+            // but standard cleanup logic is safer inside then/catch blocks
             RecentlyViewedManager.clear()
                 .then(function () {
                     $wrapper.fadeOut(300);
                     if (typeof abp !== 'undefined' && abp.notify) {
                         abp.notify.success('Đã xóa lịch sử xem sản phẩm');
                     }
+                    clearInProgress = false;
                 })
                 .catch(function (err) {
                     console.error('Clear failed:', err);
                     if (typeof abp !== 'undefined' && abp.notify) {
                         abp.notify.error('Không thể xóa lịch sử');
                     }
-                })
-                .finally(function () {
                     clearInProgress = false;
                 });
         }
