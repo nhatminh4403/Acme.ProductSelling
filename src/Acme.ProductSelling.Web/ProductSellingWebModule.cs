@@ -69,6 +69,7 @@ using Volo.Abp.TenantManagement.Web;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
+
 #endregion
 
 namespace Acme.ProductSelling.Web;
@@ -267,14 +268,25 @@ public class ProductSellingWebModule : AbpModule
         {
             options.Filters.AddService<AuthenticatedRedirectFilter>();
         });
-        context.Services.AddSignalR();
 
-        Configure<AbpSignalROptions>(options =>
+        ConfigureSignalR(services);
+        ConfigureRazorPages();
+
+        ConfigureRequestLocalization(services);
+        //context.Services.AddTransient<CultureAwareAnchorTagHelper>();
+        ConfigureAdminPages(services);
+        ConfigureRouting(services);
+        Configure<AbpBackgroundJobOptions>(options =>
         {
-            options.Hubs.AddOrUpdate<OrderHub>();
+            options.IsJobExecutionEnabled = true;
         });
+        ConfigureHangfireServer(services);
+    }
 
 
+
+    private void ConfigureRazorPages()
+    {
         Configure<RazorPagesOptions>(options =>
         {
             var supportedCultures = new[] { "en", "vi" };
@@ -284,15 +296,16 @@ public class ProductSellingWebModule : AbpModule
             ));
         });
 
-        ConfigureRequestLocalization(services);
-        context.Services.AddTransient<CultureAwareAnchorTagHelper>();
-        ConfigureAdminPages(services);
-        ConfigureRouting(services);
-        Configure<AbpBackgroundJobOptions>(options =>
+    }
+    private void ConfigureSignalR(IServiceCollection services)
+    {
+        services.AddSignalR();
+
+        Configure<AbpSignalROptions>(options =>
         {
-            options.IsJobExecutionEnabled = true;
+            options.Hubs.AddOrUpdate<OrderHub>();
         });
-        ConfigureHangfireServer(services);
+
     }
     private void ConfigureHangfire(IServiceCollection services, IConfiguration configuration)
     {
@@ -302,7 +315,7 @@ public class ProductSellingWebModule : AbpModule
                 new SqlServerStorageOptions
                 {
 
-                    QueuePollInterval = TimeSpan.FromSeconds(30), // Good as-is
+                    QueuePollInterval = TimeSpan.FromSeconds(30), 
 
                     CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
 
@@ -347,7 +360,7 @@ public class ProductSellingWebModule : AbpModule
 
             options.Conventions.AddPageApplicationModelConvention("/Identity", model =>
             {
-                // Fix: Use model.Properties to set layout for the folder's pages
+                // Layout for the Admin/Roles side
                 model.Properties["Layout"] = "/Pages/Admin/Shared/_AdminLayout.cshtml";
             });
 
@@ -553,7 +566,7 @@ public class ProductSellingWebModule : AbpModule
                         options.FileSets.ReplaceEmbeddedByPhysical<TModule>(fullPath);
                     }
                 }
-ReplaceIfExists<ProductSellingDomainSharedModule>($"..{Path.DirectorySeparatorChar}Acme.ProductSelling.Domain.Shared");
+                ReplaceIfExists<ProductSellingDomainSharedModule>($"..{Path.DirectorySeparatorChar}Acme.ProductSelling.Domain.Shared");
                 ReplaceIfExists<ProductSellingDomainModule>($"..{Path.DirectorySeparatorChar}Acme.ProductSelling.Domain");
                 ReplaceIfExists<ProductSellingApplicationContractsModule>($"..{Path.DirectorySeparatorChar}Acme.ProductSelling.Application.Contracts");
                 ReplaceIfExists<ProductSellingApplicationModule>($"..{Path.DirectorySeparatorChar}Acme.ProductSelling.Application");
