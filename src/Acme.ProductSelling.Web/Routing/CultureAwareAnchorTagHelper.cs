@@ -3,13 +3,14 @@ using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using System.Collections.Generic;
+using Volo.Abp.DependencyInjection;
 
 namespace Acme.ProductSelling.Web.Routing
 {
     [HtmlTargetElement("a", Attributes = "asp-page")]
     [HtmlTargetElement("a", Attributes = "asp-controller")]
     [HtmlTargetElement("a", Attributes = "asp-action")]
-    public class CultureAwareAnchorTagHelper : AnchorTagHelper
+    public class CultureAwareAnchorTagHelper : AnchorTagHelper, ITransientDependency
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 

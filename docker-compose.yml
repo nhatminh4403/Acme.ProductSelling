@@ -1,0 +1,46 @@
+﻿services:
+  # 1. Database (Updated to SQL Server 2022)
+  db:
+    image: mcr.microsoft.com/mssql/rhel/server:2025-latest
+    container_name: acme-db
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Nhatminh03
+    ports:
+      - "1433:1433"
+    networks:
+      - acme-network
+
+  # 2. Migrator (Seeds the DB)
+  migrator:
+    build:
+      context: .
+      dockerfile: src/Acme.ProductSelling.DbMigrator/Dockerfile
+    container_name: acme-migrator
+    environment:
+      - ConnectionStrings__Default=Server=db, 1433;Database=ProductSelling;TrustServerCertificate=True;User ID=sa;Password=Nhatminh03
+    depends_on:
+      - db
+    networks:
+      - acme-network
+
+  # 3. The Web App (Razor Pages + API)
+  web:
+    build:
+      context: .
+      dockerfile: src/Acme.ProductSelling.Web/Dockerfile
+    container_name: acme-web
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__Default=Server=db, 1433;Database=ProductSelling;TrustServerCertificate=True;User ID=sa;Password=Nhatminh03
+    ports:
+      - "44400:80"
+    depends_on:
+      - migrator
+    networks:
+      - acme-network
+
+networks:
+  acme-network:
+    driver: bridge

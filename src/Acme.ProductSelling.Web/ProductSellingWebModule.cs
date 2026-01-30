@@ -538,16 +538,33 @@ public class ProductSellingWebModule : AbpModule
             options.FileSets.AddEmbedded<ProductSellingWebModule>();
             options.FileSets.AddEmbedded<Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.AbpAspNetCoreMvcUiThemeSharedModule>();
 
+           
+        });
+        Configure<AbpVirtualFileSystemOptions>(options =>
+        {
+
             if (hostingEnvironment.IsDevelopment())
             {
-                options.FileSets.ReplaceEmbeddedByPhysical<ProductSellingDomainSharedModule>(Path.Combine(hostingEnvironment.ContentRootPath, string.Format("..{0}Acme.ProductSelling.Domain.Shared", Path.DirectorySeparatorChar)));
-                options.FileSets.ReplaceEmbeddedByPhysical<ProductSellingDomainModule>(Path.Combine(hostingEnvironment.ContentRootPath, string.Format("..{0}Acme.ProductSelling.Domain", Path.DirectorySeparatorChar)));
-                options.FileSets.ReplaceEmbeddedByPhysical<ProductSellingApplicationContractsModule>(Path.Combine(hostingEnvironment.ContentRootPath, string.Format("..{0}Acme.ProductSelling.Application.Contracts", Path.DirectorySeparatorChar)));
-                options.FileSets.ReplaceEmbeddedByPhysical<ProductSellingApplicationModule>(Path.Combine(hostingEnvironment.ContentRootPath, string.Format("..{0}Acme.ProductSelling.Application", Path.DirectorySeparatorChar)));
-                options.FileSets.ReplaceEmbeddedByPhysical<ProductSellingHttpApiModule>(Path.Combine(hostingEnvironment.ContentRootPath, string.Format("..{0}..{0}src{0}Acme.ProductSelling.HttpApi", Path.DirectorySeparatorChar)));
+                void ReplaceIfExists<TModule>(string path)
+                {
+                    var fullPath = Path.Combine(hostingEnvironment.ContentRootPath, path);
+                    if (Directory.Exists(fullPath))
+                    {
+                        options.FileSets.ReplaceEmbeddedByPhysical<TModule>(fullPath);
+                    }
+                }
+ReplaceIfExists<ProductSellingDomainSharedModule>($"..{Path.DirectorySeparatorChar}Acme.ProductSelling.Domain.Shared");
+                ReplaceIfExists<ProductSellingDomainModule>($"..{Path.DirectorySeparatorChar}Acme.ProductSelling.Domain");
+                ReplaceIfExists<ProductSellingApplicationContractsModule>($"..{Path.DirectorySeparatorChar}Acme.ProductSelling.Application.Contracts");
+                ReplaceIfExists<ProductSellingApplicationModule>($"..{Path.DirectorySeparatorChar}Acme.ProductSelling.Application");
+                
+                // Simplified this path as well to match others or be robust
+                ReplaceIfExists<ProductSellingHttpApiModule>($"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}src{Path.DirectorySeparatorChar}Acme.ProductSelling.HttpApi");
                 options.FileSets.ReplaceEmbeddedByPhysical<ProductSellingWebModule>(hostingEnvironment.ContentRootPath);
+
             }
         });
+        
     }
     private void ConfigureNavigationServices()
     {
