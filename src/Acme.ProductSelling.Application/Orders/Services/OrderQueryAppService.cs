@@ -21,7 +21,7 @@ using Volo.Abp.Users;
 namespace Acme.ProductSelling.Orders.Services
 {
     [Authorize(ProductSellingPermissions.Orders.Default)]
-    public class OrderAdminAppService : ProductSellingAppService, IOrderAdminAppService
+    public class OrderQueryAppService : ProductSellingAppService, IOrderQueryAppService
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderNotificationService _orderNotificationService;
@@ -31,8 +31,8 @@ namespace Acme.ProductSelling.Orders.Services
         private readonly OrderToOrderDtoMapper _orderMapper;
         private readonly ICurrentUser _currentUser;
         private readonly IIdentityUserRepository _userRepository;
-        private readonly ILogger _logger;
-        public OrderAdminAppService(IOrderRepository orderRepository,
+        private readonly ILogger<OrderQueryAppService> _logger;
+        public OrderQueryAppService(IOrderRepository orderRepository,
                                     IOrderNotificationService orderNotificationService,
                                     IOrderHistoryAppService orderHistoryAppService,
                                     IStringLocalizer<ProductSellingResource> localizer,
@@ -40,7 +40,7 @@ namespace Acme.ProductSelling.Orders.Services
                                     OrderToOrderDtoMapper orderMapper,
                                     ICurrentUser currentUser,
                                     IIdentityUserRepository userRepository,
-                                    ILogger logger)
+                                    ILogger<OrderQueryAppService> logger)
         {
             _orderRepository = orderRepository;
             _orderNotificationService = orderNotificationService;
@@ -274,8 +274,6 @@ namespace Acme.ProductSelling.Orders.Services
                 _orderMapper.MapList(items)
             );
         }
-
-
         private async Task<bool> IsAdminOrManagerAsync()
         {
             if (!_currentUser.Id.HasValue)
@@ -304,7 +302,6 @@ namespace Acme.ProductSelling.Orders.Services
 
             return isInRole;
         }
-
         private async Task<Guid?> GetCurrentUserStoreIdAsync()
         {
             if (!_currentUser.Id.HasValue)
@@ -321,8 +318,5 @@ namespace Acme.ProductSelling.Orders.Services
 
             return storeIdProperty;
         }
-
-
-
     }
 }

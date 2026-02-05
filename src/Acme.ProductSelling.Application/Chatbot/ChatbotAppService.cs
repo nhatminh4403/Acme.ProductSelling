@@ -120,7 +120,6 @@ namespace Acme.ProductSelling.Chatbot
 
             if (_currentUser.IsInRole(IdentityRoleConsts.Admin)) return "admin";
             if (_currentUser.IsInRole(IdentityRoleConsts.Manager)) return "manager";
-            if (_currentUser.IsInRole(IdentityRoleConsts.Blogger)) return "blogger";
             if (_currentUser.IsInRole(IdentityRoleConsts.WarehouseStaff)) return "warehouse";
             if (_currentUser.IsInRole(IdentityRoleConsts.Seller) || _currentUser.IsInRole(IdentityRoleConsts.Cashier)) return "sales_agent";
 
@@ -151,11 +150,7 @@ namespace Acme.ProductSelling.Chatbot
                     baseContext += " Tone: Precise, technical, safety-oriented.";
                     break;
 
-                case "blogger":
-                    baseContext += " Your role: Content Marketing Assistant.";
-                    baseContext += " You help write catchy product descriptions, social media posts, and SEO tags. Focus on key features, benefits, and 'selling the dream' rather than technical specs.";
-                    baseContext += " Tone: Creative, engaging, persuasive.";
-                    break;
+
 
                 case "customer":
                 default:

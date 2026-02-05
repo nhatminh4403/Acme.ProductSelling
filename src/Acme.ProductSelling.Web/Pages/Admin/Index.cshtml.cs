@@ -1,5 +1,4 @@
-﻿using Acme.ProductSelling.Blogs;
-using Acme.ProductSelling.Identity;
+﻿using Acme.ProductSelling.Identity;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Orders.Services;
@@ -35,21 +34,21 @@ namespace Acme.ProductSelling.Web.Admin.Pages
         public List<int> AvailableYears { get; set; } = new();
         private GetOrderListInput input { get; set; } = new();
         private readonly IOrderAppService _orderAppService;
-        private readonly IBlogAppService _blogAppService;
 
-        public PagedResultDto<BlogDto> Blogs { get; set; }
         [BindProperty(SupportsGet = true)]
         public string Prefix { get; set; }
 
         private readonly ICurrentUser _currentUser;
-        public IndexModel(IOrderAppService orderAppService, IStringLocalizer<ProductSellingResource> stringLocalizer, ICurrentUser currentUser, IBlogAppService blogAppService)
+        public IndexModel(IOrderAppService orderAppService,
+                          IStringLocalizer<ProductSellingResource> stringLocalizer,
+                          ICurrentUser currentUser)
         {
             _orderAppService = orderAppService;
             YearlyStatistics = new Dictionary<int, List<MoneyStatistics>>();
             MoneyStatisticsList = new List<MoneyStatistics>();
             _localizer = stringLocalizer;
             _currentUser = currentUser;
-            _blogAppService = blogAppService;
+
         }
 
         public async Task OnGetAsync(int? year = null)
@@ -59,7 +58,7 @@ namespace Acme.ProductSelling.Web.Admin.Pages
             {
                 Response.Redirect($"/{RoleBasedPrefix}");
             }
-            if (!_currentUser.IsInRole(IdentityRoleConsts.Blogger))
+            if (_currentUser.IsAuthenticated)
             {
                 var orders = await _orderAppService.GetListAsync(input);
                 var totalProfit = await _orderAppService.GetProfitReportAsync(input);
@@ -110,13 +109,7 @@ namespace Acme.ProductSelling.Web.Admin.Pages
                     SkipCount = (CurrentPage - 1) * PageSize,
                     Sorting = "CreationTime DESC"
                 };
-                var blogs = await _blogAppService.GetListAsync(input);
-
-                Blogs = new PagedResultDto<BlogDto>
-                {
-                    TotalCount = blogs.TotalCount,
-                    Items = blogs.Items
-                };
+                
             }
         }
         private void InitializeThreeYearsData(int currentYear)

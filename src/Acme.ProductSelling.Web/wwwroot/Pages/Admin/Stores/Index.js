@@ -59,32 +59,32 @@
                     }
                 },
                 {
-                    title: l('Code'),
+                    title: l('Store:Code'),
                     data: "code"
                 },
                 {
-                    title: l('Name'),
+                    title: l('Store:Name'),
                     data: "name"
                 },
                 {
-                    title: l('Address'),
+                    title: l('Store:Address'),
                     data: "address"
                 },
                 {
-                    title: l('City'),
+                    title: l('Store:City'),
                     data: "city"
                 },
                 {
-                    title: l('PhoneNumber'),
+                    title: l('Store:PhoneNumber'),
                     data: "phoneNumber"
                 },
                 {
-                    title: l('Status'),
+                    title: l('Store:Status'),
                     data: "isActive",
                     render: function (data) {
                         return data
-                            ? '<span class="badge bg-success">' + l('Active') + '</span>'
-                            : '<span class="badge bg-secondary">' + l('Inactive') + '</span>';
+                            ? '<span class="badge bg-success">' + l('Store:Active') + '</span>'
+                            : '<span class="badge bg-secondary">' + l('Store:Inactive') + '</span>';
                     }
                 }
             ]

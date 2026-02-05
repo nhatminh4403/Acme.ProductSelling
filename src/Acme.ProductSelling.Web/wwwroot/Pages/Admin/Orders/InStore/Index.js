@@ -1,6 +1,6 @@
 ﻿(function () {
     const l = abp.localization.getResource('ProductSelling');
-    const orderService = acme.productSelling.orders.services.orderAppService;
+    const orderService = acme.productSelling.orders.services.orderQuery;
 
     const dataTable = $('#InStoreOrdersTable').DataTable(
         abp.libs.datatables.normalizeConfiguration({
@@ -9,7 +9,7 @@
             order: [[1, 'desc']],
             searching: true,
             scrollX: true,
-            ajax: abp.libs.datatables.createAjax(orderService.getStoreOrders, function () {
+            ajax: abp.libs.datatables.createAjax(orderQuery.getList, function () {
                 return {
                     orderType: 1, // InStore
                     sorting: 'CreationTime DESC'

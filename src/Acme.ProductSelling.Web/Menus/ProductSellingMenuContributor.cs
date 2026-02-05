@@ -150,13 +150,6 @@ namespace Acme.ProductSelling.Web.Menus
                        url: $"/{prefix}/orders/in-store/create",
                        icon: "fas fa-plus-circle"
                    ));
-
-                    ordersMenu.AddItem(new ApplicationMenuItem(
-                        "Admin.Orders.MyOrders",
-                        l["Menu:MyOrders"],
-                        url: $"/{prefix}/orders/in-store",
-                        icon: "fas fa-receipt"
-                    ));
                 }
 
                 // Pending Payment (for cashiers)
@@ -195,17 +188,7 @@ namespace Acme.ProductSelling.Web.Menus
                 context.Menu.AddItem(ordersMenu);
             }
 
-            // Blogs
-            if (await permissionChecker.IsGrantedAsync(ProductSellingPermissions.Blogs.Default))
-            {
-                context.Menu.AddItem(new ApplicationMenuItem(
-                    ProductSellingMenus.Blogs,
-                    l["Admin:Menu:Blogs"],
-                    icon: "fa-solid fa-blog",
-                    url: $"/{prefix}/blogs",
-                    order: 7
-                ));
-            }
+            
             // User Management (Admin/Manager only)
             if (await permissionChecker.IsGrantedAsync(ProductSellingPermissions.Users.Default))
             {
@@ -283,8 +266,7 @@ namespace Acme.ProductSelling.Web.Menus
             var userRepository = serviceProvider.GetRequiredService<IIdentityUserRepository>();
             var user = await userRepository.GetAsync(currentUser.Id.Value);
             var roles = await userRepository.GetRolesAsync(user.Id);
-            if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.IdentityRoleConsts.Blogger, System.StringComparison.OrdinalIgnoreCase)))
-                return "blogger";
+            
             if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.IdentityRoleConsts.Manager, System.StringComparison.OrdinalIgnoreCase)))
                 return "manager";
             if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.IdentityRoleConsts.Seller, System.StringComparison.OrdinalIgnoreCase)))

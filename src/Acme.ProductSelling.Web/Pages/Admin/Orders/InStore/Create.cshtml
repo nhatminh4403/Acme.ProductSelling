@@ -68,11 +68,7 @@
                     <h4>@L["PaymentMethod"]</h4>
                 </abp-card-header>
                 <abp-card-body>
-                    <abp-select asp-for="Order.PaymentMethod">
-                        <abp-select-item value="Cash">@L["Cash"]</abp-select-item>
-                        <abp-select-item value="Card">@L["Card"]</abp-select-item>
-                        <abp-select-item value="E-Wallet">@L["E-Wallet"]</abp-select-item>
-                    </abp-select>
+                    <abp-select asp-for="Order.PaymentMethod" asp-items="Model.PaymentMethods" />
                 </abp-card-body>
             </abp-card>
 
@@ -80,7 +76,7 @@
                 <abp-card-body>
                     <abp-row>
                         <abp-column size="_6">
-                            <h4>@L["Total"]: <span id="totalAmount">0 VND</span></h4>
+                            <h4>@L["Order:Total"]: <span id="totalAmount">0 VND</span></h4>
                         </abp-column>
                         <abp-column size="_6" class="text-end">
                             <abp-button button-type="Primary" text="@L["CreateOrder"].Value" type="Submit" />

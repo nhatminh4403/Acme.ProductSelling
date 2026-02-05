@@ -3,6 +3,8 @@
 
 @model Acme.ProductSelling.Web.Pages.Admin.Orders.InStore.IndexModel
 @{
+    Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = L["Title:InStoreOrders"];
 }
 @section scripts {
     <abp-script src="/Pages/Admin/Orders/InStore/Index.js" />

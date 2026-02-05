@@ -3,6 +3,7 @@ using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Payments;
 using Acme.ProductSelling.Permissions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Data;
 using Volo.Abp.EventBus.Distributed;
 using Volo.Abp.Identity;
@@ -163,6 +165,22 @@ namespace Acme.ProductSelling.Orders.Services
             var dto = _orderMapper.Map(order);
             dto.StoreName = storeName;
             return dto;
+        }
+
+        [Authorize(ProductSellingPermissions.Orders.Default)]
+        public async Task<PagedResultDto<OrderDto>> GetListAsync()
+        {
+            var query = (await _orderRepository.GetQueryableAsync())
+                    .Include(o => o.OrderItems)
+                    .Where(o => o.OrderType == OrderType.InStore);
+
+            var items = await query.ToListAsync();
+            var totalCount = items.Count;
+
+            return new PagedResultDto<OrderDto>(
+                totalCount,
+                _orderMapper.MapList(items)
+            );
         }
     }
 }

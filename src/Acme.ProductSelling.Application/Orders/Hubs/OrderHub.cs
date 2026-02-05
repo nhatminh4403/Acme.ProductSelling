@@ -75,12 +75,7 @@ namespace Acme.ProductSelling.Orders.Hubs
                     _logger.LogDebug("[OrderHub-Connect] Added to Cashiers group");
                 }
 
-                if (_currentUser.IsInRole(IdentityRoleConsts.Blogger))
-                {
-                    await Groups.AddToGroupAsync(Context.ConnectionId, "Bloggers");
-                    roleGroupsAdded++;
-                    _logger.LogDebug("[OrderHub-Connect] Added to Bloggers group");
-                }
+                
 
                 _logger.LogInformation("[OrderHub-Connect] COMPLETED - ConnectionId: {ConnectionId}, UserId: {UserId}, RoleGroupsAdded: {RoleGroupsCount}",
                     Context.ConnectionId, _currentUser.Id, roleGroupsAdded);

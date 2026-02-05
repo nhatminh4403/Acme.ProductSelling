@@ -547,6 +547,7 @@
     "Manufacturer:Name": "Manufacturer Name",
     "Manufacturer:ContactInfo": "Contact Info",
     "Manufacturer:Image": "Image",
+    "Manufacturer:Description": "Description",
     "Manufacturer:Actions": "Actions",
 
     "UI:OtherRecentlyViewed": "Recently Viewed Products",
@@ -1334,7 +1335,7 @@
     "Store:CreateStore": "Create Store",
     "Store:EditStore": "Edit Store",
     "Store:StoreName": "Store Name",
-    "Store:StoreCode": "Store Code",
+    "Store:Code": "Store Code",
     "Store:Address": "Address",
     "Store:City": "City",
     "Store:PhoneNumber": "Phone Number",
@@ -1343,6 +1344,11 @@
     "Store:IsActive": "Is Active",
     "Store:AllStores": "All Stores",
     "Store:YourAssignedStore": "Your Assigned Store",
+    "Store:NoStoresAvailable": "No stores available",
+    "Store:Active": "Active",
+    "Store:Inactive": "Inactive",
+    "Store:Status": "Store's Status",
+
     "User:UserManagement": "User Management",
     "User:StaffUsers": "Staff Users",
     "User:UnassignedStaff": "Unassigned Staff",

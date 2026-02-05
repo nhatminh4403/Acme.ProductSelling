@@ -43,17 +43,12 @@ namespace Acme.ProductSelling.Account
             var roleNames = roles.Select(r => r.Name).ToList();
             result.HasAdminAccess = roleNames.Any(r =>
                            r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Admin, StringComparison.OrdinalIgnoreCase) ||
-                           r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Blogger, StringComparison.OrdinalIgnoreCase) ||
                            r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Manager, StringComparison.OrdinalIgnoreCase) ||
                            r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Seller, StringComparison.OrdinalIgnoreCase) ||
                            r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Cashier, StringComparison.OrdinalIgnoreCase) ||
                            r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.WarehouseStaff, StringComparison.OrdinalIgnoreCase)
                        );
-            if (roleNames.Any(r => r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Blogger, StringComparison.OrdinalIgnoreCase)))
-            {
-                result.Prefix = "blogger";
-            }
-            else if (roleNames.Any(r => r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Manager, StringComparison.OrdinalIgnoreCase)))
+            if (roleNames.Any(r => r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Manager, StringComparison.OrdinalIgnoreCase)))
             {
                 result.Prefix = "manager";
             }

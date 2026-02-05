@@ -290,7 +290,7 @@ body {
     position: fixed;
     top: 70px;
     left: 0;
-    width: 280px;
+    width: 290px;
     height: calc(100vh - 70px);
     background-color: #252525;
     padding: 0;
@@ -414,7 +414,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 15px 25px;
+    padding: 15px;
     color: #b0b0b0;
     text-decoration: none;
     transition: all 0.3s ease;
@@ -506,11 +506,11 @@ ul {
 
 /* Level 2 Item Indentation (e.g., Administration children) */
 .menu-item[data-level="2"] > .menu-link > span:first-child {
-    padding-left: 50px;
+    padding-left: 40px;
 }
 
 .menu-item[data-level="2"] > .menu-link:hover > span:first-child {
-    padding-left: 55px;
+    padding-left: 45px;
 }
 
 /* Level 3 Item Indentation (e.g., Roles, Users) */

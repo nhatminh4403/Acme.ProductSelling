@@ -110,7 +110,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="wwwroot\js\admin\blogs\create.js" />
-    <None Include="wwwroot\Pages\Admin\Blogs\Index.js" />
     <None Include="wwwroot\Pages\Admin\Categories\Index.js" />
     <None Include="wwwroot\Pages\Admin\Manufacturers\Index.js" />
     <None Include="wwwroot\Pages\Admin\Orders\Index.js" />

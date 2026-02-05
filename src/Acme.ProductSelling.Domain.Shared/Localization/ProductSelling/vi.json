@@ -8,7 +8,7 @@
     "CloseButton": "Đóng",
     "Actions": "Hành động",
     "Cancel": "Hủy",
-    "Yes":  "Có",
+    "Yes": "Có",
     "Edit": "Sửa",
     "Delete": "Xóa",
     "ContinueShopping": "Tiếp tục mua sắm",
@@ -412,7 +412,10 @@
     "Manufacturer:Name": "Tên hãng",
     "Manufacturer:ContactInfo": "Thông tin liên hệ",
     "Manufacturer:Image": "Logo",
+    "Manufacturer:Description": "Mô tả",
     "Manufacturer:Actions": "Hành động",
+
+
     "UI:RecentlyViewed": "Sản phẩm xem gần đây",
     "UI:OtherRecentlyViewed": "Sản phẩm xem gần đây",
     "UI:Brands": "Thương hiệu",
@@ -1282,12 +1285,13 @@
     "Inventory:GoodStock": "Tồn kho tốt",
     "Inventory:Normal": "Bình thường",
     "Inventory:OutOfStock": "Hết hàng",
+
     "Store:Stores": "Cửa hàng",
     "Store:NewStore": "Thêm cửa hàng",
     "Store:CreateStore": "Tạo cửa hàng",
     "Store:EditStore": "Sửa cửa hàng",
     "Store:StoreName": "Tên cửa hàng",
-    "Store:StoreCode": "Mã cửa hàng",
+    "Store:Code": "Mã cửa hàng",
     "Store:Address": "Địa chỉ",
     "Store:City": "Thành phố",
     "Store:PhoneNumber": "Số điện thoại",
@@ -1296,6 +1300,12 @@
     "Store:IsActive": "Đang hoạt động",
     "Store:AllStores": "Tất cả cửa hàng",
     "Store:YourAssignedStore": "Cửa hàng được gán cho bạn",
+    "Store:NoStoresAvailable": "Không có cửa hàng nào",
+    "Store:Active": "Đang hoạt động",
+    "Store:Inactive": "Ngừng hoạt động",
+    "Store:Status": "Trạng thái hoạt động",
+
+
     "User:UserManagement": "Quản lý người dùng",
     "User:StaffUsers": "Nhân viên",
     "User:UnassignedStaff": "Nhân viên chưa gán cửa hàng",

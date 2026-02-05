@@ -4,7 +4,7 @@
 
 @inject IAuthorizationService AuthorizationService
 @{
-    ViewData["Title"] = L["Stores"];
+    ViewData["Title"] = L["Store:Stores"];
     Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
 }
 
@@ -16,7 +16,7 @@
     <abp-card-header>
         <abp-row>
             <abp-column size-md="_6">
-                <h2>@L["Stores"]</h2>
+                <h2>@L["Store:Stores"]</h2>
             </abp-column>
             <abp-column size-md="_6" class="text-end">
                 @if (await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Stores.Create))

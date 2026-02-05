@@ -348,7 +348,6 @@ public class ProductSellingWebModule : AbpModule
             options.Conventions.AddPageRoute("/Account/Manage", "/admin/Account/Manage");
 
 
-            options.Conventions.AddPageRoute("/Admin/Blogs/Index", "/{prefix:regex(^(admin|blogger|manager)$)}/blogs");
             options.Conventions.AddPageRoute("/Admin/Products/Index", "/{prefix:regex(^(admin|manager|seller|cashier|warehouse)$)}/products");
             options.Conventions.AddPageRoute("/Admin/Orders/Index", "/{prefix:regex(^(admin|manager|seller|cashier|warehouse)$)}/orders");
 

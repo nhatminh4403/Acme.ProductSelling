@@ -8,7 +8,7 @@ using Volo.Abp.Application.Services;
 
 namespace Acme.ProductSelling.Orders.Services
 {
-    public interface IOrderAdminAppService : IApplicationService
+    public interface IOrderQueryAppService : IApplicationService
     {
         Task<PagedResultDto<OrderDto>> GetListAsync(GetOrderListInput input);
         Task<OrderDto> UpdateStatusAsync(Guid id, UpdateOrderStatusDto input);

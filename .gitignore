@@ -278,3 +278,4 @@ tempkey.jwk
 /src/Acme.ProductSelling.Web/appsettings.json
 /src/Acme.ProductSelling.Web/appsettings.json
 /mySession.argr
+/src/Acme.ProductSelling.Application/Orders/OrderAppService.cs

@@ -4,7 +4,7 @@
 @model Acme.ProductSelling.Web.Pages.Admin.Users.IndexModel
 
 @{
-    ViewData["Title"] = L["UserManagement"];
+    ViewData["Title"] = L["Title:UserManagement"];
     Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
 }
 
@@ -14,14 +14,14 @@
 
 <abp-card>
     <abp-card-header>
-        <h2>@L["UserManagement"]</h2>
+        <h2>@L["Admin:User:UserManagement"]</h2>
     </abp-card-header>
     <abp-card-body>
         <abp-tabs name="UsersTabs">
-            <abp-tab title="@L["StaffUsers"].Value" name="Staff">
+            <abp-tab title="@L["Admin:User:StaffUsers"].Value" name="Staff">
                 <abp-table striped-rows="true" id="StaffUsersTable" class="nowrap"></abp-table>
             </abp-tab>
-            <abp-tab title="@L["UnassignedStaff"].Value" name="Unassigned">
+            <abp-tab title="@L["Admin:User:UnassignedStaff"].Value" name="Unassigned">
                 <abp-table striped-rows="true" id="UnassignedStaffTable" class="nowrap"></abp-table>
             </abp-tab>
         </abp-tabs>
@@ -30,26 +30,26 @@
 
 <!-- Assign Store Modal -->
 <abp-modal id="assignStoreModal" static="true" size="Default">
-    <abp-modal-header title="@L["AssignToStore"].Value"></abp-modal-header>
+    <abp-modal-header title="@L["Admin:User:AssignToStore"].Value"></abp-modal-header>
     <abp-modal-body>
         <form id="assignStoreForm">
             <input type="hidden" id="userId" />
             <div class="mb-3">
-                <label class="form-label">@L["UserName"]</label>
+                <label class="form-label">@L["Admin:User:UserName"]</label>
                 <input type="text" class="form-control" id="userName" readonly />
             </div>
             <div class="mb-3">
-                <label class="form-label">@L["Email"]</label>
+                <label class="form-label">@L["Admin:User:Email"]</label>
                 <input type="text" class="form-control" id="userEmail" readonly />
             </div>
             <div class="mb-3">
-                <label class="form-label">@L["Roles"]</label>
+                <label class="form-label">@L["Admin:User:Roles"]</label>
                 <input type="text" class="form-control" id="userRoles" readonly />
             </div>
             <div class="mb-3">
-                <label class="form-label">@L["Store"] *</label>
+                <label class="form-label">@L["Admin:User:Store"] *</label>
                 <select class="form-select" id="storeId" required>
-                    <option value="">-- @L["SelectStore"] --</option>
+                    <option value="">-- @L["Admin:User:SelectStore"] --</option>
                 </select>
             </div>
         </form>

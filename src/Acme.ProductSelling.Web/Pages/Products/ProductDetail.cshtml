@@ -3,7 +3,6 @@
 @using Acme.ProductSelling.Categories
 @using Acme.ProductSelling.Web.Helpers
 @using Acme.ProductSelling.Web.Pages.Components.RecentlyViewed
-@using Acme.ProductSelling.Web.Pages.Components.RelatedBlogs
 @{
     ViewData["Title"] = Model.Product?.ProductName ?? L["Product:ProductDetail"];
     Layout = "/Views/Shared/_Layout.cshtml";
@@ -304,11 +303,7 @@
             <!-- Sidebar -->
             <div class="col-lg-4">
                 <div class="sticky-sidebar" id="rightSidebar">
-                    @await Component.InvokeAsync(typeof(RelatedBlogsViewComponent), new {
-                    blogs = Model.Blogs?.Items?.ToList(),
-                                title = L["UI:Title:RelatedBlogs"].Value,
-                                count = 4
-                                })
+                    <p>change to @L["Product:Specification"]</p>
                 </div>
             </div>
         </div>
