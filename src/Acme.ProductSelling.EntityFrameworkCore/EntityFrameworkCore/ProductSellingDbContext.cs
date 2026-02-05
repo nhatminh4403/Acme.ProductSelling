@@ -66,9 +66,9 @@ public class ProductSellingDbContext :
     public DbSet<OrderHistory> OrderHistories { get; set; }
     public DbSet<Cart> Carts { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
-    public DbSet<Comment> Comments { get; set; }
-    public DbSet<Blog> Blogs { get; set; }
-    public DbSet<Likes> Likes { get; set; }
+    //public DbSet<Comment> Comments { get; set; }
+    //public DbSet<Blog> Blogs { get; set; }
+    //public DbSet<Likes> Likes { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<RecentlyViewedProduct> RecentlyViewedProducts { get; set; }
     #endregion
@@ -598,28 +598,28 @@ public class ProductSellingDbContext :
         #endregion
 
         #region Comments and Blogs
-        builder.Entity<Comment>(b =>
-        {
-            b.ToTable(tablePrefix + "Comments");
-            b.ConfigureFullAuditedAggregateRoot();
-            b.HasIndex(c => new { c.EntityType, c.EntityId });
-        });
+        //builder.Entity<Comment>(b =>
+        //{
+        //    b.ToTable(tablePrefix + "Comments");
+        //    b.ConfigureFullAuditedAggregateRoot();
+        //    b.HasIndex(c => new { c.EntityType, c.EntityId });
+        //});
 
-        builder.Entity<Likes>(b =>
-        {
-            b.ToTable(tablePrefix + "Likes");
-            b.HasKey(l => new { l.CommentId, l.UserId });
-            b.HasIndex(x => new { x.CommentId, x.UserId });
-        });
+        //builder.Entity<Likes>(b =>
+        //{
+        //    b.ToTable(tablePrefix + "Likes");
+        //    b.HasKey(l => new { l.CommentId, l.UserId });
+        //    b.HasIndex(x => new { x.CommentId, x.UserId });
+        //});
 
-        builder.Entity<Blog>(b =>
-        {
-            b.ToTable(tablePrefix + "Blogs");
-            b.ConfigureFullAuditedAggregateRoot();
-            b.Property(b => b.Title).IsRequired();
-            b.Property(b => b.Content).IsRequired();
-            b.Property(b => b.UrlSlug).IsRequired();
-        });
+        //builder.Entity<Blog>(b =>
+        //{
+        //    b.ToTable(tablePrefix + "Blogs");
+        //    b.ConfigureFullAuditedAggregateRoot();
+        //    b.Property(b => b.Title).IsRequired();
+        //    b.Property(b => b.Content).IsRequired();
+        //    b.Property(b => b.UrlSlug).IsRequired();
+        //});
         #endregion
 
         #region Chatbot
