@@ -71,13 +71,7 @@ public static class ProductSellingPermissions
         public const string Manage = Default + ".Manage";
 
     }
-    public static class Blogs
-    {
-        public const string Default = GroupName + ".Blogs";
-        public const string Create = Default + ".Create";
-        public const string Edit = Default + ".Edit";
-        public const string Delete = Default + ".Delete";
-    }
+
     public static class Comments
     {
         public const string Default = GroupName + ".Comments";

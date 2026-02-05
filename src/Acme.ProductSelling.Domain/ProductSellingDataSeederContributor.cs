@@ -6,6 +6,7 @@ using Acme.ProductSelling.Data.Manufacturers;
 using Acme.ProductSelling.Data.Products;
 using Acme.ProductSelling.Data.Stores;
 using Acme.ProductSelling.Products.Services;
+using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
@@ -146,6 +147,8 @@ namespace Acme.ProductSelling
             await _storageAndNetworkSeeder.SeedAsync();
 
             await _storeSeeder.SeedAsync();
+            var storeDictionary = _storeSeeder.SeededStores.ToDictionary(s => s.Code, s => s);
+            _identityDataSeedContributor.SetDependencies( storeDictionary);
 
             await _identityDataSeedContributor.SeedAsync();
         }

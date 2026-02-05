@@ -1,8 +1,10 @@
 ﻿using Acme.ProductSelling.Data.BaseSeeder;
 using Acme.ProductSelling.Permissions;
+using Acme.ProductSelling.Stores;
 using Acme.ProductSelling.Users;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Authorization.Permissions;
@@ -21,6 +23,14 @@ namespace Acme.ProductSelling.Data.Identity
         private readonly IPermissionDataSeeder _permissionDataSeeder;
         private readonly IGuidGenerator _guidGenerator;
 
+        public Dictionary<string, Store> _seededStores { get; private set; }
+        public IdentityDataSeederContributor SetDependencies(
+            Dictionary<string, Store> seededStores)
+        {
+            _seededStores = seededStores;
+            return this;
+        }
+
         public IdentityDataSeederContributor(
             IdentityUserManager identityUserManager,
             ILookupNormalizer lookupNormalizer,
@@ -37,6 +47,8 @@ namespace Acme.ProductSelling.Data.Identity
             _guidGenerator = guidGenerator;
         }
 
+
+
         public async Task SeedAsync()
         {
             // Create roles
@@ -44,8 +56,7 @@ namespace Acme.ProductSelling.Data.Identity
                 Acme.ProductSelling.Identity.IdentityRoleConsts.Admin);
             var managerRole = await CreateRoleIfNotExistsAsync(
                 Acme.ProductSelling.Identity.IdentityRoleConsts.Manager);
-            var editorRole = await CreateRoleIfNotExistsAsync(
-                Acme.ProductSelling.Identity.IdentityRoleConsts.Blogger);
+
             var sellerRole = await CreateRoleIfNotExistsAsync(
                 Acme.ProductSelling.Identity.IdentityRoleConsts.Seller);
             var cashierRole = await CreateRoleIfNotExistsAsync(
@@ -55,16 +66,24 @@ namespace Acme.ProductSelling.Data.Identity
             var customerRole = await CreateRoleIfNotExistsAsync(
                 Acme.ProductSelling.Identity.IdentityRoleConsts.Customer, isDefault: true);
 
-            // Create users (NOTE: Store IDs should be passed from StoreSeeder)
-            await CreateUserIfNotExistsAsync("manager", "manager@abp.io", "123456", managerRole.Name);
-            await CreateUserIfNotExistsAsync("editor", "blogger@abp.io", "123456", editorRole.Name);
 
+            _seededStores.TryGetValue("ST001", out var store1);
+            _seededStores.TryGetValue("ST002", out var store2);
+            _seededStores.TryGetValue("ST003", out var store3);
+
+            // Create users (NOTE: Store IDs should be passed from StoreSeeder)
+            await CreateUserIfNotExistsAsync("manager1", "manager1@abp.io", "123456", managerRole.Name, storeId: store1?.Id);
+            await CreateUserIfNotExistsAsync(username: "seller1", email: "seller1@abo.io", password: "1q2w3E", roleNameToAssign: sellerRole.Name, storeId: store1?.Id);
+            await CreateUserIfNotExistsAsync(username: "cashier1", email: "casher1@abp.io", password: "1q2w3E", roleNameToAssign: cashierRole.Name, storeId: store1?.Id);
+            await CreateUserIfNotExistsAsync(username: "warehouse1", email: "warehouse1@abp.io", password: "1q2w3E", roleNameToAssign: warehouseRole.Name, storeId: store1?.Id);
+            await CreateUserIfNotExistsAsync("manager2", "manager2@abp.io", "123456", managerRole.Name, storeId: store2?.Id);
+            await CreateUserIfNotExistsAsync(username: "seller2", email: "seller2@abp.io", password: "1q2w3E", roleNameToAssign: sellerRole.Name, storeId: store2?.Id);
+            await CreateUserIfNotExistsAsync(username: "cashier2", email: "casher2@abp.io", password: "1q2w3E", roleNameToAssign: cashierRole.Name, storeId: store2?.Id);
+            await CreateUserIfNotExistsAsync(username: "warehouse2", email: "warehouse2@abp.io", password: "1q2w3E", roleNameToAssign: warehouseRole.Name, storeId: store2?.Id);
             // Grant permissions to roles
             await GrantPermissionsToRoleAsync(managerRole.Name, new[]
             {
-                ProductSellingPermissions.Blogs.Default,
-                ProductSellingPermissions.Blogs.Create,
-                ProductSellingPermissions.Blogs.Edit,
+
                 ProductSellingPermissions.Orders.Default,
                 ProductSellingPermissions.Orders.ViewAll,
                 ProductSellingPermissions.Products.Default,
@@ -72,13 +91,7 @@ namespace Acme.ProductSelling.Data.Identity
                 ProductSellingPermissions.Products.Edit,
             });
 
-            await GrantPermissionsToRoleAsync(editorRole.Name, new[]
-            {
-                ProductSellingPermissions.Blogs.Default,
-                ProductSellingPermissions.Blogs.Edit,
-                ProductSellingPermissions.Blogs.Delete,
-                ProductSellingPermissions.Blogs.Create
-            });
+
 
             await GrantPermissionsToRoleAsync(cashierRole.Name, new[]
             {
@@ -116,10 +129,9 @@ namespace Acme.ProductSelling.Data.Identity
             });
         }
 
-        private async Task<Volo.Abp.Identity.IdentityRole> CreateRoleIfNotExistsAsync(
-            string roleName,
-            bool isDefault = false,
-            bool isPublic = false)
+        private async Task<Volo.Abp.Identity.IdentityRole> CreateRoleIfNotExistsAsync(string roleName,
+                                                                                      bool isDefault = false,
+                                                                                      bool isPublic = false)
         {
             var normalizedRoleName = _lookupNormalizer.NormalizeName(roleName);
             var existingRole = await _identityRoleRepository.FindByNormalizedNameAsync(normalizedRoleName);
@@ -136,12 +148,11 @@ namespace Acme.ProductSelling.Data.Identity
             return role;
         }
 
-        private async Task<Volo.Abp.Identity.IdentityUser> CreateUserIfNotExistsAsync(
-            string username,
-            string email,
-            string password,
-            string roleNameToAssign = null,
-            Guid? storeId = null)
+        private async Task<Volo.Abp.Identity.IdentityUser> CreateUserIfNotExistsAsync(string username,
+                                                                                      string email,
+                                                                                      string password,
+                                                                                      string roleNameToAssign = null,
+                                                                                      Guid? storeId = null)
         {
             var normalizedUserName = _lookupNormalizer.NormalizeName(username);
             var existingUser = await _identityUserRepository.FindByNormalizedUserNameAsync(normalizedUserName);

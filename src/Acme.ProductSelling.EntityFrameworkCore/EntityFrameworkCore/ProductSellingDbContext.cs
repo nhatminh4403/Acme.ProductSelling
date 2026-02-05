@@ -1,5 +1,4 @@
-﻿using Acme.ProductSelling.Blogs;
-using Acme.ProductSelling.Carts;
+﻿using Acme.ProductSelling.Carts;
 using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Comments;
 using Acme.ProductSelling.Manufacturers;

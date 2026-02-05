@@ -52,14 +52,8 @@ public class ProductSellingPermissionDefinitionProvider : PermissionDefinitionPr
         manufacturersPermission.AddChild(ProductSellingPermissions.Manufacturers.Delete, L("Permission:Manufacturers.Delete"));
         #endregion
 
-        #region Blog Permissions
-        var blogsPermission = myGroup.AddPermission(ProductSellingPermissions.Blogs.Default, L("Permission:Blogs"));
-        blogsPermission.AddChild(ProductSellingPermissions.Blogs.Create, L("Permission:Blogs.Create"));
-        blogsPermission.AddChild(ProductSellingPermissions.Blogs.Edit, L("Permission:Blogs.Edit"));
-        blogsPermission.AddChild(ProductSellingPermissions.Blogs.Delete, L("Permission:Blogs.Delete"));
-        //blogsPermission.AddChild(ProductSellingPermissions.Blogs.Publish, L("Permission:Blogs.Publish"));
 
-        #endregion
+
         #region Comment Permissions
 
         var commentsPermission = myGroup.AddPermission(ProductSellingPermissions.Comments.Default, L("Permission:Comments"));
