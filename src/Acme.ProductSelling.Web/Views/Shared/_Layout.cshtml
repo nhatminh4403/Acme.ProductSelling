@@ -51,13 +51,19 @@
         });
     </script>
     @await RenderSectionAsync("styles", required: false)
-
+    <link href="~/css/shared/category-sidebar.css" rel="stylesheet" />
     <style>
         * {
             margin: 0;
             padding: 0;
+            box-sizing: inherit;
+            
         }
-
+        html {
+            font-size: 90%;
+            line-height: 1.6rem;
+            box-sizing: border-box;
+        }
         .input-group .form-control:focus {
             box-shadow: none;
             border-color: transparent;
@@ -101,21 +107,7 @@
 <body class="abp-application-layout bg-light d-flex flex-column min-vh-100">
 
     <!-- TOP BAR -->
-    <div class="top-bar">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <small>
-                        <i class="fas fa-phone"></i> +1 234 567 890 |
-                        <i class="fas fa-envelope"></i> support@techstore.com
-                    </small>
-                </div>
-                <div class="col-md-6 text-end">
-                    <small>Free Shipping on Orders Over $50</small>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <!-- HEADER -->
     @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Views.Shared.Components.Header.HeaderViewComponent))

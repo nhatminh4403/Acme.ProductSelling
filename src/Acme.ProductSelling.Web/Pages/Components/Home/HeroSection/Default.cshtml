@@ -15,7 +15,8 @@
                 {
                     foreach (var category in Model.IndividualCategories)
                     {
-                        <li class="list-group-item list-group-item-action category-menu-item has-megamenu" style="padding:0">
+                        <li class="list-group-item list-group-item-action
+                                category-menu-item has-megamenu" style="padding:0">
                             <a asp-page="/Products/ProductsByCategory"
                                asp-route-slug="@category.UrlSlug"
                                class="d-flex justify-content-between align-items-center text-decoration-none text-dark px-3 py-2">
@@ -123,7 +124,7 @@
                                             </div>
                                         }
 
-                                        
+
                                     </div>
                                 </div>
                             </div>
@@ -188,7 +189,7 @@
                                                         <div class="subcategory-links">
                                                             @foreach (var range in category.PriceRanges)
                                                             {
-                                                                
+
                                                                 <a asp-page="/Products/ProductsByPrice"
                                                                    asp-route-slug="@category.UrlSlug"
                                                                    asp-route-priceRange="@range.UrlValue">

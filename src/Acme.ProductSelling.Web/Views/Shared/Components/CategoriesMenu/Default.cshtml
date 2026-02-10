@@ -1,7 +1,8 @@
-﻿@model List<Acme.ProductSelling.Categories.Dtos.CategoryWithManufacturersDto>
-
+﻿@using Acme.ProductSelling.Categories.Dtos
+@using Acme.ProductSelling.Categories
+@model GroupedCategoriesResultDto
 @{
-    var categoriesWithManufacturer = Model;
+   
 }
 
 <!-- Overlay -->
@@ -10,685 +11,105 @@
 <div class="category-megamenu" id="categoryMegamenu">
     <div class="megamenu-sidebar">
         <div class="megamenu-header">
-            <h2 class="megamenu-title">@L["Categories"]</h2>
+            <h2 class="megamenu-title">@L["Category:Categories"]</h2>
             <button class="megamenu-close-btn" id="megamenuCloseBtn" aria-label="Close menu">
                 <i class="bi bi-x-lg"></i>
             </button>
         </div>
 
-        @if (categoriesWithManufacturer != null && categoriesWithManufacturer.Any())
-        {
-            <ul class="category-list">
-                @foreach (var category in categoriesWithManufacturer)
+        <ul class="category-list">
+            @* Individual Categories First *@
+            @if (Model.IndividualCategories != null && Model.IndividualCategories.Any())
+            {
+                @foreach (var category in Model.IndividualCategories)
                 {
                     <li class="category-item">
-                        <a href="#" class="category-item-link" data-category-id="@category.Id">
-                            <span>@category.CategoryName</span>
+                        <a href="#"
+                           data-category-id="@category.Id"
+                           class="category-item-link">
+                            <span>@HelperMethods.GetCategoryLocalizerName(category.Name, L)</span>
                             <i class="bi bi-chevron-right"></i>
                         </a>
                     </li>
                 }
-            </ul>
-        }
+            }
+
+            @* Grouped Categories *@
+            @if (Model.Groups != null && Model.Groups.Any())
+            {
+                @foreach (var group in Model.Groups)
+                {
+                    @* Group Header *@
+                    <li class="category-group-header">
+                        <div class="category-group-title">
+                            @if (!string.IsNullOrEmpty(group.GroupIcon))
+                            {
+                                <i class="@group.GroupIcon"></i>
+                            }
+                            <span>@group.GroupName</span>
+                        </div>
+                    </li>
+
+                    @* Categories in this group *@
+                    @foreach (var category in group.Categories)
+                    {
+                        <li class="category-item">
+                            <a href="#"
+                               data-category-id="@category.Id"
+                               class="category-item-link category-item-grouped">
+                                <span>@HelperMethods.GetCategoryLocalizerName(category.Name, L)</span>
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    }
+                }
+            }
+        </ul>
     </div>
 
     <!-- Content Area -->
     <div class="megamenu-content" id="megamenuContent">
-        @if (categoriesWithManufacturer != null && categoriesWithManufacturer.Any())
+        @* Individual Categories Content *@
+        @if (Model.IndividualCategories != null && Model.IndividualCategories.Any())
         {
-            var firstCategory = categoriesWithManufacturer.First();
-            <div class="category-content-panel active" data-category-id="@firstCategory.Id">
-                <div class="content-header">
-                    <h3 class="content-category-name">@firstCategory.CategoryName</h3>
-                    <div class="content-breadcrumb">
-                        <span>@L["Categories"]</span>
-                        <i class="bi bi-chevron-right"></i>
-                        <span>@firstCategory.CategoryName</span>
-                    </div>
-                </div>
-
-                <div class="content-main">
-                    <div class="content-rows">
-                        <!-- Row 1 -->
-                        <div class="content-row">
-                            <!-- Column 1: Top Brands -->
-                            <div class="content-column">
-                                <div class="column-header">
-                                    <i class="bi bi-star-fill column-icon"></i>
-                                    <h4 class="column-title">@L["UI:TopBrands"]</h4>
-                                </div>
-                                <div class="column-items">
-                                    @if (firstCategory.Manufacturers != null && firstCategory.Manufacturers.Any())
-                                    {
-                                        @foreach (var manufacturer in firstCategory.Manufacturers.Take(5))
-                                        {
-                                            <a asp-page="/Products/ProductsByManufacturer"
-                                               asp-route-categoryUrlSlug="@firstCategory.CategoryUrlSlug"
-                                               asp-route-manufacturerUrlSlug="@manufacturer.UrlSlug"
-                                               class="column-item-link">
-                                                <i class="bi bi-chevron-right column-item-icon"></i>
-                                                <span>@manufacturer.Name</span>
-                                            </a>
-                                        }
-                                    }
-                                </div>
-                                <a asp-page="/Products/ProductsByCategory"
-                                   asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                   class="view-all-link">
-                                    @L["SeeAll"]
-                                    <i class="bi bi-arrow-right"></i>
-                                </a>
-                            </div>
-
-                            <!-- Column 2: All Brands -->
-                            <div class="content-column">
-                                <div class="column-header">
-                                    <i class="bi bi-building column-icon"></i>
-                                    <h4 class="column-title">@L["UI:AllBrands"]</h4>
-                                </div>
-                                <div class="column-items">
-                                    @if (firstCategory.Manufacturers != null && firstCategory.Manufacturers.Any())
-                                    {
-                                        @foreach (var manufacturer in firstCategory.Manufacturers.Skip(5).Take(5))
-                                        {
-                                            <a asp-page="/Products/ProductsByManufacturer"
-                                               asp-route-categoryUrlSlug="@firstCategory.CategoryUrlSlug"
-                                               asp-route-manufacturerUrlSlug="@manufacturer.UrlSlug"
-                                               class="column-item-link">
-                                                <i class="bi bi-chevron-right column-item-icon"></i>
-                                                <span>@manufacturer.Name</span>
-                                            </a>
-                                        }
-                                    }
-                                </div>
-                                <a asp-page="/Products/ProductsByCategory"
-                                   asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                   class="view-all-link">
-                                    @L["SeeAll"]
-                                    <i class="bi bi-arrow-right"></i>
-                                </a>
-                            </div>
-
-                            <!-- Column 3: By Price Range -->
-                            <div class="content-column">
-                                <div class="column-header">
-                                    <i class="bi bi-tag-fill column-icon"></i>
-                                    <h4 class="column-title">@L["UI:ByPrice"]</h4>
-                                </div>
-                                <div class="column-items">
-                                    <a asp-page="/Products/ProductsByPrice"
-                                       asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                       asp-route-PriceRangeAlias="@L["UI:PriceRange:Under1Million"].Value"
-                                       class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>@L["UI:PriceRange:Under1Million"]</span>
-                                    </a>
-                                    <a asp-page="/Products/ProductsByPrice"
-                                       asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                       asp-route-PriceRangeAlias="@L["UI:PriceRange:From1MillionTo5Million"].Value"
-                                       class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>@L["UI:PriceRange:From1MillionTo5Million"]</span>
-                                    </a>
-                                    <a asp-page="/Products/ProductsByPrice"
-                                       asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                       asp-route-PriceRangeAlias="@L["UI:PriceRange:From5MillionTo20Million"].Value"
-                                       class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>@L["UI:PriceRange:From5MillionTo20Million"]</span>
-                                    </a>
-                                    <a asp-page="/Products/ProductsByPrice"
-                                       asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                       asp-route-PriceRangeAlias="@L["UI:PriceRange:Over20Million"].Value"
-                                       class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>@L["UI:PriceRange:Over20Million"]</span>
-                                    </a>
-                                </div>
-                                <a asp-page="/Products/ProductsByCategory"
-                                   asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                   class="view-all-link">
-                                    @L["SeeAll"]
-                                    <i class="bi bi-arrow-right"></i>
-                                </a>
-                            </div>
-
-                            <!-- Column 4: Popular Items -->
-                            <div class="content-column">
-                                <div class="column-header">
-                                    <i class="bi bi-fire column-icon"></i>
-                                    <h4 class="column-title">@L["UI:Popular"]</h4>
-                                </div>
-                                <div class="column-items">
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                       class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>Best Sellers</span>
-                                    </a>
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                       class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>New Arrivals</span>
-                                    </a>
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                       class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>Top Rated</span>
-                                    </a>
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                       class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>Featured Products</span>
-                                    </a>
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                       class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>Special Offers</span>
-                                    </a>
-                                </div>
-                                <a asp-page="/Products/ProductsByCategory"
-                                   asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                   class="view-all-link">
-                                    @L["SeeAll"]
-                                    <i class="bi bi-arrow-right"></i>
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- Row 2 -->
-                        <div class="content-row">
-                            <!-- Column 5: More Brands -->
-                            <div class="content-column">
-                                <div class="column-header">
-                                    <i class="bi bi-bookmark-star column-icon"></i>
-                                    <h4 class="column-title">@L["UI:MoreBrands"]</h4>
-                                </div>
-                                <div class="column-items">
-                                    @if (firstCategory.Manufacturers != null && firstCategory.Manufacturers.Any())
-                                    {
-                                        @foreach (var manufacturer in firstCategory.Manufacturers.Skip(10).Take(5))
-                                        {
-                                            <a asp-page="/Products/ProductsByManufacturer"
-                                               asp-route-categoryUrlSlug="@firstCategory.CategoryUrlSlug"
-                                               asp-route-manufacturerUrlSlug="@manufacturer.UrlSlug"
-                                               class="column-item-link">
-                                                <i class="bi bi-chevron-right column-item-icon"></i>
-                                                <span>@manufacturer.Name</span>
-                                            </a>
-                                        }
-                                    }
-                                </div>
-                                <a asp-page="/Products/ProductsByCategory"
-                                   asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                   class="view-all-link">
-                                    @L["SeeAll"]
-                                    <i class="bi bi-arrow-right"></i>
-                                </a>
-                            </div>
-
-                            <!-- Column 6: Accessories -->
-                            <div class="content-column">
-                                <div class="column-header">
-                                    <i class="bi bi-tools column-icon"></i>
-                                    <h4 class="column-title">@L["UI:Accessories"]</h4>
-                                </div>
-                                <div class="column-items">
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                       class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>Keyboards & Mice</span>
-                                    </a>
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                       class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>Headphones</span>
-                                    </a>
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                       class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>Webcams</span>
-                                    </a>
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                       class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>Storage Devices</span>
-                                    </a>
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                       class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>Cables & Adapters</span>
-                                    </a>
-                                </div>
-                                <a asp-page="/Products/ProductsByCategory"
-                                   asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                   class="view-all-link">
-                                    @L["SeeAll"]
-                                    <i class="bi bi-arrow-right"></i>
-                                </a>
-                            </div>
-
-                            <!-- Column 7: By Feature -->
-                            <div class="content-column">
-                                <div class="column-header">
-                                    <i class="bi bi-cpu column-icon"></i>
-                                    <h4 class="column-title">@L["UI:ByFeature"]</h4>
-                                </div>
-                                <div class="column-items">
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                       class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>Gaming</span>
-                                    </a>
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                       class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>Business</span>
-                                    </a>
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                       class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>Creative Work</span>
-                                    </a>
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                       class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>Student</span>
-                                    </a>
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                       class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>Portable & Light</span>
-                                    </a>
-                                </div>
-                                <a asp-page="/Products/ProductsByCategory"
-                                   asp-route-slug="@firstCategory.CategoryUrlSlug"
-                                   class="view-all-link">
-                                    @L["SeeAll"]
-                                    <i class="bi bi-arrow-right"></i>
-                                </a>
-                            </div>
-
-                            <!-- Column 8: Services -->
-                            <div class="content-column">
-                                <div class="column-header">
-                                    <i class="bi bi-box-seam column-icon"></i>
-                                    <h4 class="column-title">@L["UI:Services"]</h4>
-                                </div>
-                                <div class="column-items">
-                                    <a href="#" class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>Extended Warranty</span>
-                                    </a>
-                                    <a href="#" class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>Installation Service</span>
-                                    </a>
-                                    <a href="#" class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>Tech Support</span>
-                                    </a>
-                                    <a href="#" class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>Trade-In Program</span>
-                                    </a>
-                                    <a href="#" class="column-item-link">
-                                        <i class="bi bi-chevron-right column-item-icon"></i>
-                                        <span>Financing Options</span>
-                                    </a>
-                                </div>
-                                <a href="#" class="view-all-link">
-                                    @L["LearnMore"]
-                                    <i class="bi bi-arrow-right"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            @foreach (var category in categoriesWithManufacturer.Skip(1))
+            var isFirst = true;
+            @foreach (var category in Model.IndividualCategories)
             {
-                <div class="category-content-panel" data-category-id="@category.Id" style="display: none;">
-                    <div class="content-header">
-                        <h3 class="content-category-name">@category.CategoryName</h3>
-                        <div class="content-breadcrumb">
-                            <span>@L["Categories"]</span>
-                            <i class="bi bi-chevron-right"></i>
-                            <span>@category.CategoryName</span>
-                        </div>
-                    </div>
+                if(category.SpecificationType == SpecificationType.Services)
+                {
+                    continue;
+                }
+                <div class="category-content-panel @(isFirst ? "active" : "")"
+                     data-category-id="@category.Id"
+                     style="@(isFirst ? "" : "display: none;")">
+                    @* @await Html.PartialAsync("_CategoryContentPanel", category) *@
+                    <partial name="/Views/Shared/PartialViews/_CategoryContentPanel.cshtml" model="category" />
 
-                    <div class="content-main">
-                        <div class="content-rows">
-                            <!-- Row 1 -->
-                            <div class="content-row">
-                                <!-- Column 1: Top Brands -->
-                                <div class="content-column">
-                                    <div class="column-header">
-                                        <i class="bi bi-star-fill column-icon"></i>
-                                        <h4 class="column-title">@L["UI:TopBrands"]</h4>
-                                    </div>
-                                    <div class="column-items">
-                                        @if (category.Manufacturers != null && category.Manufacturers.Any())
-                                        {
-                                            @foreach (var manufacturer in category.Manufacturers.Take(5))
-                                            {
-                                                <a asp-page="/Products/ProductsByManufacturer"
-                                                   asp-route-categoryUrlSlug="@category.CategoryUrlSlug"
-                                                   asp-route-manufacturerUrlSlug="@manufacturer.UrlSlug"
-                                                   class="column-item-link">
-                                                    <i class="bi bi-chevron-right column-item-icon"></i>
-                                                    <span>@manufacturer.Name</span>
-                                                </a>
-                                            }
-                                        }
-                                    </div>
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@category.CategoryUrlSlug"
-                                       class="view-all-link">
-                                        @L["SeeAll"]
-                                        <i class="bi bi-arrow-right"></i>
-                                    </a>
-                                </div>
-
-                                <!-- Column 2: All Brands -->
-                                <div class="content-column">
-                                    <div class="column-header">
-                                        <i class="bi bi-building column-icon"></i>
-                                        <h4 class="column-title">@L["UI:AllBrands"]</h4>
-                                    </div>
-                                    <div class="column-items">
-                                        @if (category.Manufacturers != null && category.Manufacturers.Any())
-                                        {
-                                            @foreach (var manufacturer in category.Manufacturers.Skip(5).Take(5))
-                                            {
-                                                <a asp-page="/Products/ProductsByManufacturer"
-                                                   asp-route-categoryUrlSlug="@category.CategoryUrlSlug"
-                                                   asp-route-manufacturerUrlSlug="@manufacturer.UrlSlug"
-                                                   class="column-item-link">
-                                                    <i class="bi bi-chevron-right column-item-icon"></i>
-                                                    <span>@manufacturer.Name</span>
-                                                </a>
-                                            }
-                                        }
-                                    </div>
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@category.CategoryUrlSlug"
-                                       class="view-all-link">
-                                        @L["SeeAll"]
-                                        <i class="bi bi-arrow-right"></i>
-                                    </a>
-                                </div>
-
-                                <!-- Column 3: By Price Range -->
-                                <div class="content-column">
-                                    <div class="column-header">
-                                        <i class="bi bi-tag-fill column-icon"></i>
-                                        <h4 class="column-title">@L["UI:ByPrice"]</h4>
-                                    </div>
-                                    <div class="column-items">
-                                        <a asp-page="/Products/ProductsByPrice"
-                                           asp-route-slug="@category.CategoryUrlSlug"
-                                           asp-route-PriceRangeAlias="@L["UI:PriceRange:Under1Million"].Value"
-                                           class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>@L["UI:PriceRange:Under1Million"]</span>
-                                        </a>
-                                        <a asp-page="/Products/ProductsByPrice"
-                                           asp-route-slug="@category.CategoryUrlSlug"
-                                           asp-route-PriceRangeAlias="@L["UI:PriceRange:From1MillionTo5Million"].Value"
-                                           class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>@L["UI:PriceRange:From1MillionTo5Million"]</span>
-                                        </a>
-                                        <a asp-page="/Products/ProductsByPrice"
-                                           asp-route-slug="@category.CategoryUrlSlug"
-                                           asp-route-PriceRangeAlias="@L["UI:PriceRange:From5MillionTo20Million"].Value"
-                                           class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>@L["UI:PriceRange:From5MillionTo20Million"]</span>
-                                        </a>
-                                        <a asp-page="/Products/ProductsByPrice"
-                                           asp-route-slug="@category.CategoryUrlSlug"
-                                           asp-route-PriceRangeAlias="@L["UI:PriceRange:Over20Million"].Value"
-                                           class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>@L["UI:PriceRange:Over20Million"]</span>
-                                        </a>
-                                    </div>
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@category.CategoryUrlSlug"
-                                       class="view-all-link">
-                                        @L["SeeAll"]
-                                        <i class="bi bi-arrow-right"></i>
-                                    </a>
-                                </div>
-
-                                <!-- Column 4: Popular Items -->
-                                <div class="content-column">
-                                    <div class="column-header">
-                                        <i class="bi bi-fire column-icon"></i>
-                                        <h4 class="column-title">@L["UI:Popular"]</h4>
-                                    </div>
-                                    <div class="column-items">
-                                        <a asp-page="/Products/ProductsByCategory"
-                                           asp-route-slug="@category.CategoryUrlSlug"
-                                           class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>Best Sellers</span>
-                                        </a>
-                                        <a asp-page="/Products/ProductsByCategory"
-                                           asp-route-slug="@category.CategoryUrlSlug"
-                                           class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>New Arrivals</span>
-                                        </a>
-                                        <a asp-page="/Products/ProductsByCategory"
-                                           asp-route-slug="@category.CategoryUrlSlug"
-                                           class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>Top Rated</span>
-                                        </a>
-                                        <a asp-page="/Products/ProductsByCategory"
-                                           asp-route-slug="@category.CategoryUrlSlug"
-                                           class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>Featured Products</span>
-                                        </a>
-                                        <a asp-page="/Products/ProductsByCategory"
-                                           asp-route-slug="@category.CategoryUrlSlug"
-                                           class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>Special Offers</span>
-                                        </a>
-                                    </div>
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@category.CategoryUrlSlug"
-                                       class="view-all-link">
-                                        @L["SeeAll"]
-                                        <i class="bi bi-arrow-right"></i>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <!-- Row 2 -->
-                            <div class="content-row">
-                                <!-- Column 5: More Brands -->
-                                <div class="content-column">
-                                    <div class="column-header">
-                                        <i class="bi bi-bookmark-star column-icon"></i>
-                                        <h4 class="column-title">@L["UI:MoreBrands"]</h4>
-                                    </div>
-                                    <div class="column-items">
-                                        @if (category.Manufacturers != null && category.Manufacturers.Any())
-                                        {
-                                            @foreach (var manufacturer in category.Manufacturers.Skip(10).Take(5))
-                                            {
-                                                <a asp-page="/Products/ProductsByManufacturer"
-                                                   asp-route-categoryUrlSlug="@category.CategoryUrlSlug"
-                                                   asp-route-manufacturerUrlSlug="@manufacturer.UrlSlug"
-                                                   class="column-item-link">
-                                                    <i class="bi bi-chevron-right column-item-icon"></i>
-                                                    <span>@manufacturer.Name</span>
-                                                </a>
-                                            }
-                                        }
-                                    </div>
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@category.CategoryUrlSlug"
-                                       class="view-all-link">
-                                        @L["SeeAll"]
-                                        <i class="bi bi-arrow-right"></i>
-                                    </a>
-                                </div>
-
-                                <!-- Column 6: Accessories -->
-                                <div class="content-column">
-                                    <div class="column-header">
-                                        <i class="bi bi-tools column-icon"></i>
-                                        <h4 class="column-title">@L["UI:Accessories"]</h4>
-                                    </div>
-                                    <div class="column-items">
-                                        <a asp-page="/Products/ProductsByCategory"
-                                           asp-route-slug="@category.CategoryUrlSlug"
-                                           class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>Keyboards & Mice</span>
-                                        </a>
-                                        <a asp-page="/Products/ProductsByCategory"
-                                           asp-route-slug="@category.CategoryUrlSlug"
-                                           class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>Headphones</span>
-                                        </a>
-                                        <a asp-page="/Products/ProductsByCategory"
-                                           asp-route-slug="@category.CategoryUrlSlug"
-                                           class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>Webcams</span>
-                                        </a>
-                                        <a asp-page="/Products/ProductsByCategory"
-                                           asp-route-slug="@category.CategoryUrlSlug"
-                                           class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>Storage Devices</span>
-                                        </a>
-                                        <a asp-page="/Products/ProductsByCategory"
-                                           asp-route-slug="@category.CategoryUrlSlug"
-                                           class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>Cables & Adapters</span>
-                                        </a>
-                                    </div>
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@category.CategoryUrlSlug"
-                                       class="view-all-link">
-                                        @L["SeeAll"]
-                                        <i class="bi bi-arrow-right"></i>
-                                    </a>
-                                </div>
-
-                                <!-- Column 7: By Feature -->
-                                <div class="content-column">
-                                    <div class="column-header">
-                                        <i class="bi bi-cpu column-icon"></i>
-                                        <h4 class="column-title">@L["UI:ByFeature"]</h4>
-                                    </div>
-                                    <div class="column-items">
-                                        <a asp-page="/Products/ProductsByCategory"
-                                           asp-route-slug="@category.CategoryUrlSlug"
-                                           class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>Gaming</span>
-                                        </a>
-                                        <a asp-page="/Products/ProductsByCategory"
-                                           asp-route-slug="@category.CategoryUrlSlug"
-                                           class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>Business</span>
-                                        </a>
-                                        <a asp-page="/Products/ProductsByCategory"
-                                           asp-route-slug="@category.CategoryUrlSlug"
-                                           class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>Creative Work</span>
-                                        </a>
-                                        <a asp-page="/Products/ProductsByCategory"
-                                           asp-route-slug="@category.CategoryUrlSlug"
-                                           class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>Student</span>
-                                        </a>
-                                        <a asp-page="/Products/ProductsByCategory"
-                                           asp-route-slug="@category.CategoryUrlSlug"
-                                           class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>Portable & Light</span>
-                                        </a>
-                                    </div>
-                                    <a asp-page="/Products/ProductsByCategory"
-                                       asp-route-slug="@category.CategoryUrlSlug"
-                                       class="view-all-link">
-                                        @L["SeeAll"]
-                                        <i class="bi bi-arrow-right"></i>
-                                    </a>
-                                </div>
-
-                                <!-- Column 8: Services -->
-                                <div class="content-column">
-                                    <div class="column-header">
-                                        <i class="bi bi-box-seam column-icon"></i>
-                                        <h4 class="column-title">@L["UI:Services"]</h4>
-                                    </div>
-                                    <div class="column-items">
-                                        <a href="#" class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>Extended Warranty</span>
-                                        </a>
-                                        <a href="#" class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>Installation Service</span>
-                                        </a>
-                                        <a href="#" class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>Tech Support</span>
-                                        </a>
-                                        <a href="#" class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>Trade-In Program</span>
-                                        </a>
-                                        <a href="#" class="column-item-link">
-                                            <i class="bi bi-chevron-right column-item-icon"></i>
-                                            <span>Financing Options</span>
-                                        </a>
-                                    </div>
-                                    <a href="#" class="view-all-link">
-                                        @L["LearnMore"]
-                                        <i class="bi bi-arrow-right"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
+                isFirst = false;
             }
         }
-        else
+
+        @* Grouped Categories Content *@
+        @if (Model.Groups != null && Model.Groups.Any())
+        {
+            @foreach (var group in Model.Groups)
+            {
+                @foreach (var category in group.Categories)
+                {
+                    <div class="category-content-panel"
+                         data-category-id="@category.Id"
+                         style="display: none;">
+                        @* @await Html.PartialAsync("_CategoryContentPanel", category) *@
+                        <partial name="/Views/Shared/PartialViews/_CategoryContentPanel.cshtml" model="category" />
+                    </div>
+                }
+            }
+        }
+
+        @* Empty State *@
+        @if ((Model.IndividualCategories == null || !Model.IndividualCategories.Any()) &&
+                (Model.Groups == null || !Model.Groups.Any()))
         {
             <div class="empty-state">
                 <i class="bi bi-inbox"></i>
@@ -698,4 +119,3 @@
         }
     </div>
 </div>
-

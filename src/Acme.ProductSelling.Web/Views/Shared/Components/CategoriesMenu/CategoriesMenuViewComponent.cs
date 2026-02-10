@@ -15,9 +15,9 @@ namespace Acme.ProductSelling.Web.Views.Shared.Components.CategoriesMenu
         }
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var brandsWithAssociatedCategory = await _categoryAppService.GetCategoriesWithManufacturersAsync();
-
-            return View(brandsWithAssociatedCategory.Items);
+            //var brandsWithAssociatedCategory = await _categoryAppService.GetCategoriesWithManufacturersAsync();
+            var groupedCategories = await _categoryAppService.GetGroupedCategoriesAsync();
+            return View(groupedCategories);
         }
 
     }

@@ -86,6 +86,29 @@
             closeMobileAccountMenu(); // Also close mobile account menu
         }
     });
+    function switchToCategory(link) {
+        const categoryId = link.dataset.categoryId;
+
+        if (!categoryId) return;
+
+        // Update active state on sidebar links
+        categoryLinks.forEach(l => l.parentElement.classList.remove('active'));
+        link.parentElement.classList.add('active');
+
+        // Switch content panels
+        contentPanels.forEach(panel => {
+            if (panel.dataset.categoryId === categoryId) {
+                panel.style.display = 'block';
+                // Add fade-in animation
+                panel.style.opacity = '0';
+                setTimeout(() => {
+                    panel.style.opacity = '1';
+                }, 10);
+            } else {
+                panel.style.display = 'none';
+            }
+        });
+    }
 
     // Logic for switching category content panels
     categoryLinks.forEach(link => {
@@ -100,11 +123,106 @@
                 panel.style.display = panel.dataset.categoryId === categoryId ? 'block' : 'none';
             });
         });
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchToCategory(link);
+        });
     });
 
     // Activate the first category by default
     if (categoryLinks.length > 0) categoryLinks[0].classList.add('active');
+    //=========================================
+    // SMOOTH SCROLL FOR CATEGORY GROUPS
+    //=========================================
+    const categoryGroupHeaders = document.querySelectorAll('.category-group-header');
 
+    categoryGroupHeaders.forEach(header => {
+        header.addEventListener('click', function () {
+            // Optional: Collapse/expand groups
+            const nextElement = this.nextElementSibling;
+            if (nextElement && nextElement.classList.contains('category-item')) {
+                // Toggle group visibility (if implementing collapsible groups)
+                // Implementation depends on your requirements
+            }
+        });
+    });
+
+    //=========================================
+    // KEYBOARD NAVIGATION SUPPORT
+    //=========================================
+    let currentCategoryIndex = 0;
+    const navigableCategories = Array.from(categoryLinks);
+
+    document.addEventListener('keydown', function (e) {
+        const megamenu = document.getElementById('categoryMegamenu');
+        if (!megamenu || !megamenu.classList.contains('active')) return;
+
+        switch (e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                currentCategoryIndex = Math.min(currentCategoryIndex + 1, navigableCategories.length - 1);
+                navigableCategories[currentCategoryIndex].focus();
+                switchToCategory(navigableCategories[currentCategoryIndex]);
+                break;
+
+            case 'ArrowUp':
+                e.preventDefault();
+                currentCategoryIndex = Math.max(currentCategoryIndex - 1, 0);
+                navigableCategories[currentCategoryIndex].focus();
+                switchToCategory(navigableCategories[currentCategoryIndex]);
+                break;
+
+            case 'Enter':
+                e.preventDefault();
+                navigableCategories[currentCategoryIndex].click();
+                break;
+        }
+    });
+
+    //=========================================
+    // ANALYTICS TRACKING (Optional)
+    //=========================================
+    function trackCategoryView(categoryId, categoryName) {
+        // Implement your analytics tracking here
+        console.log(`Category viewed: ${categoryName} (${categoryId})`);
+
+        // Example: Google Analytics
+        // if (typeof gtag !== 'undefined') {
+        //     gtag('event', 'category_view', {
+        //         'category_id': categoryId,
+        //         'category_name': categoryName
+        //     });
+        // }
+    }
+
+    //=========================================
+    // PERFORMANCE OPTIMIZATION
+    //=========================================
+    // Lazy load category content panels
+    const lazyLoadCategoryContent = () => {
+        const observerOptions = {
+            root: document.querySelector('.megamenu-content'),
+            rootMargin: '50px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const panel = entry.target;
+                    // Load any deferred content here
+                    panel.classList.add('loaded');
+                }
+            });
+        }, observerOptions);
+
+        contentPanels.forEach(panel => {
+            observer.observe(panel);
+        });
+    };
+
+    // Initialize lazy loading if needed
+     lazyLoadCategoryContent();
 
     //=========================================
     // 4. MOBILE MENU & RESPONSIVE BEHAVIOR
