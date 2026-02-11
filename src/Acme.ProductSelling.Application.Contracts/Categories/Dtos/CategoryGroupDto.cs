@@ -19,6 +19,8 @@ namespace Acme.ProductSelling.Categories.Dtos
         public string UrlSlug { get; set; }
         public SpecificationType SpecificationType { get; set; }
         public List<ManufacturerDto> Manufacturers { get; set; }
+        public bool HasMegamenu { get; set; }
+
         public List<PriceRangeDto> PriceRanges { get; set; } = new();
 
     }

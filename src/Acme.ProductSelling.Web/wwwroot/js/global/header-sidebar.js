@@ -56,6 +56,8 @@
     const mobileOpenBtn = document.getElementById('mobileCategoryBtn');
     const categoryLinks = document.querySelectorAll('.category-item-link');
     const contentPanels = document.querySelectorAll('.category-content-panel');
+    const groupContentPanels = document.querySelectorAll('.group-content-panel');
+    const megamenuContent = document.getElementById('megamenuContent');
 
     function openMegamenu() {
         if (megamenu && overlay) {
@@ -86,72 +88,123 @@
             closeMobileAccountMenu(); // Also close mobile account menu
         }
     });
-    function switchToCategory(link) {
-        const categoryId = link.dataset.categoryId;
 
-        if (!categoryId) return;
+
+    function switchContent(link) {
+        const isGroup = link.dataset.isGroup === 'true';
+        const hasMegamenu = link.dataset.hasMegamenu === 'true';
+
+        // Show megamenu content area
+
 
         // Update active state on sidebar links
         categoryLinks.forEach(l => l.parentElement.classList.remove('active'));
         link.parentElement.classList.add('active');
 
-        // Switch content panels
-        contentPanels.forEach(panel => {
-            if (panel.dataset.categoryId === categoryId) {
-                panel.style.display = 'block';
-                // Add fade-in animation
-                panel.style.opacity = '0';
+        if (megamenuContent) {
+            if (hasMegamenu) {
+                megamenuContent.style.display = 'flex';
+                // Small timeout to ensure display:flex is painted before opacity starts
                 setTimeout(() => {
-                    panel.style.opacity = '1';
+                    megamenuContent.classList.add('show');
                 }, 10);
             } else {
-                panel.style.display = 'none';
+                megamenuContent.classList.remove('show');
+                megamenuContent.style.display = 'none';
+                return; // Exit early, nothing else to render
             }
-        });
+        }
+        if (isGroup) {
+            // Show group content panel
+            const groupId = link.dataset.groupId;
+
+            contentPanels.forEach(panel => {
+                panel.style.display = 'none';
+                panel.classList.remove('active');
+            });
+
+            // Show the selected group panel
+            groupContentPanels.forEach(panel => {
+                if (panel.dataset.groupId === groupId) {
+                    panel.style.display = 'block';
+                    panel.classList.add('active');
+                    panel.style.opacity = '1';
+                } else {
+                    panel.style.display = 'none';
+                    panel.classList.remove('active');
+                }
+            });
+        } else {
+            const categoryId = link.dataset.categoryId;
+            groupContentPanels.forEach(panel => {
+                panel.style.display = 'none';
+                panel.classList.remove('active');
+            });
+
+            contentPanels.forEach(panel => {
+                if (panel.dataset.categoryId === categoryId) {
+                    panel.style.display = 'block';
+                    panel.classList.add('active');
+                    panel.style.opacity = '1';
+                } else {
+                    panel.style.display = 'none';
+                    panel.classList.remove('active');
+                }
+            });
+        }
     }
 
     // Logic for switching category content panels
     categoryLinks.forEach(link => {
-        link.addEventListener('mouseenter', (e) => { // Using mouseenter for better desktop UX
-            e.preventDefault();
-            const categoryId = link.dataset.categoryId;
-
-            categoryLinks.forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
-
-            contentPanels.forEach(panel => {
-                panel.style.display = panel.dataset.categoryId === categoryId ? 'block' : 'none';
-            });
+        // Use mouseenter for desktop hover experience
+        link.addEventListener('mouseenter', (e) => {
+            switchContent(link);
         });
+
+        // Handle click
         link.addEventListener('click', (e) => {
             e.preventDefault();
-            switchToCategory(link);
-        });
-    });
+            const hasMegamenu = link.dataset.hasMegamenu === 'true';
 
-    // Activate the first category by default
-    if (categoryLinks.length > 0) categoryLinks[0].classList.add('active');
-    //=========================================
-    // SMOOTH SCROLL FOR CATEGORY GROUPS
-    //=========================================
-    const categoryGroupHeaders = document.querySelectorAll('.category-group-header');
-
-    categoryGroupHeaders.forEach(header => {
-        header.addEventListener('click', function () {
-            // Optional: Collapse/expand groups
-            const nextElement = this.nextElementSibling;
-            if (nextElement && nextElement.classList.contains('category-item')) {
-                // Toggle group visibility (if implementing collapsible groups)
-                // Implementation depends on your requirements
+            if (hasMegamenu) {
+                // Prevent navigation and show the menu
+                e.preventDefault();
+                switchContent(link);
+            } else {
+                // Do nothing! Let the browser follow the actual 'href' link 
+                // because there is no megamenu to show.
+                closeMegamenu();
             }
         });
     });
+    // Activate the first category by default
+    if (categoryLinks.length > 0) {
+        categoryLinks[0].parentElement.classList.add('active');
+        // Ensure the first panel is shown
+        if (contentPanels.length > 0) {
+            contentPanels[0].style.display = 'block';
+            contentPanels[0].classList.add('active');
+        }
+    }
+    // SMOOTH SCROLL FOR CATEGORY GROUPS
+    const allPanels = [...contentPanels, ...groupContentPanels];
+    allPanels.forEach(panel => {
+        panel.style.transition = 'opacity 0.1s ease-in-out';
+    });
+    const megamenuSidebar = document.querySelector('.megamenu-sidebar');
 
-    //=========================================
+    if (megamenu) {
+        // Hide content when mouse leaves entire megamenu
+        megamenu.addEventListener('click', (e) => {
+            if (e.target === megamenu) {
+                closeMegamenu();
+            }
+        });
+    }
+
     // KEYBOARD NAVIGATION SUPPORT
-    //=========================================
-    let currentCategoryIndex = 0;
-    const navigableCategories = Array.from(categoryLinks);
+    let currentIndex = 0;
+    const navigableLinks = Array.from(categoryLinks);
 
     document.addEventListener('keydown', function (e) {
         const megamenu = document.getElementById('categoryMegamenu');
@@ -160,44 +213,34 @@
         switch (e.key) {
             case 'ArrowDown':
                 e.preventDefault();
-                currentCategoryIndex = Math.min(currentCategoryIndex + 1, navigableCategories.length - 1);
-                navigableCategories[currentCategoryIndex].focus();
-                switchToCategory(navigableCategories[currentCategoryIndex]);
+                currentIndex = Math.min(currentIndex + 1, navigableLinks.length - 1);
+                navigableLinks[currentIndex].focus();
+                switchContent(navigableLinks[currentIndex]);
                 break;
 
             case 'ArrowUp':
                 e.preventDefault();
-                currentCategoryIndex = Math.max(currentCategoryIndex - 1, 0);
-                navigableCategories[currentCategoryIndex].focus();
-                switchToCategory(navigableCategories[currentCategoryIndex]);
+                currentIndex = Math.max(currentIndex - 1, 0);
+                navigableLinks[currentIndex].focus();
+                switchContent(navigableLinks[currentIndex]);
                 break;
 
             case 'Enter':
                 e.preventDefault();
-                navigableCategories[currentCategoryIndex].click();
+                if (navigableLinks[currentIndex].dataset.isGroup === 'true') {
+                    // Already showing group content, do nothing
+                } else {
+                    // Navigate to category page
+                    const categoryLink = navigableLinks[currentIndex].getAttribute('href');
+                    if (categoryLink && categoryLink !== '#') {
+                        window.location.href = categoryLink;
+                    }
+                }
                 break;
         }
     });
 
-    //=========================================
-    // ANALYTICS TRACKING (Optional)
-    //=========================================
-    function trackCategoryView(categoryId, categoryName) {
-        // Implement your analytics tracking here
-        console.log(`Category viewed: ${categoryName} (${categoryId})`);
 
-        // Example: Google Analytics
-        // if (typeof gtag !== 'undefined') {
-        //     gtag('event', 'category_view', {
-        //         'category_id': categoryId,
-        //         'category_name': categoryName
-        //     });
-        // }
-    }
-
-    //=========================================
-    // PERFORMANCE OPTIMIZATION
-    //=========================================
     // Lazy load category content panels
     const lazyLoadCategoryContent = () => {
         const observerOptions = {
@@ -221,9 +264,8 @@
         });
     };
 
-    // Initialize lazy loading if needed
-     lazyLoadCategoryContent();
-
+    // Initialize lazy loading 
+    lazyLoadCategoryContent();
     //=========================================
     // 4. MOBILE MENU & RESPONSIVE BEHAVIOR
     //=========================================

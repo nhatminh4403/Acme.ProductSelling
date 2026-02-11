@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Volo.Abp.AspNetCore.Mvc;
 
-namespace Acme.ProductSelling.Web.Views.Shared.Components.CategoriesMenu
+namespace Acme.ProductSelling.Web.Views.Shared.Components.CategorySidebar
 {
-    public class CategoriesMenuViewComponent : AbpViewComponent
+    public class CategorySidebarViewComponent : AbpViewComponent
     {
         private readonly ICategoryAppService _categoryAppService;
 
-        public CategoriesMenuViewComponent(ICategoryAppService categoryAppService)
+        public CategorySidebarViewComponent(ICategoryAppService categoryAppService)
         {
             _categoryAppService = categoryAppService;
         }

@@ -1,0 +1,190 @@
+﻿@using Acme.ProductSelling.Categories.Dtos
+@using Acme.ProductSelling.Categories
+@model GroupedCategoriesResultDto
+
+@{
+}
+
+<!-- Overlay -->
+<div class="category-megamenu-overlay" id="categoryMegamenuOverlay"></div>
+
+<div class="category-megamenu" id="categoryMegamenu">
+    <div class="megamenu-sidebar">
+        <div class="megamenu-header">
+            <h2 class="megamenu-title">@L["Category:Categories"]</h2>
+            <button class="megamenu-close-btn" id="megamenuCloseBtn" aria-label="Close menu">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <ul class="category-list">
+            @* Individual Categories First *@
+            @if (Model.IndividualCategories != null && Model.IndividualCategories.Any())
+            {
+                @foreach (var category in Model.IndividualCategories)
+                {
+                    <li class="category-item">
+                        <a asp-page="/Products/ProductsByCategory"
+                           asp-route-slug="@category.UrlSlug"
+                           data-category-id="@category.Id"
+                           data-is-group="false"
+                           data-has-megamenu="@(category.HasMegamenu ? "true" : "false")"
+                           class="category-item-link">
+                            <span>@HelperMethods.GetCategoryLocalizerName(category.Name, L)</span>
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                }
+            }
+
+            @* Grouped Categories - Show as Group Items *@
+            @if (Model.Groups != null && Model.Groups.Any())
+            {
+                @foreach (var group in Model.Groups)
+                {
+                    <li class="category-item category-group-item">
+                        <a href="#"
+                           data-group-id="@group.GroupType"
+                           data-is-group="true"
+                           data-has-megamenu="true"
+                           class="category-item-link">
+                            <span>
+                                @if (!string.IsNullOrEmpty(group.GroupIcon))
+                                {
+                                    <i class="@group.GroupIcon me-2"></i>
+                                }
+                                @group.GroupName
+                            </span>
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+
+    <!-- Content Area -->
+    <div class="megamenu-content" id="megamenuContent">
+        @* Individual Categories Content *@
+        @if (Model.IndividualCategories != null && Model.IndividualCategories.Any())
+        {
+            @foreach (var category in Model.IndividualCategories)
+            {
+                @if (category.HasMegamenu)
+                {
+                    <div class="category-content-panel"
+                         data-category-id="@category.Id"
+                         style="display: none;">
+                        <partial name="/Views/Shared/PartialViews/_CategoryContentPanel.cshtml" model="@category" />
+                    </div>
+                }
+            }
+        }
+
+        @* Group Content Panels - Show categories in columns *@
+        @if (Model.Groups != null && Model.Groups.Any())
+        {
+            @foreach (var group in Model.Groups)
+            {
+                <div class="group-content-panel"
+                     data-group-id="@group.GroupType"
+                     style="display: none;">
+                    <div class="content-header">
+                        <h3 class="content-category-name">
+                            @if (!string.IsNullOrEmpty(group.GroupIcon))
+                            {
+                                <i class="@group.GroupIcon me-2"></i>
+                            }
+                            @group.GroupName
+                        </h3>
+                        <div class="content-breadcrumb">
+                            <span>@L["Category:Categories"]</span>
+                            <i class="bi bi-chevron-right"></i>
+                            <span>@group.GroupName</span>
+                        </div>
+                    </div>
+
+                    <div class="content-main">
+                        <div class="content-rows">
+                            <div class="content-row">
+                                @foreach (var category in group.Categories)
+                                {
+                                    <div class="content-column">
+                                        <div class="column-header">
+                                            <i class="bi bi-box column-icon"></i>
+                                            <h4 class="column-title">
+                                                <a asp-page="/Products/ProductsByCategory"
+                                                   asp-route-slug="@category.UrlSlug">
+                                                    @HelperMethods.GetCategoryLocalizerName(category.Name, L)
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div class="column-items">
+                                            @* Top Manufacturers *@
+                                            @if (category.Manufacturers != null && category.Manufacturers.Any())
+                                            {
+                                                @foreach (var manufacturer in category.Manufacturers.Take(5))
+                                                {
+                                                    <a asp-page="/Products/ProductsByManufacturer"
+                                                       asp-route-categoryUrlSlug="@category.UrlSlug"
+                                                       asp-route-manufacturerUrlSlug="@manufacturer.UrlSlug"
+                                                       class="column-item-link">
+                                                        <i class="bi bi-chevron-right column-item-icon"></i>
+                                                        <span>@manufacturer.Name</span>
+                                                    </a>
+                                                }
+                                                @if (category.Manufacturers.Count > 5)
+                                                {
+                                                    <a asp-page="/Products/ProductsByCategory"
+                                                       asp-route-slug="@category.UrlSlug"
+                                                       class="column-item-link text-muted">
+                                                        <i class="bi bi-plus-circle column-item-icon"></i>
+                                                        <span>+@(category.Manufacturers.Count - 5) @L["More"]</span>
+                                                    </a>
+                                                }
+                                            }
+
+                                            @* Price Ranges *@
+                                            @if (category.PriceRanges != null && category.PriceRanges.Any())
+                                            {
+                                                <div class="mt-2 pt-2" style="border-top: 1px solid #eee;">
+                                                    @foreach (var range in category.PriceRanges.Take(3))
+                                                    {
+                                                        <a asp-page="/Products/ProductsByPrice"
+                                                           asp-route-slug="@category.UrlSlug"
+                                                           asp-route-priceRange="@range.UrlValue"
+                                                           class="column-item-link">
+                                                            <i class="bi bi-tag column-item-icon"></i>
+                                                            <span>@range.DisplayText</span>
+                                                        </a>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                        <a asp-page="/Products/ProductsByCategory"
+                                           asp-route-slug="@category.UrlSlug"
+                                           class="view-all-link">
+                                            @L["SeeAll"]
+                                            <i class="bi bi-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+        @* Empty State *@
+        @if ((Model.IndividualCategories == null || !Model.IndividualCategories.Any()) &&
+                (Model.Groups == null || !Model.Groups.Any()))
+        {
+            <div class="empty-state">
+                <i class="bi bi-inbox"></i>
+                <p class="empty-state-text">@L["NoCategories"]</p>
+                <p>@L["NoCategoriesDescription"]</p>
+            </div>
+        }
+    </div>
+</div>

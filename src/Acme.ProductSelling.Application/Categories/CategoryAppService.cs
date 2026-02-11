@@ -135,37 +135,37 @@ namespace Acme.ProductSelling.Categories
         public async Task<GroupedCategoriesResultDto> GetGroupedCategoriesAsync()
         {
             var categories = await _categoryRepository.GetListAsync();
-
-            // Single optimized query to get manufacturer lookup
             var manufacturersByCategory = await GetCategoryManufacturerLookupAsync();
+            var serviceCategory = categories.FirstOrDefault(c => c.SpecificationType == SpecificationType.Services);
 
-            // Group categories efficiently
             var groupedCategories = categories
-                .Where(c => c.CategoryGroup != CategoryGroup.Individual)
-                .GroupBy(c => c.CategoryGroup)
-                .Select(g => new CategoryGroupDto
-                {
-                    GroupType = g.Key,
-                    GroupName = _localizer[GetGroupLocalizationKey(g.Key)],
-                    GroupIcon = g.First().IconCssClass,
-                    DisplayOrder = g.First().DisplayOrder,
-                    Categories = g.Select(c => MapToCategoryInGroup(c, manufacturersByCategory)).ToList()
-                })
-                .OrderBy(g => g.DisplayOrder)
-                .ToList();
+                   .Where(c => c.CategoryGroup != CategoryGroup.Individual)
+                   .GroupBy(c => c.CategoryGroup)
+                   .Select(g => new CategoryGroupDto
+                   {
+                       GroupType = g.Key,
+                       GroupName = _localizer[GetGroupLocalizationKey(g.Key)],
+                       GroupIcon = g.First().IconCssClass,
+                       DisplayOrder = g.First().DisplayOrder,
+                       Categories = g.Select(c => MapToCategoryInGroup(c, manufacturersByCategory)).ToList()
+                   })
+                   .OrderBy(g => g.DisplayOrder)
+                   .ToList();
+
 
             // Get individual categories
             var individualCategories = categories
-                .Where(c => c.CategoryGroup == CategoryGroup.Individual)
-                .Select(c => MapToCategoryInGroup(c, manufacturersByCategory))
-                .OrderBy(c => c.Name)
-                .ToList();
+                  .Where(c => c.CategoryGroup == CategoryGroup.Individual)
+                  .Select(c => MapToCategoryInGroup(c, manufacturersByCategory))
+                  .OrderBy(c => c.Name)
+                  .ToList();
 
             return new GroupedCategoriesResultDto
             {
                 Groups = groupedCategories,
                 IndividualCategories = individualCategories
             };
+
         }
         [AllowAnonymous]
         [RemoteService(false)]
@@ -257,9 +257,7 @@ namespace Acme.ProductSelling.Categories
             Category category,
             Dictionary<Guid, List<Manufacturer>> manufacturersByCategory)
         {
-            var manufacturers = manufacturersByCategory.TryGetValue(category.Id, out var manufs)
-           ? manufs
-           : new List<Manufacturer>();
+            var manufacturers = manufacturersByCategory.TryGetValue(category.Id, out var manufs) ? manufs : new List<Manufacturer>();
 
             // Generate price ranges for this category
             var priceRanges = GeneratePriceRangesForCategory(category.SpecificationType);
@@ -271,7 +269,8 @@ namespace Acme.ProductSelling.Categories
                 UrlSlug = category.UrlSlug,
                 SpecificationType = category.SpecificationType,
                 Manufacturers = manufacturers.Select(m => _manufacturerToDtoMapper.Map(m)).ToList(),
-                PriceRanges = priceRanges
+                PriceRanges = priceRanges,
+                HasMegamenu = category.SpecificationType != SpecificationType.Services
             };
         }
 
@@ -313,7 +312,7 @@ namespace Acme.ProductSelling.Categories
         }
         private List<PriceRangeDto> GeneratePriceRangesForCategory(SpecificationType specificationType)
         {
-            if (!CategoryPriceRangeConfiguration.HasPriceRanges(specificationType))
+            if (specificationType == SpecificationType.Services || !CategoryPriceRangeConfiguration.HasPriceRanges(specificationType))
             {
                 return new List<PriceRangeDto>();
             }
