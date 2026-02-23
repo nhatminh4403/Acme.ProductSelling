@@ -73,7 +73,8 @@ namespace Acme.ProductSelling.Chatbot
                     Temperature = _settings.Temperature,
                     MaxOutputTokens = _settings.MaxTokens,
                     Tools = tools.Any() ? tools : null,
-                    SystemInstruction = !string.IsNullOrEmpty(systemContext) ? new Content { Parts = new List<Part> { new Part { Text = systemContext } } } : null
+                    SystemInstruction = !string.IsNullOrEmpty(systemContext) ? 
+                    new Content { Parts = new List<Part> { new Part { Text = systemContext } } } : null
                 };
 
                 // Generate content using official SDK

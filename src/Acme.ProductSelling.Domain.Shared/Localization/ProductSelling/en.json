@@ -1388,6 +1388,19 @@
 
     "Enum:PaymentMethod:VnPay": "VNPay",
 
-    "Enum:PaymentMethod:MoMo": "MoMo"
+    "Enum:PaymentMethod:MoMo": "MoMo",
+
+    "Chatbot:Title": "AI Shopping Assistant",
+    "Chatbot:WelcomeMessage": "Welcome! I can help you check specs, compare prices, or find the perfect gear. What are you looking for today?",
+    "Chatbot:InputPlaceholder": "Type a message (e.g., 'Best gaming laptop under $1000')...",
+    "Chatbot:Thinking": "Thinking...",
+    "Chatbot:Button:View": "View Details",
+    "Chatbot:Header:FoundProducts": "Products found in store",
+
+    "Chatbot:Quick:GamingLaptops": "Gaming Laptops",
+    "Chatbot:Quick:CheapMouse": "Budget Mice",
+    "Chatbot:Quick:StockCheck": "Check Stock",
+
+    "Chatbot:System:Error": "Sorry, I'm having trouble connecting right now."
   }
 }

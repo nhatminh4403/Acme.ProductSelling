@@ -1343,7 +1343,19 @@
 
     "Enum:PaymentMethod:MoMo": "MoMo",
 
-    "AllPrices": "Tất cả mức giá"
+    "AllPrices": "Tất cả mức giá",
+    "Chatbot:Title": "Trợ lý Mua sắm AI",
+    "Chatbot:WelcomeMessage": "Xin chào! Tôi có thể giúp bạn kiểm tra cấu hình, so sánh giá hoặc tìm sản phẩm phù hợp. Bạn đang quan tâm đến món nào?",
+    "Chatbot:InputPlaceholder": "Nhập câu hỏi (ví dụ: 'Laptop gaming dưới 20 triệu')...",
+    "Chatbot:Thinking": "Đang suy nghĩ...",
+    "Chatbot:Button:View": "Xem chi tiết",
+    "Chatbot:Header:FoundProducts": "Sản phẩm tìm thấy tại cửa hàng",
+
+    "Chatbot:Quick:GamingLaptops": "Laptop Gaming",
+    "Chatbot:Quick:CheapMouse": "Chuột giá rẻ",
+    "Chatbot:Quick:StockCheck": "Kiểm tra tồn kho",
+
+    "Chatbot:System:Error": "Xin lỗi, hiện tại tôi đang gặp sự cố kết nối."
   }
   
 }

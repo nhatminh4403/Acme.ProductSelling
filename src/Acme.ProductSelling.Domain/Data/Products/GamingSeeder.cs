@@ -67,7 +67,8 @@ namespace Acme.ProductSelling.Data.Products
                 OperatingSystem = "Windows 11 Home",
                 BatteryLife = "Up to 5 hours",
                 Weight = "1.95 Kg",
-                Warranty = "2 years",IsForGaming = true
+                Warranty = "2 years",
+                IsForGaming = true
 
             }, autoSave: true);
 
