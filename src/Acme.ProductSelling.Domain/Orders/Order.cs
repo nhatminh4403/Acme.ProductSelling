@@ -43,7 +43,7 @@ namespace Acme.ProductSelling.Orders
         public OrderStatus OrderStatus { get; private set; }
         public PaymentStatus PaymentStatus { get; private set; }
 
-        // NEW: Multi-location store properties
+        //Multi-location store properties
         public Guid? StoreId { get; protected set; } // Nullable for online orders
 
         public OrderType OrderType { get; protected set; } // Online or InStore
@@ -66,13 +66,13 @@ namespace Acme.ProductSelling.Orders
         public DateTime? CompletedAt { get; protected set; } // When cashier processed payment
         public DateTime? FulfilledAt { get; protected set; } // When warehouse gave items
 
-        // Existing collections
+        
         public virtual ICollection<OrderItem> OrderItems { get; protected set; } = new HashSet<OrderItem>();
         public virtual ICollection<OrderHistory> OrderHistories { get; protected set; } = new HashSet<OrderHistory>();
 
         protected Order() { /* Required by EF Core */ }
 
-        // Updated constructor for online orders (existing behavior)
+        
         public Order(
             Guid id,
             string orderNumber,
@@ -96,7 +96,7 @@ namespace Acme.ProductSelling.Orders
             OrderType = OrderType.Online; // Default to online
         }
 
-        // NEW: Constructor for in-store orders
+        //Constructor for in-store orders
         public Order(
             Guid id,
             string orderNumber,
