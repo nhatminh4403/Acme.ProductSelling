@@ -9,5 +9,8 @@ namespace Acme.ProductSelling.Chatbot.Services
     {
         Task<ChatMessageOutputDto> SendMessageAsync(ChatMessageInputDto input);
         Task<List<ChatbotProductDto>> SearchProductsAsync(string query);
+
+
+        Task<List<string>> GetAvailableAsync();
     }
 }

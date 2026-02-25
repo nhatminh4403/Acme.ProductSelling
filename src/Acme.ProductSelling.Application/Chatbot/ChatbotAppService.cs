@@ -209,5 +209,9 @@ namespace Acme.ProductSelling.Chatbot
             return products.Select(MapToProductDto).ToList();
         }
 
+        public async Task<List<string>> GetAvailableAsync()
+        {
+            return await _geminiApiService.GetAvailableModelsAsync();
+        }
     }
 }

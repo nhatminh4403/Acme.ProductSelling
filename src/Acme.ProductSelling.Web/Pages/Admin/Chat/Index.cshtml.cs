@@ -1,0 +1,18 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
+namespace Acme.ProductSelling.Web.Pages.Admin.Chat
+{
+    public class IndexModel : AdminPageModelBase
+    {
+        [BindProperty(SupportsGet = true)]
+        public string Prefix { get; set; }
+        public void OnGet()
+        {
+            if (Prefix != RoleBasedPrefix)
+            {
+                Response.Redirect(GetUrl($"/chat-testing"));
+            }
+        }
+    }
+}

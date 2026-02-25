@@ -55,7 +55,8 @@ namespace Acme.ProductSelling.Chatbot
                 .Include(p => p.NetworkHardwareSpecification)
                 .AsQueryable();
 
-            var rawTerms = query.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries).ToList();
+            var rawTerms = query.ToLower().Split((char[])null, StringSplitOptions.RemoveEmptyEntries).ToList();
+            
             var laptopKeywords = new[] { "laptop", "notebook", "máy tính xách tay" };
             var gamingKeywords = new[] { "gaming", "game", "chơi game", "gamer" };
             var mouseKeywords = new[] { "mouse", "chuột" };
