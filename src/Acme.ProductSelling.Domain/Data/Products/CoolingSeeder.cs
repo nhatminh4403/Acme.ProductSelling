@@ -6,6 +6,7 @@ using Acme.ProductSelling.Products.Lookups;
 using Acme.ProductSelling.Products.Services;
 using Acme.ProductSelling.Specifications.Junctions;
 using Acme.ProductSelling.Specifications.Models;
+using Acme.ProductSelling.Specifications.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,12 +17,14 @@ namespace Acme.ProductSelling.Data.Products
     /// </summary>
     public class CoolingSeeder : ProductSeederBase, IDataSeederContributor
     {
-        private readonly IRepository<PsuSpecification, Guid> _psuSpecRepository;
-        private readonly IRepository<CaseSpecification, Guid> _caseSpecRepository;
-        private readonly IRepository<CpuCoolerSpecification, Guid> _cpuCoolerSpecRepository;
-        private readonly IRepository<CaseFanSpecification, Guid> _caseFanSpecRepository;
+        //private readonly IRepository<PsuSpecification, Guid> _psuSpecRepository;
+        //private readonly IRepository<CaseSpecification, Guid> _caseSpecRepository;
+        //private readonly IRepository<CpuCoolerSpecification, Guid> _cpuCoolerSpecRepository;
+        //private readonly IRepository<CaseFanSpecification, Guid> _caseFanSpecRepository;
         private readonly IRepository<CpuCoolerSocketSupport> _cpuCoolerSocketSupportRepository;
         private readonly IRepository<CaseMaterial> _caseMaterialRepository;
+
+        private readonly ISpecificationRepository _specificationRepository;
 
         private Dictionary<string, Category> _categories;
         private Dictionary<string, Manufacturer> _manufacturers;
@@ -31,21 +34,23 @@ namespace Acme.ProductSelling.Data.Products
 
         public CoolingSeeder(
             IProductRepository productRepository,
-            IRepository<PsuSpecification, Guid> psuSpecRepository,
-            IRepository<CaseSpecification, Guid> caseSpecRepository,
-            IRepository<CpuCoolerSpecification, Guid> cpuCoolerSpecRepository,
-            IRepository<CaseFanSpecification, Guid> caseFanSpecRepository,
+            ProductManager productManager,    
+            //IRepository<PsuSpecification, Guid> psuSpecRepository,
+            //IRepository<CaseSpecification, Guid> caseSpecRepository,
+            //IRepository<CpuCoolerSpecification, Guid> cpuCoolerSpecRepository,
+            //IRepository<CaseFanSpecification, Guid> caseFanSpecRepository,
             IRepository<CpuCoolerSocketSupport> cpuCoolerSocketSupportRepository,
-            ProductManager productManager,
-            IRepository<CaseMaterial> caseMaterialRepository)
+            IRepository<CaseMaterial> caseMaterialRepository,
+            ISpecificationRepository specificationRepository)
             : base(productRepository, productManager)
         {
-            _psuSpecRepository = psuSpecRepository;
-            _caseSpecRepository = caseSpecRepository;
-            _cpuCoolerSpecRepository = cpuCoolerSpecRepository;
-            _caseFanSpecRepository = caseFanSpecRepository;
+            //_psuSpecRepository = psuSpecRepository;
+            //_caseSpecRepository = caseSpecRepository;
+            //_cpuCoolerSpecRepository = cpuCoolerSpecRepository;
+            //_caseFanSpecRepository = caseFanSpecRepository;
             _cpuCoolerSocketSupportRepository = cpuCoolerSocketSupportRepository;
             _caseMaterialRepository = caseMaterialRepository;
+            _specificationRepository = specificationRepository;
         }
 
         public void SetDependencies(
@@ -78,7 +83,7 @@ namespace Acme.ProductSelling.Data.Products
                 50, true, DateTime.Now,
                 "https://bizweb.dktcdn.net/thumb/grande/100/329/122/products/nguon-may-tinh-corsair-rm750x-shift-750w-80-plus-gold-cp-9020251-na-04-20838ea6-b253-460f-bb0c-ad9327565373.jpg?v=1743639588677");
 
-            await _psuSpecRepository.InsertAsync(new PsuSpecification
+            await _specificationRepository.InsertAsync(new PsuSpecification
             {
                 ProductId = psu1.Id,
                 Wattage = 750,
@@ -93,7 +98,7 @@ namespace Acme.ProductSelling.Data.Products
                 35, true, DateTime.Now,
                 "https://tandoanh.vn/wp-content/uploads/2021/10/EVGA-SuperNOVA-750-G1-%E2%80%93-80-GOLD-750W-%E2%80%93-Fully-Modular-h1.jpg");
 
-            await _psuSpecRepository.InsertAsync(new PsuSpecification
+            await _specificationRepository.InsertAsync(new PsuSpecification
             {
                 ProductId = psu2.Id,
                 Wattage = 750,
@@ -111,7 +116,7 @@ namespace Acme.ProductSelling.Data.Products
                 40, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/4108_be554d73268e3ca69f25d192629df397_b7fd1aebb5f74f50ae18c3b23efb8755_b6d80711bb304b568b03fdcf3e94c1ab_grande.jpg");
 
-            var spec_case1 = await _caseSpecRepository.InsertAsync(new CaseSpecification
+            var spec_case1 = await _specificationRepository.InsertAsync(new CaseSpecification
             {
                 ProductId = case1.Id,
                 FormFactorId = _formFactors["ATX Mid Tower"].Id,
@@ -139,7 +144,7 @@ namespace Acme.ProductSelling.Data.Products
                 45, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/k-_1_65d8edfddc2b4785af9a13f971fc258a_6043347819ed417bb6dd327b41b39b6e_60a930dd805e4bc891b6ea69e7c2d21a_grande.jpg");
 
-            var spec_case2 = await _caseSpecRepository.InsertAsync(new CaseSpecification
+            var spec_case2 = await _specificationRepository.InsertAsync(new CaseSpecification
             {
                 ProductId = case2.Id,
                 FormFactorId = _formFactors["ATX Mid Tower"].Id,
@@ -170,7 +175,7 @@ namespace Acme.ProductSelling.Data.Products
                 60, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/hyper-212-argb-gallery-4-image_dc19349414e94e0e869c23e85c70cb49_d2713cd5bac947da94ee34d1456220fe_grande.png");
 
-            var spec_cooler1 = await _cpuCoolerSpecRepository.InsertAsync(new CpuCoolerSpecification
+            var spec_cooler1 = await _specificationRepository.InsertAsync(new CpuCoolerSpecification
             {
                 ProductId = cooler1.Id,
                 CoolerType = "Air",
@@ -195,7 +200,7 @@ namespace Acme.ProductSelling.Data.Products
                 20, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/noctua_nh-d15_2_75940b3d5fbb485190327d6b592429af_9ad735dcdbb94a71ba171d7d4ae0a326_grande.jpg");
 
-            var spec_cooler2 = await _cpuCoolerSpecRepository.InsertAsync(new CpuCoolerSpecification
+            var spec_cooler2 = await _specificationRepository.InsertAsync(new CpuCoolerSpecification
             {
                 ProductId = cooler2.Id,
                 CoolerType = "Air",
@@ -223,7 +228,7 @@ namespace Acme.ProductSelling.Data.Products
                 100, true, DateTime.Now.AddDays(2),
                 "https://noctua.at/pub/media/catalog/product/cache/74c1057f7991b4edb2bc7bdaa94de933/n/f/nf_a12x25_pwm_1.jpg");
 
-            await _caseFanSpecRepository.InsertAsync(new CaseFanSpecification
+            await _specificationRepository.InsertAsync(new CaseFanSpecification
             {
                 ProductId = fan1.Id,
                 FanSize = 120,

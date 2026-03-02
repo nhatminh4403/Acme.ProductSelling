@@ -1,5 +1,4 @@
-﻿using Acme.ProductSelling.Orders.Services;
-using Acme.ProductSelling.PaymentGateway.MoMo.Configurations.Models;
+﻿using Acme.ProductSelling.PaymentGateway.MoMo.Configurations.Models;
 using Acme.ProductSelling.Payments;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

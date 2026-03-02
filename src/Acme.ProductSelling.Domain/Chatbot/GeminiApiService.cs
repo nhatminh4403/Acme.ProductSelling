@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Google.GenAI;
+using Google.GenAI.Types;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Google.GenAI;
-using Google.GenAI.Types;
 using Volo.Abp.DependencyInjection;
 
 namespace Acme.ProductSelling.Chatbot
@@ -73,7 +73,7 @@ namespace Acme.ProductSelling.Chatbot
                     Temperature = _settings.Temperature,
                     MaxOutputTokens = _settings.MaxTokens,
                     Tools = tools.Any() ? tools : null,
-                    SystemInstruction = !string.IsNullOrEmpty(systemContext) ? 
+                    SystemInstruction = !string.IsNullOrEmpty(systemContext) ?
                     new Content { Parts = new List<Part> { new Part { Text = systemContext } } } : null
                 };
 

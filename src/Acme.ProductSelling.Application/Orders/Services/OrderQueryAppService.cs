@@ -7,13 +7,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
+using Volo.Abp.Caching;
 using Volo.Abp.Data;
 using Volo.Abp.Identity;
 using Volo.Abp.Users;
@@ -29,9 +28,13 @@ namespace Acme.ProductSelling.Orders.Services
         private readonly IStringLocalizer<ProductSellingResource> _localizer;
         private readonly IDataFilter<ISoftDelete> _softDeleteFilter;
         private readonly OrderToOrderDtoMapper _orderMapper;
+        private readonly IPaymentStatusPolicy _paymentStatusPolicy;
         private readonly ICurrentUser _currentUser;
         private readonly IIdentityUserRepository _userRepository;
         private readonly ILogger<OrderQueryAppService> _logger;
+
+        private readonly IDistributedCache<OrderDto, Guid> _orderCache;
+
         public OrderQueryAppService(IOrderRepository orderRepository,
                                     IOrderNotificationService orderNotificationService,
                                     IOrderHistoryAppService orderHistoryAppService,
@@ -40,7 +43,9 @@ namespace Acme.ProductSelling.Orders.Services
                                     OrderToOrderDtoMapper orderMapper,
                                     ICurrentUser currentUser,
                                     IIdentityUserRepository userRepository,
-                                    ILogger<OrderQueryAppService> logger)
+                                    ILogger<OrderQueryAppService> logger,
+                                    IPaymentStatusPolicy paymentStatusPolicy,
+                                    IDistributedCache<OrderDto, Guid> orderCache)
         {
             _orderRepository = orderRepository;
             _orderNotificationService = orderNotificationService;
@@ -51,108 +56,39 @@ namespace Acme.ProductSelling.Orders.Services
             _currentUser = currentUser;
             _userRepository = userRepository;
             _logger = logger;
+            _paymentStatusPolicy = paymentStatusPolicy;
+            _orderCache = orderCache;
         }
 
         public async Task<PagedResultDto<OrderDto>> GetListAsync(GetOrderListInput input)
         {
-            //// Code identical to original GetListAsync
-            //// Can optimize later with Custom Repository Method
-            //using (input.IncludeDeleted ? _softDeleteFilter.Disable() : null)
-            //{
-            //    var query = (await _orderRepository.GetQueryableAsync()).Include(o => o.OrderItems);
-            //    // ... Filters (StoreId, OrderType, Status, Dates) ...
-            //    // ... Sorting & Paging ...
-
-            //    var totalCount = await AsyncExecuter.CountAsync(query);
-            //    var items = await AsyncExecuter.ToListAsync(query.OrderBy(input.Sorting ?? "CreationTime DESC").PageBy(input));
-            //    return new PagedResultDto<OrderDto>(totalCount, _orderMapper.MapList(items));
-            //}
-
-            Logger.LogInformation("[GetList] START - UserId:" +
-                " {UserId}, Filters: StoreId={StoreId}, OrderType={OrderType}," +
-                " OrderStatus={OrderStatus}, PaymentStatus={PaymentStatus}, " +
-                "DateRange={StartDate}-{EndDate}, IncludeDeleted={IncludeDeleted}",
-                _currentUser.Id, input.StoreId, input.OrderType, input.OrderStatus, input.PaymentStatus,
-                input.StartDate, input.EndDate, input.IncludeDeleted);
+            Logger.LogInformation(
+               "[GetList] START - Filters: StoreId={StoreId}, OrderType={OrderType}, Status={Status}, Payment={Payment}",
+               input.StoreId, input.OrderType, input.OrderStatus, input.PaymentStatus);
 
             using (input.IncludeDeleted ? _softDeleteFilter.Disable() : null)
             {
-                var query = (await _orderRepository.GetQueryableAsync())
-                    .Include(o => o.OrderItems);
+                var query = (await _orderRepository.GetQueryableAsync()).Include(o => o.OrderItems);
+                IQueryable<Order> filtered = query;
 
-                IQueryable<Order> filteredQuery = query;
-                var filterCount = 0;
-
-                if (input.StoreId.HasValue)
-                {
-                    filteredQuery = query.Where(o => o.StoreId == input.StoreId.Value);
-                    filterCount++;
-                    Logger.LogDebug("[GetList] Applied StoreId filter: {StoreId}", input.StoreId.Value);
-                }
-
-                if (input.OrderType.HasValue)
-                {
-                    filteredQuery = query.Where(o => o.OrderType == input.OrderType.Value);
-                    filterCount++;
-                    Logger.LogDebug("[GetList] Applied OrderType filter: {OrderType}", input.OrderType.Value);
-                }
-
-                if (input.OrderStatus.HasValue)
-                {
-                    filteredQuery = query.Where(o => o.OrderStatus == input.OrderStatus.Value);
-                    filterCount++;
-                    Logger.LogDebug("[GetList] Applied OrderStatus filter: {OrderStatus}", input.OrderStatus.Value);
-                }
-
-                if (input.PaymentStatus.HasValue)
-                {
-                    filteredQuery = query.Where(o => o.PaymentStatus == input.PaymentStatus.Value);
-                    filterCount++;
-                    Logger.LogDebug("[GetList] Applied PaymentStatus filter: {PaymentStatus}", input.PaymentStatus.Value);
-                }
-
-                if (input.StartDate.HasValue)
-                {
-                    filteredQuery = query.Where(o => o.CreationTime >= input.StartDate.Value);
-                    filterCount++;
-                    Logger.LogDebug("[GetList] Applied StartDate filter: {StartDate}", input.StartDate.Value);
-                }
-
-                if (input.EndDate.HasValue)
-                {
-                    filteredQuery = query.Where(o => o.CreationTime <= input.EndDate.Value);
-                    filterCount++;
-                    Logger.LogDebug("[GetList] Applied EndDate filter: {EndDate}", input.EndDate.Value);
-                }
+                if (input.StoreId.HasValue) filtered = filtered.Where(o => o.StoreId == input.StoreId.Value);
+                if (input.OrderType.HasValue) filtered = filtered.Where(o => o.OrderType == input.OrderType.Value);
+                if (input.OrderStatus.HasValue) filtered = filtered.Where(o => o.OrderStatus == input.OrderStatus.Value);
+                if (input.PaymentStatus.HasValue) filtered = filtered.Where(o => o.PaymentStatus == input.PaymentStatus.Value);
+                if (input.StartDate.HasValue) filtered = filtered.Where(o => o.CreationTime >= input.StartDate.Value);
+                if (input.EndDate.HasValue) filtered = filtered.Where(o => o.CreationTime <= input.EndDate.Value);
 
                 var userStoreId = await GetCurrentUserStoreIdAsync();
                 var isAdmin = await IsAdminOrManagerAsync();
 
-                Logger.LogDebug("[GetList] User access check - UserStoreId: {UserStoreId}, IsAdminOrManager: {IsAdmin}",
-                    userStoreId, isAdmin);
-
                 if (userStoreId.HasValue && !isAdmin)
-                {
-                    filteredQuery = query.Where(o => o.StoreId == userStoreId.Value);
-                    filterCount++;
-                    Logger.LogInformation("[GetList] Non-admin user restricted to store: {StoreId}", userStoreId.Value);
-                }
+                    filtered = filtered.Where(o => o.StoreId == userStoreId.Value);
 
-                var totalCount = await AsyncExecuter.CountAsync(filteredQuery);
-                Logger.LogInformation("[GetList] Query executed - TotalCount: {TotalCount}, FiltersApplied: {FilterCount}",
-                    totalCount, filterCount);
-
+                var totalCount = await AsyncExecuter.CountAsync(filtered);
                 var items = await AsyncExecuter.ToListAsync(
-                    query.OrderBy(input.Sorting ?? "CreationTime DESC").PageBy(input)
-                );
+                    filtered.OrderBy(input.Sorting ?? "CreationTime DESC").PageBy(input));
 
-                Logger.LogInformation("[GetList] COMPLETED - Returned {ItemCount} items out of {TotalCount} total",
-                    items.Count, totalCount);
-
-                return new PagedResultDto<OrderDto>(
-                    totalCount,
-                    _orderMapper.MapList(items)
-                );
+                return new PagedResultDto<OrderDto>(totalCount, _orderMapper.MapList(items));
             }
         }
 
@@ -164,12 +100,15 @@ namespace Acme.ProductSelling.Orders.Services
             var oldPayment = order.PaymentStatus;
 
             order.SetStatus(input.NewStatus);
+            if (!_paymentStatusPolicy.CanTransition(order.PaymentStatus, input.NewPaymentStatus))
+                throw new UserFriendlyException("InvalidPaymentStatusChange");
             order.SetPaymentStatus(input.NewPaymentStatus);
 
             await _orderRepository.UpdateAsync(order, autoSave: true);
 
             await _orderHistoryAppService.LogOrderChangeAsync(id, oldStatus, order.OrderStatus, oldPayment, order.PaymentStatus, "Updated by Admin");
             await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
+            await _orderCache.RemoveAsync(id);
 
             return _orderMapper.Map(order);
         }
@@ -177,9 +116,8 @@ namespace Acme.ProductSelling.Orders.Services
         [Authorize(ProductSellingPermissions.Orders.Edit)]
         public async Task ShipOrderAsync(Guid orderId)
         {
-            var order = await _orderRepository.GetAsync(orderId);
+            var order = await _orderRepository.GetAsync(orderId) as OnlineOrder;
 
-            // Domain Logic Check (Validating logic is inside SetStatus wrappers somewhat, but extra app logic here)
             if (order.OrderStatus != OrderStatus.Confirmed && order.OrderStatus != OrderStatus.Processing)
                 throw new UserFriendlyException(_localizer["Order:CannotShip"]);
 
@@ -188,30 +126,41 @@ namespace Acme.ProductSelling.Orders.Services
 
             await _orderRepository.UpdateAsync(order, autoSave: true);
             await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
-            // Log history...
+            await _orderCache.RemoveAsync(orderId);
         }
 
         [Authorize(ProductSellingPermissions.Orders.Edit)]
         public async Task DeliverOrderAsync(Guid orderId)
         {
-            var order = await _orderRepository.GetAsync(orderId);
-            if (order.OrderStatus != OrderStatus.Shipped) throw new UserFriendlyException(_localizer["Order:CannotDeliver"]);
+            var order = await _orderRepository.GetAsync(orderId) as OnlineOrder;
 
-            if (order.PaymentMethod == PaymentMethods.COD) order.MarkAsCodPaidAndCompleted(_localizer);
-            else order.SetStatus(OrderStatus.Delivered);
+            if (order == null)
+                throw new UserFriendlyException("Order:NotFound");
+
+            if (order.OrderStatus != OrderStatus.Shipped)
+                throw new UserFriendlyException(_localizer["Order:CannotDeliver"]);
+
+            if (order.PaymentMethod == PaymentMethods.COD)
+                order.MarkAsCodPaidAndCompleted();
+            else
+                order.SetStatus(OrderStatus.Delivered);
 
             await _orderRepository.UpdateAsync(order, autoSave: true);
             await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
-            // Log history...
+            await _orderCache.RemoveAsync(orderId);
         }
 
         [Authorize(ProductSellingPermissions.Orders.ConfirmCodPayment)]
         public async Task MarkAsCodPaidAndCompletedAsync(Guid orderId)
         {
-            var order = await _orderRepository.GetAsync(orderId);
-            order.MarkAsCodPaidAndCompleted(_localizer);
+            var order = await _orderRepository.GetAsync(orderId) as OnlineOrder;
+            if (order == null)
+                throw new UserFriendlyException("Order:NotFound");
+            order.MarkAsCodPaidAndCompleted();
             await _orderRepository.UpdateAsync(order, autoSave: true);
             await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
+            await _orderCache.RemoveAsync(orderId);
+
         }
         [RemoteService(false)]
         public async Task RestoreOrderAsync(Guid orderId)
@@ -225,6 +174,8 @@ namespace Acme.ProductSelling.Orders.Services
                 order.DeletionTime = null;
                 order.DeleterId = null;
                 await _orderRepository.UpdateAsync(order);
+                await _orderCache.RemoveAsync(orderId);
+
             }
         }
 

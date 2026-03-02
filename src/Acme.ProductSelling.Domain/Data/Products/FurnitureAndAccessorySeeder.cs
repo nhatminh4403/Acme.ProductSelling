@@ -4,6 +4,7 @@ using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Services;
 using Acme.ProductSelling.Specifications.Models;
+using Acme.ProductSelling.Specifications.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,33 +14,37 @@ namespace Acme.ProductSelling.Data.Products
 {
     public class FurnitureAndAccessorySeeder : ProductSeederBase, IDataSeederContributor
     {
-        private readonly IRepository<ChairSpecification, Guid> _chairSpecRepository;
-        private readonly IRepository<DeskSpecification, Guid> _deskSpecRepository;
-        private readonly IRepository<CableSpecification, Guid> _cableSpecRepository;
-        private readonly IRepository<ChargerSpecification, Guid> _chargerSpecRepository;
-        private readonly IRepository<PowerBankSpecification, Guid> _powerBankSpecRepository;
-        private readonly IRepository<HubSpecification, Guid> _hubSpecRepository;
+        //private readonly IRepository<ChairSpecification, Guid> _chairSpecRepository;
+        //private readonly IRepository<DeskSpecification, Guid> _deskSpecRepository;
+        //private readonly IRepository<CableSpecification, Guid> _cableSpecRepository;
+        //private readonly IRepository<ChargerSpecification, Guid> _chargerSpecRepository;
+        //private readonly IRepository<PowerBankSpecification, Guid> _powerBankSpecRepository;
+        //private readonly IRepository<HubSpecification, Guid> _hubSpecRepository;
+
+        private readonly ISpecificationRepository _specificationRepository;
 
         private Dictionary<string, Category> _categories;
         private Dictionary<string, Manufacturer> _manufacturers;
 
         public FurnitureAndAccessorySeeder(
             IProductRepository productRepository,
-            IRepository<ChairSpecification, Guid> chairSpecRepository,
-            IRepository<DeskSpecification, Guid> deskSpecRepository,
-            IRepository<CableSpecification, Guid> cableSpecRepository,
-            IRepository<ChargerSpecification, Guid> chargerSpecRepository,
-            IRepository<PowerBankSpecification, Guid> powerBankSpecRepository,
             ProductManager productManager,
-            IRepository<HubSpecification, Guid> hubSpecRepository)
+            //IRepository<ChairSpecification, Guid> chairSpecRepository,
+            //IRepository<DeskSpecification, Guid> deskSpecRepository,
+            //IRepository<CableSpecification, Guid> cableSpecRepository,
+            //IRepository<ChargerSpecification, Guid> chargerSpecRepository,
+            //IRepository<PowerBankSpecification, Guid> powerBankSpecRepository,
+            //IRepository<HubSpecification, Guid> hubSpecRepository,
+            ISpecificationRepository specificationRepository)
             : base(productRepository, productManager)
         {
-            _chairSpecRepository = chairSpecRepository;
-            _deskSpecRepository = deskSpecRepository;
-            _cableSpecRepository = cableSpecRepository;
-            _chargerSpecRepository = chargerSpecRepository;
-            _powerBankSpecRepository = powerBankSpecRepository;
-            _hubSpecRepository = hubSpecRepository;
+            //_chairSpecRepository = chairSpecRepository;
+            //_deskSpecRepository = deskSpecRepository;
+            //_cableSpecRepository = cableSpecRepository;
+            //_chargerSpecRepository = chargerSpecRepository;
+            //_powerBankSpecRepository = powerBankSpecRepository;
+            //_hubSpecRepository = hubSpecRepository;
+            _specificationRepository = specificationRepository;
         }
 
         public void SetDependencies(
@@ -68,7 +73,7 @@ namespace Acme.ProductSelling.Data.Products
                 25, true, DateTime.Now.AddDays(7),
                 "https://assets.corsair.com/image/upload/f_auto,q_auto/content/TC100-RELAXED-BLACK-Gallery-Hero-01.png");
 
-            await _chairSpecRepository.InsertAsync(new ChairSpecification
+            await _specificationRepository.InsertAsync(new ChairSpecification
             {
                 ProductId = chair1.Id,
                 ChairType = "Gaming/Office",
@@ -93,7 +98,7 @@ namespace Acme.ProductSelling.Data.Products
                 15, true, DateTime.Now.AddDays(3),
                 "https://www.ikea.com/us/en/images/products/uppspel-gaming-desk-black__0981784_pe815503_s5.jpg");
 
-            await _deskSpecRepository.InsertAsync(new DeskSpecification
+            await _specificationRepository.InsertAsync(new DeskSpecification
             {
                 ProductId = desk1.Id,
                 Width = 140,
@@ -118,7 +123,7 @@ namespace Acme.ProductSelling.Data.Products
                 200, true, DateTime.Now.AddDays(1),
                 "https://i5.walmartimages.com/asr/c6f8f7c8-c0f5-4c8e-9d0e-1f7e0e0e0e0e.jpg");
 
-            await _cableSpecRepository.InsertAsync(new CableSpecification
+            await _specificationRepository.InsertAsync(new CableSpecification
             {
                 ProductId = cable1.Id,
                 CableType = CableType.USB_C_to_USB_C,
@@ -141,7 +146,7 @@ namespace Acme.ProductSelling.Data.Products
                 80, true, DateTime.Now.AddDays(5),
                 "https://m.media-amazon.com/images/I/61Zfh+vkVoL._AC_SL1500_.jpg");
 
-            await _chargerSpecRepository.InsertAsync(new ChargerSpecification
+            await _specificationRepository.InsertAsync(new ChargerSpecification
             {
                 ProductId = charger1.Id,
                 ChargerType = ChargerType.WallCharger,
@@ -166,7 +171,7 @@ namespace Acme.ProductSelling.Data.Products
                 50, true, DateTime.Now.AddDays(4),
                 "https://m.media-amazon.com/images/I/61SfU5bj9uL._AC_SL1500_.jpg");
 
-            await _powerBankSpecRepository.InsertAsync(new PowerBankSpecification
+            await _specificationRepository.InsertAsync(new PowerBankSpecification
             {
                 ProductId = powerBank1.Id,
                 Capacity = 24000,
@@ -192,7 +197,7 @@ namespace Acme.ProductSelling.Data.Products
                 35, true, DateTime.Now.AddDays(3),
                 "https://d2j6dbq0eux0bg.cloudfront.net/images/66203968/2624850885.jpg");
 
-            await _hubSpecRepository.InsertAsync(new HubSpecification
+            await _specificationRepository.InsertAsync(new HubSpecification
             {
                 ProductId = hub1.Id,
                 HubType = HubType.Thunderbolt_3_Dock,

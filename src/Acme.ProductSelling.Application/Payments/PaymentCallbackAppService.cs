@@ -81,7 +81,7 @@ namespace Acme.ProductSelling.Payments
                     return new VnPaymentResponseModel { VnPayResponseCode = "01", OrderDescription = "Order not found" };
                 }
 
-                var order = await _orderRepository.FirstOrDefaultAsync(o => o.Id == orderId);
+                var order = await _orderRepository.FirstOrDefaultAsync(o => o.Id == orderId) as OnlineOrder;
 
                 if (order == null)
                 {
@@ -281,7 +281,7 @@ namespace Acme.ProductSelling.Payments
                         return await AsyncExecuter.FirstOrDefaultAsync(
                             queryable.Where(o => o.Id == orderId)
                         );
-                    }).Unwrap();
+                    }).Unwrap() as OnlineOrder;
 
                 if (order == null)
                 {

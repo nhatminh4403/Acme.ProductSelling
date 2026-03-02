@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
-using System.Linq;
 using Volo.Abp.DependencyInjection;
 
 namespace Acme.ProductSelling.Products.Helpers

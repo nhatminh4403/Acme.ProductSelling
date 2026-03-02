@@ -6,9 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
@@ -66,7 +64,7 @@ namespace Acme.ProductSelling.Orders.Services
                 input.CustomerPhone,
                 input.PaymentMethod,
                 items
-            );
+            ) as InStoreOrder;
 
             await _orderRepository.InsertAsync(order, autoSave: true);
 
@@ -89,7 +87,7 @@ namespace Acme.ProductSelling.Orders.Services
         [Authorize(ProductSellingPermissions.Orders.Complete)]
         public async Task<OrderDto> CompleteInStorePaymentAsync(Guid orderId, CompleteInStorePaymentDto input)
         {
-            var order = await _orderRepository.GetAsync(orderId);
+            var order = await _orderRepository.GetAsync(orderId) as InStoreOrder;
             if (order.OrderType != OrderType.InStore) throw new UserFriendlyException(_localizer["Order:OnlyForInStoreOrders"]);
 
             await CheckStoreAccessAsync(order.StoreId.Value);
@@ -99,7 +97,7 @@ namespace Acme.ProductSelling.Orders.Services
             var oldPayment = order.PaymentStatus;
 
             // Domain Entity Logic
-            order.CompletePaymentInStore(cashier.Id, cashier.Name ?? cashier.UserName, input.PaidAmount);
+            order.CompletePaymentInStore(cashier.Id, cashier.Name ?? cashier.UserName, Clock.Now);
             await _orderRepository.UpdateAsync(order, autoSave: true);
 
             await _eventBus.PublishAsync(new OrderStatusChangedEto
@@ -119,7 +117,7 @@ namespace Acme.ProductSelling.Orders.Services
         [Authorize(ProductSellingPermissions.Orders.Fulfill)]
         public async Task<OrderDto> FulfillInStoreOrderAsync(Guid orderId)
         {
-            var order = await _orderRepository.GetAsync(orderId);
+            var order = await _orderRepository.GetAsync(orderId) as InStoreOrder;
             if (order.OrderType != OrderType.InStore) throw new UserFriendlyException(_localizer["Order:OnlyForInStoreOrders"]);
 
             await CheckStoreAccessAsync(order.StoreId.Value);
@@ -127,7 +125,7 @@ namespace Acme.ProductSelling.Orders.Services
             var staff = await _userRepository.GetAsync(CurrentUser.Id.Value);
 
             // Domain Entity Logic
-            order.FulfillInStore(staff.Id, staff.Name ?? staff.UserName);
+            order.FulfillInStore(staff.Id, staff.Name ?? staff.UserName, Clock.Now);
             await _orderRepository.UpdateAsync(order, autoSave: true);
 
             await _eventBus.PublishAsync(new OrderStatusChangedEto

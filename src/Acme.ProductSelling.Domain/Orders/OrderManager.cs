@@ -1,5 +1,6 @@
 ﻿using Acme.ProductSelling.Carts;
 using Acme.ProductSelling.Localization;
+using Acme.ProductSelling.Orders.Services;
 using Acme.ProductSelling.Products.Services;
 using Acme.ProductSelling.StoreInventories;
 using Acme.ProductSelling.Stores;
@@ -7,7 +8,6 @@ using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Domain.Services;
@@ -38,7 +38,7 @@ namespace Acme.ProductSelling.Orders
             _localizer = localizer;
             _storeInventoryRepository = storeInventoryRepository;
         }
-        public async Task<Order> CreateOnlineOrderAsync(
+        public async Task<OnlineOrder> CreateOnlineOrderAsync(
                    Guid customerId,
                    string customerName,
                    string customerPhone,
@@ -46,19 +46,19 @@ namespace Acme.ProductSelling.Orders
                    string paymentMethod,
                    List<CartItem> cartItems)
         {
-            var orderNumber = $"DH-{DateTime.UtcNow:yyyyMMddHHmmss}-{_guidGenerator.Create().ToString("N").Substring(0, 6)}";
+            var orderNumber = await GenerateOrderNumberAsync();
 
-            var order = new Order(
+            var order = new OnlineOrder(
                 _guidGenerator.Create(),
                 orderNumber,
-                DateTime.Now,
+                Clock.Now,
                 customerId,
                 customerName,
                 customerPhone,
                 shippingAddress,
                 paymentMethod
             );
-            order.SetStatus(OrderStatus.Placed);
+            //order.SetStatus(OrderStatus.Placed);
 
             var productIds = cartItems.Select(i => i.ProductId).Distinct().ToList();
             var products = await _productRepository.GetListAsync(p => productIds.Contains(p.Id));
@@ -97,13 +97,12 @@ namespace Acme.ProductSelling.Orders
                 if (product != null)
                 {
                     product.StockCount += item.Quantity;
-                    // Note: UpdateAsync isn't strictly needed here if UOW is active, 
-                    // but it's safe to assume the Repo will handle tracking.
+
                     await _productRepository.UpdateAsync(product);
                 }
             }
         }
-        public async Task<Order> CreateInStoreOrderAsync(
+        public async Task<InStoreOrder> CreateInStoreOrderAsync(
             Guid storeId,
             Guid sellerId,
             string sellerName,
@@ -114,12 +113,12 @@ namespace Acme.ProductSelling.Orders
         {
             // Validate Store Access & Generate Number
             var store = await _storeRepository.GetAsync(storeId);
-            var orderNumber = await GenerateInStoreOrderNumberAsync(store);
+            var orderNumber = await GenerateOrderNumberAsync(store);
 
-            var order = new Order(
+            var order = new InStoreOrder(
                 _guidGenerator.Create(),
                 orderNumber,
-                DateTime.Now,
+                Clock.Now,
                 storeId,
                 sellerId,
                 sellerName,
@@ -167,14 +166,13 @@ namespace Acme.ProductSelling.Orders
             return order;
         }
 
-        private async Task<string> GenerateInStoreOrderNumberAsync(Store store)
+        private async Task<string> GenerateOrderNumberAsync(Store store = null)
         {
-            var dateStr = DateTime.Now.ToString("yyyyMMdd");
-            // NOTE: Ideally move this counting logic to a custom repository method to keep Domain clean of Queryable
-            // keeping simplified string logic here.
-            var prefix = $"ST-{store.Code}-{dateStr}-";
-            var randomPart = _guidGenerator.Create().ToString("N").Substring(0, 4).ToUpper();
-            return prefix + randomPart;
+            if (store == null)
+            {
+                return $"DH-{Clock.Now:yyyyMMddHHmmss}-ST-{store?.Code}-{_guidGenerator.Create().ToString("N").Substring(0, 6)}";
+            }
+            else return $"DH-{Clock.Now:yyyyMMddHHmmss}-{_guidGenerator.Create().ToString("N").Substring(0, 6)}";
         }
     }
 }

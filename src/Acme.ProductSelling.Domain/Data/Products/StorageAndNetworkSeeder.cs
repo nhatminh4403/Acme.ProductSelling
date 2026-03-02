@@ -4,6 +4,7 @@ using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Services;
 using Acme.ProductSelling.Specifications.Models;
+using Acme.ProductSelling.Specifications.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,10 +14,12 @@ namespace Acme.ProductSelling.Data.Products
 {
     public class StorageAndNetworkSeeder : ProductSeederBase, IDataSeederContributor
     {
-        private readonly IRepository<MemoryCardSpecification, Guid> _memoryCardSpecRepository;
-        private readonly IRepository<SoftwareSpecification, Guid> _softwareSpecRepository;
-        private readonly IRepository<NetworkHardwareSpecification, Guid> _networkHardwareSpecRepository;
-        private readonly IRepository<MousePadSpecification, Guid> _mousePadSpecRepository;
+        //private readonly IRepository<MemoryCardSpecification, Guid> _memoryCardSpecRepository;
+        //private readonly IRepository<SoftwareSpecification, Guid> _softwareSpecRepository;
+        //private readonly IRepository<NetworkHardwareSpecification, Guid> _networkHardwareSpecRepository;
+        //private readonly IRepository<MousePadSpecification, Guid> _mousePadSpecRepository;
+
+        private readonly ISpecificationRepository _specificationRepository;
 
         private Dictionary<string, Category> _categories;
         private Dictionary<string, Manufacturer> _manufacturers;
@@ -24,16 +27,18 @@ namespace Acme.ProductSelling.Data.Products
         public StorageAndNetworkSeeder(
             IProductRepository productRepository,
             ProductManager productManager,
-            IRepository<MemoryCardSpecification, Guid> memoryCardSpecRepository,
-            IRepository<SoftwareSpecification, Guid> softwareSpecRepository,
-            IRepository<NetworkHardwareSpecification, Guid> networkHardwareSpecRepository,
-            IRepository<MousePadSpecification, Guid> mousePadSpecRepository)
+            //IRepository<MemoryCardSpecification, Guid> memoryCardSpecRepository,
+            //IRepository<SoftwareSpecification, Guid> softwareSpecRepository,
+            //IRepository<NetworkHardwareSpecification, Guid> networkHardwareSpecRepository,
+            //IRepository<MousePadSpecification, Guid> mousePadSpecRepository,
+            ISpecificationRepository specificationRepository)
             : base(productRepository, productManager)
         {
-            _memoryCardSpecRepository = memoryCardSpecRepository;
-            _softwareSpecRepository = softwareSpecRepository;
-            _networkHardwareSpecRepository = networkHardwareSpecRepository;
-            _mousePadSpecRepository = mousePadSpecRepository;
+            //_memoryCardSpecRepository = memoryCardSpecRepository;
+            //_softwareSpecRepository = softwareSpecRepository;
+            //_networkHardwareSpecRepository = networkHardwareSpecRepository;
+            //_mousePadSpecRepository = mousePadSpecRepository;
+            _specificationRepository = specificationRepository;
         }
 
         public void SetDependencies(
@@ -60,7 +65,7 @@ namespace Acme.ProductSelling.Data.Products
                 200, true, DateTime.Now.AddDays(1),
                 "https://images.samsung.com/is/image/samsung/p6pim/vn/mb-mc128ka-apc/gallery/vn-microsdxc-evo-plus-mb-mc128ka-535234-mb-mc128ka-apc-538392334");
 
-            await _memoryCardSpecRepository.InsertAsync(new MemoryCardSpecification
+            await _specificationRepository.InsertAsync(new MemoryCardSpecification
             {
                 ProductId = memoryCard1.Id,
                 Capacity = 128,
@@ -82,7 +87,7 @@ namespace Acme.ProductSelling.Data.Products
                 500, true, DateTime.Now.AddDays(1),
                 "https://cdn-dynmedia-1.microsoft.com/is/image/microsoftcorp/RWZQBF_Hero_960x540_2x_RE4VnJV");
 
-            await _softwareSpecRepository.InsertAsync(new SoftwareSpecification
+            await _specificationRepository.InsertAsync(new SoftwareSpecification
             {
                 ProductId = software1.Id,
                 SoftwareType = SoftwareType.OperatingSystem,
@@ -104,7 +109,7 @@ namespace Acme.ProductSelling.Data.Products
                 40, true, DateTime.Now.AddDays(2),
                 "https://static.tp-link.com/upload/product-overview/2021/202106/20210625155708974.png");
 
-            await _networkHardwareSpecRepository.InsertAsync(new NetworkHardwareSpecification
+            await _specificationRepository.InsertAsync(new NetworkHardwareSpecification
             {
                 ProductId = network1.Id,
                 DeviceType = NetworkDeviceType.Router,
@@ -127,7 +132,7 @@ namespace Acme.ProductSelling.Data.Products
                 120, true, DateTime.Now.AddDays(2),
                 "https://media.steelseriescdn.com/thumbs/catalogue/products/00431-qck-heavy-xxl/c0eb6b6563984f2fab338c58e37b0ee1.png.500x400_q100_crop-fit_optimize.png");
 
-            await _mousePadSpecRepository.InsertAsync(new MousePadSpecification
+            await _specificationRepository.InsertAsync(new MousePadSpecification
             {
                 ProductId = mousePad1.Id,
                 Width = 900,

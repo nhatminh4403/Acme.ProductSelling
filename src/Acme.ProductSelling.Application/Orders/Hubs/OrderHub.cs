@@ -75,7 +75,7 @@ namespace Acme.ProductSelling.Orders.Hubs
                     _logger.LogDebug("[OrderHub-Connect] Added to Cashiers group");
                 }
 
-                
+
 
                 _logger.LogInformation("[OrderHub-Connect] COMPLETED - ConnectionId: {ConnectionId}, UserId: {UserId}, RoleGroupsAdded: {RoleGroupsCount}",
                     Context.ConnectionId, _currentUser.Id, roleGroupsAdded);

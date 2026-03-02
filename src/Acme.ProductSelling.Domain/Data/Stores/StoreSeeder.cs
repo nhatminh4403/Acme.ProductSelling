@@ -1,6 +1,4 @@
-﻿using Acme.ProductSelling.Categories;
-using Acme.ProductSelling.Data.BaseSeeder;
-using Acme.ProductSelling.Manufacturers;
+﻿using Acme.ProductSelling.Data.BaseSeeder;
 using Acme.ProductSelling.Products.Services;
 using Acme.ProductSelling.StoreInventories;
 using Acme.ProductSelling.Stores;
@@ -10,7 +8,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
-using static Acme.ProductSelling.Permissions.ProductSellingPermissions;
 
 namespace Acme.ProductSelling.Data.Stores
 {

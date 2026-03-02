@@ -146,7 +146,7 @@ namespace Acme.ProductSelling.Web.Controllers
                 }
 
                 //var order = await _orderAppService.GetAsync(orderIdGuid);
-                var order  = await _orderPublicAppService.GetAsync(orderIdGuid);
+                var order = await _orderPublicAppService.GetAsync(orderIdGuid);
 
                 if (order == null)
                 {

@@ -1,0 +1,34 @@
+﻿:root {
+    /* ── Backgrounds ── */
+    --bg-darkest: #1a1a1a; /* body */
+    --bg-dark: #252525; /* sidebar, content cards */
+    --bg-mid: #2d2d2d; /* header, sidebar header, hover surfaces */
+    --bg-elevated: #2a2a2a; /* open menu item */
+    --bg-submenu: #1f1f1f; /* submenu */
+    --bg-hover: #3d3d3d; /* button / item hover */
+    /* ── Borders ── */
+    --border-color: #3d3d3d;
+    /* ── Accent ── */
+    --accent: #4a9eff;
+    --accent-dark: #357abd;
+    /* ── Typography ── */
+    --text-primary: #e0e0e0;
+    --text-secondary: #b0b0b0;
+    --text-muted: #909090;
+    /* ── Danger / Destructive ── */
+    --danger: #ff6b6b;
+    --danger-alt: #ff4a4a;
+    --danger-bg: #3d2d2d;
+    --danger-border: #4d3d3d;
+    --danger-bg-hover: #4d3d3d;
+    /* ── Active / Selected ── */
+    --active-bg: #333333;
+    /* ── Scrollbar ── */
+    --scrollbar-thumb: #3d3d3d;
+    --scrollbar-thumb-hover: #4d4d4d;
+    /* ── Shadows ── */
+    --shadow-sm: rgba(0, 0, 0, 0.2);
+    --shadow-md: rgba(0, 0, 0, 0.3);
+    --shadow-lg: rgba(0, 0, 0, 0.4);
+    --overlay-bg: rgba(0, 0, 0, 0.5);
+}

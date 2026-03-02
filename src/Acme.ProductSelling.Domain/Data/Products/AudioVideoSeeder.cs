@@ -4,6 +4,7 @@ using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Services;
 using Acme.ProductSelling.Specifications.Models;
+using Acme.ProductSelling.Specifications.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,24 +14,28 @@ namespace Acme.ProductSelling.Data.Products
 {
     public class AudioVideoSeeder : ProductSeederBase, IDataSeederContributor
     {
-        private readonly IRepository<SpeakerSpecification, Guid> _speakerSpecRepository;
-        private readonly IRepository<MicrophoneSpecification, Guid> _microphoneSpecRepository;
-        private readonly IRepository<WebcamSpecification, Guid> _webcamSpecRepository;
+        //private readonly IRepository<SpeakerSpecification, Guid> _speakerSpecRepository;
+        //private readonly IRepository<MicrophoneSpecification, Guid> _microphoneSpecRepository;
+        //private readonly IRepository<WebcamSpecification, Guid> _webcamSpecRepository;
+
+        private readonly ISpecificationRepository _specificationRepository; 
 
         private Dictionary<string, Category> _categories;
         private Dictionary<string, Manufacturer> _manufacturers;
 
         public AudioVideoSeeder(
             IProductRepository productRepository,
-            IRepository<SpeakerSpecification, Guid> speakerSpecRepository,
-            IRepository<MicrophoneSpecification, Guid> microphoneSpecRepository,
-            ProductManager productManager,
-            IRepository<WebcamSpecification, Guid> webcamSpecRepository)
+            ProductManager productManager,   
+            //IRepository<SpeakerSpecification, Guid> speakerSpecRepository,
+            //IRepository<MicrophoneSpecification, Guid> microphoneSpecRepository,
+            //IRepository<WebcamSpecification, Guid> webcamSpecRepository,
+            ISpecificationRepository specificationRepository)
             : base(productRepository, productManager)
         {
-            _speakerSpecRepository = speakerSpecRepository;
-            _microphoneSpecRepository = microphoneSpecRepository;
-            _webcamSpecRepository = webcamSpecRepository;
+            //_speakerSpecRepository = speakerSpecRepository;
+            //_microphoneSpecRepository = microphoneSpecRepository;
+            //_webcamSpecRepository = webcamSpecRepository;
+            _specificationRepository = specificationRepository;
         }
 
         public void SetDependencies(
@@ -56,7 +61,7 @@ namespace Acme.ProductSelling.Data.Products
                 45, true, DateTime.Now.AddDays(4),
                 "https://resource.logitech.com/w_800,c_lpad,ar_1:1,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/speakers/z623/gallery/z623-gallery-1.png");
 
-            await _speakerSpecRepository.InsertAsync(new SpeakerSpecification
+            await _specificationRepository.InsertAsync(new SpeakerSpecification
             {
                 ProductId = speaker1.Id,
                 SpeakerType = SpeakerType.Stereo_2_1_WithSubwoofer,
@@ -73,7 +78,7 @@ namespace Acme.ProductSelling.Data.Products
                 70, true, DateTime.Now.AddDays(2),
                 "https://example.com/jbl-charge-5.jpg");
 
-            await _speakerSpecRepository.InsertAsync(new SpeakerSpecification
+            await _specificationRepository.InsertAsync(new SpeakerSpecification
             {
                 ProductId = speaker2.Id,
                 SpeakerType = SpeakerType.Stereo_2_0,
@@ -93,7 +98,7 @@ namespace Acme.ProductSelling.Data.Products
                 60, true, DateTime.Now.AddDays(3),
                 "https://row.hyperx.com/cdn/shop/files/hyperx_quadcast_s_mic_1_top_down_zm_lg.jpg");
 
-            await _microphoneSpecRepository.InsertAsync(new MicrophoneSpecification
+            await _specificationRepository.InsertAsync(new MicrophoneSpecification
             {
                 ProductId = microphone1.Id,
                 MicrophoneType = MicrophoneType.Condenser,
@@ -118,7 +123,7 @@ namespace Acme.ProductSelling.Data.Products
                 50, true, DateTime.Now.AddDays(5),
                 "https://resource.logitech.com/w_800,c_lpad,ar_1:1,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/webcams/streamcam/gallery/streamcam-gallery-1-graphite.png");
 
-            await _webcamSpecRepository.InsertAsync(new WebcamSpecification
+            await _specificationRepository.InsertAsync(new WebcamSpecification
             {
                 ProductId = webcam1.Id,
                 Resolution = "1920x1080",

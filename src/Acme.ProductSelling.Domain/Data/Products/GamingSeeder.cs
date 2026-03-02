@@ -4,6 +4,7 @@ using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Services;
 using Acme.ProductSelling.Specifications.Models;
+using Acme.ProductSelling.Specifications.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,24 +14,29 @@ namespace Acme.ProductSelling.Data.Products
 {
     public class GamingSeeder : ProductSeederBase, IDataSeederContributor
     {
-        private readonly IRepository<LaptopSpecification, Guid> _laptopSpecRepository;
-        private readonly IRepository<HandheldSpecification, Guid> _handheldSpecRepository;
-        private readonly IRepository<ConsoleSpecification, Guid> _consoleSpecRepository;
+        //private readonly IRepository<LaptopSpecification, Guid> _laptopSpecRepository;
+        //private readonly IRepository<HandheldSpecification, Guid> _handheldSpecRepository;
+        //private readonly IRepository<ConsoleSpecification, Guid> _consoleSpecRepository;
+
+        private readonly ISpecificationRepository _specificationRepository;
 
         private Dictionary<string, Category> _categories;
         private Dictionary<string, Manufacturer> _manufacturers;
 
         public GamingSeeder(
-            IProductRepository productRepository,
-            IRepository<LaptopSpecification, Guid> laptopSpecRepository,
+            IProductRepository productRepository,     
             ProductManager productManager,
-            IRepository<HandheldSpecification, Guid> handheldSpecRepository,
-            IRepository<ConsoleSpecification, Guid> consoleSpecRepository)
+
+            //IRepository<LaptopSpecification, Guid> laptopSpecRepository,
+            //IRepository<HandheldSpecification, Guid> handheldSpecRepository,
+            //IRepository<ConsoleSpecification, Guid> consoleSpecRepository,
+            ISpecificationRepository specificationRepository)
             : base(productRepository, productManager)
         {
-            _laptopSpecRepository = laptopSpecRepository;
-            _handheldSpecRepository = handheldSpecRepository;
-            _consoleSpecRepository = consoleSpecRepository;
+            //_laptopSpecRepository = laptopSpecRepository;
+            //_handheldSpecRepository = handheldSpecRepository;
+            //_consoleSpecRepository = consoleSpecRepository;
+            _specificationRepository = specificationRepository;
         }
 
         public void SetDependencies(
@@ -56,7 +62,7 @@ namespace Acme.ProductSelling.Data.Products
                 10, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/zephyrus_g16_gu605_grey_03_rgb_1_b58d513a9306445daf2980232fe2544b_grande.png");
 
-            await _laptopSpecRepository.InsertAsync(new LaptopSpecification
+            await _specificationRepository.InsertAsync(new LaptopSpecification
             {
                 ProductId = laptop1.Id,
                 CPU = "Intel® Core™ Ultra 9",
@@ -78,7 +84,7 @@ namespace Acme.ProductSelling.Data.Products
                 8, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/51529_laptop_dell_xps_9350_xps93_1d46c518185a488a92c40932dd4d5cf6_grande.png");
 
-            await _laptopSpecRepository.InsertAsync(new LaptopSpecification
+            await _specificationRepository.InsertAsync(new LaptopSpecification
             {
                 ProductId = laptop2.Id,
                 CPU = "Intel® Core™ Ultra 5",
@@ -102,7 +108,7 @@ namespace Acme.ProductSelling.Data.Products
                 20, true, DateTime.Now.AddDays(4),
                 "https://cdn.cloudflare.steamstatic.com/steamdeck/images/hero/hero_deck_fullbleed.jpg");
 
-            await _handheldSpecRepository.InsertAsync(new HandheldSpecification
+            await _specificationRepository.InsertAsync(new HandheldSpecification
             {
                 ProductId = handheld1.Id,
                 Processor = "AMD Zen 2 4c/8t",
@@ -127,7 +133,7 @@ namespace Acme.ProductSelling.Data.Products
                 30, true, DateTime.Now.AddDays(6),
                 "https://gmedia.playstation.com/is/image/SIEPDC/ps5-digital-edition-console-image-block-01-en-25jun20");
 
-            await _consoleSpecRepository.InsertAsync(new ConsoleSpecification
+            await _specificationRepository.InsertAsync(new ConsoleSpecification
             {
                 ProductId = console1.Id,
                 Processor = "AMD Zen 2 8-core",

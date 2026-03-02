@@ -5,6 +5,7 @@ using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Products.Lookups;
 using Acme.ProductSelling.Products.Services;
 using Acme.ProductSelling.Specifications.Models;
+using Acme.ProductSelling.Specifications.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,10 +15,12 @@ namespace Acme.ProductSelling.Data.Products
 {
     public class PeripheralSeeder : ProductSeederBase, IDataSeederContributor
     {
-        private readonly IRepository<KeyboardSpecification, Guid> _keyboardSpecRepository;
-        private readonly IRepository<MouseSpecification, Guid> _mouseSpecRepository;
-        private readonly IRepository<MonitorSpecification, Guid> _monitorSpecRepository;
-        private readonly IRepository<HeadsetSpecification, Guid> _headsetSpecRepository;
+        //private readonly IRepository<KeyboardSpecification, Guid> _keyboardSpecRepository;
+        //private readonly IRepository<MouseSpecification, Guid> _mouseSpecRepository;
+        //private readonly IRepository<MonitorSpecification, Guid> _monitorSpecRepository;
+        //private readonly IRepository<HeadsetSpecification, Guid> _headsetSpecRepository;
+
+        private readonly ISpecificationRepository _specificationRepository;
 
         private Dictionary<string, Category> _categories;
         private Dictionary<string, Manufacturer> _manufacturers;
@@ -27,16 +30,18 @@ namespace Acme.ProductSelling.Data.Products
         public PeripheralSeeder(
             IProductRepository productRepository,
             ProductManager productManager,
-            IRepository<KeyboardSpecification, Guid> keyboardSpecRepository,
-            IRepository<MouseSpecification, Guid> mouseSpecRepository,
-            IRepository<MonitorSpecification, Guid> monitorSpecRepository,
-            IRepository<HeadsetSpecification, Guid> headsetSpecRepository)
+            //IRepository<KeyboardSpecification, Guid> keyboardSpecRepository,
+            //IRepository<MouseSpecification, Guid> mouseSpecRepository,
+            //IRepository<MonitorSpecification, Guid> monitorSpecRepository,
+            //IRepository<HeadsetSpecification, Guid> headsetSpecRepository,
+            ISpecificationRepository specificationRepository)
             : base(productRepository, productManager)
         {
-            _keyboardSpecRepository = keyboardSpecRepository;
-            _mouseSpecRepository = mouseSpecRepository;
-            _monitorSpecRepository = monitorSpecRepository;
-            _headsetSpecRepository = headsetSpecRepository;
+            //_keyboardSpecRepository = keyboardSpecRepository;
+            //_mouseSpecRepository = mouseSpecRepository;
+            //_monitorSpecRepository = monitorSpecRepository;
+            //_headsetSpecRepository = headsetSpecRepository;
+            _specificationRepository = specificationRepository;
         }
 
         public void SetDependencies(
@@ -67,7 +72,7 @@ namespace Acme.ProductSelling.Data.Products
                 80, true, DateTime.Now.AddDays(-10),
                 "https://product.hstatic.net/200000722513/product/1_5b2f7891bf434a7aab9f1abdba56c17e_grande.jpg");
 
-            await _keyboardSpecRepository.InsertAsync(new KeyboardSpecification
+            await _specificationRepository.InsertAsync(new KeyboardSpecification
             {
                 ProductId = kb1.Id,
                 KeyboardType = "Mechanical",
@@ -82,7 +87,7 @@ namespace Acme.ProductSelling.Data.Products
                 40, true, DateTime.Now.AddMonths(1),
                 "https://product.hstatic.net/200000722513/product/r3m1_ac3aa0be001640e2873ff732d34617bc_2295901522e24ce399b8f5f07be51467_3ab2e4aca4434a9a84997283b79b5c3c_grande.png");
 
-            await _keyboardSpecRepository.InsertAsync(new KeyboardSpecification
+            await _specificationRepository.InsertAsync(new KeyboardSpecification
             {
                 ProductId = kb2.Id,
                 KeyboardType = "Mechanical",
@@ -100,7 +105,7 @@ namespace Acme.ProductSelling.Data.Products
                 150, true, DateTime.Now.AddDays(3),
                 "https://product.hstatic.net/200000722513/product/10001_01736316d2b443d0838e5a0741434420_grande.png");
 
-            await _mouseSpecRepository.InsertAsync(new MouseSpecification
+            await _specificationRepository.InsertAsync(new MouseSpecification
             {
                 ProductId = mouse1.Id,
                 Dpi = 16000,
@@ -124,7 +129,7 @@ namespace Acme.ProductSelling.Data.Products
                 30, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/lg_27gx790a-b_gearvn_18880ec6e5a944c2b29c76d85d44d243_medium.jpg");
 
-            await _monitorSpecRepository.InsertAsync(new MonitorSpecification
+            await _specificationRepository.InsertAsync(new MonitorSpecification
             {
                 ProductId = monitor1.Id,
                 ScreenSize = 27,
@@ -146,7 +151,7 @@ namespace Acme.ProductSelling.Data.Products
                 70, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/gvn_logitech_prox_79c556630c454086baf1bee06c577ab7_3471d9d886fd4dbe8ab5ae6bed9f4d78_grande.png");
 
-            await _headsetSpecRepository.InsertAsync(new HeadsetSpecification
+            await _specificationRepository.InsertAsync(new HeadsetSpecification
             {
                 ProductId = headset1.Id,
                 Connectivity = ConnectivityType.Wired,

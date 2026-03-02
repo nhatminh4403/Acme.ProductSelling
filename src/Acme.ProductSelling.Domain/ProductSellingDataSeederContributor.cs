@@ -148,7 +148,7 @@ namespace Acme.ProductSelling
 
             await _storeSeeder.SeedAsync();
             var storeDictionary = _storeSeeder.SeededStores.ToDictionary(s => s.Code, s => s);
-            _identityDataSeedContributor.SetDependencies( storeDictionary);
+            _identityDataSeedContributor.SetDependencies(storeDictionary);
 
             await _identityDataSeedContributor.SeedAsync();
         }

@@ -10,5 +10,13 @@ namespace Acme.ProductSelling.Specifications
         [ForeignKey(nameof(Product))]
         public Guid ProductId { get; set; }
         public virtual Product Product { get; set; }
+
+        protected SpecificationBase()
+        {
+        }
+        protected SpecificationBase(Guid id, Guid productId) : base(id)
+        {
+            ProductId = productId;
+        }
     }
 }

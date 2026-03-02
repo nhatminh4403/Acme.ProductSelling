@@ -188,7 +188,7 @@ namespace Acme.ProductSelling.Web.Menus
                 context.Menu.AddItem(ordersMenu);
             }
 
-            
+
             // User Management (Admin/Manager only)
             if (await permissionChecker.IsGrantedAsync(ProductSellingPermissions.Users.Default))
             {
@@ -266,7 +266,7 @@ namespace Acme.ProductSelling.Web.Menus
             var userRepository = serviceProvider.GetRequiredService<IIdentityUserRepository>();
             var user = await userRepository.GetAsync(currentUser.Id.Value);
             var roles = await userRepository.GetRolesAsync(user.Id);
-            
+
             if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.IdentityRoleConsts.Manager, System.StringComparison.OrdinalIgnoreCase)))
                 return "manager";
             if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.IdentityRoleConsts.Seller, System.StringComparison.OrdinalIgnoreCase)))

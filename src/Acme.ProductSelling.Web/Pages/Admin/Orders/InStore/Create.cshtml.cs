@@ -1,6 +1,5 @@
 ﻿using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Orders.Services;
-using Acme.ProductSelling.Payments;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products.Services;
 using Acme.ProductSelling.StoreInventories;
@@ -30,7 +29,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Orders.InStore
         private readonly IProductAppService _productAppService;
         private readonly IStoreInventoryRepository _storeInventoryRepository;
 
-        public CreateModel(IOrderAppService orderAppService, IProductAppService productAppService, 
+        public CreateModel(IOrderAppService orderAppService, IProductAppService productAppService,
             IProductRepository productRepository, IStoreInventoryRepository storeInventoryRepository)
         {
             _orderAppService = orderAppService;
@@ -46,7 +45,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Orders.InStore
                 {
                     Items = new List<CreateOrderItemDto>()
                 };
-                await LoadAvailableProductsAsync(); 
+                await LoadAvailableProductsAsync();
                 LoadPaymentMethods();
 
                 if (Prefix != RoleBasedPrefix)
@@ -89,7 +88,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Orders.InStore
             catch (Exception ex)
             {
                 ModelState.AddModelError("", ex.Message);
-                await LoadAvailableProductsAsync(); 
+                await LoadAvailableProductsAsync();
                 LoadPaymentMethods();
 
                 return Page();

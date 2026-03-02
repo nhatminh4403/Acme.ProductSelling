@@ -282,9 +282,6 @@ public class ProductSellingWebModule : AbpModule
         });
         ConfigureHangfireServer(services);
     }
-
-
-
     private void ConfigureRazorPages()
     {
         Configure<RazorPagesOptions>(options =>
@@ -315,7 +312,7 @@ public class ProductSellingWebModule : AbpModule
                 new SqlServerStorageOptions
                 {
 
-                    QueuePollInterval = TimeSpan.FromSeconds(30), 
+                    QueuePollInterval = TimeSpan.FromSeconds(30),
 
                     CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
 
@@ -445,8 +442,8 @@ public class ProductSellingWebModule : AbpModule
                 "Main.Global",
                 bundle =>
                 {
-                    bundle.AddFiles("/global-styles.css");
                     bundle.AddFiles("/css/base.css");
+                    bundle.AddFiles("/global-styles.css");
                     bundle.AddFiles("/css/shared/header.css");
                 }
             );
@@ -479,7 +476,12 @@ public class ProductSellingWebModule : AbpModule
                 "Admin.Global",
                 bundle =>
                 {
-                    bundle.AddFiles("/css/admin/main/style.css");
+                    bundle.AddFiles("/css/admin/base-admin.css");
+                    bundle.AddFiles("/css/admin/main/header.css");
+                    bundle.AddFiles("/css/admin/main/sidebar.css");
+                    bundle.AddFiles("/css/admin/main/main.css");
+
+                    //bundle.AddFiles("/css/admin/main/style.css");
                 }
             );
             options.ScriptBundles.Add(
@@ -550,7 +552,7 @@ public class ProductSellingWebModule : AbpModule
             options.FileSets.AddEmbedded<ProductSellingWebModule>();
             options.FileSets.AddEmbedded<Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.AbpAspNetCoreMvcUiThemeSharedModule>();
 
-           
+
         });
         Configure<AbpVirtualFileSystemOptions>(options =>
         {
@@ -569,14 +571,14 @@ public class ProductSellingWebModule : AbpModule
                 ReplaceIfExists<ProductSellingDomainModule>($"..{Path.DirectorySeparatorChar}Acme.ProductSelling.Domain");
                 ReplaceIfExists<ProductSellingApplicationContractsModule>($"..{Path.DirectorySeparatorChar}Acme.ProductSelling.Application.Contracts");
                 ReplaceIfExists<ProductSellingApplicationModule>($"..{Path.DirectorySeparatorChar}Acme.ProductSelling.Application");
-                
+
                 // Simplified this path as well to match others or be robust
                 ReplaceIfExists<ProductSellingHttpApiModule>($"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}src{Path.DirectorySeparatorChar}Acme.ProductSelling.HttpApi");
                 options.FileSets.ReplaceEmbeddedByPhysical<ProductSellingWebModule>(hostingEnvironment.ContentRootPath);
 
             }
         });
-        
+
     }
     private void ConfigureNavigationServices()
     {

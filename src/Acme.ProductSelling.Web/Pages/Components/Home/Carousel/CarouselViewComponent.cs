@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Acme.ProductSelling.Web.Models;
+using Microsoft.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc;
 
 namespace Acme.ProductSelling.Web.Pages.Components.Home.Carousel
@@ -10,7 +11,11 @@ namespace Acme.ProductSelling.Web.Pages.Components.Home.Carousel
         }
         public IViewComponentResult Invoke()
         {
-            return View("/Pages/Components/Home/Carousel/Default.cshtml");
+            var model = new CarouselViewModel
+            {
+                IsSidebarDataEmpty = false // Set this based on your actual data
+            };
+            return View("/Pages/Components/Home/Carousel/Default.cshtml", model);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Acme.ProductSelling.Categories;
-using Acme.ProductSelling.Categories.Dtos;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products.BackgroundJobs.ProductRelease;
+using Acme.ProductSelling.Products.Caching;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Helpers;
 using Acme.ProductSelling.Products.Services;
@@ -13,6 +13,7 @@ using Acme.ProductSelling.Stores;
 using Acme.ProductSelling.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.BackgroundJobs;
+using Volo.Abp.Caching;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 namespace Acme.ProductSelling.Products
@@ -34,8 +36,8 @@ namespace Acme.ProductSelling.Products
         private readonly IProductRepository _productRepository;
         private readonly ISpecificationService _specificationService;
         private readonly IRepository<CaseMaterial> _caseMaterialRepository;
-        private readonly IRepository<CaseSpecification, Guid> _caseSpecificationRepository;
-        private readonly IRepository<CpuCoolerSpecification, Guid> _cpuCoolerSpecificationRepository;
+        //private readonly IRepository<CaseSpecification, Guid> _caseSpecificationRepository;
+        //private readonly IRepository<CpuCoolerSpecification, Guid> _cpuCoolerSpecificationRepository;
         private readonly IStoreInventoryRepository _storeInventoryRepository;
         private readonly IStoreRepository _storeRepository;
         private readonly IBackgroundJobManager _backgroundJobManager;
@@ -45,11 +47,16 @@ namespace Acme.ProductSelling.Products
         private readonly ProductToProductDtoMapper _productToProductDtoMapper;
         private readonly ProductDtoToCreateUpdateProductDtoMapper _productDtoToCreateUpdateProductDtoMapper;
         private readonly CreateUpdateProductDtoToProductMapper _createUpdateProductDtoToProductMapper;
+
+        private readonly IDistributedCache<ProductDto, Guid> _productDetailCache;
+        private readonly IDistributedCache<ProductDto, string> _productSlugCache;
+        private readonly IDistributedCache<List<FeaturedCategoryProductsDto>, string> _featuredCache;
+
         public ProductAppService(IRepository<Product, Guid> repository,
                                  IRepository<Category, Guid> categoryRepository,
                                  IRepository<CaseMaterial> caseMaterialRepository,
-                                 IRepository<CaseSpecification, Guid> caseSpecificationRepository,
-                                 IRepository<CpuCoolerSpecification, Guid> cpuCoolerSpecificationRepository,
+                                 //IRepository<CaseSpecification, Guid> caseSpecificationRepository,
+                                 //IRepository<CpuCoolerSpecification, Guid> cpuCoolerSpecificationRepository,
                                  ISpecificationService specificationService,
                                  IProductRepository productRepository,
                                  IStoreInventoryRepository storeInventoryRepository,
@@ -59,14 +66,17 @@ namespace Acme.ProductSelling.Products
                                  IRecentlyViewedProductAppService recentlyViewedService,
                                  ProductToProductDtoMapper productToProductDtoMapper,
                                  ProductDtoToCreateUpdateProductDtoMapper productDtoToCreateUpdateProductDtoMapper,
-                                 CreateUpdateProductDtoToProductMapper createUpdateProductDtoToProductMapper)
+                                 CreateUpdateProductDtoToProductMapper createUpdateProductDtoToProductMapper,
+                                 IDistributedCache<ProductDto, Guid> productDetailCache,
+                                 IDistributedCache<ProductDto, string> productSlugCache,
+                                 IDistributedCache<List<FeaturedCategoryProductsDto>, string> featuredCache)
             : base(repository)
         {
             _categoryRepository = categoryRepository;
             _productRepository = productRepository;
             _caseMaterialRepository = caseMaterialRepository;
-            _caseSpecificationRepository = caseSpecificationRepository;
-            _cpuCoolerSpecificationRepository = cpuCoolerSpecificationRepository;
+            //_caseSpecificationRepository = caseSpecificationRepository;
+            //_cpuCoolerSpecificationRepository = cpuCoolerSpecificationRepository;
             _specificationService = specificationService;
             _storeInventoryRepository = storeInventoryRepository;
             _storeRepository = storeRepository;
@@ -80,6 +90,9 @@ namespace Acme.ProductSelling.Products
             _createUpdateProductDtoToProductMapper = createUpdateProductDtoToProductMapper;
 
             ConfigurePolicies();
+            _productDetailCache = productDetailCache;
+            _productSlugCache = productSlugCache;
+            _featuredCache = featuredCache;
         }
         private void ConfigurePolicies()
         {
@@ -88,15 +101,14 @@ namespace Acme.ProductSelling.Products
             UpdatePolicyName = ProductSellingPermissions.Products.Edit;
             DeletePolicyName = ProductSellingPermissions.Products.Delete;
         }
-
-        [AllowAnonymous]
+        [Authorize(ProductSellingPermissions.Products.Default)]
         public override async Task<PagedResultDto<ProductDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
             var query = await Repository.GetQueryableAsync();
             query = query.AsNoTracking()
-                .Include(p => p.Category)
-                .Include(p => p.Manufacturer)
-                .Include(p => p.StoreInventories);
+                .IncludeAllRelations();
+
+
             var totalCount = await AsyncExecuter.CountAsync(query);
             query = query.OrderBy(input.Sorting ?? nameof(Product.ProductName));
             query = query.PageBy(input);
@@ -104,14 +116,40 @@ namespace Acme.ProductSelling.Products
 
             var productDtos = products.Select(p => _productToProductDtoMapper.Map(p)).ToList();
 
+            _ = Task.Run(async () =>
+            {
+                foreach (var dto in productDtos)
+                {
+                    await _productDetailCache.SetAsync(
+                        dto.Id,
+                        dto,
+                        new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(ProductCacheKeys.DetailTtlMinutes) },
+                        considerUow: false);
+                }
+            });
+
             return new PagedResultDto<ProductDto>(
                 totalCount,
                 productDtos
             );
         }
-
+        [Authorize(ProductSellingPermissions.Products.Default)]
         public override async Task<ProductDto> GetAsync(Guid id)
         {
+            // Try cache first
+            var cached = await _productDetailCache.GetAsync(id);
+            if (cached != null)
+            {
+                _logger.LogDebug("[GetAsync] Cache HIT - ProductId: {ProductId}", id);
+                _ = Task.Run(async () =>
+                {
+                    try { await _recentlyViewedService.TrackProductViewAsync(id); }
+                    catch (Exception ex) { _logger.LogWarning(ex, "Failed to track product view for ProductId: {ProductId}", id); }
+                });
+                return cached;
+            }
+
+
             var query = await Repository.GetQueryableAsync();
             var product = await query
                 .AsNoTracking()
@@ -149,10 +187,8 @@ namespace Acme.ProductSelling.Products
                 await CheckCreatePolicyAsync();
                 var category = await _categoryRepository.GetAsync(input.CategoryId);
 
-                // Use Mapperly
                 var product = _createUpdateProductDtoToProductMapper.Map(input);
 
-                // Set explicit/calculated properties
                 product.UrlSlug = UrlHelperMethod.RemoveDiacritics(product.ProductName);
 
                 await Repository.InsertAsync(product, autoSave: true);
@@ -161,6 +197,9 @@ namespace Acme.ProductSelling.Products
                     _specificationService.CreateSpecificationAsync(product.Id, input, category.SpecificationType),
                     HandleManyToManyAsync(product.Id, input)
                 );
+
+                await InvalidateFeaturedCacheAsync();
+
                 await ScheduleProductReleaseJobAsync(product);
 
                 return await GetAsync(product.Id);
@@ -180,8 +219,10 @@ namespace Acme.ProductSelling.Products
             var product = await (await Repository.GetQueryableAsync())
                 .Include(p => p.Category)
                 .FirstAsync(p => p.Id == id);
+
             var oldReleaseDate = product.ReleaseDate;
             var oldSpecType = product.Category.SpecificationType;
+            var oldSlug = product.UrlSlug;
 
             // Use Mapperly to update existing entity
             _createUpdateProductDtoToProductMapper.Map(input, product);
@@ -203,17 +244,40 @@ namespace Acme.ProductSelling.Products
             {
                 await ScheduleProductReleaseJobAsync(product);
             }
+            await InvalidateProductCacheAsync(id, oldSlug);
+            await InvalidateFeaturedCacheAsync();
             return await GetAsync(product.Id);
         }
+        [Authorize(ProductSellingPermissions.Products.Delete)]
+        public override async Task DeleteAsync(Guid id)
+        {
+            var product = await Repository.FindAsync(id);
+            var slug = product?.UrlSlug;
 
+            await base.DeleteAsync(id);
+
+            await InvalidateProductCacheAsync(id, slug);
+            await InvalidateFeaturedCacheAsync();
+        }
+
+
+        private Task InvalidateFeaturedCacheAsync()
+            => _featuredCache.RemoveAsync(ProductCacheKeys.FeaturedCarousels);
+        private async Task InvalidateProductCacheAsync(Guid productId, string slug = null)
+        {
+            await _productDetailCache.RemoveAsync(productId);
+
+            if (!string.IsNullOrWhiteSpace(slug))
+                await _productSlugCache.RemoveAsync(ProductCacheKeys.DetailBySlug + slug.ToLower());
+        }
         private async Task ScheduleProductReleaseJobAsync(Product product)
         {
-            if (!product.ReleaseDate.HasValue || product.ReleaseDate.Value <= DateTime.Now)
+            if (!product.ReleaseDate.HasValue || product.ReleaseDate.Value <= Clock.Now)
             {
                 return; // Already released or no release date
             }
 
-            var delay = product.ReleaseDate.Value - DateTime.Now;
+            var delay = product.ReleaseDate.Value - Clock.Now;
 
             await _backgroundJobManager.EnqueueAsync(
                 new ProductReleaseJobArgs { ProductId = product.Id },
@@ -250,8 +314,9 @@ namespace Acme.ProductSelling.Products
         }
         private async Task UpdateCaseMaterialsAsync(Guid productId, List<Guid> materialIds)
         {
-            var spec = await _caseSpecificationRepository
-                .GetAsync(s => s.ProductId == productId, includeDetails: true);
+            var caseProduct = await _productRepository.GetAsync(s => s.Id == productId, includeDetails: true);
+
+            var spec = caseProduct.SpecificationBase as CaseSpecification;
 
             spec.Materials.Clear();
 
@@ -264,13 +329,14 @@ namespace Acme.ProductSelling.Products
                 });
             }
 
-            await _caseSpecificationRepository.UpdateAsync(spec, autoSave: false);
+            await _productRepository.UpdateAsync(caseProduct, autoSave: false);
         }
-
         private async Task UpdateCpuCoolerSocketsAsync(Guid productId, List<Guid> socketIds)
         {
-            var spec = await _cpuCoolerSpecificationRepository
-                .GetAsync(s => s.ProductId == productId, includeDetails: true);
+            var cpuCoolerProduct = await _productRepository
+                .GetAsync(s => s.Id == productId, includeDetails: true);
+
+            var spec = cpuCoolerProduct.SpecificationBase as CpuCoolerSpecification;
 
             spec.SupportedSockets.Clear();
 
@@ -283,7 +349,7 @@ namespace Acme.ProductSelling.Products
                 });
             }
 
-            await _cpuCoolerSpecificationRepository.UpdateAsync(spec, autoSave: false);
+            await _productRepository.UpdateAsync(cpuCoolerProduct, autoSave: false);
         }
         private async Task PopulateStoreInventoryAsync(ProductDto productDto, Guid productId)
         {
@@ -314,65 +380,5 @@ namespace Acme.ProductSelling.Products
             }
         }
 
-        public async Task<List<FeaturedCategoryProductsDto>> GetFeaturedProductCarouselsAsync()
-        {
-            var result = new List<FeaturedCategoryProductsDto>();
-
-            // 1. Define the Spec Types we want
-            var featuredSpecTypes = new[]
-            {
-                SpecificationType.Mouse,
-                SpecificationType.Laptop,
-                SpecificationType.Monitor,
-                SpecificationType.Keyboard
-            };
-            var categories = await _categoryRepository.GetListAsync(c => featuredSpecTypes.Contains(c.SpecificationType));
-
-            var categoriesToFeature = categories.Take(4).ToList();
-
-            // 2. Get Categories (Lightweight query)
-            foreach (var category in categoriesToFeature)
-            {
-                var query = await _productRepository.GetQueryableAsync();
-
-                var rawProducts = await query
-                    .AsNoTracking()
-                    .Where(p => p.CategoryId == category.Id && p.StockCount > 0)
-                    .OrderBy(p => Guid.NewGuid())
-                    .Take(20) // Get 20, then shuffle and take 10
-                              //.Select(p => new  // Project only needed fields
-                              //{
-                              //    p.Id,
-                              //    p.ProductName,
-                              //    p.UrlSlug,
-                              //    p.ImageUrl,
-                              //    p.OriginalPrice,
-                              //    p.DiscountedPrice,
-                              //    p.DiscountPercent,
-                              //    CategoryName = p.Category.Name,
-                              //    ManufacturerName = p.Manufacturer.Name,
-                              //    p.StockCount
-                              //})
-                    .Include(p => p.Category)
-                    .Include(p => p.Manufacturer)
-                    .Include(p => p.StoreInventories)
-                    .ToListAsync();
-
-
-                rawProducts = rawProducts.OrderBy(x => Guid.NewGuid()).Shuffle().ToList();
-                if (!rawProducts.Any()) continue;
-
-                // Map to DTO
-                var productDtos = rawProducts.Select(p => _productToProductDtoMapper.Map(p)).ToList();
-
-                result.Add(new FeaturedCategoryProductsDto
-                {
-                    Category = ObjectMapper.Map<Category, CategoryDto>(category),
-                    Products = productDtos
-                });
-            }
-            return result;
-
-        }
     }
 }

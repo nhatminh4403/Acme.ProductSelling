@@ -1,7 +1,6 @@
 ﻿using Acme.ProductSelling.Specifications;
 using Acme.ProductSelling.Specifications.Models;
 using Riok.Mapperly.Abstractions;
-using System;
 using System.Linq;
 using Volo.Abp.Mapperly;
 

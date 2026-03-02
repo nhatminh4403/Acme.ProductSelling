@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.EntityFrameworkCore;
+using Acme.ProductSelling.Orders.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,23 +16,6 @@ namespace Acme.ProductSelling.Orders
             : base(dbContextProvider)
         {
         }
-
-        public async Task<List<Order>> GetListByStoreAsync(Guid storeId, OrderStatus? status = null)
-        {
-            var dbSet = await GetDbSetAsync();
-            var query = dbSet.Where(x => x.StoreId == storeId);
-
-            if (status.HasValue)
-            {
-                query = query.Where(x => x.OrderStatus == status.Value);
-            }
-
-            return await query
-                .Include(o => o.OrderItems)
-                .OrderByDescending(x => x.CreationTime)
-                .ToListAsync();
-        }
-
         public async Task<List<Order>> GetListByStatusAsync(OrderStatus status)
         {
             var dbSet = await GetDbSetAsync();
@@ -51,20 +35,6 @@ namespace Acme.ProductSelling.Orders
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<List<Order>> GetInStoreOrdersAsync(Guid storeId, OrderStatus? status = null)
-        {
-            var dbSet = await GetDbSetAsync();
-            var query = dbSet.Where(x => x.StoreId == storeId && x.OrderType == OrderType.InStore);
 
-            if (status.HasValue)
-            {
-                query = query.Where(x => x.OrderStatus == status.Value);
-            }
-
-            return await query
-                .Include(o => o.OrderItems)
-                .OrderByDescending(x => x.CreationTime)
-                .ToListAsync();
-        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Products.Dtos;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -15,6 +16,7 @@ namespace Acme.ProductSelling.Products.Services
         Task<PagedResultDto<ProductDto>> GetProductsByNameWithPrice(GetProductByNameWithPriceDto input);
         Task<PagedResultDto<ProductDto>> GetProductsByManufacturerWithPrice(GetProductsByManufacturerWithPriceDto input);
 
+        Task<List<FeaturedCategoryProductsDto>> GetFeaturedProductCarouselsAsync();
 
     }
 }

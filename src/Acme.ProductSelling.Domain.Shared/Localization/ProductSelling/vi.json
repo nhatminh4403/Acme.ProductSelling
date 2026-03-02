@@ -196,7 +196,7 @@
     "Product:No": "Không",
     "Product:ProductsByName": "Tìm kiếm theo {0}",
     "Product:NoProductsFound": "Không Tìm Thấy Sản Phẩm",
-
+    "Product:NoFeaturedProductsFound": "Sản phẩm đang cập nhật",
     "Product:NoProductsFoundInCategory": "Không tìm thấy sản phẩm nào trong danh mục này.",
     "Product:NoProductsFoundWithKeyword": "Không tìm thấy sản phẩm nào với từ khóa {0}",
     "Product:NoProductsFoundForThisManufacturer": "Không tìm thấy sản phẩm nào của hãng này.",

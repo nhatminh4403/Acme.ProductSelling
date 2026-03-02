@@ -265,7 +265,7 @@
     "Product:No": "No",
     "Product:SearchByName": "Products by {0}",
     "Product:NoProductsFound": "No Products Found",
-
+    "Product:NoFeaturedProductsFound": "Products to be updated",
     "Product:NoProductsFoundInCategory": "No products found in this category.",
     "Product:NoProductsFoundWithKeyword": "No products found with keyword {0}",
     "Product:NoProductsFoundForThisManufacturer": "No products found for this manufacturer.",

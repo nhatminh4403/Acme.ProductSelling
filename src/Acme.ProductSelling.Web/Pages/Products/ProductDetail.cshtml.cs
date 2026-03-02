@@ -21,7 +21,7 @@ namespace Acme.ProductSelling.Web.Pages.Products
 
         private readonly IProductLookupAppService _productAppService;
         private readonly ILogger<ProductDetailModel> _logger;
-        public ProductDetailModel(IProductLookupAppService productAppService,  ILogger<ProductDetailModel> logger)
+        public ProductDetailModel(IProductLookupAppService productAppService, ILogger<ProductDetailModel> logger)
         {
             _productAppService = productAppService;
             _logger = logger;

@@ -5,7 +5,6 @@ using Acme.ProductSelling.Specifications;
 using Acme.ProductSelling.Specifications.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories;
 // Note: Removed Volo.Abp.ObjectMapping usage
@@ -14,43 +13,45 @@ namespace Acme.ProductSelling.Products.Specification
 {
     public class SpecificationService : ISpecificationService
     {
-        private readonly Dictionary<SpecificationType, ISpecificationHandler> _handlers;
+        //private readonly Dictionary<SpecificationType, ISpecificationHandler> _handlers;
+        private readonly IRepository<SpecificationBase, Guid> _specRepository;
+        private readonly CreateUpdateMonitorSpecToEntityMapper _monitorMapper;
+        private readonly CreateUpdateMouseSpecToEntityMapper _mouseMapper;
+        private readonly CreateUpdateLaptopSpecToEntityMapper _laptopMapper;
+        private readonly CreateUpdateCpuSpecToEntityMapper _cpuMapper;
+        private readonly CreateUpdateGpuSpecToEntityMapper _gpuMapper;
+        private readonly CreateUpdateRamSpecToEntityMapper _ramMapper;
+        private readonly CreateUpdateMotherboardSpecToEntityMapper _motherboardMapper;
+        private readonly CreateUpdateStorageSpecToEntityMapper _storageMapper;
+        private readonly CreateUpdatePsuSpecToEntityMapper _psuMapper;
+        private readonly CreateUpdateCaseSpecToEntityMapper _caseMapper;
+        private readonly CreateUpdateCpuCoolerSpecToEntityMapper _cpuCoolerMapper;
+        private readonly CreateUpdateKeyboardSpecToEntityMapper _keyboardMapper;
+        private readonly CreateUpdateHeadsetSpecToEntityMapper _headsetMapper;
+        private readonly CreateUpdateSpeakerSpecToEntityMapper _speakerMapper;
+        private readonly CreateUpdateWebcamSpecToEntityMapper _webcamMapper;
+        private readonly CreateUpdateCableSpecToEntityMapper _cableMapper;
+        private readonly CreateUpdateSoftwareSpecToEntityMapper _softwareMapper;
+        private readonly CreateUpdateCaseFanSpecToEntityMapper _caseFanMapper;
+        private readonly CreateUpdateChairSpecToEntityMapper _chairMapper;
+        private readonly CreateUpdateDeskSpecToEntityMapper _deskMapper;
+        private readonly CreateUpdateChargerSpecToEntityMapper _chargerMapper;
+        private readonly CreateUpdateConsoleSpecToEntityMapper _consoleMapper;
+        private readonly CreateUpdateHandheldSpecToEntityMapper _handheldMapper;
+        private readonly CreateUpdateHubSpecToEntityMapper _hubMapper;
+        private readonly CreateUpdateMemoryCardSpecToEntityMapper _memoryCardMapper;
+        private readonly CreateUpdateMicrophoneSpecToEntityMapper _microphoneMapper;
+        private readonly CreateUpdateMousePadSpecToEntityMapper _mousePadMapper;
+        private readonly CreateUpdateNetworkHardwareSpecToEntityMapper _networkMapper;
+        private readonly CreateUpdatePowerBankSpecToEntityMapper _powerBankMapper;
+        private readonly IServiceProvider _serviceProvider;
+        private record HandlerRegistry(Func<IServiceProvider, CreateUpdateProductDto, SpecificationBase> BuildAsync,
+            Action<IServiceProvider, SpecificationBase, CreateUpdateProductDto> UpdateAsync);
+        private readonly Dictionary<SpecificationType, HandlerRegistry> _registry;
 
-        // The constructor becomes large because we inject specific mappers instead of generic factory.
-        // This is necessary for type-safe static Mapperly mappings.
         public SpecificationService(
-            // --- Repositories ---
-            IRepository<MonitorSpecification, Guid> monitorRepo,
-            IRepository<MouseSpecification, Guid> mouseRepo,
-            IRepository<LaptopSpecification, Guid> laptopRepo,
-            IRepository<CpuSpecification, Guid> cpuRepo,
-            IRepository<GpuSpecification, Guid> gpuRepo,
-            IRepository<RamSpecification, Guid> ramRepo,
-            IRepository<MotherboardSpecification, Guid> motherboardRepo,
-            IRepository<StorageSpecification, Guid> storageRepo,
-            IRepository<PsuSpecification, Guid> psuRepo,
-            IRepository<CaseSpecification, Guid> caseRepo,
-            IRepository<CpuCoolerSpecification, Guid> cpuCoolerRepo,
-            IRepository<KeyboardSpecification, Guid> keyboardRepo,
-            IRepository<HeadsetSpecification, Guid> headsetRepo,
-            IRepository<SpeakerSpecification, Guid> speakerRepo,
-            IRepository<WebcamSpecification, Guid> webcamRepo,
-            IRepository<CableSpecification, Guid> cableRepo,
-            IRepository<SoftwareSpecification, Guid> softwareRepo,
-            IRepository<CaseFanSpecification, Guid> caseFanRepo,
-            IRepository<ChairSpecification, Guid> chairRepo,
-            IRepository<DeskSpecification, Guid> deskRepo,
-            IRepository<ChargerSpecification, Guid> chargerRepo,
-            IRepository<ConsoleSpecification, Guid> consoleRepo,
-            IRepository<HandheldSpecification, Guid> handheldRepo,
-            IRepository<HubSpecification, Guid> hubRepo,
-            IRepository<MemoryCardSpecification, Guid> memoryCardRepo,
-            IRepository<MicrophoneSpecification, Guid> microphoneRepo,
-            IRepository<MousePadSpecification, Guid> mousepadRepo,
-            IRepository<NetworkHardwareSpecification, Guid> networkHardwareRepo,
-            IRepository<PowerBankSpecification, Guid> powerBankRepo,
-
-            // --- Mappers (Generated via Mapperly) ---
+            Dictionary<SpecificationType, ISpecificationHandler> handlers,
+            IRepository<SpecificationBase, Guid> specRepository,
             CreateUpdateMonitorSpecToEntityMapper monitorMapper,
             CreateUpdateMouseSpecToEntityMapper mouseMapper,
             CreateUpdateLaptopSpecToEntityMapper laptopMapper,
@@ -79,143 +80,241 @@ namespace Acme.ProductSelling.Products.Specification
             CreateUpdateMicrophoneSpecToEntityMapper microphoneMapper,
             CreateUpdateMousePadSpecToEntityMapper mousePadMapper,
             CreateUpdateNetworkHardwareSpecToEntityMapper networkMapper,
-            CreateUpdatePowerBankSpecToEntityMapper powerBankMapper
-        )
+            CreateUpdatePowerBankSpecToEntityMapper powerBankMapper,
+            IServiceProvider serviceProvider)
         {
-            // Init dictionary
-            _handlers = new Dictionary<SpecificationType, ISpecificationHandler>();
+            _registry = new Dictionary<SpecificationType, HandlerRegistry>();
 
-            // Helper to clean up instantiation
-            void AddHandler<TEntity, TDto, TMapper>(
-                SpecificationType type,
-                IRepository<TEntity, Guid> repo,
-                TMapper mapper,
-                Func<CreateUpdateProductDto, TDto> selector,
-                Func<TMapper, TDto, TEntity> createMap,
-                Action<TMapper, TDto, TEntity> updateMap)
-                where TEntity : SpecificationBase, new()
-                where TDto : class
-            {
-                _handlers.Add(type, new SpecificationHandler<TEntity, TDto>(
-                    repo,
-                    dto => selector(dto), // Get specific DTO part from ProductDto
-                    specDto => createMap(mapper, specDto), // Function to create entity
-                    (specDto, entity) => updateMap(mapper, specDto, entity) // Function to update entity
-                ));
-            }
+            _specRepository = specRepository;
+            _monitorMapper = monitorMapper;
+            _mouseMapper = mouseMapper;
+            _laptopMapper = laptopMapper;
+            _cpuMapper = cpuMapper;
+            _gpuMapper = gpuMapper;
+            _ramMapper = ramMapper;
+            _motherboardMapper = motherboardMapper;
+            _storageMapper = storageMapper;
+            _psuMapper = psuMapper;
+            _caseMapper = caseMapper;
+            _cpuCoolerMapper = cpuCoolerMapper;
+            _keyboardMapper = keyboardMapper;
+            _headsetMapper = headsetMapper;
+            _speakerMapper = speakerMapper;
+            _webcamMapper = webcamMapper;
+            _cableMapper = cableMapper;
+            _softwareMapper = softwareMapper;
+            _caseFanMapper = caseFanMapper;
+            _chairMapper = chairMapper;
+            _deskMapper = deskMapper;
+            _chargerMapper = chargerMapper;
+            _consoleMapper = consoleMapper;
+            _handheldMapper = handheldMapper;
+            _hubMapper = hubMapper;
+            _memoryCardMapper = memoryCardMapper;
+            _microphoneMapper = microphoneMapper;
+            _mousePadMapper = mousePadMapper;
+            _networkMapper = networkMapper;
+            _powerBankMapper = powerBankMapper;
+            _serviceProvider = serviceProvider;
 
-            // --- Register Handlers ---
-            AddHandler(SpecificationType.Monitor, monitorRepo, monitorMapper,
-                d => d.MonitorSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
 
-            AddHandler(SpecificationType.Mouse, mouseRepo, mouseMapper,
-                d => d.MouseSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.Laptop, laptopRepo, laptopMapper,
-                d => d.LaptopSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.CPU, cpuRepo, cpuMapper,
-                d => d.CpuSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.GPU, gpuRepo, gpuMapper,
-                d => d.GpuSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.RAM, ramRepo, ramMapper,
-                d => d.RamSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.Motherboard, motherboardRepo, motherboardMapper,
-                d => d.MotherboardSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.Storage, storageRepo, storageMapper,
-                d => d.StorageSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.PSU, psuRepo, psuMapper,
-                d => d.PsuSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.Case, caseRepo, caseMapper,
-                d => d.CaseSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.CPUCooler, cpuCoolerRepo, cpuCoolerMapper,
-                d => d.CpuCoolerSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.Keyboard, keyboardRepo, keyboardMapper,
-                d => d.KeyboardSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.Headset, headsetRepo, headsetMapper,
-                d => d.HeadsetSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.Speaker, speakerRepo, speakerMapper,
-                d => d.SpeakerSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.Webcam, webcamRepo, webcamMapper,
-                d => d.WebcamSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.Cable, cableRepo, cableMapper,
-                d => d.CableSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.Software, softwareRepo, softwareMapper,
-                d => d.SoftwareSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.CaseFan, caseFanRepo, caseFanMapper,
-                d => d.CaseFanSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.Chair, chairRepo, chairMapper,
-                d => d.ChairSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.Desk, deskRepo, deskMapper,
-                d => d.DeskSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.Charger, chargerRepo, chargerMapper,
-                d => d.ChargerSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.Console, consoleRepo, consoleMapper,
-                d => d.ConsoleSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.Handheld, handheldRepo, handheldMapper,
-                d => d.HandheldSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.Hub, hubRepo, hubMapper,
-                d => d.HubSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.MemoryCard, memoryCardRepo, memoryCardMapper,
-                d => d.MemoryCardSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.Microphone, microphoneRepo, microphoneMapper,
-                d => d.MicrophoneSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.MousePad, mousepadRepo, mousePadMapper,
-                d => d.MousepadSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.NetworkHardware, networkHardwareRepo, networkMapper,
-                d => d.NetworkHardwareSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
-
-            AddHandler(SpecificationType.PowerBank, powerBankRepo, powerBankMapper,
-                d => d.PowerBankSpecification, (m, s) => m.Map(s), (m, s, e) => m.Map(s, e));
         }
 
         // Methods below delegate to handlers without changes
         public async Task CreateSpecificationAsync(Guid productId, CreateUpdateProductDto dto, SpecificationType specType)
         {
-            if (_handlers.TryGetValue(specType, out var handler))
-                await handler.CreateAsync(productId, dto);
+            var spec = BuildNewSpec(dto, specType); // switch → mapper.Map(dto.XxxSpec)
+            spec.ProductId = productId;
+            await _specRepository.InsertAsync(spec, autoSave: true);
         }
 
         public async Task DeleteAllSpecificationsAsync(Guid productId)
         {
-            var deleteTasks = _handlers.Values.Select(handler => handler.DeleteIfExistsAsync(productId));
-            await Task.WhenAll(deleteTasks);
+            var existing = await _specRepository.FindAsync(s => s.ProductId == productId);
+            if (existing != null)
+                await _specRepository.DeleteAsync(existing, autoSave: true);
+
         }
 
         public async Task HandleCategoryChangeAsync(Guid productId, SpecificationType currentSpecType, SpecificationType newSpecType)
         {
-            if (currentSpecType != newSpecType && _handlers.TryGetValue(currentSpecType, out var oldHandler))
-                await oldHandler.DeleteIfExistsAsync(productId);
+            if (currentSpecType == newSpecType) return;
+
+            var existing = await _specRepository.FindAsync(s => s.ProductId == productId);
+            if (existing != null)
+                await _specRepository.DeleteAsync(existing, autoSave: true);
         }
 
         public async Task UpdateSpecificationAsync(Guid productId, CreateUpdateProductDto dto, SpecificationType specType)
         {
-            if (_handlers.TryGetValue(specType, out var handler))
-                await handler.UpdateAsync(productId, dto);
+            var existing = await _specRepository.FindAsync(s => s.ProductId == productId);
+
+            if (existing == null)
+            {
+                await CreateSpecificationAsync(productId, dto, specType);
+                return;
+            }
+
+            // Type matches — update in place
+            ApplyUpdate(existing, dto);
+            await _specRepository.UpdateAsync(existing, autoSave: true);
+        }
+        private SpecificationBase BuildNewSpec(CreateUpdateProductDto dto, SpecificationType specType)
+        {
+            return specType switch
+            {
+                SpecificationType.Cable => _cableMapper.Map(dto.CableSpecification),
+                SpecificationType.CaseFan => _caseFanMapper.Map(dto.CaseFanSpecification),
+                SpecificationType.Case => _caseMapper.Map(dto.CaseSpecification),
+                SpecificationType.Chair => _chairMapper.Map(dto.ChairSpecification),
+                SpecificationType.Charger => _chargerMapper.Map(dto.ChargerSpecification),
+                SpecificationType.Console => _consoleMapper.Map(dto.ConsoleSpecification),
+                SpecificationType.CPUCooler => _cpuCoolerMapper.Map(dto.CpuCoolerSpecification),
+                SpecificationType.CPU => _cpuMapper.Map(dto.CpuSpecification),
+                SpecificationType.Desk => _deskMapper.Map(dto.DeskSpecification),
+                SpecificationType.GPU => _gpuMapper.Map(dto.GpuSpecification),
+                SpecificationType.Handheld => _handheldMapper.Map(dto.HandheldSpecification),
+                SpecificationType.Headset => _headsetMapper.Map(dto.HeadsetSpecification),
+                SpecificationType.Hub => _hubMapper.Map(dto.HubSpecification),
+                SpecificationType.Keyboard => _keyboardMapper.Map(dto.KeyboardSpecification),
+                SpecificationType.Laptop => _laptopMapper.Map(dto.LaptopSpecification),
+                SpecificationType.MemoryCard => _memoryCardMapper.Map(dto.MemoryCardSpecification),
+                SpecificationType.Microphone => _microphoneMapper.Map(dto.MicrophoneSpecification),
+                SpecificationType.Monitor => _monitorMapper.Map(dto.MonitorSpecification),
+                SpecificationType.Motherboard => _motherboardMapper.Map(dto.MotherboardSpecification),
+                SpecificationType.MousePad => _mousePadMapper.Map(dto.MousepadSpecification),
+                SpecificationType.Mouse => _mouseMapper.Map(dto.MouseSpecification),
+                SpecificationType.NetworkHardware => _networkMapper.Map(dto.NetworkHardwareSpecification),
+                SpecificationType.PowerBank => _powerBankMapper.Map(dto.PowerBankSpecification),
+                SpecificationType.PSU => _psuMapper.Map(dto.PsuSpecification),
+                SpecificationType.RAM => _ramMapper.Map(dto.RamSpecification),
+                SpecificationType.Software => _softwareMapper.Map(dto.SoftwareSpecification),
+                SpecificationType.Speaker => _speakerMapper.Map(dto.SpeakerSpecification),
+                SpecificationType.Storage => _storageMapper.Map(dto.StorageSpecification),
+                SpecificationType.Webcam => _webcamMapper.Map(dto.WebcamSpecification),
+                _ => throw new ArgumentOutOfRangeException(nameof(specType))
+            };
+        }
+        private void ApplyUpdate(SpecificationBase existing, CreateUpdateProductDto dto)
+        {
+            switch (existing)
+            {
+                case CableSpecification e:
+                    _cableMapper.Map(dto.CableSpecification, e);
+                    break;
+
+                case CaseFanSpecification e:
+                    _caseFanMapper.Map(dto.CaseFanSpecification, e);
+                    break;
+
+                case CaseSpecification e:
+                    _caseMapper.Map(dto.CaseSpecification, e);
+                    break;
+
+                case ChairSpecification e:
+                    _chairMapper.Map(dto.ChairSpecification, e);
+                    break;
+
+                case ChargerSpecification e:
+                    _chargerMapper.Map(dto.ChargerSpecification, e);
+                    break;
+
+                case ConsoleSpecification e:
+                    _consoleMapper.Map(dto.ConsoleSpecification, e);
+                    break;
+
+                case CpuCoolerSpecification e:
+                    _cpuCoolerMapper.Map(dto.CpuCoolerSpecification, e);
+                    break;
+
+                case CpuSpecification e:
+                    _cpuMapper.Map(dto.CpuSpecification, e);
+                    break;
+
+                case DeskSpecification e:
+                    _deskMapper.Map(dto.DeskSpecification, e);
+                    break;
+
+                case GpuSpecification e:
+                    _gpuMapper.Map(dto.GpuSpecification, e);
+                    break;
+
+                case HandheldSpecification e:
+                    _handheldMapper.Map(dto.HandheldSpecification, e);
+                    break;
+
+                case HeadsetSpecification e:
+                    _headsetMapper.Map(dto.HeadsetSpecification, e);
+                    break;
+
+                case HubSpecification e:
+                    _hubMapper.Map(dto.HubSpecification, e);
+                    break;
+
+                case KeyboardSpecification e:
+                    _keyboardMapper.Map(dto.KeyboardSpecification, e);
+                    break;
+
+                case LaptopSpecification e:
+                    _laptopMapper.Map(dto.LaptopSpecification, e);
+                    break;
+
+                case MemoryCardSpecification e:
+                    _memoryCardMapper.Map(dto.MemoryCardSpecification, e);
+                    break;
+
+                case MicrophoneSpecification e:
+                    _microphoneMapper.Map(dto.MicrophoneSpecification, e);
+                    break;
+
+                case MonitorSpecification e:
+                    _monitorMapper.Map(dto.MonitorSpecification, e);
+                    break;
+
+                case MotherboardSpecification e:
+                    _motherboardMapper.Map(dto.MotherboardSpecification, e);
+                    break;
+
+                case MousePadSpecification e:
+                    _mousePadMapper.Map(dto.MousepadSpecification, e);
+                    break;
+
+                case MouseSpecification e:
+                    _mouseMapper.Map(dto.MouseSpecification, e);
+                    break;
+
+                case NetworkHardwareSpecification e:
+                    _networkMapper.Map(dto.NetworkHardwareSpecification, e);
+                    break;
+
+                case PowerBankSpecification e:
+                    _powerBankMapper.Map(dto.PowerBankSpecification, e);
+                    break;
+
+                case PsuSpecification e:
+                    _psuMapper.Map(dto.PsuSpecification, e);
+                    break;
+
+                case RamSpecification e:
+                    _ramMapper.Map(dto.RamSpecification, e);
+                    break;
+
+                case SoftwareSpecification e:
+                    _softwareMapper.Map(dto.SoftwareSpecification, e);
+                    break;
+
+                case SpeakerSpecification e:
+                    _speakerMapper.Map(dto.SpeakerSpecification, e);
+                    break;
+
+                case StorageSpecification e:
+                    _storageMapper.Map(dto.StorageSpecification, e);
+                    break;
+
+                case WebcamSpecification e:
+                    _webcamMapper.Map(dto.WebcamSpecification, e);
+                    break;
+            }
         }
     }
 }

@@ -1,0 +1,233 @@
+﻿.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background-color: var(--bg-mid);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-shadow: 0 2px 10px var(--shadow-md);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.toggle-btn {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 10px;
+    margin-right: 20px;
+    transition: all 0.3s ease;
+    border-radius: 5px;
+}
+
+    .toggle-btn:hover {
+        background-color: var(--bg-hover);
+        color: var(--accent);
+    }
+
+.header-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* ── Header Right ── */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.language-switcher {
+    padding: 8px 15px;
+    background-color: var(--bg-mid);
+    border-radius: 6px;
+    min-width: 100px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+}
+
+/* ── Account Button ── */
+.account-dropdown {
+    position: relative;
+}
+
+.account-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--bg-mid);
+    border: 1px solid var(--border-color);
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text-primary);
+}
+
+    .account-btn:hover {
+        background-color: var(--bg-hover);
+        border-color: var(--accent);
+    }
+
+.account-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.account-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.account-name {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.account-role {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.account-arrow {
+    font-size: 12px;
+    margin-left: 5px;
+    transition: transform 0.3s ease;
+}
+
+    .account-arrow.rotated {
+        transform: rotate(180deg);
+    }
+
+/* ── Account Dropdown Menu ── */
+.dropdown-menu-custom {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background-color: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    min-width: 220px;
+    box-shadow: 0 5px 20px var(--shadow-lg);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1001;
+}
+
+    .dropdown-menu-custom.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+.dropdown-header {
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dropdown-user-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+}
+
+.dropdown-user-email {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.dropdown-item-custom {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+    .dropdown-item-custom:hover {
+        background-color: var(--bg-mid);
+        color: var(--accent);
+    }
+
+    .dropdown-item-custom i {
+        width: 18px;
+        font-size: 16px;
+    }
+
+.dropdown-divider-custom {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 5px 0;
+}
+
+.dropdown-item-custom.danger:hover {
+    background-color: var(--danger-bg);
+    color: var(--danger-alt);
+}
+
+/* ── Header Responsive ── */
+@media (max-width: 768px) {
+    .header-title {
+        font-size: 18px;
+    }
+
+    .account-info {
+        display: none;
+    }
+
+    .language-switcher {
+        min-width: 80px;
+        padding: 8px 10px;
+    }
+
+    .header-right {
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 0 10px;
+    }
+
+    .header-title {
+        display: none;
+    }
+
+    .toggle-btn {
+        margin-right: 10px;
+    }
+}

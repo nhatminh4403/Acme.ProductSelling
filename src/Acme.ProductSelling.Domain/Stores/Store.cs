@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Domain.Entities.Auditing;
 
 namespace Acme.ProductSelling.Stores
@@ -9,6 +10,7 @@ namespace Acme.ProductSelling.Stores
         public string Code { get; set; } // Unique store code (e.g., "ST001")
         public string Address { get; set; }
         public string City { get; set; }
+        [Phone]
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
         public bool IsActive { get; set; }

@@ -1,6 +1,6 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Manufacturers;
-using Acme.ProductSelling.Specifications.Models;
+using Acme.ProductSelling.Specifications;
 using Acme.ProductSelling.StoreInventories;
 using System;
 using System.Collections.Generic;
@@ -58,36 +58,37 @@ namespace Acme.ProductSelling.Products
         public virtual ICollection<StoreInventory> StoreInventories { get; set; } = new HashSet<StoreInventory>();
 
         #region Specifications
-        public virtual MonitorSpecification MonitorSpecification { get; set; }
-        public virtual MouseSpecification MouseSpecification { get; set; }
-        public virtual LaptopSpecification LaptopSpecification { get; set; }
-        public virtual CpuSpecification CpuSpecification { get; set; }
-        public virtual GpuSpecification GpuSpecification { get; set; }
-        public virtual RamSpecification RamSpecification { get; set; }
-        public virtual MotherboardSpecification MotherboardSpecification { get; set; }
-        public virtual StorageSpecification StorageSpecification { get; set; }
-        public virtual PsuSpecification PsuSpecification { get; set; }
-        public virtual CaseSpecification CaseSpecification { get; set; }
-        public virtual CpuCoolerSpecification CpuCoolerSpecification { get; set; }
-        public virtual KeyboardSpecification KeyboardSpecification { get; set; }
-        public virtual HeadsetSpecification HeadsetSpecification { get; set; }
+        //public virtual MonitorSpecification MonitorSpecification { get; set; }
+        //public virtual MouseSpecification MouseSpecification { get; set; }
+        //public virtual LaptopSpecification LaptopSpecification { get; set; }
+        //public virtual CpuSpecification CpuSpecification { get; set; }
+        //public virtual GpuSpecification GpuSpecification { get; set; }
+        //public virtual RamSpecification RamSpecification { get; set; }
+        //public virtual MotherboardSpecification MotherboardSpecification { get; set; }
+        //public virtual StorageSpecification StorageSpecification { get; set; }
+        //public virtual PsuSpecification PsuSpecification { get; set; }
+        //public virtual CaseSpecification CaseSpecification { get; set; }
+        //public virtual CpuCoolerSpecification CpuCoolerSpecification { get; set; }
+        //public virtual KeyboardSpecification KeyboardSpecification { get; set; }
+        //public virtual HeadsetSpecification HeadsetSpecification { get; set; }
 
-        public virtual SpeakerSpecification SpeakerSpecification { get; set; }
-        public virtual WebcamSpecification WebcamSpecification { get; set; }
-        public virtual CableSpecification CableSpecification { get; set; }
-        public virtual SoftwareSpecification SoftwareSpecification { get; set; }
-        public virtual CaseFanSpecification CaseFanSpecification { get; set; }
-        public virtual ChairSpecification ChairSpecification { get; set; }
-        public virtual DeskSpecification DeskSpecification { get; set; }
-        public virtual ChargerSpecification ChargerSpecification { get; set; }
-        public virtual ConsoleSpecification ConsoleSpecification { get; set; }
-        public virtual HandheldSpecification HandheldSpecification { get; set; }
-        public virtual HubSpecification HubSpecification { get; set; }
-        public virtual MemoryCardSpecification MemoryCardSpecification { get; set; }
-        public virtual MicrophoneSpecification MicrophoneSpecification { get; set; }
-        public virtual MousePadSpecification MousepadSpecification { get; set; }
-        public virtual NetworkHardwareSpecification NetworkHardwareSpecification { get; set; }
-        public virtual PowerBankSpecification PowerBankSpecification { get; set; }
+        //public virtual SpeakerSpecification SpeakerSpecification { get; set; }
+        //public virtual WebcamSpecification WebcamSpecification { get; set; }
+        //public virtual CableSpecification CableSpecification { get; set; }
+        //public virtual SoftwareSpecification SoftwareSpecification { get; set; }
+        //public virtual CaseFanSpecification CaseFanSpecification { get; set; }
+        //public virtual ChairSpecification ChairSpecification { get; set; }
+        //public virtual DeskSpecification DeskSpecification { get; set; }
+        //public virtual ChargerSpecification ChargerSpecification { get; set; }
+        //public virtual ConsoleSpecification ConsoleSpecification { get; set; }
+        //public virtual HandheldSpecification HandheldSpecification { get; set; }
+        //public virtual HubSpecification HubSpecification { get; set; }
+        //public virtual MemoryCardSpecification MemoryCardSpecification { get; set; }
+        //public virtual MicrophoneSpecification MicrophoneSpecification { get; set; }
+        //public virtual MousePadSpecification MousepadSpecification { get; set; }
+        //public virtual NetworkHardwareSpecification NetworkHardwareSpecification { get; set; }
+        //public virtual PowerBankSpecification PowerBankSpecification { get; set; }
+        public virtual SpecificationBase SpecificationBase { get; set; }
         #endregion
 
         private void CalculateDiscountedPrice()

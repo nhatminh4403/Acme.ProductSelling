@@ -1,6 +1,5 @@
 ﻿
 :root {
-    /* --- Your Existing Variables --- */
     --header-bg: #4CE1CA;
     --primary-color: #10b981;
     --primary-hover: #059669;
@@ -21,7 +20,7 @@
     --login-btn-hover: #374151;
     --header-height: 80px;
 
-    /* --- Sidebar Specific Variables (Compact Design) --- */
+    /* --- Sidebar Specific Variables  --- */
     --sidebar-width: 280px;
     --sidebar-bg: #f9fafb;
     --sidebar-item-padding: 0.5rem 1rem;

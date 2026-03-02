@@ -1,8 +1,8 @@
 ﻿using Acme.ProductSelling.Data.BaseSeeder;
 using Acme.ProductSelling.Manufacturers;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
 namespace Acme.ProductSelling.Data.Manufacturers
 {
     public class ManufacturerSeeder : IDataSeederContributor
@@ -192,14 +192,15 @@ namespace Acme.ProductSelling.Data.Manufacturers
             string imageUrl,
             string description)
         {
-            return await _manufacturerRepository.InsertAsync(new Manufacturer
-            {
-                Name = name,
-                UrlSlug = urlSlug,
-                ContactInfo = contactInfo,
-                ManufacturerImage = imageUrl,
-                Description = description
-            }, autoSave: true);
+
+            var newManufacturer = new Manufacturer(Guid.NewGuid(),
+                                                   name: name,
+                                                   urlSlug: urlSlug,
+                                                   contactInfo: contactInfo,
+                                                   manufacturerImage: imageUrl,
+                                                   description: description);
+
+            return await _manufacturerRepository.InsertAsync(newManufacturer, autoSave: true);
         }
     }
 

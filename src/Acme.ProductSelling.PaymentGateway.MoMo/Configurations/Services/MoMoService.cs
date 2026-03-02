@@ -1,5 +1,4 @@
 ﻿//using Newtonsoft.Json;
-using Acme.ProductSelling.PaymentGateway.MoMo.Configurations;
 using Acme.ProductSelling.PaymentGateway.MoMo.Configurations.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

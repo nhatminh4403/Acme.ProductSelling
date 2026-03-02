@@ -106,7 +106,7 @@ namespace Acme.ProductSelling.Orders.Services
                 CustomerId = order.CustomerId,
                 OrderStatus = order.OrderStatus.ToString(),
                 PaymentStatus = order.PaymentStatus.ToString(),
-                StoreId = order.StoreId,
+                //StoreId = order.StoreId,
                 IsInStore = order.OrderType == OrderType.Online
             });
             await _orderHistoryAppService.LogOrderChangeAsync(order.Id, OrderStatus.Pending, order.OrderStatus, PaymentStatus.Unpaid, order.PaymentStatus, _localizer["Order:Created"]);
@@ -114,10 +114,10 @@ namespace Acme.ProductSelling.Orders.Services
             return new CreateOrderResultDto { Order = _orderMapper.Map(order), RedirectUrl = gatewayResult.RedirectUrl };
         }
         [RemoteService(false)]
-        public async Task<OrderDto> ConfirmPayPalOrderAsync(Guid guid)
+        public async Task<OrderDto> ConfirmPayPalOrderAsync(Guid id)
         {
-            var order = await _orderRepository.GetAsync(guid);
-            if (order.CustomerId != CurrentUser.Id) throw new EntityNotFoundException(typeof(Order), guid);
+            var order = await _orderRepository.GetAsync(id) as OnlineOrder;
+            if (order.CustomerId != CurrentUser.Id) throw new EntityNotFoundException(typeof(Order), id);
 
             if (order.PaymentStatus == PaymentStatus.Pending)
             {
@@ -130,7 +130,7 @@ namespace Acme.ProductSelling.Orders.Services
                     CustomerId = order.CustomerId,
                     OrderStatus = order.OrderStatus.ToString(),
                     PaymentStatus = order.PaymentStatus.ToString(),
-                    StoreId = order.StoreId,
+                    //StoreId = order.StoreId,
                     IsInStore = order.OrderType == OrderType.Online
                 });
             }
@@ -139,13 +139,13 @@ namespace Acme.ProductSelling.Orders.Services
 
         public async Task DeleteAsync(Guid id)
         {
-            var order = await _orderRepository.GetAsync(id, includeDetails: true);
+            var order = await _orderRepository.GetAsync(id, includeDetails: true) as OnlineOrder;
             if (order.CustomerId != CurrentUser.Id) throw new AbpAuthorizationException(L["Account:Unauthorized"]);
 
             // Domain Manager handles logic + restoring stock
             await _orderManager.RestoreStockAsync(order);
 
-            order.CancelByUser(_localizer);
+            order.CancelByUser();
             await _orderRepository.UpdateAsync(order, autoSave: true);
 
             //await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
@@ -155,10 +155,14 @@ namespace Acme.ProductSelling.Orders.Services
                 CustomerId = order.CustomerId,
                 OrderStatus = order.OrderStatus.ToString(),
                 PaymentStatus = order.PaymentStatus.ToString(),
-                StoreId = order.StoreId,
                 IsInStore = order.OrderType == OrderType.Online
             });
-            await _orderHistoryAppService.LogOrderChangeAsync(id, OrderStatus.Pending, order.OrderStatus, PaymentStatus.Unpaid, order.PaymentStatus, _localizer["Order:CancelledByUser"]);
+            await _orderHistoryAppService.LogOrderChangeAsync(id,
+                                                            OrderStatus.Pending,
+                                                            order.OrderStatus,
+                                                            PaymentStatus.Unpaid,
+                                                            order.PaymentStatus,
+                                                            _localizer["Order:CancelledByUser"]);
         }
 
         public async Task<OrderDto> GetAsync(Guid id)

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Timing;
 using Volo.Abp.Uow;
 
 namespace Acme.ProductSelling.Orders.BackgroundJobs.OrderCleanup
@@ -14,11 +15,13 @@ namespace Acme.ProductSelling.Orders.BackgroundJobs.OrderCleanup
         private readonly IRepository<Order, Guid> _orderRepository;
 
         private readonly ILogger<CleanupOldOrdersJob> _logger;
+        private readonly IClock _clock;
 
-        public CleanupOldOrdersJob(IRepository<Order, Guid> orderRepository, ILogger<CleanupOldOrdersJob> logger)
+        public CleanupOldOrdersJob(IRepository<Order, Guid> orderRepository, ILogger<CleanupOldOrdersJob> logger, IClock clock)
         {
             _orderRepository = orderRepository;
             _logger = logger;
+            _clock = clock;
         }
 
         [UnitOfWork]
@@ -26,7 +29,7 @@ namespace Acme.ProductSelling.Orders.BackgroundJobs.OrderCleanup
         {
             try
             {
-                var cutoffDate = DateTime.UtcNow.AddMonths(-args.MonthsOld);
+                var cutoffDate = _clock.Now.AddMonths(-args.MonthsOld);
 
                 _logger.LogInformation("Starting cleanup of orders older than {CutoffDate}", cutoffDate);
 

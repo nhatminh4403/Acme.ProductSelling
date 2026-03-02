@@ -159,7 +159,7 @@ namespace Acme.ProductSelling.Products
                 {
                     if (existingProductMap.TryGetValue(productId, out var existingItem))
                     {
-                        existingItem.UpdateViewedTime();
+                        existingItem.UpdateViewedTime(Clock.Now);
                         itemsToUpdate.Add(existingItem);
                     }
                     else
@@ -216,7 +216,7 @@ namespace Acme.ProductSelling.Products
 
                 if (existing != null)
                 {
-                    existing.UpdateViewedTime();
+                    existing.UpdateViewedTime(Clock.Now);
                     await _recentlyViewedRepository.UpdateAsync(existing);
                 }
                 else

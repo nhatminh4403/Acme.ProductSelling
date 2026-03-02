@@ -1,7 +1,6 @@
 ﻿using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Localization;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,17 +9,14 @@ namespace Acme.ProductSelling.Web.Pages;
 public class IndexModel : ProductSellingPageModel
 {
     private readonly IStringLocalizer<ProductSellingResource> _localizer;
-    private readonly IProductAppService _productAppService;
+    private readonly IProductLookupAppService _productLookupAppService;
 
     public List<FeaturedCategoryProductsDto> FeaturedProductCarousels { get; set; }
-    private readonly IDistributedCache _cache;
-    public IndexModel(IProductAppService productAppService,
-                      IStringLocalizer<ProductSellingResource> localizer,
-                      IDistributedCache cache)
+    public IndexModel(IProductLookupAppService productLookupAppService,
+                      IStringLocalizer<ProductSellingResource> localizer)
     {
-        _productAppService = productAppService;
+        _productLookupAppService = productLookupAppService;
         _localizer = localizer;
-        _cache = cache;
     }
 
     public async Task OnGetAsync()
@@ -31,6 +27,6 @@ public class IndexModel : ProductSellingPageModel
         //    async () => await _productAppService.GetFeaturedProductCarouselsAsync(),
         //    TimeSpan.FromHours(1)
         //);
-        FeaturedProductCarousels = await _productAppService.GetFeaturedProductCarouselsAsync();
+        FeaturedProductCarousels = await _productLookupAppService.GetFeaturedProductCarouselsAsync();
     }
 }

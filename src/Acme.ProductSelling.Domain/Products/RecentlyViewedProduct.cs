@@ -27,9 +27,9 @@ namespace Acme.ProductSelling.Products
             ViewedAt = viewedAt;
         }
 
-        public void UpdateViewedTime()
+        public void UpdateViewedTime(DateTime viewedAt)
         {
-            ViewedAt = DateTime.UtcNow;
+            ViewedAt = viewedAt;
         }
     }
 }

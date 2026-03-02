@@ -11,7 +11,7 @@ namespace Acme.ProductSelling.Specifications
         public int ModuleCount { get; set; }
         public string Timing { get; set; }
         public float Voltage { get; set; }
-        public bool HasRGB { get; set; }
+        public bool HasRgb { get; set; }
         public RamFormFactor RamFormFactor { get; set; }
     }
 }

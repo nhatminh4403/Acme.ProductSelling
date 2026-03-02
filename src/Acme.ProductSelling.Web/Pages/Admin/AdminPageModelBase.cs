@@ -57,7 +57,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin
             var roles = await UserRepository.GetRolesAsync(user.Id);
 
             // Priority order
-           
+
             if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.IdentityRoleConsts.Manager, StringComparison.OrdinalIgnoreCase)))
                 return "manager";
             if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.IdentityRoleConsts.Seller, StringComparison.OrdinalIgnoreCase)))

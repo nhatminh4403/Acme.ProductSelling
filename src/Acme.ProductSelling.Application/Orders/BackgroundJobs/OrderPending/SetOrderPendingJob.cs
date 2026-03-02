@@ -1,6 +1,7 @@
 ﻿using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Orders.Hubs;
 using Acme.ProductSelling.Orders.Services;
+using Google.Apis.Util;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -22,14 +23,15 @@ namespace Acme.ProductSelling.Orders.BackgroundJobs.OrderPending
         private readonly IOrderNotificationService _orderNotificationService;
         private readonly ILogger<SetOrderPendingJob> _logger;
         private readonly IDistributedEventBus _distributedEventBus;
-
+        private readonly IClock _clock;
         public SetOrderPendingJob(
                   IRepository<Order, Guid> orderRepository,
                   IHubContext<OrderHub, IOrderClient> orderHubContext,
                    ILogger<SetOrderPendingJob> logger,
                   IStringLocalizer<ProductSellingResource> localizer,
                   IDistributedEventBus distributedEventBus,
-                  IOrderNotificationService orderNotificationService)
+                  IOrderNotificationService orderNotificationService,
+                  IClock clock)
         {
             _orderRepository = orderRepository;
             _orderHubContext = orderHubContext;
@@ -37,6 +39,7 @@ namespace Acme.ProductSelling.Orders.BackgroundJobs.OrderPending
             _logger = logger;
             _distributedEventBus = distributedEventBus;
             _orderNotificationService = orderNotificationService;
+            _clock = clock;
         }
 
         [UnitOfWork]

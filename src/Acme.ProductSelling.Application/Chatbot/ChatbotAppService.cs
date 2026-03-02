@@ -2,7 +2,6 @@
 using Acme.ProductSelling.Chatbot.Services;
 using Acme.ProductSelling.Identity;
 using Acme.ProductSelling.Products;
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -134,14 +133,14 @@ namespace Acme.ProductSelling.Chatbot
             var currentDisplayLanguage = CultureInfo.CurrentCulture.DisplayName;
             var currentUIDisplayLanguage = CultureInfo.CurrentUICulture.DisplayName;
 
-            var selectedLanguage =  !string.IsNullOrWhiteSpace(currentLanguage) ? currentLanguage :
+            var selectedLanguage = !string.IsNullOrWhiteSpace(currentLanguage) ? currentLanguage :
                                     !string.IsNullOrWhiteSpace(currentUILanguage) ? currentUILanguage :
                                     !string.IsNullOrWhiteSpace(currentDisplayLanguage) ? currentDisplayLanguage : currentUIDisplayLanguage;
 
             var sb = new StringBuilder();
 
 
-            sb.AppendLine( $"You are the 'XComputer AI Assistant'. \n" +
+            sb.AppendLine($"You are the 'XComputer AI Assistant'. \n" +
                               $"IMPORTANT: You MUST always respond to the user in {selectedLanguage}. " +
                               $"Translate any technical database data into {selectedLanguage} naturally.");
 

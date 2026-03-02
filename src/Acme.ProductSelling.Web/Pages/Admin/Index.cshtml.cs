@@ -1,5 +1,4 @@
-﻿using Acme.ProductSelling.Identity;
-using Acme.ProductSelling.Localization;
+﻿using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Orders.Services;
 using Acme.ProductSelling.Web.Pages.Admin;
@@ -109,7 +108,7 @@ namespace Acme.ProductSelling.Web.Admin.Pages
                     SkipCount = (CurrentPage - 1) * PageSize,
                     Sorting = "CreationTime DESC"
                 };
-                
+
             }
         }
         private void InitializeThreeYearsData(int currentYear)
