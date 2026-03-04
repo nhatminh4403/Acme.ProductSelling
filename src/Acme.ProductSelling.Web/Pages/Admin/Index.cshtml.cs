@@ -32,13 +32,13 @@ namespace Acme.ProductSelling.Web.Admin.Pages
         public int SelectedYear { get; set; }
         public List<int> AvailableYears { get; set; } = new();
         private GetOrderListInput input { get; set; } = new();
-        private readonly IOrderAppService _orderAppService;
-
+        //private readonly IOrderAppService _orderAppService;
+        private readonly IOrderQueryAppService _orderAppService;
         [BindProperty(SupportsGet = true)]
         public string Prefix { get; set; }
 
         private readonly ICurrentUser _currentUser;
-        public IndexModel(IOrderAppService orderAppService,
+        public IndexModel(IOrderQueryAppService orderAppService,
                           IStringLocalizer<ProductSellingResource> stringLocalizer,
                           ICurrentUser currentUser)
         {

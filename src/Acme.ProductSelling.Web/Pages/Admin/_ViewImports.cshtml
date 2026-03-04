@@ -12,8 +12,9 @@
 @using Microsoft.AspNetCore.Authorization
 @using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite
 @using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
-
+@using Acme.ProductSelling.Identity
 @using Acme.ProductSelling.Permissions
 
 @inject IStringLocalizer<ProductSellingResource> L
+@inject Volo.Abp.Users.ICurrentUser CurrentUser
 

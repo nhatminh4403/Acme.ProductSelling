@@ -9,7 +9,7 @@
             order: [[1, 'desc']],
             searching: true,
             scrollX: true,
-            ajax: abp.libs.datatables.createAjax(orderQuery.getList, function () {
+            ajax: abp.libs.datatables.createAjax(orderService.getList, function () {
                 return {
                     orderType: 1, // InStore
                     sorting: 'CreationTime DESC'

@@ -1,0 +1,70 @@
+﻿
+<div id="chatbotCustomerBubble" class="chatbot-bubble-root">
+
+    <!-- ── Collapsible panel ──────────────────────────────────────── -->
+    <div class="chatbot-bubble-panel d-none">
+
+        <!-- Header — coloured entirely via CSS -->
+        <div class="chatbot-bubble-panel-header">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-headset"></i>
+                <strong class="chatbot-bubble-title">@L["Chatbot:Title"]</strong>
+            </div>
+            <div class="d-flex align-items-center gap-1">
+                <button class="chatbot-bubble-clear btn btn-sm btn-outline-light py-0 px-1"
+                        title="@L["Chatbot:ClearHistory"]">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                <button class="chatbot-bubble-close btn btn-sm btn-outline-light py-0 px-1"
+                        title="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick chips -->
+        <div class="chatbot-bubble-chips px-2 pt-2 pb-1 d-flex gap-1 flex-wrap">
+            <button class="btn btn-xs btn-outline-primary rounded-pill text-nowrap quick-question"
+                    data-question="@L["Chatbot:Quick:GamingLaptops"]">
+                <i class="fas fa-laptop me-1"></i>@L["Chatbot:Quick:GamingLaptops"]
+            </button>
+            <button class="btn btn-xs btn-outline-primary rounded-pill text-nowrap quick-question"
+                    data-question="@L["Chatbot:Quick:CheapMouse"]">
+                <i class="fas fa-mouse me-1"></i>@L["Chatbot:Quick:CheapMouse"]
+            </button>
+            @* <button class="btn btn-xs btn-outline-secondary rounded-pill text-nowrap quick-question"
+                    data-question="What are your best deals today?">
+                <i class="fas fa-tags me-1"></i>Best Deals
+            </button> *@
+        </div>
+
+        <!-- Messages -->
+        <div class="chatbot-bubble-messages">
+            <!-- Populated by chatbot-bubble.js -->
+        </div>
+
+        <!-- Input -->
+        <div class="chatbot-bubble-footer">
+            <form class="chatbot-bubble-form">
+                <div class="input-group input-group-sm">
+                    <input type="text"
+                           class="chatbot-bubble-input form-control border-end-0"
+                           placeholder="..."
+                           autocomplete="off"
+                           required>
+                    <button type="submit" class="chatbot-bubble-send btn btn-sm">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ── Toggle FAB — coloured entirely via CSS ────────────────── -->
+    <button class="chatbot-bubble-toggle" aria-label="Open chat assistant">
+        <span class="chatbot-bubble-unread d-none"></span>
+        <i class="fas fa-headset chatbot-bubble-icon-open"></i>
+        <i class="fas fa-chevron-down chatbot-bubble-icon-close d-none"></i>
+    </button>
+
+</div>

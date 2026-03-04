@@ -7,12 +7,12 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Orders
 {
     public class DeletedOrderModel : ProductSellingPageModel
     {
-        private readonly IOrderAppService _orderAppService;
+        private readonly IOrderQueryAppService _orderAppService;
         public PagedResultDto<OrderDto> DeletedOrders { get; private set; }
 
         [BindProperty(SupportsGet = true)]
         public PagedAndSortedResultRequestDto Input { get; set; } = new PagedAndSortedResultRequestDto();
-        public DeletedOrderModel(IOrderAppService orderAppService)
+        public DeletedOrderModel(IOrderQueryAppService orderAppService)
         {
             _orderAppService = orderAppService;
         }

@@ -1,0 +1,74 @@
+﻿@{
+
+}
+
+
+<div id="chatbotAdminBubble" class="chatbot-bubble-root">
+
+    <!-- ── Collapsible panel ──────────────────────────────────────── -->
+    <div class="chatbot-bubble-panel d-none">
+
+        <!-- Header -->
+        <div class="chatbot-bubble-panel-header bg-primary text-white">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-robot"></i>
+                <strong style="font-size:.95rem;">@L["Chatbot:Title"]</strong>
+                <span class="chatbot-bubble-role-badge badge bg-white text-primary ms-1" style="font-size:.7rem;">Guest</span>
+            </div>
+            <div class="d-flex align-items-center gap-1">
+                <button class="chatbot-bubble-clear btn btn-sm btn-outline-light py-0 px-1"
+                        title="@L["Chatbot:ClearHistory"]" style="font-size:.8rem;">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+                <button class="chatbot-bubble-close btn btn-sm btn-outline-light py-0 px-1"
+                        title="Close" style="font-size:.8rem;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick chips (admin-specific) -->
+        <div class="px-2 pt-2 pb-1 d-flex gap-1 flex-wrap" style="background:#f0f4ff;">
+            @if (CurrentUser.IsAuthenticated && (CurrentUser.IsInRole(IdentityRoleConsts.Admin) || CurrentUser.IsInRole(IdentityRoleConsts.Manager)))
+            {
+                <button class="btn btn-xs btn-outline-primary rounded-pill text-nowrap quick-question"
+                        data-question="Sales Report" style="font-size:.72rem;padding:.15rem .55rem;">
+                    <i class="fas fa-chart-bar me-1"></i>Sales Report
+                </button>
+                <button class="btn btn-xs btn-outline-primary rounded-pill text-nowrap quick-question"
+                        data-question="Stock Status" style="font-size:.72rem;padding:.15rem .55rem;">
+                    <i class="fas fa-boxes me-1"></i>Stock Check
+                </button>
+            }
+        </div>
+
+        <!-- Messages -->
+        <div class="chatbot-bubble-messages">
+            <!-- Populated by chatbot-bubble.js -->
+        </div>
+
+        <!-- Input -->
+        <div class="chatbot-bubble-footer">
+            <form class="chatbot-bubble-form">
+                <div class="input-group input-group-sm">
+                    <input type="text"
+                           class="chatbot-bubble-input form-control border-end-0"
+                           placeholder="..."
+                           autocomplete="off"
+                           required>
+                    <button type="submit" class="chatbot-bubble-send btn btn-primary btn-sm">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ── Toggle FAB ────────────────────────────────────────────── -->
+    <button class="chatbot-bubble-toggle bg-primary text-white" aria-label="Open chat">
+        <span class="chatbot-bubble-unread d-none"></span>
+        <i class="fas fa-robot chatbot-bubble-icon-open"></i>
+        <i class="fas fa-chevron-down chatbot-bubble-icon-close d-none"></i>
+    </button>
+
+</div>

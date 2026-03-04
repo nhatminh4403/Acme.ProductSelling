@@ -18,6 +18,17 @@
             ajax: abp.libs.datatables.createAjax(categoryService.getList),
             columnDefs: [
                 {
+                    title: "STT",
+                    data: null,
+                    orderable: false,
+                    searchable: false,
+                    width: "60px",
+                    class:"text-center",
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
                     title: l('Category:Actions'),
                     visible: abp.auth.isGranted('ProductSelling.Categories.Edit') || abp.auth.isGranted('ProductSelling.Categories.Delete'),
                     rowAction: {
@@ -54,6 +65,10 @@
                     title: l('Category:Description'),
                     data: "description"
                 },
+                {
+                     title: l('GUID'),
+                    data: "id"
+                }
             ]
         })
     );

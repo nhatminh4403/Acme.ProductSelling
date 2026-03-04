@@ -37,26 +37,6 @@ namespace Acme.ProductSelling.Chatbot
                 .Include(p => p.Manufacturer)
                 .Include(p => p.SpecificationBase)
                 .Include(p => p.StoreInventories)
-                // the includes below are no longer useful since we are only checking SpecificationBase for LaptopSpecification and MonitorSpecification (for gaming intent).
-                //.Include(p => p.LaptopSpecification)
-                //.Include(p => p.MonitorSpecification).ThenInclude(m => m.PanelType)
-                //.Include(p => p.CpuSpecification).ThenInclude(c => c.Socket)
-                //.Include(p => p.GpuSpecification)
-                //.Include(p => p.KeyboardSpecification).ThenInclude(k => k.SwitchType)
-                //.Include(p => p.MouseSpecification)
-                //.Include(p => p.MotherboardSpecification)
-                //.Include(p => p.RamSpecification).ThenInclude(r => r.RamType)
-                //.Include(p => p.StorageSpecification)
-                //.Include(p => p.CaseSpecification).ThenInclude(c => c.FormFactor)
-                //.Include(p => p.PsuSpecification).ThenInclude(ps => ps.FormFactor)
-                //.Include(p => p.HeadsetSpecification)
-                //.Include(p => p.ChairSpecification)
-                //.Include(p => p.DeskSpecification)
-                //.Include(p => p.SpeakerSpecification)
-                //.Include(p => p.MicrophoneSpecification)
-                //.Include(p => p.WebcamSpecification)
-                //.Include(p => p.SoftwareSpecification)
-                //.Include(p => p.NetworkHardwareSpecification)
                 .AsQueryable();
 
             var rawTerms = query.ToLower().Split((char[])null, StringSplitOptions.RemoveEmptyEntries).ToList();
@@ -69,7 +49,6 @@ namespace Acme.ProductSelling.Chatbot
             bool wantsLaptop = rawTerms.Any(t => laptopKeywords.Any(k => t.Contains(k)));
             bool wantsGaming = rawTerms.Any(t => gamingKeywords.Any(k => t.Contains(k)));
             bool wantsMouse = rawTerms.Any(t => mouseKeywords.Any(k => t.Contains(k)));
-
             bool wantsPad = rawTerms.Any(t => t.Contains("pad") || t.Contains("lót"));
 
             if (wantsGaming)
@@ -92,9 +71,20 @@ namespace Acme.ProductSelling.Chatbot
                 productQuery = productQuery.Where(p =>
                     !p.ProductName.ToLower().Contains("pad") &&
                     !p.ProductName.ToLower().Contains("lót") &&
-                    !p.Category.Name.ToLower().Contains("pad")
+                    !p.Category.Name.ToLower().Contains("pad") &&
+                    p.SpecificationBase is MouseSpecification 
                 );
             }
+
+            if (wantsPad && !wantsMouse)
+            {
+                productQuery = productQuery.Where(p =>
+                    (p.ProductName.ToLower().Contains("pad") || p.ProductName.ToLower().Contains("lót") || p.Category.Name.ToLower().Contains("pad"))
+                    && !(p.SpecificationBase is MousePadSpecification)
+                );
+            }
+
+
             var allKeywordsToRemove = laptopKeywords
               .Concat(gamingKeywords)
               .Concat(mouseKeywords)

@@ -472,6 +472,7 @@ public class ProductSellingWebModule : AbpModule
 
                 }
             );
+
             options.StyleBundles.Add(
                 "Admin.Global",
                 bundle =>

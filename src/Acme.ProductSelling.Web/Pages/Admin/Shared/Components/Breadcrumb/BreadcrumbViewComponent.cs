@@ -29,11 +29,9 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Shared.Components.Breadcrumb
 
             if (segments.Length == 0)
             {
-                // No need for breadcrumbs on the root page
                 return View(breadcrumbs);
             }
 
-            // --- NEW: Identify and handle the culture prefix ---
             var supportedCultures = _localizationOptions.Value.SupportedCultures?.Select(c => c.Name).ToHashSet();
             string culturePrefix = string.Empty;
             int startIndex = 0;
@@ -41,16 +39,13 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Shared.Components.Breadcrumb
             if (supportedCultures != null && supportedCultures.Contains(segments[0], StringComparer.OrdinalIgnoreCase))
             {
                 culturePrefix = $"/{segments[0]}";
-                startIndex = 1; // Start processing segments *after* the culture code
+                startIndex = 1; 
             }
 
-            // The root/dashboard link is always the starting point
             breadcrumbs.Add(new BreadcrumbItem { Text = "Dashboard", Url = $"{culturePrefix}/" });
 
-            // Initialize currentPath with the culture prefix to build correct links
             var currentPath = new StringBuilder(culturePrefix);
 
-            // --- UPDATED: Loop starts from the correct index ---
             for (int i = startIndex; i < segments.Length; i++)
             {
                 var segment = segments[i];
@@ -72,7 +67,6 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Shared.Components.Breadcrumb
                     IsActive = isActive
                 });
             }
-            // This is a simple async placeholder; real async logic could go here if needed.
             return View("/Pages/Admin/Shared/Components/Breadcrumb/Default.cshtml", breadcrumbs);
         }
 

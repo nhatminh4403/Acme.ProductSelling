@@ -41,6 +41,7 @@
     <abp-style-bundle name="@LeptonXLiteThemeBundles.Styles.Global" />
     <abp-style-bundle name="Main.Global" />
     <link href="~/css/shared/header.css" rel="stylesheet" />
+    <link href="~/css/shared/chatbot.css" rel="stylesheet" />
     <script>
         // Detect if we're on homepage by checking for hero section
         document.addEventListener('DOMContentLoaded', function() {
@@ -106,9 +107,6 @@
 
 <body class="abp-application-layout bg-light d-flex flex-column min-vh-100">
 
-    <!-- TOP BAR -->
-
-
     <!-- HEADER -->
     @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Views.Shared.Components.Header.HeaderViewComponent))
 
@@ -119,6 +117,8 @@
     <!-- FOOTER & MODAL -->
     @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Views.Shared.Components.Footer.FooterViewComponent))
     @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Views.Shared.Components.Modal.ModalViewComponent))
+
+    @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Views.Shared.Components.Chatbot.ChatWidgetViewComponent))
 
     <script src="~/libs/abp/core/abp.js"></script>
     <abp-script-bundle name="@LeptonXLiteThemeBundles.Scripts.Global" />
@@ -137,5 +137,10 @@
 
     @await RenderSectionAsync("scripts", required: false)
     <script src="~/js/global/categorySidebar.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <script src="~/js/shared/chatbot/chatbot-core.js"></script>
+    <script src="~/js/shared/chatbot/chatbot-bubble.js"></script>
 </body>
 </html>

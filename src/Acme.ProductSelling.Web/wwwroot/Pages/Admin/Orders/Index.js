@@ -1,5 +1,5 @@
 ﻿$(function () {
-    var orderService = acme.productSelling.orders.order;
+    var orderService = acme.productSelling.orders.services.orderQuery;
     var storeService = acme.productSelling.stores.store;
     var l = abp.localization.getResource('ProductSelling');
 

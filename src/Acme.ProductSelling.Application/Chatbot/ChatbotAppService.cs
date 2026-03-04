@@ -28,6 +28,18 @@ namespace Acme.ProductSelling.Chatbot
         public async Task<ChatMessageOutputDto> SendMessageAsync(ChatMessageInputDto input)
         {
             var userRole = DetermineUserRole();
+
+            if (input.Message == "__role_ping__")
+            {
+                return new ChatMessageOutputDto
+                {
+                    UserRole = userRole,
+                    Response = string.Empty,
+                    Source = ResponseSource.Database
+                };
+            }
+
+
             var response = new ChatMessageOutputDto
             {
                 UserRole = userRole
@@ -91,7 +103,8 @@ namespace Acme.ProductSelling.Chatbot
             else if (_chatbotManager.IsProductQuery(input.Message))
             {
                 // Product query but no results - search web
-                var searchInstructions = $"{systemContext}\n\nIMPORTANT: The internal database found NO products matching this query. Please use your Google Search tool to find current real-world information, prices, and reviews for '{input.Message}'.";
+                var searchInstructions = $"{systemContext}\n\nIMPORTANT: The internal database found NO products matching this query. " +
+                    $"Please use your Google Search tool to find current real-world information, prices, and reviews for '{input.Message}'.";
                 response.Response = await _geminiApiService.GenerateContentAsync(
                     input.Message,
                     searchInstructions,
@@ -207,7 +220,7 @@ namespace Acme.ProductSelling.Chatbot
             var products = await _chatbotManager.SearchProductsAsync(query, maxResults: 3);
             return products.Select(MapToProductDto).ToList();
         }
-
+        //for testing purposes - to see available models in Gemini API
         public async Task<List<string>> GetAvailableAsync()
         {
             return await _geminiApiService.GetAvailableModelsAsync();
