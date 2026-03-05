@@ -24,14 +24,12 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>@ViewBag.Title - Admin</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" 
-                            integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" 
-                            crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="~/lib/font-awesome/css/all.min.css" rel="stylesheet" />
     <link href="~/favicon.svg" rel="icon" type="image/svg+xml" />
     <link href="~/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
 
     <abp-style-bundle name="@LeptonXLiteThemeBundles.Styles.Global" />
-    
+
     <abp-style-bundle name="Admin.Global" />
 
     @await RenderSectionAsync("styles", required: false)
@@ -59,9 +57,9 @@
         }
 
             .c-breadcrumb__item:not(:first-child)::before {
-                content: '›'; 
+                content: '›';
                 margin: 0 0.6em;
-                color: #8894a4; 
+                color: #8894a4;
             }
 
         /* Styling for the breadcrumb links */
@@ -113,7 +111,7 @@
     @await Component.InvokeAsync(typeof(HeaderViewComponent))
     <!-- Sidebar -->
     @await Component.InvokeAsync(typeof(MainNavbarMenuViewComponent))
- 
+
 
     <!-- Main Content Area -->
     <main class="main-content" id="mainContent">
@@ -145,10 +143,10 @@
     <script src="~/Abp/ApplicationLocalizationScript?cultureName=@CultureInfo.CurrentUICulture.Name"></script>
     <script src="~/Abp/ApplicationConfigurationScript" asp-append-version="true"></script>
 
-
+    <script src="~/lib/font-awesome/js/all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-    
+
     <script src="~/js/shared/chatbot/chatbot-core.js"></script>
 
     @await RenderSectionAsync("scripts", required: false)

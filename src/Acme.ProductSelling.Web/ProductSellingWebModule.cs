@@ -452,8 +452,17 @@ public class ProductSellingWebModule : AbpModule
                 "Main.Global",
                 bundle =>
                 {
-                    bundle.AddFiles("/global-scripts.js");
-
+                    //bundle.AddFiles("/global-scripts.js");
+                    bundle.AddFiles(
+                           "/js/global-scripts/localization.js",
+                           "/js/global-scripts/notification.js",
+                           "/js/global-scripts/recently-viewed.js",
+                           "/js/global-scripts/session-notification.js",
+                           "/js/global-scripts/auth/auth-utils.js",
+                           "/js/global-scripts/auth/logout-handler.js",
+                           "/js/global-scripts/auth/login-handler.js",
+                           "/js/global-scripts/auth/register-handler.js"
+                       );
                     bundle.AddFiles("/js/global/main.js");
                     bundle.AddFiles("/js/global/header-sidebar.js");
                     bundle.AddFiles("/js/global/cart/cart.utils.js");
