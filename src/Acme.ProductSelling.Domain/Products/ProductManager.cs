@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Products.Services;
+using Acme.ProductSelling.Products.Services;
 using Acme.ProductSelling.Utils;
 using System;
 using System.Threading.Tasks;
@@ -33,24 +33,22 @@ namespace Acme.ProductSelling.Products
 
             if (originalPrice < 0)
             {
-                throw new BusinessException("Product price cannot be negative.");
+                throw new BusinessException(ProductSellingDomainErrorCodes.ProductPriceCannotBeNegative);
             }
-
             if (discountPercent < 0 || discountPercent > 100)
             {
-                throw new BusinessException("Discount percent must be between 0 and 100.");
+                throw new BusinessException(ProductSellingDomainErrorCodes.ProductDiscountPercentInvalid);
             }
-
             if (stockCount < 0)
             {
-                throw new BusinessException("Stock count cannot be negative.");
+                throw new BusinessException(ProductSellingDomainErrorCodes.ProductStockCountCannotBeNegative);
             }
-
             // Check if product with same name already exists
             var existingProduct = await _productRepository.FindByNameAsync(productName);
             if (existingProduct != null)
             {
-                throw new BusinessException($"Product with name '{productName}' already exists.");
+                throw new BusinessException(ProductSellingDomainErrorCodes.ProductNameAlreadyExists)
+                    .WithData("Name", productName);
             }
 
             // Create new product

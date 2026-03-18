@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Orders;
+using Acme.ProductSelling.Orders;
 using Acme.ProductSelling.Orders.Services;
 using Acme.ProductSelling.PaymentGateway.MoMo.Configurations.Models;
 using Acme.ProductSelling.PaymentGateway.MoMo.Configurations.Services;
@@ -254,7 +254,7 @@ namespace Acme.ProductSelling.Payments
                         "[MoMo IPN] Signature validation failed. CorrelationId: {CorrelationId}, OrderId: {OrderId}",
                         correlationId, request.orderId
                     );
-                    throw new UserFriendlyException("Dữ liệu IPN từ MoMo không hợp lệ.");
+                    throw new UserFriendlyException(ProductSellingDomainErrorCodes.PaymentInvalidIpnData);
                 }
 
                 _logger.LogInformation(
@@ -269,7 +269,7 @@ namespace Acme.ProductSelling.Payments
                         "[MoMo IPN] Invalid OrderId format. CorrelationId: {CorrelationId}, OrderId: {OrderId}",
                         correlationId, request.orderId
                     );
-                    throw new UserFriendlyException("Mã tham chiếu không hợp lệ.");
+                    throw new UserFriendlyException(ProductSellingDomainErrorCodes.PaymentInvalidReferenceCode);
                 }
 
                 // Step 3: Get order with details
@@ -289,7 +289,7 @@ namespace Acme.ProductSelling.Payments
                         "[MoMo IPN] Order not found. CorrelationId: {CorrelationId}, OrderId: {OrderId}",
                         correlationId, orderId
                     );
-                    throw new UserFriendlyException("Không tìm thấy đơn hàng.");
+                    throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderNotFound);
                 }
 
                 _logger.LogInformation(
@@ -316,7 +316,7 @@ namespace Acme.ProductSelling.Payments
                             "[MoMo IPN] Invalid payment status transition. CorrelationId: {CorrelationId}, OrderId: {OrderId}, CurrentStatus: {CurrentStatus}",
                             correlationId, orderId, order.PaymentStatus
                         );
-                        throw new UserFriendlyException("Trạng thái đơn hàng không hợp lệ.");
+                        throw new UserFriendlyException(ProductSellingDomainErrorCodes.InvalidOrderStatus);
                     }
 
                     // IMPROVEMENT: Validate amount
@@ -326,7 +326,7 @@ namespace Acme.ProductSelling.Payments
                             "[MoMo IPN] Amount mismatch. CorrelationId: {CorrelationId}, OrderId: {OrderId}, Expected: {Expected}, Received: {Received}",
                             correlationId, orderId, order.TotalAmount, request.amount
                         );
-                        throw new UserFriendlyException("Số tiền không khớp với đơn hàng.");
+                        throw new UserFriendlyException(ProductSellingDomainErrorCodes.PaymentAmountMismatch);
                     }
 
                     _logger.LogInformation(
@@ -406,7 +406,7 @@ namespace Acme.ProductSelling.Payments
                     "[MoMo IPN] Unexpected error. CorrelationId: {CorrelationId}, OrderId: {OrderId}, Message: {Message}",
                     correlationId, request.orderId, ex.Message
                 );
-                throw new UserFriendlyException("Đã có lỗi xảy ra khi xử lý IPN từ MoMo.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.PaymentInitializationFailed);
             }
         }
 

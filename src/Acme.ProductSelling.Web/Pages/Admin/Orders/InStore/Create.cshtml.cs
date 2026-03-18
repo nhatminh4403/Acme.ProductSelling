@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Orders.Dtos;
+using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Orders.Services;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products.Services;
@@ -56,7 +56,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Orders.InStore
 
             else
             {
-                throw new UserFriendlyException("You must be assigned to a store to create orders.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.UserNotAssignedToStore);
             }
 
 

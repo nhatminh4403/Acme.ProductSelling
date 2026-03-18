@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Data.BaseSeeder;
+using Acme.ProductSelling.Data.BaseSeeder;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Stores;
 using Acme.ProductSelling.Users;
@@ -175,7 +175,9 @@ namespace Acme.ProductSelling.Data.Identity
             if (!creationResult.Succeeded)
             {
                 var errorDetails = string.Join(", ", creationResult.Errors.Select(e => e.Description));
-                throw new Exception($"Cannot create user '{username}'. Reason: {errorDetails}");
+                throw new BusinessException(ProductSellingDomainErrorCodes.IdentityDataSeedingFailed)
+                    .WithData("User", username)
+                    .WithData("Reason", errorDetails);
             }
 
             if (!string.IsNullOrWhiteSpace(roleNameToAssign))
@@ -184,7 +186,10 @@ namespace Acme.ProductSelling.Data.Identity
                 if (!roleResult.Succeeded)
                 {
                     var errorDetails = string.Join(", ", roleResult.Errors.Select(e => e.Description));
-                    throw new Exception($"Cannot assign role '{roleNameToAssign}' to user '{username}'. Reason: {errorDetails}");
+                    throw new BusinessException(ProductSellingDomainErrorCodes.IdentityDataSeedingFailed)
+                        .WithData("User", username)
+                        .WithData("Role", roleNameToAssign)
+                        .WithData("Reason", errorDetails);
                 }
             }
 

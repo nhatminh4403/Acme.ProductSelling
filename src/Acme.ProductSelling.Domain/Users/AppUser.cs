@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Volo.Abp.Identity;
 using Volo.Abp.Users;
 
@@ -47,7 +47,7 @@ namespace Acme.ProductSelling.Users
                 throw new ArgumentNullException(nameof(customer));
 
             if (AssignedStoreId.HasValue)
-                throw new InvalidOperationException("Staff users cannot have customer profiles");
+                throw new BusinessException(ProductSellingDomainErrorCodes.StaffUsersCannotHaveCustomerProfiles);
 
             Customer = customer;
         }

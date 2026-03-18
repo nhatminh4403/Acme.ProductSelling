@@ -1,4 +1,4 @@
-﻿using Google.GenAI;
+using Google.GenAI;
 using Google.GenAI.Types;
 using Microsoft.Extensions.Options;
 using System;
@@ -113,7 +113,8 @@ namespace Acme.ProductSelling.Chatbot
             }
             catch (Exception ex)
             {
-                throw new Exception($"Gemini Search Error: {ex.Message}. Check if Model supports tools.", ex);
+                throw new BusinessException(ProductSellingDomainErrorCodes.GeminiSearchError)
+                    .WithData("Message", ex.Message);
             }
         }
 
@@ -218,7 +219,8 @@ namespace Acme.ProductSelling.Chatbot
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed to retrieve models: {ex.Message}", ex);
+                throw new BusinessException(ProductSellingDomainErrorCodes.GeminiRetrieveModelsFailed)
+                    .WithData("Message", ex.Message);
             }
         }
 
@@ -238,7 +240,8 @@ namespace Acme.ProductSelling.Chatbot
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed to count tokens: {ex.Message}", ex);
+                throw new BusinessException(ProductSellingDomainErrorCodes.GeminiCountTokensFailed)
+                    .WithData("Message", ex.Message);
             }
         }
     }

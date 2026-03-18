@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Payments;
+using Acme.ProductSelling.Payments;
 using JetBrains.Annotations;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -46,14 +46,13 @@ namespace Acme.ProductSelling.Orders
         {
             if (OrderType != OrderType.InStore)
             {
-                throw new UserFriendlyException("OnlyForInStoreOrders",
-                    "Phương thức này chỉ dành cho đơn hàng tại cửa hàng.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderOnlyForInStoreOrders);
             }
 
             if (OrderStatus != OrderStatus.Placed && OrderStatus != OrderStatus.Pending)
             {
-                throw new UserFriendlyException("CannotCompletePayment",
-                    $"Chỉ có thể thanh toán cho đơn hàng ở trạng thái Placed hoặc Pending. Trạng thái hiện tại: {OrderStatus}");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderCannotCompletePayment)
+                    .WithData("Status", OrderStatus);
             }
 
             CashierId = cashierId;
@@ -68,20 +67,18 @@ namespace Acme.ProductSelling.Orders
         {
             if (OrderType != OrderType.InStore)
             {
-                throw new UserFriendlyException("OnlyForInStoreOrders",
-                    "Phương thức này chỉ dành cho đơn hàng tại cửa hàng.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderOnlyForInStoreOrders);
             }
 
             if (OrderStatus != OrderStatus.Confirmed && OrderStatus != OrderStatus.Processing)
             {
-                throw new UserFriendlyException("CannotFulfillOrder",
-                    $"Chỉ có thể giao hàng cho đơn đã thanh toán. Trạng thái hiện tại: {OrderStatus}");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderCannotFulfillOrder)
+                    .WithData("Status", OrderStatus);
             }
 
             if (PaymentStatus != PaymentStatus.Paid)
             {
-                throw new UserFriendlyException("PaymentNotCompleted",
-                    "Đơn hàng chưa được thanh toán.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderPaymentNotCompleted);
             }
 
             FulfillerId = fulfillerId;

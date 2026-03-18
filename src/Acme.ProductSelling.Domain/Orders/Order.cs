@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Localization;
+using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Payments;
 using Microsoft.Extensions.Localization;
 using System;
@@ -81,8 +81,9 @@ namespace Acme.ProductSelling.Orders
         {
             if (!IsNextStatusValid(newStatus))
             {
-                throw new UserFriendlyException("OrderStatusChangeNotAllowed",
-                    $"Không thể chuyển trạng thái từ '{OrderStatus}' sang '{newStatus}'.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderStatusChangeNotAllowed)
+                    .WithData("OldStatus", OrderStatus)
+                    .WithData("NewStatus", newStatus);
             }
             OrderStatus = newStatus;
         }

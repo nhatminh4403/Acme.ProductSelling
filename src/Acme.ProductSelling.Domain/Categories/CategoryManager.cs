@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Utils;
+using Acme.ProductSelling.Utils;
 using System;
 using System.Threading.Tasks;
 using Volo.Abp;
@@ -29,7 +29,8 @@ namespace Acme.ProductSelling.Categories
             var existingCategory = await _categoryRepository.FindByNameAsync(name);
             if (existingCategory != null)
             {
-                throw new Exception($"Category with name '{name}' already exists.");
+                throw new BusinessException(ProductSellingDomainErrorCodes.CategoryNameAlreadyExists)
+                    .WithData("Name", name);
             }
 
             // Tạo Category mới

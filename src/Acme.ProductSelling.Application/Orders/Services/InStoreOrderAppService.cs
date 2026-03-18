@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Localization;
+using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Payments;
 using Acme.ProductSelling.Permissions;
@@ -50,7 +50,7 @@ namespace Acme.ProductSelling.Orders.Services
         public async Task<OrderDto> CreateInStoreOrderAsync(CreateInStoreOrderDto input)
         {
             var userStoreId = await GetCurrentUserStoreIdAsync();
-            if (!userStoreId.HasValue) throw new UserFriendlyException(_localizer["Order:UserNotAssignedToStore"]);
+            if (!userStoreId.HasValue) throw new UserFriendlyException(ProductSellingDomainErrorCodes.UserNotAssignedToStore);
 
             var currentUser = await _userRepository.GetAsync(CurrentUser.Id.Value);
 
@@ -78,7 +78,7 @@ namespace Acme.ProductSelling.Orders.Services
                 StoreId = order.StoreId,
                 IsInStore = order.OrderType == OrderType.InStore
             });
-            await _orderHistoryAppService.LogOrderChangeAsync(order.Id, OrderStatus.Pending, order.OrderStatus, PaymentStatus.Unpaid, order.PaymentStatus, "In-store order created");
+            await _orderHistoryAppService.LogOrderChangeAsync(order.Id, OrderStatus.Pending, order.OrderStatus, PaymentStatus.Unpaid, order.PaymentStatus, _localizer["Order:InStoreCreated"]);
 
             return MapToDto(order, "");
             // We need store name? Fetched later or irrelevant for Create return
@@ -88,7 +88,7 @@ namespace Acme.ProductSelling.Orders.Services
         public async Task<OrderDto> CompleteInStorePaymentAsync(Guid orderId, CompleteInStorePaymentDto input)
         {
             var order = await _orderRepository.GetAsync(orderId) as InStoreOrder;
-            if (order.OrderType != OrderType.InStore) throw new UserFriendlyException(_localizer["Order:OnlyForInStoreOrders"]);
+            if (order.OrderType != OrderType.InStore) throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderOnlyForInStoreOrders);
 
             await CheckStoreAccessAsync(order.StoreId.Value);
 
@@ -109,7 +109,7 @@ namespace Acme.ProductSelling.Orders.Services
                 StoreId = order.StoreId,
                 IsInStore = order.OrderType == OrderType.InStore
             });
-            await _orderHistoryAppService.LogOrderChangeAsync(orderId, oldStatus, order.OrderStatus, oldPayment, order.PaymentStatus, $"Paid In-Store: {input.PaidAmount:C}");
+            await _orderHistoryAppService.LogOrderChangeAsync(orderId, oldStatus, order.OrderStatus, oldPayment, order.PaymentStatus, _localizer["Order:PaidInStore", input.PaidAmount]);
 
             return MapToDto(order);
         }
@@ -118,7 +118,7 @@ namespace Acme.ProductSelling.Orders.Services
         public async Task<OrderDto> FulfillInStoreOrderAsync(Guid orderId)
         {
             var order = await _orderRepository.GetAsync(orderId) as InStoreOrder;
-            if (order.OrderType != OrderType.InStore) throw new UserFriendlyException(_localizer["Order:OnlyForInStoreOrders"]);
+            if (order.OrderType != OrderType.InStore) throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderOnlyForInStoreOrders);
 
             await CheckStoreAccessAsync(order.StoreId.Value);
 
@@ -148,7 +148,7 @@ namespace Acme.ProductSelling.Orders.Services
 
             var userStoreId = await GetCurrentUserStoreIdAsync();
             if (userStoreId != storeId)
-                throw new UserFriendlyException(_localizer["Order:NoStoreAccess"]);
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.NoStoreAccess);
         }
 
         private async Task<Guid?> GetCurrentUserStoreIdAsync()

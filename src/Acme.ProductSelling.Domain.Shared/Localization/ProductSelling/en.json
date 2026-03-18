@@ -1,6 +1,66 @@
-﻿{
+{
   "culture": "en",
   "texts": {
+    "ProductSelling:OrderNotFound": "Order not found.",
+    "ProductSelling:OrderCannotShip": "Order cannot be shipped in its current status.",
+    "ProductSelling:OrderCannotDeliver": "Order cannot be delivered in its current status.",
+    "ProductSelling:OnlyForInStoreOrders": "This action is only for in-store orders.",
+    "ProductSelling:InvalidPaymentStatusChange": "The requested payment status change is invalid.",
+    "ProductSelling:CartIsEmpty": "Your cart is empty.",
+    "ProductSelling:Unauthorized": "You are not authorized to perform this action.",
+    "ProductSelling:UserNotAuthenticated": "User is not authenticated.",
+    "ProductSelling:UserCannotAssignStoreToCustomer": "Cannot assign store to customer accounts.",
+    "ProductSelling:InventoryRecordAlreadyExists": "Inventory record already exists for this store and product combination.",
+    "ProductSelling:InventoryCannotTransferToSameStore": "Cannot transfer inventory to the same store.",
+    "ProductSelling:InventorySourceNotFound": "Source inventory not found.",
+    "ProductSelling:InventoryInsufficientStock": "Insufficient stock. Available: {0}, Requested: {1}",
+    "ProductSelling:InventoryNotFoundForStoreAndProduct": "Inventory not found for this store and product combination.",
+    "ProductSelling:InventoryNoAccessToStore": "You don't have access to this store's inventory.",
+    "ProductSelling:InventoryNoPermissionViewAll": "You don't have permission to view all stores' inventory.",
+    "ProductSelling:PaymentInitializationFailed": "Could not initialize payment. Please try again.",
+    "ProductSelling:VnPayLinkCreationFailed": "Could not create VNPay payment link. Please try again.",
+    "ProductSelling:PaymentInvalidOrderAmount": "Invalid order amount.",
+    "ProductSelling:PaymentOrderAlreadyPaid": "This order has already been paid.",
+    "ProductSelling:PaymentCannotPayForCancelledOrder": "Cannot pay for a cancelled order.",
+    "ProductSelling:PaymentPayPalSmallAmount": "Payment amount must be greater than ${0} USD.",
+    "ProductSelling:PaymentPayPalLargeAmount": "Payment amount exceeds the limit of ${0} USD.",
+    "ProductSelling:PaymentPayPalLinkCreationFailed": "Could not create PayPal payment link. Please try again.",
+    "ProductSelling:PaymentPayPalConnectionError": "An error occurred while connecting to the payment gateway. Please try again later.",
+    "ProductSelling:PaymentInvalidIpnData": "Invalid IPN data received from payment gateway.",
+    "ProductSelling:PaymentInvalidReferenceCode": "Invalid reference code.",
+    "ProductSelling:PaymentAmountMismatch": "The payment amount does not match the order amount.",
+    "ProductSelling:ProductPriceCannotBeNegative": "Product price cannot be negative.",
+    "ProductSelling:ProductDiscountPercentInvalid": "Discount percent must be between 0 and 100.",
+    "ProductSelling:ProductStockCountCannotBeNegative": "Stock count cannot be negative.",
+    "ProductSelling:ProductNameAlreadyExists": "Product with name '{Name}' already exists.",
+    "ProductSelling:ProductNotFound": "Product not found.",
+    "ProductSelling:ProductNotYetReleased": "Product '{Name}' is not yet released.",
+    "ProductSelling:CategoryNameAlreadyExists": "Category with name '{Name}' already exists.",
+    "ProductSelling:OrderCannotCompletePayment": "Only orders in Placed or Pending status can be paid. Current status: {Status}",
+    "ProductSelling:OrderCannotFulfillOrder": "Only confirmed orders can be fulfilled. Current status: {Status}",
+    "ProductSelling:OrderPaymentNotCompleted": "Payment not completed.",
+    "ProductSelling:OrderOnlyForCODOrders": "Only for COD orders.",
+    "ProductSelling:OrderActionNotAllowedForNonCodOrder": "Action not allowed for non-COD orders.",
+    "ProductSelling:OrderCannotConfirmPaymentForThisOrder": "Payment status must be '{Status}'.",
+    "ProductSelling:OrderCanOnlyBeCancelledWhenPlacedOrPending": "Orders can only be cancelled when Placed or Pending.",
+    "ProductSelling:OrderCannotCancelPaidOrder": "Cannot cancel a paid order.",
+    "ProductSelling:OrderStatusChangeNotAllowed": "Cannot transition from '{OldStatus}' to '{NewStatus}'.",
+    "ProductSelling:StaffUsersCannotHaveCustomerProfiles": "Staff users cannot have customer profiles.",
+    "ProductSelling:NoClientSecretCanBeSetForPublicApplications": "No client secret can be set for public applications.",
+    "ProductSelling:TheClientSecretIsRequiredForConfidentialApplications": "The client secret is required for confidential applications.",
+    "ProductSelling:InvalidRedirectUri": "Invalid Redirect URI: {0}",
+    "ProductSelling:InvalidPostLogoutRedirectUri": "Invalid Post Logout Redirect URI: {0}",
+    "ProductSelling:StoreInventoryInsufficientStock": "Insufficient stock. Available: {Quantity}, Requested: {Requested}",
+    "ProductSelling:QuantityMustBePositive": "Quantity must be positive.",
+    "ProductSelling:QuantityCannotBeNegative": "Quantity cannot be negative.",
+    "ProductSelling:ReorderValuesCannotBeNegative": "Reorder values cannot be negative.",
+    "ProductSelling:GeminiSearchError": "Gemini Search Error: {Message}",
+    "ProductSelling:GeminiRetrieveModelsFailed": "Failed to retrieve models: {Message}",
+    "ProductSelling:GeminiCountTokensFailed": "Failed to count tokens: {Message}",
+    "ProductSelling:IdentityDataSeedingFailed": "Identity data seeding failed for user '{User}'. Reason: {Reason}",
+    "ProductSelling:OpenIddictDataSeedingFailed": "OpenIddict data seeding failed. Reason: {Reason}",
+    "ProductSelling:DatabaseMigrationFailed": "Database migration failed. Reason: {Reason}",
+    "ProductSelling:StoreNotFound": "Store not found.",
     "AppName": "XComputer",
     "Welcome": "Welcome",
     "Or": "Or",
@@ -36,24 +96,24 @@
     "CustomerName": "Customer Name",
     "CustomerInformation": "Customer Information",
 
-    // Payment
+
     "PaymentStatus": "Payment Status",
     "PaymentMethod": "Payment Method",
     "Cash": "Cash",
     "Card": "Card",
     "E-Wallet": "E-Wallet",
 
-    // Store
+
     "Store": "Store",
     "StoreName": "Store Name",
     "StoreCode": "Store Code",
 
-    // Items
+
     "AddItem": "Add Item",
     "NoItemsAdded": "No items have been added yet",
     "CreateOrder": "Create Order",
     "ViewItems": "View Items",
-    // Staff Roles
+
     "StaffInformation": "Staff Information",
     "Seller": "Seller",
     "Cashier": "Cashier",
@@ -82,7 +142,7 @@
     "Menu:SalesReport": "Sales Report",
     "Menu:InventoryReport": "Inventory Report",
 
-    // Order Types & Statuses
+
     "OrderType": "Order Type",
     "InStore": "In-Store",
     "Online": "Online",
@@ -230,9 +290,9 @@
     "Cart:Total": "Total",
     "Cart:Actions": "Actions",
     "Cart:Subtotal": "Subtotal",
-    // ============================================
-    // PRODUCTS MODULE (Prefix: Product)
-    // ============================================
+
+
+
     "Product:Products": "Products",
     "Product:ProductName": "Product Name",
     "Product:Price": "Price",
@@ -296,9 +356,9 @@
     "Product:UpdateFailureMessageGeneral": "Failed to update product '{0}'.",
     "Product:UpdateErrorGeneral": "An error occurred while updating the product.",
 
-    // ============================================
-    // ORDERS MODULE (Prefix: Order)
-    // ============================================
+
+
+
     "Order:Orders": "Orders",
     "Order:NotFound": "Order not found.",
     "Order:Details": "Order Details",
@@ -310,6 +370,9 @@
     "Order:HistoryUpdated": "History Updated",
     "Order:Date": "Order Date",
     "Order:OrderDate": "Order Date",
+    "Order:InStoreCreated": "In-store order created",
+    "Order:PaidInStore": "Paid In-Store: {0}",
+    "Order:UpdatedByAdmin": "Updated by Admin",
     "Order:TotalAmount": "Total Amount",
     "Order:Status": "Order Status",
     "Order:OrderStatus": "Order Status",
@@ -393,7 +456,7 @@
     "Order:CannotFulfillOrder": "Cannot fulfill this order",
     "Order:PaymentNotCompleted": "Payment has not been completed",
 
-    // In-Store Orders
+
     "Order:CreateInStoreOrder": "Create In-Store Order",
     "Order:MyInStoreOrders": "My In-Store Orders",
     "Order:InStoreOrders": "In-Store Orders",
@@ -539,6 +602,22 @@
     "Category:PowerBanks": "Power Banks",
     "Category:Services": "Services",
 
+    "DatabaseLimit:Title": "Oops! Out of Free Credits",
+    "DatabaseLimit:Subtitle": "Azure SQL Free Credits Exhausted for {Month}",
+    "DatabaseLimit:CasualText1": "Hey there! So... I burned through Azure's 32GB free database quota for {Month}.",
+    "DatabaseLimit:CasualText2": "As a fresh grad running this on the free tier, the database auto-paused until next month.",
+    "DatabaseLimit:CasualText3": "Don't worry though - all the data is safe! It'll be back up automatically when the free quota resets in {Month}.",
+    "DatabaseLimit:CasualText4": "Just the reality of learning and building on a student budget! 💪",
+    "DatabaseLimit:ResumesOn": "Service Will Resume On:",
+    "DatabaseLimit:WhyHappened": "Why This Happened (Learning Moment!)",
+    "DatabaseLimit:Reason1": "Free Tier Limits: Azure gives 32GB storage/month for free. Great for students & side projects!",
+    "DatabaseLimit:Reason2": "Auto-Pause: When limits hit, Azure pauses the DB (doesn't delete anything, thankfully).",
+    "DatabaseLimit:Reason3": "Monthly Reset: Everything resets at midnight UTC on the 1st of each month.",
+    "DatabaseLimit:Reason4": "No Charges: As long as I stay on free tier, no credit card charges! 🎉",
+    "DatabaseLimit:Footer1": "Thanks for checking out my project! 🙏",
+    "DatabaseLimit:Footer2": "See you in {Month}!",
+    "DatabaseLimit:Footer3": "P.S. If you're a recruiter and seeing this... yes, I know how to handle production databases too! 😄",
+    "DatabaseLimit:TechnicalDetails": "Show Technical Error Details",
     "Manufacturer:Manufacturers": "Manufacturers",
     "Manufacturer:Create": "Create Manufacturer",
     "Manufacturer:CreateManufacturer": "Create Manufacturer",
@@ -661,19 +740,12 @@
     "Error:ConfigurationIssue": "Configuration issue detected. Please check settings.",
     "ErrorOccurred": "An error has occurred!",
     "SorryErrorOccurred": "Sorry, an error occurred while processing your request.",
-    "Permission:Orders.ConfirmCodPayment": "Confirm COD Payment",
     "Home:CategoryList": "Category List",
 
-
+    "Permission:Products": "Products",
     "Permission:Products.Create": "Create Products",
     "Permission:Products.Edit": "Edit Products",
     "Permission:Products.Delete": "Delete Products",
-    "Permission:Product": "Product",
-
-    "Permission:Orders": "Orders",
-    "Permission:Orders.Create": "Create Orders",
-    "Permission:Orders.Edit": "Edit Orders",
-    "Permission:Orders.Delete": "Delete Orders",
 
     "Permission:Categories": "Categories",
     "Permission:Categories.Create": "Create Categories",
@@ -685,11 +757,50 @@
     "Permission:Manufacturers.Edit": "Edit Manufacturers",
     "Permission:Manufacturers.Delete": "Delete Manufacturers",
 
+    "Permission:Carts": "Carts",
+    "Permission:Carts.Create": "Create Carts",
+    "Permission:Carts.Edit": "Edit Carts",
+    "Permission:Carts.Delete": "Delete Carts",
+
+    "Permission:Orders": "Orders",
+    "Permission:Orders.Create": "Create Orders",
+    "Permission:Orders.Edit": "Edit Orders",
+    "Permission:Orders.Delete": "Delete Orders",
+    "Permission:Orders.ChangeStatus": "Change Status",
+    "Permission:Orders.ConfirmCodPayment": "Confirm COD Payment",
+    "Permission:Orders.ShipOrder": "Ship Order",
+    "Permission:Orders.ViewProfitReport": "View Profit Report",
+    "Permission:Orders.Complete": "Complete Order",
+    "Permission:Orders.Fulfill": "Fulfill Order",
+    "Permission:Orders.ViewCompleted": "View Completed Orders",
+    "Permission:Orders.ViewAll": "View All Orders",
+
+    "Permission:Stores": "Stores",
+    "Permission:Stores.Create": "Create Stores",
+    "Permission:Stores.Edit": "Edit Stores",
+    "Permission:Stores.Delete": "Delete Stores",
+
+    "Permission:Inventory": "Inventory",
+    "Permission:Inventory.Manage": "Manage Inventory",
+    "Permission:Inventory.Transfer": "Transfer Inventory",
+    "Permission:Inventory.ViewAllStores": "View All Stores Inventory",
+
+    "Permission:Users": "Users",
+    "Permission:Users.ManageStoreAssignment": "Manage Store Assignment",
+    "Permission:Users.AssignToStore": "Assign to Store",
+    "Permission:Users.Manage": "Manage Users",
+
     "Permission:Comments": "Comments",
     "Permission:Comments.Create": "Create Comments",
     "Permission:Comments.Edit": "Edit Comments",
     "Permission:Comments.Approve": "Approve Comments",
     "Permission:Comments.Delete": "Delete Comments",
+
+    "Permission:Chatbot": "AI Chatbot",
+    "Permission:Chatbot:Admin": "Chatbot Admin",
+    "Permission:Chatbot:ViewHistory": "View History",
+
+    "Permission:HangfireDashboard": "Hangfire Dashboard",
 
     "Error:400:Title": "Bad Request",
     "Error:400:Message": "Your request cannot be processed due to invalid syntax.",
@@ -1267,9 +1378,9 @@
     "Product:Storage:RPM": "RPM",
 
 
-    // ============================================
-    // STORE INVENTORY MODULE (Prefix: Inventory)
-    // ============================================
+
+
+
     "Inventory:StoreInventory": "Store Inventory",
     "Inventory:CurrentQuantity": "Current Quantity",
     "Inventory:ReorderLevel": "Reorder Level",
@@ -1292,7 +1403,7 @@
     "Inventory:InventoryTransferredSuccessfully": "Inventory transferred successfully",
     "Inventory:QuantityExceedsAvailableStock": "Quantity exceeds available stock",
 
-    // Low Stock
+
     "Inventory:LowStockItems": "Low Stock Items",
     "Inventory:LowStockItemsDescription": "Products that need to be reordered based on reorder levels",
     "Inventory:ShowCriticalOnly": "Show Critical Only (≤50% of reorder level)",

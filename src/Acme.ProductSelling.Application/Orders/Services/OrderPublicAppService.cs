@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Carts;
+using Acme.ProductSelling.Carts;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Orders.BackgroundJobs.OrderPending;
 using Acme.ProductSelling.Orders.Dtos;
@@ -71,7 +71,7 @@ namespace Acme.ProductSelling.Orders.Services
             var cart = await _cartRepository.WithDetailsAsync(c => c.Items)
                 .Result.FirstOrDefaultAsync(c => c.UserId == customerId);
 
-            if (cart == null || !cart.Items.Any()) throw new UserFriendlyException(_localizer["Cart:IsEmpty"]);
+            if (cart == null || !cart.Items.Any()) throw new UserFriendlyException(ProductSellingDomainErrorCodes.CartIsEmpty);
 
             // 2. Delegate Creation to Domain (Includes Stock Check)
             var order = await _orderManager.CreateOnlineOrderAsync(
@@ -140,7 +140,7 @@ namespace Acme.ProductSelling.Orders.Services
         public async Task DeleteAsync(Guid id)
         {
             var order = await _orderRepository.GetAsync(id, includeDetails: true) as OnlineOrder;
-            if (order.CustomerId != CurrentUser.Id) throw new AbpAuthorizationException(L["Account:Unauthorized"]);
+            if (order.CustomerId != CurrentUser.Id) throw new AbpAuthorizationException(ProductSellingDomainErrorCodes.AccountUnauthorized);
 
             // Domain Manager handles logic + restoring stock
             await _orderManager.RestoreStockAsync(order);
@@ -193,7 +193,7 @@ namespace Acme.ProductSelling.Orders.Services
             if (!_currentUser.IsAuthenticated || _currentUser.Id == null)
             {
                 Logger.LogWarning("[GetListForCurrentUser] FAILED - User not authenticated");
-                throw new AbpAuthorizationException(L["Account:UserNotAuthenticated"]);
+                throw new AbpAuthorizationException(ProductSellingDomainErrorCodes.AccountUserNotAuthenticated);
             }
 
             var currentUserId = _currentUser.Id.Value;
@@ -227,7 +227,7 @@ namespace Acme.ProductSelling.Orders.Services
             if (order == null)
             {
                 Logger.LogWarning("[GetByOrderNumber] FAILED - Order not found. OrderNumber: {OrderNumber}", orderNumber);
-                throw new UserFriendlyException(L["Order:OrderNotFound"]);
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderNotFound);
             }
 
             Logger.LogInformation("[GetByOrderNumber] COMPLETED - OrderId: {OrderId}, OrderNumber: {OrderNumber}",

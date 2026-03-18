@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Permissions;
+using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products.Services;
 using Acme.ProductSelling.StoreInventories.Dtos;
 using Acme.ProductSelling.StoreInventories.Services;
@@ -116,7 +116,7 @@ namespace Acme.ProductSelling.StoreInventories
             var existing = await _storeInventoryRepository.GetByStoreAndProductAsync(input.StoreId, input.ProductId);
             if (existing != null)
             {
-                throw new UserFriendlyException("Inventory record already exists for this store and product combination.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.InventoryRecordAlreadyExists);
             }
 
             // Validate product exists
@@ -192,7 +192,7 @@ namespace Acme.ProductSelling.StoreInventories
         {
             if (input.FromStoreId == input.ToStoreId)
             {
-                throw new UserFriendlyException("Cannot transfer inventory to the same store.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.InventoryCannotTransferToSameStore);
             }
 
             await CheckStoreAccessAsync(input.FromStoreId);
@@ -202,13 +202,15 @@ namespace Acme.ProductSelling.StoreInventories
             var sourceInventory = await _storeInventoryRepository.GetByStoreAndProductAsync(input.FromStoreId, input.ProductId);
             if (sourceInventory == null)
             {
-                throw new UserFriendlyException("Source inventory not found.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.InventorySourceNotFound);
             }
 
             // Check sufficient stock
             if (sourceInventory.Quantity < input.Quantity)
             {
-                throw new UserFriendlyException($"Insufficient stock. Available: {sourceInventory.Quantity}, Requested: {input.Quantity}");
+                throw new BusinessException(ProductSellingDomainErrorCodes.InventoryInsufficientStock)
+                    .WithData("0", sourceInventory.Quantity)
+                    .WithData("1", input.Quantity);
             }
 
             // Get or create destination inventory
@@ -244,7 +246,7 @@ namespace Acme.ProductSelling.StoreInventories
             var inventory = await _storeInventoryRepository.GetByStoreAndProductAsync(storeId, productId);
             if (inventory == null)
             {
-                throw new UserFriendlyException("Inventory not found for this store and product combination.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.InventoryNotFoundForStoreAndProduct);
             }
 
             return await MapToInventoryDtoAsync(inventory);
@@ -290,7 +292,7 @@ namespace Acme.ProductSelling.StoreInventories
             var userStoreId = await GetCurrentUserStoreIdAsync();
             if (!userStoreId.HasValue || userStoreId.Value != storeId)
             {
-                throw new UserFriendlyException("You don't have access to this store's inventory.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.InventoryNoAccessToStore);
             }
         }
 
@@ -347,7 +349,7 @@ namespace Acme.ProductSelling.StoreInventories
                 // All stores query (admin/manager only)
                 if (!await IsAdminOrManagerAsync())
                 {
-                    throw new UserFriendlyException("You don't have permission to view all stores' inventory.");
+                    throw new UserFriendlyException(ProductSellingDomainErrorCodes.InventoryNoPermissionViewAll);
                 }
 
                 inventories = await _storeInventoryRepository.GetLowStockItemsAsync();

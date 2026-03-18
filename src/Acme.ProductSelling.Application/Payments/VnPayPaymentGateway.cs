@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Orders;
+using Acme.ProductSelling.Orders;
 using Acme.ProductSelling.PaymentGateway.VnPay.Dtos;
 using Acme.ProductSelling.PaymentGateway.VnPay.Services;
 using Microsoft.AspNetCore.Http;
@@ -33,7 +33,7 @@ namespace Acme.ProductSelling.Payments
                 if (httpContext == null)
                 {
                     _logger.LogError("HttpContext is null when processing VNPay payment for order {OrderId}", order.Id);
-                    throw new UserFriendlyException("Không thể khởi tạo thanh toán. Vui lòng thử lại.");
+                    throw new UserFriendlyException(ProductSellingDomainErrorCodes.PaymentInitializationFailed);
                 }
 
                 var model = new VnPaymentRequestModel
@@ -56,7 +56,7 @@ namespace Acme.ProductSelling.Payments
                 if (string.IsNullOrWhiteSpace(paymentUrl))
                 {
                     _logger.LogError("VNPay service returned empty payment URL for order {OrderId}", order.Id);
-                    throw new UserFriendlyException("Không thể tạo liên kết thanh toán VNPay. Vui lòng thử lại.");
+                    throw new UserFriendlyException(ProductSellingDomainErrorCodes.PaymentVnPayLinkCreationFailed);
                 }
 
                 _logger.LogInformation("VNPay payment URL created successfully for order {OrderId}", order.Id);
@@ -81,19 +81,19 @@ namespace Acme.ProductSelling.Payments
             if (order.TotalAmount <= 0)
             {
                 _logger.LogWarning("Invalid order amount {Amount} for order {OrderId}", order.TotalAmount, order.Id);
-                throw new UserFriendlyException("Số tiền đơn hàng không hợp lệ.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.PaymentInvalidOrderAmount);
             }
 
             if (order.PaymentStatus == PaymentStatus.Paid)
             {
                 _logger.LogWarning("Attempting to pay for already paid order {OrderId}", order.Id);
-                throw new UserFriendlyException("Đơn hàng này đã được thanh toán.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.PaymentOrderAlreadyPaid);
             }
 
             if (order.OrderStatus == OrderStatus.Cancelled)
             {
                 _logger.LogWarning("Attempting to pay for cancelled order {OrderId}", order.Id);
-                throw new UserFriendlyException("Không thể thanh toán cho đơn hàng đã hủy.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.PaymentCannotPayForCancelledOrder);
             }
         }
     }

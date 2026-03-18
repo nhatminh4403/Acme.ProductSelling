@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Orders;
+using Acme.ProductSelling.Orders;
 using Acme.ProductSelling.PaymentGateway.PayPal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -42,7 +42,7 @@ namespace Acme.ProductSelling.Payments
                 if (httpContext == null)
                 {
                     _logger.LogError("HttpContext is null when processing PayPal payment for order {OrderId}", order.Id);
-                    throw new UserFriendlyException("Không thể khởi tạo thanh toán. Vui lòng thử lại.");
+                    throw new UserFriendlyException(ProductSellingDomainErrorCodes.PaymentInitializationFailed);
                 }
 
                 var baseUrl = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}";
@@ -69,9 +69,7 @@ namespace Acme.ProductSelling.Payments
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Currency conversion failed for order {OrderId}", order.Id);
-                    throw new UserFriendlyException(
-                        "Không thể chuyển đổi tiền tệ. Vui lòng thử lại sau hoặc chọn phương thức thanh toán khác."
-                    );
+                    throw new UserFriendlyException(ProductSellingDomainErrorCodes.PaymentPayPalConnectionError);
                 }
 
                 // Validate converted amount
@@ -83,7 +81,7 @@ namespace Acme.ProductSelling.Payments
                         "Converted USD amount {UsdAmount} is below minimum for order {OrderId}",
                         totalPriceUSD, order.Id
                     );
-                    throw new UserFriendlyException($"Số tiền thanh toán phải lớn hơn ${MIN_USD_AMOUNT} USD.");
+                    throw new BusinessException(ProductSellingDomainErrorCodes.PaymentPayPalSmallAmount).WithData("0", MIN_USD_AMOUNT);
                 }
 
                 if (totalPriceUSD > MAX_USD_AMOUNT)
@@ -92,7 +90,7 @@ namespace Acme.ProductSelling.Payments
                         "Converted USD amount {UsdAmount} exceeds maximum for order {OrderId}",
                         totalPriceUSD, order.Id
                     );
-                    throw new UserFriendlyException($"Số tiền thanh toán vượt quá giới hạn ${MAX_USD_AMOUNT} USD.");
+                    throw new BusinessException(ProductSellingDomainErrorCodes.PaymentPayPalLargeAmount).WithData("0", MAX_USD_AMOUNT);
                 }
 
                 _logger.LogInformation(
@@ -111,7 +109,7 @@ namespace Acme.ProductSelling.Payments
                 if (string.IsNullOrWhiteSpace(paymentUrl))
                 {
                     _logger.LogError("PayPal service returned empty payment URL for order {OrderId}", order.Id);
-                    throw new UserFriendlyException("Không thể tạo liên kết thanh toán PayPal. Vui lòng thử lại.");
+                    throw new UserFriendlyException(ProductSellingDomainErrorCodes.PaymentPayPalLinkCreationFailed);
                 }
 
                 _logger.LogInformation("PayPal payment URL created successfully for order {OrderId}", order.Id);
@@ -131,7 +129,7 @@ namespace Acme.ProductSelling.Payments
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error creating PayPal payment for order {OrderId}", order.Id);
-                throw new UserFriendlyException("Đã có lỗi xảy ra khi kết nối với PayPal. Vui lòng thử lại sau.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.PaymentPayPalConnectionError);
             }
         }
 
@@ -143,17 +141,17 @@ namespace Acme.ProductSelling.Payments
             if (order.TotalAmount <= 0)
             {
                 _logger.LogWarning("Invalid order amount {Amount} for order {OrderId}", order.TotalAmount, order.Id);
-                throw new UserFriendlyException("Số tiền đơn hàng không hợp lệ.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.PaymentInvalidOrderAmount);
             }
 
             if (order.PaymentStatus == PaymentStatus.Paid)
             {
-                throw new UserFriendlyException("Đơn hàng này đã được thanh toán.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.PaymentOrderAlreadyPaid);
             }
 
             if (order.OrderStatus == OrderStatus.Cancelled)
             {
-                throw new UserFriendlyException("Không thể thanh toán cho đơn hàng đã hủy.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.PaymentCannotPayForCancelledOrder);
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Localization;
+using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Payments;
 using Acme.ProductSelling.Permissions;
@@ -101,12 +101,12 @@ namespace Acme.ProductSelling.Orders.Services
 
             order.SetStatus(input.NewStatus);
             if (!_paymentStatusPolicy.CanTransition(order.PaymentStatus, input.NewPaymentStatus))
-                throw new UserFriendlyException("InvalidPaymentStatusChange");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderInvalidPaymentStatusChange);
             order.SetPaymentStatus(input.NewPaymentStatus);
 
             await _orderRepository.UpdateAsync(order, autoSave: true);
 
-            await _orderHistoryAppService.LogOrderChangeAsync(id, oldStatus, order.OrderStatus, oldPayment, order.PaymentStatus, "Updated by Admin");
+            await _orderHistoryAppService.LogOrderChangeAsync(id, oldStatus, order.OrderStatus, oldPayment, order.PaymentStatus, _localizer["Order:UpdatedByAdmin"]);
             await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
             await _orderCache.RemoveAsync(id);
 
@@ -119,7 +119,7 @@ namespace Acme.ProductSelling.Orders.Services
             var order = await _orderRepository.GetAsync(orderId) as OnlineOrder;
 
             if (order.OrderStatus != OrderStatus.Confirmed && order.OrderStatus != OrderStatus.Processing)
-                throw new UserFriendlyException(_localizer["Order:CannotShip"]);
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderCannotShip);
 
             order.SetStatus(OrderStatus.Shipped);
             if (order.PaymentMethod == PaymentMethods.COD) order.SetPendingOnDelivery();
@@ -135,10 +135,10 @@ namespace Acme.ProductSelling.Orders.Services
             var order = await _orderRepository.GetAsync(orderId) as OnlineOrder;
 
             if (order == null)
-                throw new UserFriendlyException("Order:NotFound");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderNotFound);
 
             if (order.OrderStatus != OrderStatus.Shipped)
-                throw new UserFriendlyException(_localizer["Order:CannotDeliver"]);
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderCannotDeliver);
 
             if (order.PaymentMethod == PaymentMethods.COD)
                 order.MarkAsCodPaidAndCompleted();
@@ -155,7 +155,7 @@ namespace Acme.ProductSelling.Orders.Services
         {
             var order = await _orderRepository.GetAsync(orderId) as OnlineOrder;
             if (order == null)
-                throw new UserFriendlyException("Order:NotFound");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderNotFound);
             order.MarkAsCodPaidAndCompleted();
             await _orderRepository.UpdateAsync(order, autoSave: true);
             await _orderNotificationService.NotifyOrderStatusChangeAsync(order);

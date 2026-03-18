@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Carts;
+using Acme.ProductSelling.Carts;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Orders.Services;
 using Acme.ProductSelling.Products.Services;
@@ -66,11 +66,14 @@ namespace Acme.ProductSelling.Orders
             foreach (var item in cartItems)
             {
                 var product = products.FirstOrDefault(p => p.Id == item.ProductId);
-                if (product == null) throw new UserFriendlyException(_localizer["Product:NotFound"]);
+                if (product == null) throw new UserFriendlyException(ProductSellingDomainErrorCodes.ProductNotFound);
 
                 if (product.StockCount < item.Quantity)
                 {
-                    throw new UserFriendlyException(_localizer["Product:Stock:NotEnoughStock", product.ProductName, product.StockCount]);
+                    throw new UserFriendlyException(ProductSellingDomainErrorCodes.InventoryInsufficientStock)
+                        .WithData("Name", product.ProductName)
+                        .WithData("Quantity", product.StockCount)
+                        .WithData("Requested", item.Quantity);
                 }
 
                 // Add item
@@ -134,19 +137,28 @@ namespace Acme.ProductSelling.Orders
             foreach (var itemDto in items)
             {
                 var product = products.FirstOrDefault(p => p.Id == itemDto.ProductId);
-                if (product == null) throw new UserFriendlyException(_localizer["Product:NotFound"]);
+                if (product == null) throw new UserFriendlyException(ProductSellingDomainErrorCodes.ProductNotFound);
 
                 // Active Checks
-                if (!product.IsActive) throw new UserFriendlyException(_localizer["Product:NotActive", product.ProductName]);
+                if (!product.IsActive) throw new UserFriendlyException(ProductSellingDomainErrorCodes.ProductNotActive)
+                    .WithData("Name", product.ProductName);
                 if (product.ReleaseDate.HasValue && product.ReleaseDate.Value > DateTime.Now)
-                    throw new UserFriendlyException(_localizer["Product:NotYetReleased", product.ProductName]);
+                    throw new BusinessException(ProductSellingDomainErrorCodes.IdentityDataSeedingFailed)
+                        .WithData("User", username)
+                        .WithData("Role", roleNameToAssign)
+                        .WithData("Reason", errorDetails);
+                        .WithData("Name", product.ProductName);
 
                 // Store Stock Check
                 var hasStock = await _storeInventoryRepository.HasSufficientStockAsync(storeId, product.Id, itemDto.Quantity);
                 if (!hasStock)
                 {
                     var currentStock = (await _storeInventoryRepository.GetByStoreAndProductAsync(storeId, product.Id))?.Quantity ?? 0;
-                    throw new UserFriendlyException(_localizer["Product:Stock:NotEnoughStockInStore", product.ProductName, store.Name, currentStock]);
+                    throw new UserFriendlyException(ProductSellingDomainErrorCodes.StoreInventoryInsufficientStock)
+                        .WithData("Name", product.ProductName)
+                        .WithData("StoreName", store.Name)
+                        .WithData("Quantity", currentStock)
+                        .WithData("Requested", itemDto.Quantity);
                 }
 
                 order.AddOrderItem(

@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Localization;
+using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Payments;
 using Microsoft.Extensions.Localization;
 using System;
@@ -42,8 +42,7 @@ namespace Acme.ProductSelling.Orders
         {
             if (PaymentMethod != PaymentMethods.COD)
             {
-                throw new UserFriendlyException("OnlyForCODOrders",
-                    "Trạng thái PendingOnDelivery chỉ dành cho đơn COD.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderOnlyForCODOrders);
             }
             SetPaymentStatus(PaymentStatus.PendingOnDelivery);
         }
@@ -61,12 +60,12 @@ namespace Acme.ProductSelling.Orders
         {
             if (PaymentMethod != PaymentMethods.COD)
             {
-                throw new UserFriendlyException("ActionNotAllowedForNonCodOrder");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderActionNotAllowedForNonCodOrder);
             }
             if (PaymentStatus != PaymentStatus.PendingOnDelivery)
             {
-                throw new UserFriendlyException("CannotConfirmPaymentForThisOrder",
-                    $"Trạng thái thanh toán phải là '{PaymentStatus.PendingOnDelivery}'.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderCannotConfirmPaymentForThisOrder)
+                    .WithData("Status", PaymentStatus.PendingOnDelivery);
             }
 
             PaymentStatus = PaymentStatus.Paid;
@@ -77,13 +76,13 @@ namespace Acme.ProductSelling.Orders
         {
             if (OrderStatus != OrderStatus.Placed && OrderStatus != OrderStatus.Pending)
             {
-                throw new UserFriendlyException("Order:OrderCanOnlyBeCancelledWhenPlacedOrPending");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderCanOnlyBeCancelledWhenPlacedOrPending);
             }
 
             // Still prevent cancelling if already PAID (for online orders)
             if (PaymentStatus == PaymentStatus.Paid)
             {
-                throw new UserFriendlyException("Order:CannotCancelPaidOrder");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderCannotCancelPaidOrder);
             }
 
             SetStatus(OrderStatus.Cancelled);

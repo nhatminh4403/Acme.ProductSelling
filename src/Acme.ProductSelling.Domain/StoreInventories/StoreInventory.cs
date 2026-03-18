@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Products;
+using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Stores;
 using System;
 using Volo.Abp.Domain.Entities.Auditing;
@@ -41,7 +41,7 @@ namespace Acme.ProductSelling.StoreInventories
         public void AddStock(int quantity)
         {
             if (quantity <= 0)
-                throw new ArgumentException("Quantity must be positive", nameof(quantity));
+                throw new ArgumentException(ProductSellingDomainErrorCodes.StoreInventoryQuantityMustBePositive);
 
             Quantity += quantity;
         }
@@ -49,10 +49,12 @@ namespace Acme.ProductSelling.StoreInventories
         public void RemoveStock(int quantity)
         {
             if (quantity <= 0)
-                throw new ArgumentException("Quantity must be positive", nameof(quantity));
+                throw new ArgumentException(ProductSellingDomainErrorCodes.StoreInventoryQuantityMustBePositive);
 
             if (Quantity < quantity)
-                throw new InvalidOperationException($"Insufficient stock. Available: {Quantity}, Requested: {quantity}");
+                throw new BusinessException(ProductSellingDomainErrorCodes.StoreInventoryInsufficientStock)
+                    .WithData("Quantity", Quantity)
+                    .WithData("Requested", quantity);
 
             Quantity -= quantity;
         }
@@ -60,7 +62,7 @@ namespace Acme.ProductSelling.StoreInventories
         public void SetQuantity(int quantity)
         {
             if (quantity < 0)
-                throw new ArgumentException("Quantity cannot be negative", nameof(quantity));
+                throw new ArgumentException(ProductSellingDomainErrorCodes.StoreInventoryQuantityCannotBeNegative);
 
             Quantity = quantity;
         }
@@ -78,7 +80,7 @@ namespace Acme.ProductSelling.StoreInventories
         public void UpdateReorderSettings(int reorderLevel, int reorderQuantity)
         {
             if (reorderLevel < 0 || reorderQuantity < 0)
-                throw new ArgumentException("Reorder values cannot be negative");
+                throw new ArgumentException(ProductSellingDomainErrorCodes.StoreInventoryReorderValuesCannotBeNegative);
 
             ReorderLevel = reorderLevel;
             ReorderQuantity = reorderQuantity;

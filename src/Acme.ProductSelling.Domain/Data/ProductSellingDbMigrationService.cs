@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.MultiTenancy;
+using Acme.ProductSelling.MultiTenancy;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System;
@@ -203,7 +203,8 @@ public class ProductSellingDbMigrationService : ITransientDependency
         }
         catch (Exception)
         {
-            throw new Exception("Couldn't run ABP CLI...");
+            throw new BusinessException(ProductSellingDomainErrorCodes.DatabaseMigrationFailed)
+                .WithData("Reason", "Couldn't run ABP CLI...");
         }
     }
 
@@ -213,7 +214,8 @@ public class ProductSellingDbMigrationService : ITransientDependency
 
         if (slnDirectoryPath == null)
         {
-            throw new Exception("Solution folder not found!");
+            throw new BusinessException(ProductSellingDomainErrorCodes.DatabaseMigrationFailed)
+                .WithData("Reason", "Solution folder not found!");
         }
 
         var srcDirectoryPath = Path.Combine(slnDirectoryPath, "src");

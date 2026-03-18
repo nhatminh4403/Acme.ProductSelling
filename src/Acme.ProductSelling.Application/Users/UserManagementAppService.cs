@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Permissions;
+using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Stores;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
@@ -46,7 +46,7 @@ namespace Acme.ProductSelling.Users
 
             if (user.IsCustomer())
             {
-                throw new UserFriendlyException("Cannot assign store to customer accounts.");
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.UserCannotAssignStoreToCustomer);
             }
 
             if (storeId.HasValue)
