@@ -32,7 +32,7 @@ namespace Acme.ProductSelling.Products
         CrudAppService<Product, ProductDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateProductDto>,
         IProductAppService
     {
-        private readonly IRepository<Category, Guid> _categoryRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly IProductRepository _productRepository;
         private readonly ISpecificationService _specificationService;
         private readonly IRepository<CaseMaterial> _caseMaterialRepository;
@@ -52,8 +52,8 @@ namespace Acme.ProductSelling.Products
         private readonly IDistributedCache<ProductDto, string> _productSlugCache;
         private readonly IDistributedCache<List<FeaturedCategoryProductsDto>, string> _featuredCache;
 
-        public ProductAppService(IRepository<Product, Guid> repository,
-                                 IRepository<Category, Guid> categoryRepository,
+        public ProductAppService(
+                                 ICategoryRepository categoryRepository,
                                  IRepository<CaseMaterial> caseMaterialRepository,
                                  //IRepository<CaseSpecification, Guid> caseSpecificationRepository,
                                  //IRepository<CpuCoolerSpecification, Guid> cpuCoolerSpecificationRepository,
@@ -70,10 +70,10 @@ namespace Acme.ProductSelling.Products
                                  IDistributedCache<ProductDto, Guid> productDetailCache,
                                  IDistributedCache<ProductDto, string> productSlugCache,
                                  IDistributedCache<List<FeaturedCategoryProductsDto>, string> featuredCache)
-            : base(repository)
+            : base(repository: productRepository)
         {
-            _categoryRepository = categoryRepository;
             _productRepository = productRepository;
+            _categoryRepository = categoryRepository;
             _caseMaterialRepository = caseMaterialRepository;
             //_caseSpecificationRepository = caseSpecificationRepository;
             //_cpuCoolerSpecificationRepository = cpuCoolerSpecificationRepository;
