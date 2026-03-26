@@ -19,7 +19,7 @@ WORKDIR /app
 COPY . .
 
 # Restore Dependencies
-RUN dotnet restore "Acme.ProductSelling.sln"
+RUN dotnet restore "Acme.ProductSelling.slnx"
 
 # Navigate to the Web project folder
 WORKDIR "/app/src/Acme.ProductSelling.Web"

@@ -123,7 +123,8 @@ namespace Acme.ProductSelling.Products
                     await _productDetailCache.SetAsync(
                         dto.Id,
                         dto,
-                        new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(ProductCacheKeys.DetailTtlMinutes) },
+                        new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = 
+                        TimeSpan.FromMinutes(ProductCacheKeys.DetailTtlMinutes) },
                         considerUow: false);
                 }
             });

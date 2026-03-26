@@ -192,8 +192,11 @@
     "Register:FullName": "Họ và Tên",
     "Register:ConfirmPassword": "Xác nhận Mật khẩu",
     "Register:HaveAnAccount?": "Đã có tài khoản?",
-
+    "Register:Name": "Tên của bạn",
+    "Register:Surname": "Họ của bạn",
+    "Register:PhoneNumber": "Số điện thoại / SĐT",
     "Logout": "Đăng xuất",
+
     "Logout:Processing": "Đang đăng xuất...",
     "Logout:PleaseWait": "Vui lòng đợi",
     "Logout:Success": "Bạn đã đăng xuất thành công!",
@@ -911,7 +914,7 @@
     "CategoryGroup:Accessories": "Phụ Kiện & Cáp",
     "Admin:Menu:Products:LowStock": "Cảnh báo tồn kho thấp",
 
-    "Register": "Đang xử lý",
+    "Register": "Đăng ký",
     "CustomerInformation": "Thông tin khách hàng",
     "PaymentStatus": "Trạng thái thanh toán",
     "PaymentMethod": "Phương thức thanh toán",

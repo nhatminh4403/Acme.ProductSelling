@@ -18,7 +18,7 @@
     var hasAdminPermission = await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Products.Default);
     var adminPaths = new[] { "/identity", "/account", "/tenantmanagement", "/setting-management", "/admin" };
     var currentPath = Context.Request.Path.Value.ToLowerInvariant();
-    var isAdminPage = adminPaths.Any(p => currentPath.StartsWith(p)) || hasAdminPermission;
+    var isAdminPage = adminPaths.Any(p => currentPath.StartsWith(p)) ;
 
 
 
@@ -48,36 +48,58 @@
         }
         encodedReturnUrl = WebUtility.UrlEncode(rawReturnUrl);
     }
+    var dropdownId = "languageDropdown_" + Guid.NewGuid().ToString("N")[..8];
 
 }
 
 @if (Model.Languages.Any())
 {
-    <div class="dropdown">
-        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown">
-            <i class="bi bi-globe"></i> @Model.CurrentLanguage.DisplayName
-        </button>
-        <ul class="dropdown-menu">
-            @foreach (var language in Model.Languages)
-            {
-                <li>
-                    @if (isAdminPage || hasAdminPermission)
-                    {
-                        <a class="dropdown-item" href="~/Abp/Languages/Switch?culture=@(language.CultureName)&uiCulture=@(language.UiCultureName)&returnUrl=@(System.Net.WebUtility.UrlEncode(Context.Request.GetEncodedPathAndQuery()))">
-                            @language.DisplayName
-                        </a>
-                    }
-                    else
-                    {
-                        <a class="dropdown-item" href="/Abp/Languages/Switch?culture=@(language.CultureName)&uiCulture=@(language.UiCultureName)&returnUrl=@encodedReturnUrl">
-                            @language.DisplayName
-                        </a>
-                    }
+    @if (isAdminPage)
+    {
+        <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="@dropdownId" data-bs-toggle="dropdown">
+                <i class="bi bi-globe"></i> @Model.CurrentLanguage.DisplayName
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="@dropdownId">
+                @foreach (var language in Model.Languages)
+                {
+                    var isCurrent = language.CultureName == Model.CurrentLanguage.CultureName;
+                    <li>
+                        @if (isCurrent)
+                        {
+                            <span class="dropdown-item active disabled">
+                                @language.DisplayName
+                            </span>
+                        }
+                        else
+                        {
+                            
+                            <a class="dropdown-item"
+                                   href="~/Abp/Languages/Switch?culture=@(language.CultureName)&uiCulture=@(language.UiCultureName)&returnUrl=@(System.Net.WebUtility.UrlEncode(Context.Request.GetEncodedPathAndQuery()))">
+                                @language.DisplayName
+                            </a>
+                        
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    }
 
-                </li>
-            }
-        </ul>
-    </div>
+    else
+    {
+        <div class="d-flex gap-3 border-1">
+            <a href="/Abp/Languages/Switch?culture=vi&uiCulture=vi&returnUrl=/"
+                   class="text-decoration-none @(CultureInfo.CurrentUICulture.Name == "vi" ? "fw-bold text-dark" : "text-muted")">
+                🇻🇳 Tiếng Việt
+            </a>
+            <a href="/Abp/Languages/Switch?culture=en&uiCulture=en&returnUrl=/"
+                   class="text-decoration-none @(CultureInfo.CurrentUICulture.Name == "en" ? "fw-bold text-dark" : "text-muted")">
+                🇺🇸 English
+            </a>
+        </div>
+    }
+
 }
 
 

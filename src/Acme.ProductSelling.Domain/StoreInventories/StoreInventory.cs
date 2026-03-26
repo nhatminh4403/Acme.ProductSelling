@@ -1,6 +1,7 @@
 using Acme.ProductSelling.Products;
 using Acme.ProductSelling.Stores;
 using System;
+using Volo.Abp;
 using Volo.Abp.Domain.Entities.Auditing;
 
 namespace Acme.ProductSelling.StoreInventories

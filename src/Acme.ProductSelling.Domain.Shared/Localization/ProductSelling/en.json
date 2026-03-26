@@ -253,7 +253,9 @@
     "Register:FullName": "Full Name",
     "Register:ConfirmPassword": "Confirm Password",
     "Register:HaveAnAccount?": "Already have an account?",
-
+    "Register:Surname": "Your Surname",
+    "Register:Name": "Your Name",
+    "Register:PhoneNumber": "Your Phone Number",
     "Logout": "Logout",
     "Logout:Processing": "Logging out...",
     "Logout:PleaseWait": "Please wait",
@@ -290,7 +292,7 @@
     "Cart:Total": "Total",
     "Cart:Actions": "Actions",
     "Cart:Subtotal": "Subtotal",
-
+    //"Cart:IsEmpty": "",
 
 
     "Product:Products": "Products",

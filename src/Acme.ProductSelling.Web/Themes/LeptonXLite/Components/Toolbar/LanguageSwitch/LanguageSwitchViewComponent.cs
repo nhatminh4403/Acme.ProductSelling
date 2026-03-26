@@ -46,7 +46,9 @@ namespace Acme.ProductSelling.Web.Themes.LeptonXLite.Components.Toolbar.Language
             var model = new ThemeLanguageInfo
             {
                 CurrentLanguage = currentLanguage,
-                Languages = languages.Where(l => l != currentLanguage).ToList(),
+                Languages = languages
+                            .Where(l => l != currentLanguage)
+                            .ToList(),
             };
 
             return View("~/Themes/LeptonXLite/Components/Toolbar/LanguageSwitch/Default.cshtml", model);

@@ -1,6 +1,4 @@
-﻿
-
-/* ============================================
+﻿/* ============================================
    HEADER STYLES
    ============================================ */
 
@@ -1002,11 +1000,10 @@
         opacity: 1;
     }
 }
-/* Category Button - Hidden by default on homepage */
+/* Category Button - Hidden by default on ALL pages */
 .category-btn {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-body.homepage .category-btn {
+    /* Hidden state (default) */
     opacity: 0;
     visibility: hidden;
     transform: scale(0.95);
@@ -1015,35 +1012,26 @@ body.homepage .category-btn {
     margin: 0;
     overflow: hidden;
 }
-    body.homepage .category-btn.show-on-scroll {
+
+    /* Visible state — only when .show-on-scroll is added via JS (homepage scroll) */
+    .category-btn.show-on-scroll {
         opacity: 1 !important;
         visibility: visible !important;
         transform: scale(1) !important;
         width: auto;
         padding: 0.625rem 1.25rem;
         margin-left: 0.75rem;
+        overflow: visible;
     }
-body:not(.homepage) .category-btn {
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: scale(1) !important;
-    width: auto;
-    padding: 0.625rem 1.25rem;
-    margin-left: 0.75rem;
-}
 
 .search-container {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Expanded search bar on homepage when category button is hidden */
-body.homepage .search-container {
+    /* Expanded by default since button is hidden */
     margin-left: 1.5rem;
 }
 
-    /* Shrink search bar when category button is visible */
-    body.homepage .search-container.shrink,
-    body:not(.homepage) .search-container {
+    /* Shrink search bar when category button slides in */
+    .search-container.shrink {
         margin-left: 1rem;
     }
 

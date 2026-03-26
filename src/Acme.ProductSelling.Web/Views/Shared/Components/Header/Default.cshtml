@@ -1,12 +1,13 @@
 ﻿@using Acme.ProductSelling.Permissions
 @using Acme.ProductSelling.Web.Views.Shared.Components.CategorySidebar
 @using Microsoft.AspNetCore.Authorization
-
+@using Acme.ProductSelling.Identity
 @inject ICurrentUser CurrentUser
 @inject IAuthorizationService AuthorizationService
 
 @{
-    var hasAdminPermission = await AuthorizationService.IsGrantedAsync(ProductSellingPermissions.Products.Default);
+    var hasAdminPermission = CurrentUser.IsInRole("Admin") ||
+         CurrentUser.IsInRole("admin") || CurrentUser.IsInRole(IdentityRoleConsts.Admin);
     var title = ViewData["Title"]?.ToString();
     var titleAppName = L["Menu:AppName"].ToString();
     bool checkTitle = title.ToLower().Contains(titleAppName.ToLower());
@@ -39,7 +40,10 @@
         </button>
 
         <!-- Desktop Category Button -->
-        <button class="category-btn d-none d-lg-flex ms-3" type="button" id="categoryMenuBtn" aria-label="Categories">
+        <button class="category-btn d-none d-lg-flex ms-3"
+                type="button"
+                id="categoryMenuBtn"
+                aria-label="Categories">
             <i class="bi bi-grid-3x3-gap-fill"></i>
             <span>@L["Category:Categories"]</span>
         </button>
@@ -85,7 +89,7 @@
                             <i class="bi bi-bag"></i>
                             @L["Order:MyOrders"]
                         </a>
-                        @if (hasAdminPermission || CurrentUser.IsInRole("Admin") || CurrentUser.IsInRole("admin"))
+                        @if (hasAdminPermission)
                         {
                             <a class="dropdown-item" asp-page="/Admin/Index" data-no-culture="true">
                                 <i class="bi bi-shield-lock"></i>

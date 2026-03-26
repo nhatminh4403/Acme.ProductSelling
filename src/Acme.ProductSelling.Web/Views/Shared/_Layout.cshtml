@@ -52,7 +52,18 @@
         });
     </script>
     @await RenderSectionAsync("styles", required: false)
+            <style>
+                    #categoryMenuBtn, #mobileCategoryBtn {
+                        visibility: hidden;
+                    }
+        </style>
     <link href="~/css/shared/category-sidebar.css" rel="stylesheet" />
+        <script>
+        if (sessionStorage.getItem('appLoaded')) {
+            document.documentElement.classList.add('app-loaded');
+        }
+    </script>
+
     <style>
         * {
             margin: 0;
@@ -102,13 +113,18 @@
                 max-height: 50vh;
             }
         }
+        html:not(.app-loaded) #categoryMenuBtn,
+html:not(.app-loaded) #mobileCategoryBtn {
+    visibility: hidden;
+}
     </style>
 </head>
 
-<body class="abp-application-layout bg-light d-flex flex-column min-vh-100">
+<body class="abp-application-layout bg-light d-flex flex-column min-vh-100 preload">
 
     <!-- HEADER -->
     @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Views.Shared.Components.Header.HeaderViewComponent))
+   
 
     <div style="background: #ececec">
         @RenderBody()

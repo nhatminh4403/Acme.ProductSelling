@@ -45,12 +45,12 @@ namespace Acme.ProductSelling.Products.Specification
         private readonly CreateUpdateNetworkHardwareSpecToEntityMapper _networkMapper;
         private readonly CreateUpdatePowerBankSpecToEntityMapper _powerBankMapper;
         private readonly IServiceProvider _serviceProvider;
-        private record HandlerRegistry(Func<IServiceProvider, CreateUpdateProductDto, SpecificationBase> BuildAsync,
-            Action<IServiceProvider, SpecificationBase, CreateUpdateProductDto> UpdateAsync);
-        private readonly Dictionary<SpecificationType, HandlerRegistry> _registry;
+        //private record HandlerRegistry(Func<IServiceProvider, CreateUpdateProductDto, SpecificationBase> BuildAsync,
+        //    Action<IServiceProvider, SpecificationBase, CreateUpdateProductDto> UpdateAsync);
+        //private readonly Dictionary<SpecificationType, HandlerRegistry> _registry;
 
         public SpecificationService(
-            Dictionary<SpecificationType, ISpecificationHandler> handlers,
+            //Dictionary<SpecificationType, ISpecificationHandler> handlers,
             IRepository<SpecificationBase, Guid> specRepository,
             CreateUpdateMonitorSpecToEntityMapper monitorMapper,
             CreateUpdateMouseSpecToEntityMapper mouseMapper,
@@ -83,7 +83,7 @@ namespace Acme.ProductSelling.Products.Specification
             CreateUpdatePowerBankSpecToEntityMapper powerBankMapper,
             IServiceProvider serviceProvider)
         {
-            _registry = new Dictionary<SpecificationType, HandlerRegistry>();
+            //_registry = new Dictionary<SpecificationType, HandlerRegistry>();
 
             _specRepository = specRepository;
             _monitorMapper = monitorMapper;

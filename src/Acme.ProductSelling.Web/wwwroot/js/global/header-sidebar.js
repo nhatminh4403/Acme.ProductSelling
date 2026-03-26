@@ -1,4 +1,17 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
+    const megamenu = document.getElementById('categoryMegamenu');
+    const overlay = document.getElementById('categoryMegamenuOverlay');
+    const closeBtn = document.getElementById('megamenuCloseBtn');
+    const desktopOpenBtn = document.getElementById('categoryMenuBtn');
+    const mobileOpenBtn = document.getElementById('mobileCategoryBtn');
+    const categoryLinks = document.querySelectorAll('.category-item-link');
+    const contentPanels = document.querySelectorAll('.category-content-panel');
+    const groupContentPanels = document.querySelectorAll('.group-content-panel');
+    const megamenuContent = document.getElementById('megamenuContent');
+
+    sessionStorage.setItem('appLoaded', '1');
+
+
 
     //=========================================
     // 1. HEADER BEHAVIOR
@@ -49,15 +62,7 @@
     //=========================================
     // 3. CATEGORY MEGAMENU
     //=========================================
-    const megamenu = document.getElementById('categoryMegamenu');
-    const overlay = document.getElementById('categoryMegamenuOverlay');
-    const closeBtn = document.getElementById('megamenuCloseBtn');
-    const desktopOpenBtn = document.getElementById('categoryMenuBtn');
-    const mobileOpenBtn = document.getElementById('mobileCategoryBtn');
-    const categoryLinks = document.querySelectorAll('.category-item-link');
-    const contentPanels = document.querySelectorAll('.category-content-panel');
-    const groupContentPanels = document.querySelectorAll('.group-content-panel');
-    const megamenuContent = document.getElementById('megamenuContent');
+
 
     function openMegamenu() {
         if (megamenu && overlay) {
@@ -319,33 +324,41 @@
     const searchContainer = document.querySelector('.search-container');
     const heroSection = document.querySelector('section.container.mt-2'); // More specific selector if needed
 
-    if (categoryBtnHomepage && document.body.classList.contains('homepage') && heroSection) {
-        function toggleCategoryButtonAndSearch() {
-            const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
-            const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-            const buffer = 100;
+    if (categoryBtnHomepage) {
+        // Remove any inline style left over from HTML (e.g. opacity:0; pointer-events:none)
+        // CSS now owns the hidden state
+        categoryBtnHomepage.removeAttribute('style');
 
-            if (scrollPosition > heroBottom - buffer) {
-                categoryBtnHomepage.classList.add('show-on-scroll');
-                if (searchContainer) searchContainer.classList.add('shrink');
-            } else {
-                categoryBtnHomepage.classList.remove('show-on-scroll');
-                if (searchContainer) searchContainer.classList.remove('shrink');
+        if (document.body.classList.contains('homepage') && heroSection) {
+            // HOMEPAGE: show button only after scrolling past the hero
+            function toggleCategoryButtonAndSearch() {
+                const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+                const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+                const buffer = 100;
+
+                if (scrollPosition > heroBottom - buffer) {
+                    categoryBtnHomepage.classList.add('show-on-scroll');
+                    if (searchContainer) searchContainer.classList.add('shrink');
+                } else {
+                    categoryBtnHomepage.classList.remove('show-on-scroll');
+                    if (searchContainer) searchContainer.classList.remove('shrink');
+                }
             }
+
+            let isScrolling = false;
+            window.addEventListener('scroll', function () {
+                if (!isScrolling) {
+                    window.requestAnimationFrame(function () {
+                        toggleCategoryButtonAndSearch();
+                        isScrolling = false;
+                    });
+                    isScrolling = true;
+                }
+            }, { passive: true });
+
+            toggleCategoryButtonAndSearch(); // Initial check on load
         }
-
-        let isScrolling = false;
-        window.addEventListener('scroll', function () {
-            if (!isScrolling) {
-                window.requestAnimationFrame(function () {
-                    toggleCategoryButtonAndSearch();
-                    isScrolling = false;
-                });
-                isScrolling = true;
-            }
-        }, { passive: true });
-
-        toggleCategoryButtonAndSearch(); // Initial check on load
+        // NON-HOMEPAGE: button stays hidden (CSS default), search stays expanded — no JS needed
     }
 
     //=========================================

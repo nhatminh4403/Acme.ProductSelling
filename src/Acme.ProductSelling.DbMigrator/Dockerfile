@@ -10,7 +10,7 @@ COPY . .
 
 
 # Copy minimal projects needed for migration (EF Core + Domain + Migrator)
-RUN dotnet restore "Acme.ProductSelling.sln"
+RUN dotnet restore "Acme.ProductSelling.slnx"
 
 COPY . .
 

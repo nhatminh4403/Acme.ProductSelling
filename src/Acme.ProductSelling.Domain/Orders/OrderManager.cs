@@ -144,9 +144,9 @@ namespace Acme.ProductSelling.Orders
                     .WithData("Name", product.ProductName);
                 if (product.ReleaseDate.HasValue && product.ReleaseDate.Value > DateTime.Now)
                     throw new BusinessException(ProductSellingDomainErrorCodes.IdentityDataSeedingFailed)
-                        .WithData("User", username)
-                        .WithData("Role", roleNameToAssign)
-                        .WithData("Reason", errorDetails);
+                        //.WithData("User", product.)
+                        //.WithData("Role", roleNameToAssign)
+                        //.WithData("Reason", errorDetails)
                         .WithData("Name", product.ProductName);
 
                 // Store Stock Check
