@@ -24,18 +24,20 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Orders.InStore
         public List<SelectListItem> PaymentMethods { get; set; }
         public List<SelectListItem> AvailableProducts { get; set; }
 
-        private readonly IOrderAppService _orderAppService;
+        private readonly IOrderPublicAppService _orderPublicAppService;
+        private readonly IInStoreOrderAppService _inStoreOrderAppService;
         private readonly IProductRepository _productRepository;
         private readonly IProductAppService _productAppService;
         private readonly IStoreInventoryRepository _storeInventoryRepository;
 
-        public CreateModel(IOrderAppService orderAppService, IProductAppService productAppService,
-            IProductRepository productRepository, IStoreInventoryRepository storeInventoryRepository)
+        public CreateModel(IProductAppService productAppService,
+            IProductRepository productRepository, IStoreInventoryRepository storeInventoryRepository, IOrderPublicAppService orderPublicAppService, IInStoreOrderAppService inStoreOrderAppService)
         {
-            _orderAppService = orderAppService;
             _productAppService = productAppService;
             _productRepository = productRepository;
             _storeInventoryRepository = storeInventoryRepository;
+            _orderPublicAppService = orderPublicAppService;
+            _inStoreOrderAppService = inStoreOrderAppService;
         }
         public async Task OnGet()
         {
@@ -82,7 +84,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Orders.InStore
 
             try
             {
-                await _orderAppService.CreateInStoreOrderAsync(Order);
+                await _inStoreOrderAppService.CreateInStoreOrderAsync(Order);
                 return Redirect(GetUrl("/orders/in-store"));
             }
             catch (Exception ex)
@@ -99,45 +101,15 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Orders.InStore
         private async Task LoadAvailableProductsAsync()
         {
             // Case 1: User is assigned to a specific store
-            if (CurrentUserStoreId.HasValue)
+            var availableProducts = await _productAppService.LoadAvailableProductsAsync(CurrentUserStoreId);
+
+            AvailableProducts = availableProducts.Select(p => new SelectListItem
             {
-                var inventories = await _storeInventoryRepository.GetByStoreAsync(CurrentUserStoreId.Value);
-
-                var productIds = inventories
-                    .Where(i => i.IsAvailableForSale && i.Quantity > 0)
-                    .Select(i => i.ProductId)
-                    .ToList();
-
-                var products = await _productRepository.GetListAsync(p => productIds.Contains(p.Id));
-
-                AvailableProducts = products
-                    .Where(p => p.IsAvailableForPurchase())
-                    .Select(p => new SelectListItem
-                    {
-                        Value = p.Id.ToString(),
-                        Text = $"{p.ProductName} - {(p.DiscountedPrice ?? p.OriginalPrice):N0} VND " +
-                               $"(Stock: {inventories.FirstOrDefault(i => i.ProductId == p.Id)?.Quantity ?? 0})"
-                    })
-                    .ToList();
-            }
-            // Case 2: Admin checking (No assigned store)
-            else if (CurrentUser.IsInRole(Acme.ProductSelling.Identity.IdentityRoleConsts.Admin))
-            {
-                var products = await _productRepository.GetListAsync();
-
-                AvailableProducts = products
-                    .Where(p => p.IsAvailableForPurchase())
-                    .Select(p => new SelectListItem
-                    {
-                        Value = p.Id.ToString(),
-                        Text = $"{p.ProductName} - {(p.DiscountedPrice ?? p.OriginalPrice):N0} VND (Admin Preview - No Store Selected)"
-                    })
-                    .ToList();
-            }
-            else
-            {
-                AvailableProducts = new List<SelectListItem>();
-            }
+                Value = p.Id.ToString(),
+                Text = p.IsAdminPreview
+                    ? $"{p.ProductName} - {p.Price:N0} VND (Admin Preview - No Store Selected)"
+                    : $"{p.ProductName} - {p.Price:N0} VND (Stock: {p.Stock ?? 0})"
+            }).ToList();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories;
 namespace Acme.ProductSelling.Products.Services
@@ -13,6 +14,9 @@ namespace Acme.ProductSelling.Products.Services
             string sorting,
             string filter = null);
         Task<Product> FindByIdAsync(Guid id);
-        Task<Product> GetByNameAsync(string name);
+
+        Task<Product> GetBySlug(string slug);
+
+        Task<IQueryable<Product>> GetQueryableWithoutSpecsAsync();
     }
 }

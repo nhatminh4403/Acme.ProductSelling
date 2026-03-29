@@ -8,7 +8,7 @@ using Volo.Abp.Caching;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EventBus;
 
-namespace Acme.ProductSelling.Products
+namespace Acme.ProductSelling.Products.Handlers
 {
     public class ProductCacheInvalidationHandler :
            ILocalEventHandler<ProductChangedEto>,

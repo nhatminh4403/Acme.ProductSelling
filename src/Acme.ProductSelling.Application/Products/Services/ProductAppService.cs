@@ -1,10 +1,10 @@
 ﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Identity;
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products.BackgroundJobs.ProductRelease;
 using Acme.ProductSelling.Products.Caching;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Helpers;
-using Acme.ProductSelling.Products.Services;
 using Acme.ProductSelling.Products.Specification;
 using Acme.ProductSelling.Specifications.Junctions;
 using Acme.ProductSelling.Specifications.Models;
@@ -12,6 +12,7 @@ using Acme.ProductSelling.StoreInventories;
 using Acme.ProductSelling.Stores;
 using Acme.ProductSelling.Utils;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
@@ -26,7 +27,7 @@ using Volo.Abp.BackgroundJobs;
 using Volo.Abp.Caching;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
-namespace Acme.ProductSelling.Products
+namespace Acme.ProductSelling.Products.Services
 {
     public class ProductAppService :
         CrudAppService<Product, ProductDto, Guid, PagedAndSortedResultRequestDto, CreateUpdateProductDto>,
@@ -36,14 +37,13 @@ namespace Acme.ProductSelling.Products
         private readonly IProductRepository _productRepository;
         private readonly ISpecificationService _specificationService;
         private readonly IRepository<CaseMaterial> _caseMaterialRepository;
-        //private readonly IRepository<CaseSpecification, Guid> _caseSpecificationRepository;
-        //private readonly IRepository<CpuCoolerSpecification, Guid> _cpuCoolerSpecificationRepository;
+
         private readonly IStoreInventoryRepository _storeInventoryRepository;
         private readonly IStoreRepository _storeRepository;
         private readonly IBackgroundJobManager _backgroundJobManager;
         private readonly ILogger<ProductAppService> _logger;
         private readonly IRecentlyViewedProductAppService _recentlyViewedService;
-
+        private readonly IStoreInventoryRepository _inventoryRepository;
         private readonly ProductToProductDtoMapper _productToProductDtoMapper;
         private readonly ProductDtoToCreateUpdateProductDtoMapper _productDtoToCreateUpdateProductDtoMapper;
         private readonly CreateUpdateProductDtoToProductMapper _createUpdateProductDtoToProductMapper;
@@ -51,7 +51,8 @@ namespace Acme.ProductSelling.Products
         private readonly IDistributedCache<ProductDto, Guid> _productDetailCache;
         private readonly IDistributedCache<ProductDto, string> _productSlugCache;
         private readonly IDistributedCache<List<FeaturedCategoryProductsDto>, string> _featuredCache;
-
+        //private readonly IRepository<CaseSpecification, Guid> _caseSpecificationRepository;
+        //private readonly IRepository<CpuCoolerSpecification, Guid> _cpuCoolerSpecificationRepository;
         public ProductAppService(
                                  ICategoryRepository categoryRepository,
                                  IRepository<CaseMaterial> caseMaterialRepository,
@@ -69,7 +70,8 @@ namespace Acme.ProductSelling.Products
                                  CreateUpdateProductDtoToProductMapper createUpdateProductDtoToProductMapper,
                                  IDistributedCache<ProductDto, Guid> productDetailCache,
                                  IDistributedCache<ProductDto, string> productSlugCache,
-                                 IDistributedCache<List<FeaturedCategoryProductsDto>, string> featuredCache)
+                                 IDistributedCache<List<FeaturedCategoryProductsDto>, string> featuredCache,
+                                 IStoreInventoryRepository inventoryRepository)
             : base(repository: productRepository)
         {
             _productRepository = productRepository;
@@ -93,6 +95,7 @@ namespace Acme.ProductSelling.Products
             _productDetailCache = productDetailCache;
             _productSlugCache = productSlugCache;
             _featuredCache = featuredCache;
+            _inventoryRepository = inventoryRepository;
         }
         private void ConfigurePolicies()
         {
@@ -105,10 +108,7 @@ namespace Acme.ProductSelling.Products
         public override async Task<PagedResultDto<ProductDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
             var query = await Repository.GetQueryableAsync();
-            query = query.AsNoTracking()
-                .IncludeAllRelations();
-
-
+            query = query.AsNoTracking();
             var totalCount = await AsyncExecuter.CountAsync(query);
             query = query.OrderBy(input.Sorting ?? nameof(Product.ProductName));
             query = query.PageBy(input);
@@ -123,8 +123,11 @@ namespace Acme.ProductSelling.Products
                     await _productDetailCache.SetAsync(
                         dto.Id,
                         dto,
-                        new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = 
-                        TimeSpan.FromMinutes(ProductCacheKeys.DetailTtlMinutes) },
+                        new DistributedCacheEntryOptions
+                        {
+                            AbsoluteExpirationRelativeToNow =
+                        TimeSpan.FromMinutes(ProductCacheKeys.DetailTtlMinutes)
+                        },
                         considerUow: false);
                 }
             });
@@ -154,7 +157,6 @@ namespace Acme.ProductSelling.Products
             var query = await Repository.GetQueryableAsync();
             var product = await query
                 .AsNoTracking()
-                .IncludeAllRelations()
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
@@ -381,5 +383,57 @@ namespace Acme.ProductSelling.Products
             }
         }
 
+
+        [Authorize(ProductSellingPermissions.Inventory.Default)]
+        public async Task<List<AvailableProductDto>> LoadAvailableProductsAsync(Guid? currentStoreId)
+        {
+            //var currentStoreId = await _storeRepository.FirstOrDefaultAsync(str => str.);
+
+
+            if (currentStoreId.HasValue)
+            {
+                var inventories = await _storeInventoryRepository.GetByStoreAsync(currentStoreId.Value);
+                var availableInventories = inventories
+                         .Where(i => i.IsAvailableForSale && i.Quantity > 0)
+                         .ToList();
+
+
+                var productIds = availableInventories
+                  .Where(i => i.IsAvailableForSale && i.Quantity > 0)
+                  .Select(i => i.ProductId)
+                  .ToList();
+
+                var products = await _productRepository.GetListAsync(p => productIds.Contains(p.Id));
+
+
+                return products
+                    .Where(p => p.IsAvailableForPurchase())
+                    .Select(p => new AvailableProductDto
+                    {
+                        Id = p.Id,
+                        ProductName = p.ProductName,
+                        Price = p.DiscountedPrice ?? p.OriginalPrice,
+                        Stock = availableInventories.FirstOrDefault(i => i.ProductId == p.Id)?.Quantity
+                    })
+                    .ToList();
+            }
+            else if(CurrentUser.IsInRole(IdentityRoleConsts.Admin)) {
+                var products = await _productRepository.GetQueryableAsync();
+
+                return products
+                    .Where(p => p.IsAvailableForPurchase())
+                    .Select(p => new AvailableProductDto
+                    {
+                        Id = p.Id,
+                        ProductName = p.ProductName,
+                        Price = p.DiscountedPrice ?? p.OriginalPrice,
+                        Stock = null,
+                        IsAdminPreview = true
+                    })
+                    .ToList();
+            }
+            return new List<AvailableProductDto>();
+
+        }
     }
 }

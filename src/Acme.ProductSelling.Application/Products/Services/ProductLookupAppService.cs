@@ -3,7 +3,6 @@ using Acme.ProductSelling.Categories.Dtos;
 using Acme.ProductSelling.Products.Caching;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Helpers;
-using Acme.ProductSelling.Products.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using System;
@@ -12,13 +11,15 @@ using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Caching;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 
-namespace Acme.ProductSelling.Products
+namespace Acme.ProductSelling.Products.Services
 {
+    [RemoteService(false)]
     public class ProductLookupAppService : ProductSellingAppService, IProductLookupAppService
     {
         private readonly IProductRepository _productRepository;
@@ -110,12 +111,8 @@ namespace Acme.ProductSelling.Products
             if (cached != null)
                 return cached;
 
-            var query = await _productRepository.GetQueryableAsync();
-            var product = await query
-                .AsNoTracking()
-                .IncludeAllRelations()
-                .Where(p => p.UrlSlug.ToLower() == slug.ToLower())
-                .FirstOrDefaultAsync();
+           
+            var product = await _productRepository.GetBySlug(slug);
 
             if (product == null)
                 throw new EntityNotFoundException(typeof(Product), slug);
@@ -204,13 +201,14 @@ namespace Acme.ProductSelling.Products
                               //    ManufacturerName = p.Manufacturer.Name,
                               //    p.StockCount
                               //})
+                              
                     .Include(p => p.Category)
                     .Include(p => p.Manufacturer)
                     .Include(p => p.StoreInventories)
                     .ToListAsync();
 
 
-                rawProducts = rawProducts.OrderBy(x => Guid.NewGuid()).Shuffle().ToList();
+                rawProducts = rawProducts.OrderBy(x => x.Id).Shuffle().ToList();
                 if (!rawProducts.Any()) continue;
 
                 // Map to DTO
@@ -233,12 +231,7 @@ namespace Acme.ProductSelling.Products
             TInput input)
             where TInput : PagedAndSortedResultRequestDto
         {
-            var queryable = await _productRepository.GetQueryableAsync();
-
-            queryable = queryable
-                .Include(p => p.Category)
-                .Include(p => p.Manufacturer)
-                .AsNoTracking();
+            var queryable = await _productRepository.GetQueryableWithoutSpecsAsync();
 
             queryable = filterExpression.Compile()(queryable);
 

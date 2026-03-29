@@ -1,5 +1,4 @@
 ﻿using Acme.ProductSelling.Products.Dtos;
-using Acme.ProductSelling.Products.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -10,7 +9,7 @@ using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Users;
 
-namespace Acme.ProductSelling.Products
+namespace Acme.ProductSelling.Products.Services
 {
     public class RecentlyViewedProductAppService : ProductSellingAppService, IRecentlyViewedProductAppService
     {

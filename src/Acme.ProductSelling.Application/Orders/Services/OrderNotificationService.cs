@@ -1,7 +1,5 @@
-﻿
-using Acme.ProductSelling.Localization;
+﻿using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Orders.Hubs;
-using Acme.ProductSelling.Orders.Services;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -9,7 +7,7 @@ using System;
 using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
 
-namespace Acme.ProductSelling.Orders
+namespace Acme.ProductSelling.Orders.Services
 {
     public class OrderNotificationService : IOrderNotificationService, ITransientDependency
     {

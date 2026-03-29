@@ -45,4 +45,7 @@
     <PackageReference Include="Volo.Abp.Identity.Application" Version="10.0.3" />
     <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="10.0.3" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Products\Mappings\" />
+  </ItemGroup>
 </Project>
