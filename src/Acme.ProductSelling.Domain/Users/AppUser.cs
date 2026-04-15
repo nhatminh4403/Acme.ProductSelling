@@ -78,6 +78,7 @@ namespace Acme.ProductSelling.Users
     {
         Admin,
         Staff,
+        Manager,
         Customer
     }
 }

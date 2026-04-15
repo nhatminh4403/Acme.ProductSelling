@@ -180,9 +180,9 @@ namespace Acme.ProductSelling.Orders
 
         private async Task<string> GenerateOrderNumberAsync(Store store = null)
         {
-            if (store == null)
+            if (store != null)
             {
-                return $"DH-{Clock.Now:yyyyMMddHHmmss}-ST-{store?.Code}-{_guidGenerator.Create().ToString("N").Substring(0, 6)}";
+                return $"DH-{Clock.Now:yyyyMMddHHmmss}-ST{store?.Code}-{_guidGenerator.Create().ToString("N").Substring(0, 6)}";
             }
             else return $"DH-{Clock.Now:yyyyMMddHHmmss}-{_guidGenerator.Create().ToString("N").Substring(0, 6)}";
         }

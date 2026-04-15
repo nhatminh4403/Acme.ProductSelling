@@ -15,19 +15,22 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Orders
     {
         [BindProperty(SupportsGet = true)]
         public string OrderNumber { get; set; }
-
+        //[BindProperty] 
+        //public Guid Id { get; set; }
         [BindProperty(SupportsGet = true)]
         public string Prefix { get; set; }
 
-        private readonly IOrderAppService _orderAppService;
+        private readonly IOrderQueryAppService _orderAppService;
         private readonly ILogger<DetailsModel> _logger;
+        private readonly IOrderHistoryAppService _orderHistoryAppService;
         public List<OrderHistoryDto> OrderHistory { get; set; }
 
         public OrderDto Order { get; set; }
-        public DetailsModel(IOrderAppService orderAppService, ILogger<DetailsModel> logger)
+        public DetailsModel(IOrderQueryAppService orderAppService, ILogger<DetailsModel> logger, IOrderHistoryAppService orderHistoryAppService)
         {
             _orderAppService = orderAppService;
             _logger = logger;
+            _orderHistoryAppService = orderHistoryAppService;
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -47,7 +50,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Orders
                     return NotFound();
                 }
 
-                OrderHistory = await _orderAppService.GetOrderHistoryAsync(Order.Id);
+                OrderHistory = await _orderHistoryAppService.GetOrderHistoryAsync(Order.Id);
                 return Page();
             }
             catch (Exception ex)

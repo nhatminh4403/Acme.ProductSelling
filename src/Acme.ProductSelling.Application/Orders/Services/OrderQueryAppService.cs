@@ -14,6 +14,7 @@ using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Caching;
 using Volo.Abp.Data;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Identity;
 using Volo.Abp.Users;
 
@@ -59,7 +60,42 @@ namespace Acme.ProductSelling.Orders.Services
             _paymentStatusPolicy = paymentStatusPolicy;
             _orderCache = orderCache;
         }
+        public async Task<OrderDto> GetAsync(Guid id)
+        {
+            Logger.LogInformation("[GetOrder] START - OrderId: {OrderId}, UserId: {UserId}", id, _currentUser.Id);
 
+            var order = await (await _orderRepository.WithDetailsAsync(o => o.OrderItems))
+                             .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (order == null)
+            {
+                Logger.LogWarning("[GetOrder] FAILED - Order not found. OrderId: {OrderId}", id);
+                throw new EntityNotFoundException(typeof(Order), id);
+            }
+
+            Logger.LogInformation("[GetOrder] COMPLETED - OrderId: {OrderId}, OrderNumber: {OrderNumber}, Status: {Status}, ItemCount: {ItemCount}",
+                order.Id, order.OrderNumber, order.OrderStatus, order.OrderItems.Count);
+
+            return _orderMapper.Map(order);
+        }
+        public async Task<OrderDto> GetByOrderNumberAsync(string orderNumber)
+        {
+            Logger.LogInformation("[GetByOrderNumber] START - OrderNumber: {OrderNumber}", orderNumber);
+
+            var order = await (await _orderRepository.WithDetailsAsync(o => o.OrderItems))
+                             .FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
+
+            if (order == null)
+            {
+                Logger.LogWarning("[GetByOrderNumber] FAILED - Order not found. OrderNumber: {OrderNumber}", orderNumber);
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderNotFound);
+            }
+
+            Logger.LogInformation("[GetByOrderNumber] COMPLETED - OrderId: {OrderId}, OrderNumber: {OrderNumber}",
+                order.Id, order.OrderNumber);
+
+            return _orderMapper.Map(order);
+        }
         public async Task<PagedResultDto<OrderDto>> GetListAsync(GetOrderListInput input)
         {
             Logger.LogInformation(

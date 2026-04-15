@@ -270,10 +270,9 @@ public class ProductSellingWebModule : AbpModule
         });
 
         ConfigureSignalR(services);
-        ConfigureRazorPages();
+        //ConfigureRazorPages();
 
-        ConfigureRequestLocalization(services);
-        //context.Services.AddTransient<CultureAwareAnchorTagHelper>();
+        //ConfigureRequestLocalization(services);
         ConfigureAdminPages(services);
         ConfigureRouting(services);
         Configure<AbpBackgroundJobOptions>(options =>
@@ -433,7 +432,7 @@ public class ProductSellingWebModule : AbpModule
                     bundle.AddContributors(typeof(BootstrapScriptContributor));
                     bundle.AddContributors(typeof(DatatablesNetScriptContributor));
 
-                    bundle.AddFiles("/js/shared/culture.js");
+                    //bundle.AddFiles("/js/shared/culture.js");
                 }
             );
 
@@ -620,6 +619,8 @@ public class ProductSellingWebModule : AbpModule
             }
         );
     }
+
+
     public override void OnApplicationInitialization(ApplicationInitializationContext context)
     {
         var app = context.GetApplicationBuilder();
@@ -650,7 +651,7 @@ public class ProductSellingWebModule : AbpModule
         app.UseAbpStudioLink();
 
         app.UseRouting();
-        app.UseMiddleware<RequestCultureMiddleware>();
+        //app.UseMiddleware<RequestCultureMiddleware>();
 
         //app.UseMiddleware<PaymentIPWhitelistMiddleware>();
 
@@ -682,6 +683,27 @@ public class ProductSellingWebModule : AbpModule
                 Authorization = new[] { new HangfireDashboardPermissionFilter() }
             });
         }
+
+
+        BackgroundJobsInitialization();
+
+        app.UseConfiguredEndpoints(endpoints =>
+        {
+
+            endpoints.MapRazorPages();
+
+            endpoints.MapHub<OrderHub>("/signalr-hubs/orders");
+        });
+        app.UseAuditing();
+        app.UseAbpSerilogEnrichers();
+
+        //app.UseExceptionHandler("/Error");
+
+    }
+
+
+    private void BackgroundJobsInitialization()
+    {
         RecurringJob.AddOrUpdate<CleanupOldOrdersJob>(
             "cleanup-old-orders",
             job => job.ExecuteAsync(new CleanupOldOrdersJobArgs { MonthsOld = 6 }),
@@ -712,17 +734,6 @@ public class ProductSellingWebModule : AbpModule
                 TimeZone = TimeZoneInfo.Local
             }
         );
-        app.UseConfiguredEndpoints(endpoints =>
-        {
-
-            endpoints.MapRazorPages();
-
-            endpoints.MapHub<OrderHub>("/signalr-hubs/orders");
-        });
-        app.UseAuditing();
-        app.UseAbpSerilogEnrichers();
-
-        //app.UseExceptionHandler("/Error");
-
     }
+
 }

@@ -91,13 +91,13 @@
                         </a>
                         @if (hasAdminPermission)
                         {
-                            <a class="dropdown-item" asp-page="/Admin/Index" data-no-culture="true">
+                            <a class="dropdown-item" asp-page="/Admin/Index" >
                                 <i class="bi bi-shield-lock"></i>
                                 @L["Admin:Panel"]
                             </a>
                         }
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/Account/Logout?returnUrl=/" data-no-culture="true">
+                        <a class="dropdown-item" href="/Account/Logout?returnUrl=/" >
                             <i class="bi bi-box-arrow-right"></i>
                             @L["Logout"]
                         </a>
@@ -220,7 +220,7 @@
                 <!-- Admin Section -->
                 <div class="mobile-account-section">
                     <h5 class="mobile-account-section-title">@L["Admin"]</h5>
-                    <a class="mobile-account-item" href="@Url.Page("/Admin/Index", new { area = "" })" data-no-culture="true">
+                    <a class="mobile-account-item" href="@Url.Page("/Admin/Index", new { area = "" })" >
                         <i class="bi bi-shield-lock"></i>
                         <span>@L["Admin:Panel"]</span>
                     </a>
@@ -236,7 +236,7 @@
                     <i class="bi bi-question-circle"></i>
                     <span>@L["Help"]</span>
                 </a>
-                <a class="dropdown-item" href="/Account/Logout?returnUrl=/" data-no-culture="true">
+                <a class="dropdown-item" href="/Account/Logout?returnUrl=/">
                     <i class="bi bi-box-arrow-right"></i>
                     <span>@L["Logout"]</span>
                 </a>

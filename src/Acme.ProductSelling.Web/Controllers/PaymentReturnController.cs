@@ -11,17 +11,17 @@ namespace Acme.ProductSelling.Web.Controllers
     [Route("/thanh-toan")]
     public class PaymentReturnController : Controller
     {
-        private readonly IOrderAppService _orderAppService;
+        //private readonly IOrderAppService _orderAppService;
         private readonly IOrderPublicAppService _orderPublicAppService;
         private readonly ILogger<PaymentReturnController> _logger;
         private readonly IVnPayService _vnPayService;
         public PaymentReturnController(
-            IOrderAppService orderAppService,
+            //IOrderAppService orderAppService,
             ILogger<PaymentReturnController> logger,
             IVnPayService vnPayService,
             IOrderPublicAppService orderPublicAppService)
         {
-            _orderAppService = orderAppService;
+            //_orderAppService = orderAppService;
             _logger = logger;
             _vnPayService = vnPayService;
             _orderPublicAppService = orderPublicAppService;
@@ -181,22 +181,22 @@ namespace Acme.ProductSelling.Web.Controllers
 
         [HttpGet("paypal-success")]
         [Authorize]
-        public async Task<IActionResult> PayPalSuccess([FromQuery] string paymentId, [FromQuery] string PayerID, [FromQuery] Guid orderId)
+        public async Task<IActionResult> PayPalSuccess([FromQuery] string token, [FromQuery] string PayerID, [FromQuery] Guid orderId)
         {
             try
             {
                 _logger.LogInformation(
                     "User returned from PayPal. OrderId: {OrderId}, PaymentId: {PaymentId}",
-                    orderId, paymentId
+                    orderId, token
                 );
 
-                if (string.IsNullOrEmpty(paymentId) || string.IsNullOrEmpty(PayerID))
+                if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(PayerID))
                 {
                     return RedirectToPage("/Error", new { message = "Invalid PayPal response" });
                 }
 
                 // Confirm the PayPal order
-                var order = await _orderAppService.ConfirmPayPalOrderAsync(orderId);
+                var order = await _orderPublicAppService.ConfirmPayPalOrderAsync(orderId,token);
 
                 if (order == null)
                 {
@@ -224,7 +224,7 @@ namespace Acme.ProductSelling.Web.Controllers
             {
                 _logger.LogInformation("User cancelled PayPal payment. OrderId: {OrderId}", orderId);
 
-                var order = await _orderAppService.GetAsync(orderId);
+                var order = await _orderPublicAppService.GetAsync(orderId);
 
                 if (order == null)
                 {

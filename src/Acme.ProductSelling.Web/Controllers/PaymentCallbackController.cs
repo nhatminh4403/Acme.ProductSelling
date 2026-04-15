@@ -13,23 +13,17 @@ namespace Acme.ProductSelling.Web.Controllers
     public class PaymentCallbackController : ControllerBase
     {
         private readonly IPaymentCallbackAppService _callbackAppService;
-        //private readonly IOrderAppService _orderAppService;
         private readonly ILogger<PaymentCallbackController> _logger;
 
         public PaymentCallbackController(
             IPaymentCallbackAppService callbackAppService,
-            //IOrderAppService orderAppService,
             ILogger<PaymentCallbackController> logger)
         {
             _callbackAppService = callbackAppService;
-            //_orderAppService = orderAppService;
             _logger = logger;
         }
 
-        /// <summary>
-        /// VNPay IPN (Instant Payment Notification) endpoint
-        /// VNPay sends GET request with query parameters
-        /// </summary>
+
         [HttpGet("vnpay-ipn")]
         [AllowAnonymous]
         [IgnoreAntiforgeryToken]
@@ -105,17 +99,12 @@ namespace Acme.ProductSelling.Web.Controllers
                     correlationId, ex.Message
                 );
 
-                // IMPORTANT: Still return 200 OK to prevent VNPay from retrying
-                // But with error code so we can track it
                 return CreateVnPayErrorResponse("99", "System error");
             }
         }
 
-        /// <summary>
-        /// MoMo IPN (Instant Payment Notification) endpoint
-        /// MoMo sends POST request with JSON body
-        /// </summary>
-        [HttpPost("momo-ipn")] // FIXED: Changed from GET to POST
+
+        [HttpPost("momo-ipn")] 
         [AllowAnonymous]
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> MoMoIpn([FromBody] MomoIPNRequest request)
@@ -153,7 +142,6 @@ namespace Acme.ProductSelling.Web.Controllers
                     correlationId, request.orderId
                 );
 
-                // IMPROVEMENT: MoMo expects 204 No Content on success
                 return NoContent();
             }
             catch (Exception ex)
@@ -164,16 +152,10 @@ namespace Acme.ProductSelling.Web.Controllers
                     correlationId, request?.orderId, ex.Message
                 );
 
-                // IMPROVEMENT: Return 204 even on error to prevent MoMo from retrying
-                // Log the error for investigation
                 return NoContent();
             }
         }
 
-        /// <summary>
-        /// PayPal IPN endpoint (if needed in the future)
-        /// PayPal uses a different IPN mechanism
-        /// </summary>
         [HttpPost("paypal-ipn")]
         [AllowAnonymous]
         [IgnoreAntiforgeryToken]
@@ -187,9 +169,6 @@ namespace Acme.ProductSelling.Web.Controllers
                     "[PayPal IPN] Received callback. CorrelationId: {CorrelationId}",
                     correlationId
                 );
-
-                // PayPal IPN requires verification by posting back to PayPal
-                // Implementation would go here
 
                 _logger.LogInformation(
                     "[PayPal IPN] Processing complete. CorrelationId: {CorrelationId}",
@@ -210,7 +189,6 @@ namespace Acme.ProductSelling.Web.Controllers
             }
         }
 
-        // IMPROVEMENT: Helper method for consistent VNPay error responses
         private IActionResult CreateVnPayErrorResponse(string code, string message)
         {
             return Ok(new

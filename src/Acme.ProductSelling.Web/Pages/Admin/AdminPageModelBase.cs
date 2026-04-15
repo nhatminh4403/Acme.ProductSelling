@@ -45,7 +45,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin
             }
 
             await base.OnPageHandlerExecutionAsync(context, next);
-            await next();
+            //await next();
         }
 
         protected async Task<string> GetRoleBasedPrefixAsync()
@@ -77,7 +77,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin
 
         public bool IsAdminOrManager()
         {
-            return CurrentUserType == UserType.Admin;
+            return CurrentUserType == UserType.Admin || CurrentUserType == UserType.Manager;
         }
 
         protected async Task<bool> IsInRoleAsync(string roleName)

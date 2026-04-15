@@ -10,7 +10,7 @@
     }
 });
 function initializeProductsPage() {
-    var productService = acme.productSelling.products.product;
+    var productService = acme.productSelling.products.services.product;
     var l = abp.localization.getResource('ProductSelling');
     var prefix = window.location.pathname.split('/')[1];
 

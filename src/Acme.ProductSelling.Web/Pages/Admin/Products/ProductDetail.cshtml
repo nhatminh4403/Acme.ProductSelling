@@ -4,7 +4,11 @@
 @using Acme.ProductSelling.Permissions
 @model Acme.ProductSelling.Web.Pages.Admin.Products.ProductDetailModel
 
+@{
+    ViewData["Title"] = L["UI:Title:Admin:Products:Details"];
+    Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
 
+}
 <div class="container ">
     <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
         <ol class="breadcrumb border-0">

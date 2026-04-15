@@ -15,6 +15,11 @@
 @section scripts {
     <abp-script-bundle name="Shared.Order.SignalR" />
     <abp-script src="/Pages/Admin/Orders/Index.js" />
+    <script>
+        window.isAdminOrManager = @Json.Serialize(Model.IsAdminOrManager());
+        window.currentUserStoreId = @Json.Serialize(Model.CurrentUserStoreId);
+        window.rolePrefix = "@Model.RoleBasedPrefix";
+    </script>
 }
 
 <abp-card>

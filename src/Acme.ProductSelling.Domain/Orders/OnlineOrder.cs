@@ -49,10 +49,10 @@ namespace Acme.ProductSelling.Orders
 
         public void MarkAsPaidOnline()
         {
-            if (PaymentStatus == PaymentStatus.Pending)
+            if (PaymentStatus == PaymentStatus.Pending || PaymentStatus == PaymentStatus.Unpaid)
             {
                 PaymentStatus = PaymentStatus.Paid;
-                SetStatus(OrderStatus.Confirmed);
+                SetStatus(OrderStatus.Confirmed);  // Automatically confirm paid online orders
             }
         }
 

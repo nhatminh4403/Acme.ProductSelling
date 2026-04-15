@@ -78,9 +78,6 @@ namespace Acme.ProductSelling.Orders.BackgroundJobs.OrderPending
                     });
                     _logger.LogDebug("[SetOrderPendingJob] Distributed event published - OrderId: {OrderId}", order.Id);
 
-                    await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
-                    _logger.LogDebug("[SetOrderPendingJob] Notification sent - OrderId: {OrderId}", order.Id);
-
                     _logger.LogInformation("[SetOrderPendingJob] COMPLETED successfully - OrderId: {OrderId}, OrderNumber: {OrderNumber}, NewStatus: {NewStatus}",
                         order.Id, order.OrderNumber, order.OrderStatus);
                 }

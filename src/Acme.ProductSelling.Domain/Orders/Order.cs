@@ -46,8 +46,17 @@ namespace Acme.ProductSelling.Orders
             PaymentMethod = Check.NotNullOrWhiteSpace(paymentMethod, nameof(paymentMethod));
             PaymentStatus = PaymentStatus.Unpaid;
         }
-        // PUBLIC METHODS
-
+        protected void PublishStatusChangeEvent()
+        {
+            AddDistributedEvent(new OrderStatusChangedEto
+            {
+                OrderId = Id,
+                CustomerId = CustomerId,
+                OrderStatus = OrderStatus.ToString(),
+                PaymentStatus = PaymentStatus.ToString(),
+                IsInStore = OrderType == OrderType.InStore
+            });
+        }
 
         public void UpdatePaymentMethod(string paymentMethod)
         {
@@ -79,34 +88,32 @@ namespace Acme.ProductSelling.Orders
 
         public void SetStatus(OrderStatus newStatus)
         {
-            if (!IsNextStatusValid(newStatus))
-            {
-                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderStatusChangeNotAllowed)
-                    .WithData("OldStatus", OrderStatus)
-                    .WithData("NewStatus", newStatus);
-            }
+            var statusChanged = OrderStatus != newStatus;
             OrderStatus = newStatus;
+
+            // AUTOMATIC SIGNALR TRIGGER
+            if (statusChanged) PublishStatusChangeEvent();
         }
 
         public void SetPaymentStatus(PaymentStatus newPaymentStatus)
         {
-            //var validTransitions = new Dictionary<PaymentStatus, PaymentStatus[]>
-            //{
-            //    { PaymentStatus.Unpaid, new[] { PaymentStatus.Pending, PaymentStatus.PendingOnDelivery, PaymentStatus.Paid, PaymentStatus.Cancelled } },
-            //    { PaymentStatus.Pending, new[] { PaymentStatus.Paid, PaymentStatus.Failed, PaymentStatus.Cancelled } },
-            //    { PaymentStatus.PendingOnDelivery, new[] { PaymentStatus.Paid, PaymentStatus.Cancelled } },
-            //    { PaymentStatus.Paid, new[] { PaymentStatus.Refunded } },
-            //    { PaymentStatus.Failed, new[] { PaymentStatus.Pending } },
-            //    { PaymentStatus.Cancelled, new PaymentStatus[] { } },
-            //    { PaymentStatus.Refunded, new PaymentStatus[] { } }
-            //};
+            var validTransitions = new Dictionary<PaymentStatus, PaymentStatus[]>
+            {
+                { PaymentStatus.Unpaid, new[] { PaymentStatus.Pending, PaymentStatus.PendingOnDelivery, PaymentStatus.Paid, PaymentStatus.Cancelled } },
+                { PaymentStatus.Pending, new[] { PaymentStatus.Paid, PaymentStatus.Failed, PaymentStatus.Cancelled } },
+                { PaymentStatus.PendingOnDelivery, new[] { PaymentStatus.Paid, PaymentStatus.Cancelled } },
+                { PaymentStatus.Paid, new[] { PaymentStatus.Refunded } },
+                { PaymentStatus.Failed, new[] { PaymentStatus.Pending } },
+                { PaymentStatus.Cancelled, new PaymentStatus[] { } },
+                { PaymentStatus.Refunded, new PaymentStatus[] { } }
+            };
 
-            //if (!validTransitions.ContainsKey(PaymentStatus) ||
-            //    !validTransitions[PaymentStatus].Contains(newPaymentStatus))
-            //{
-            //    throw new UserFriendlyException("InvalidPaymentStatusChange",
-            //        $"Không thể chuyển trạng thái thanh toán từ '{PaymentStatus}' sang '{newPaymentStatus}'.");
-            //}
+            if (!validTransitions.ContainsKey(PaymentStatus) ||
+                !validTransitions[PaymentStatus].Contains(newPaymentStatus))
+            {
+                throw new UserFriendlyException("InvalidPaymentStatusChange",
+                    $"Không thể chuyển trạng thái thanh toán từ '{PaymentStatus}' sang '{newPaymentStatus}'.");
+            }
 
             PaymentStatus = newPaymentStatus;
         }
@@ -118,6 +125,12 @@ namespace Acme.ProductSelling.Orders
                 return true;
             }
 
+            if (OrderStatus == OrderStatus.Placed && newStatus == OrderStatus.Pending)
+            {
+                return true;
+            }
+
+            // Default rule: Can only move forward in the enum
             return (int)newStatus >= (int)OrderStatus;
         }
     }

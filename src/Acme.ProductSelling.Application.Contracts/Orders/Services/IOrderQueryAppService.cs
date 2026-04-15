@@ -14,6 +14,8 @@ namespace Acme.ProductSelling.Orders.Services
         Task DeliverOrderAsync(Guid orderId);
         Task MarkAsCodPaidAndCompletedAsync(Guid orderId);
         Task RestoreOrderAsync(Guid orderId);
+        Task<OrderDto> GetAsync(Guid id);
+        Task<OrderDto> GetByOrderNumberAsync(string orderNumber);
         Task<PagedResultDto<OrderDto>> GetProfitReportAsync(PagedAndSortedResultRequestDto input);
         Task<PagedResultDto<OrderDto>> GetDeletedOrdersAsync(PagedAndSortedResultRequestDto input);
     }

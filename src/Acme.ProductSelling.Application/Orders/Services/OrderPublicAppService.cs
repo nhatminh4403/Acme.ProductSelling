@@ -2,6 +2,7 @@ using Acme.ProductSelling.Carts;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Orders.BackgroundJobs.OrderPending;
 using Acme.ProductSelling.Orders.Dtos;
+using Acme.ProductSelling.PaymentGateway.PayPal;
 using Acme.ProductSelling.Payments;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -31,36 +32,39 @@ namespace Acme.ProductSelling.Orders.Services
         private readonly IRepository<Cart, Guid> _cartRepository;
         private readonly IPaymentGatewayResolver _paymentGatewayResolver;
         private readonly IBackgroundJobManager _backgroundJobManager;
-        //private readonly IOrderNotificationService _orderNotificationService;
+        private readonly IOrderNotificationService _orderNotificationService;
         private readonly IDistributedEventBus _eventBus;
         private readonly IOrderHistoryAppService _orderHistoryAppService;
         private readonly IStringLocalizer<ProductSellingResource> _localizer;
         private readonly OrderToOrderDtoMapper _orderMapper;
         private readonly ICurrentUser _currentUser;
+        private readonly IPayPalService _payPalService;
         public OrderPublicAppService(
             OrderManager orderManager,
             IOrderRepository orderRepository,
             IRepository<Cart, Guid> cartRepository,
             IPaymentGatewayResolver paymentGatewayResolver,
             IBackgroundJobManager backgroundJobManager,
-            //IOrderNotificationService orderNotificationService,
+            IOrderNotificationService orderNotificationService,
             IOrderHistoryAppService orderHistoryAppService,
             IStringLocalizer<ProductSellingResource> localizer,
             OrderToOrderDtoMapper orderMapper,
             ICurrentUser currentUser,
-            IDistributedEventBus eventBus)
+            IDistributedEventBus eventBus,
+            IPayPalService payPalService)
         {
             _orderManager = orderManager;
             _orderRepository = orderRepository;
             _cartRepository = cartRepository;
             _paymentGatewayResolver = paymentGatewayResolver;
             _backgroundJobManager = backgroundJobManager;
-            //_orderNotificationService = orderNotificationService;
+            _orderNotificationService = orderNotificationService;
             _orderHistoryAppService = orderHistoryAppService;
             _localizer = localizer;
             _orderMapper = orderMapper;
             _currentUser = currentUser;
             _eventBus = eventBus;
+            _payPalService = payPalService;
         }
 
         public async Task<CreateOrderResultDto> CreateAsync(CreateOrderDto input)
@@ -86,7 +90,6 @@ namespace Acme.ProductSelling.Orders.Services
             // 3. Process Payment
             var gateway = _paymentGatewayResolver.Resolve(input.PaymentMethod);
             if (input.PaymentMethod != PaymentMethods.COD) order.SetStatus(OrderStatus.Placed);
-            // ^ Small logic adjustment based on Gateway specifics if needed
 
             var gatewayResult = await gateway.ProcessAsync(order);
 
@@ -97,42 +100,45 @@ namespace Acme.ProductSelling.Orders.Services
             // 5. Jobs & Notifications
             if (input.PaymentMethod == PaymentMethods.COD)
             {
-                await _backgroundJobManager.EnqueueAsync(new SetOrderBackgroundJobArgs { OrderId = order.Id }, delay: TimeSpan.FromHours(1));
+                await _backgroundJobManager.EnqueueAsync(new SetOrderBackgroundJobArgs { OrderId = order.Id },
+                    delay: TimeSpan.FromSeconds(10));
             }
-            //await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
-            await _eventBus.PublishAsync(new OrderStatusChangedEto
-            {
-                OrderId = order.Id,
-                CustomerId = order.CustomerId,
-                OrderStatus = order.OrderStatus.ToString(),
-                PaymentStatus = order.PaymentStatus.ToString(),
-                //StoreId = order.StoreId,
-                IsInStore = order.OrderType == OrderType.Online
-            });
-            await _orderHistoryAppService.LogOrderChangeAsync(order.Id, OrderStatus.Pending, order.OrderStatus, PaymentStatus.Unpaid, order.PaymentStatus, _localizer["Order:Created"]);
+            await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
+
+            await _orderHistoryAppService.LogOrderChangeAsync(order.Id, OrderStatus.Pending,
+                order.OrderStatus, PaymentStatus.Unpaid, order.PaymentStatus, _localizer["Order:Created"]);
 
             return new CreateOrderResultDto { Order = _orderMapper.Map(order), RedirectUrl = gatewayResult.RedirectUrl };
         }
         [RemoteService(false)]
-        public async Task<OrderDto> ConfirmPayPalOrderAsync(Guid id)
+        public async Task<OrderDto> ConfirmPayPalOrderAsync(Guid id, string token)
         {
             var order = await _orderRepository.GetAsync(id) as OnlineOrder;
             if (order.CustomerId != CurrentUser.Id) throw new EntityNotFoundException(typeof(Order), id);
 
-            if (order.PaymentStatus == PaymentStatus.Pending)
+            if (order.PaymentStatus == PaymentStatus.Pending || order.PaymentStatus == PaymentStatus.Unpaid)
             {
+                var captureResponse = await _payPalService.ExecutePaymentAsync(token);
+
+                // 6. Verify the payment was successful before giving them the items
+                if (captureResponse == null || captureResponse.Status != PaypalServerSdk.Standard.Models.OrderStatus.Completed)
+                {
+                    throw new UserFriendlyException("Giao dịch PayPal chưa được hoàn tất hoặc bị từ chối.");
+                }
+                var oldOrderStatus = order.OrderStatus;
+                var oldPaymentStatus = order.PaymentStatus;
+
                 order.MarkAsPaidOnline();
                 await _orderRepository.UpdateAsync(order, autoSave: true);
-                //await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
-                await _eventBus.PublishAsync(new OrderStatusChangedEto
-                {
-                    OrderId = order.Id,
-                    CustomerId = order.CustomerId,
-                    OrderStatus = order.OrderStatus.ToString(),
-                    PaymentStatus = order.PaymentStatus.ToString(),
-                    //StoreId = order.StoreId,
-                    IsInStore = order.OrderType == OrderType.Online
-                });
+                await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
+
+                await _orderHistoryAppService.LogOrderChangeAsync(order.Id,
+                                                                  oldOrderStatus,
+                                                                  order.OrderStatus,
+                                                                  oldPaymentStatus,
+                                                                  order.PaymentStatus,
+                                                                  _localizer["Order:PaidViaPayPal"] ?? "Thanh toán thành công qua PayPal");
+
             }
             return _orderMapper.Map(order);
         }
@@ -148,15 +154,8 @@ namespace Acme.ProductSelling.Orders.Services
             order.CancelByUser();
             await _orderRepository.UpdateAsync(order, autoSave: true);
 
-            //await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
-            await _eventBus.PublishAsync(new OrderStatusChangedEto
-            {
-                OrderId = order.Id,
-                CustomerId = order.CustomerId,
-                OrderStatus = order.OrderStatus.ToString(),
-                PaymentStatus = order.PaymentStatus.ToString(),
-                IsInStore = order.OrderType == OrderType.Online
-            });
+            await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
+
             await _orderHistoryAppService.LogOrderChangeAsync(id,
                                                             OrderStatus.Pending,
                                                             order.OrderStatus,

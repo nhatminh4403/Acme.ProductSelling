@@ -10,9 +10,14 @@
         orderType: null,
         orderStatus: null
     };
+    var prefix = window.location.pathname.split('/')[1];
 
+    let isAdminOrManager;
+    if (prefix === 'admin' || prefix === 'manager') {
+        isAdminOrManager = true;
+    } 
     // Load stores for admin/manager
-    if (window.isAdminOrManager) {
+    if (isAdminOrManager) {
         storeService.getList({ maxResultCount: 1000 }).then(function (result) {
             stores = result.items;
             const $select = $('#storeFilter');
@@ -64,7 +69,7 @@
                             {
                                 text: l('View'),
                                 action: function (data) {
-                                    window.location.href = `/${window.rolePrefix}/orders/details/${data.record.orderNumber}`;
+                                    window.location.href = `/${prefix}/orders/details/${data.record.orderNumber}`;
                                 }
                             },
                             {
@@ -146,7 +151,7 @@
                     title: l('Order:Number'),
                     data: "orderNumber",
                     render: function (data, type, row) {
-                        return `<a href="/${window.rolePrefix}/orders/details/${data}">${data}</a>`;
+                        return `<a href="/${prefix}/orders/details/${data}">${data}</a>`;
                     }
                 },
                 {
@@ -166,7 +171,7 @@
                 {
                     title: l('Store'),
                     data: "storeName",
-                    visible: window.isAdminOrManager,
+                    visible: isAdminOrManager,
                     render: function (data) {
                         return data ? `<span class="badge bg-secondary">${data}</span>` : '-';
                     }
