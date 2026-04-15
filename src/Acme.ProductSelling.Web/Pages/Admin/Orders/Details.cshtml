@@ -116,8 +116,8 @@
     <div class="info-row">
         <div class="info-label">@L["Order:OrderStatus"]:</div>
         <div class="info-value">
-            <span class="status-badge @GetStatusBadgeClass(Model.Order.OrderStatusText)">
-                @L[$"Enum:OrderStatus.{Model.Order.OrderStatusText}"]
+            <span class="status-badge @GetOrderStatusBadgeClass(Model.Order.OrderStatus.ToString())">
+                @L[$"Enum:OrderStatus.{Model.Order.OrderStatus.ToString()}"]
             </span>
         </div>
     </div>
@@ -330,11 +330,11 @@
                                     {
                                         <div class="mb-2">
                                             <small class="text-muted d-block">@L["OrderStatus"]:</small>
-                                            <span class="badge @GetStatusBadgeClass(history.OldStatus)">
+                                            <span class="badge @GetOrderStatusBadgeClass(history.OldStatus)">
                                                 @L[$"Enum:OrderStatus.{history.OldStatus}"]
                                             </span>
                                             <i class="fa fa-arrow-right mx-1"></i>
-                                            <span class="badge @GetStatusBadgeClass(history.NewStatus)">
+                                            <span class="badge @GetOrderStatusBadgeClass(history.NewStatus)">
                                                 @L[$"Enum:OrderStatus.{history.NewStatus}"]
                                             </span>
                                         </div>
@@ -370,7 +370,7 @@
 </abp-card>
 
 @functions {
-    string GetStatusBadgeClass(string status)
+    string GetOrderStatusBadgeClass(string status)
     {
         return status switch
         {

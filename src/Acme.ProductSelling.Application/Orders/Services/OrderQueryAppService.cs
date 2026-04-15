@@ -75,7 +75,7 @@ namespace Acme.ProductSelling.Orders.Services
 
             Logger.LogInformation("[GetOrder] COMPLETED - OrderId: {OrderId}, OrderNumber: {OrderNumber}, Status: {Status}, ItemCount: {ItemCount}",
                 order.Id, order.OrderNumber, order.OrderStatus, order.OrderItems.Count);
-
+            var dto = new OrderDto();
             return _orderMapper.Map(order);
         }
         public async Task<OrderDto> GetByOrderNumberAsync(string orderNumber)

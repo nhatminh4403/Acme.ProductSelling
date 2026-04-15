@@ -26,7 +26,14 @@ public partial class OrderToOrderDtoMapper : MapperBase<Order, OrderDto>
     [MapperIgnoreTarget(nameof(OrderDto.FulfillerName))]
     [MapperIgnoreTarget(nameof(OrderDto.CompletedAt))]
     [MapperIgnoreTarget(nameof(OrderDto.FulfilledAt))]
-    public override partial OrderDto Map(Order source);
+    public override OrderDto Map(Order source)
+    {
+        var destination = new OrderDto();
+        Map(source, destination);
+        AfterMap(source, destination);
+
+        return destination;
+    }
 
     [MapperIgnoreTarget(nameof(OrderDto.OrderStatusText))]
     [MapperIgnoreTarget(nameof(OrderDto.PaymentStatusText))]
@@ -45,11 +52,9 @@ public partial class OrderToOrderDtoMapper : MapperBase<Order, OrderDto>
 
     public override void AfterMap(Order source, OrderDto destination)
     {
-        // Shared computed fields
         destination.OrderStatusText = source.OrderStatus.ToString();
         destination.PaymentStatusText = source.PaymentStatus.ToString();
 
-        // Subtype-specific fields
         switch (source)
         {
             case OnlineOrder online:
@@ -72,37 +77,13 @@ public partial class OrderToOrderDtoMapper : MapperBase<Order, OrderDto>
     public partial List<OrderDto> MapList(List<Order> orders);
 
 }
-[Mapper]
-public partial class OrderListMapper
-{
-    private readonly OrderToOrderDtoMapper _orderMapper;
 
-    public OrderListMapper(OrderToOrderDtoMapper orderMapper)
-    {
-        _orderMapper = orderMapper;
-    }
-
-    public List<OrderDto> MapList(List<Order> orders)
-    {
-        var result = new List<OrderDto>();
-        foreach (var order in orders)
-        {
-            result.Add(_orderMapper.Map(order));
-        }
-        return result;
-    }
-
-    // Alternative if you want partial method
-    //public partial List<OrderDto> MapList(List<Order> orders);
-}
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public partial class OrderItemToOrderItemDtoMapper : MapperBase<OrderItem, OrderItemDto>
 {
     public override partial OrderItemDto Map(OrderItem source);
     public override partial void Map(OrderItem source, OrderItemDto destination);
 }
-
-
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public partial class CreateOrderDtoToOnlineOrderMapper : MapperBase<CreateOrderDto, OnlineOrder>
@@ -151,24 +132,11 @@ public partial class OrderHistoryToOrderHistoryDtoMapper : MapperBase<OrderHisto
 
     private string MapStatus(OrderStatus status) => status.ToString();
     private string MapPayStatus(PaymentStatus status) => status.ToString();
-}
-[Mapper]
-public partial class OrderHistoryListMapper
-{
-    private readonly OrderHistoryToOrderHistoryDtoMapper _historyMapper;
-
-    public OrderHistoryListMapper(OrderHistoryToOrderHistoryDtoMapper historyMapper)
+    public override void AfterMap(OrderHistory source, OrderHistoryDto destination)
     {
-        _historyMapper = historyMapper;
-    }
-
-    public List<OrderHistoryDto> MapList(List<OrderHistory> histories)
-    {
-        var result = new List<OrderHistoryDto>();
-        foreach (var history in histories)
-        {
-            result.Add(_historyMapper.Map(history));
-        }
-        return result;
+        destination.OldStatus = source.OldStatus.ToString();
+        destination.NewStatus = source.NewStatus.ToString();
+        destination.OldPaymentStatus = source.OldPaymentStatus.ToString();
+        destination.NewPaymentStatus = source.NewPaymentStatus.ToString();
     }
 }
