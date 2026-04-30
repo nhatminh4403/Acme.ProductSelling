@@ -1,57 +1,98 @@
-﻿/* recently-viewed.css */
+/* =========================================================
+   recently-viewed.css
+   Styles for the "Recently Viewed Products" widget.
+   Visibility is controlled by JS (jQuery .show()/.hide()).
+   ========================================================= */
 
+/* ── Wrapper ─────────────────────────────────────────────── */
 .recently-viewed-wrapper {
     background: #fff;
     padding: 1.5rem 0;
     border-top: 1px solid #eaecf0;
     margin: 0.5rem 0 2rem;
-    
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
 }
 
+/* ── Product Grid (skeleton + real products share the same layout) ── */
+#recently-viewed-products,
+#recently-viewed-skeleton {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+@media (min-width: 576px) {
+    #recently-viewed-products,
+    #recently-viewed-skeleton {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 992px) {
+    #recently-viewed-products,
+    #recently-viewed-skeleton {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Remove Bootstrap column padding when items are inside a CSS grid */
+#recently-viewed-products .col,
+#recently-viewed-skeleton .col {
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+}
+
+/* ── Card ────────────────────────────────────────────────── */
 .rv-card {
     display: flex;
-    align-items: flex-start; /* Changed from center to top-align for tight lists */
+    align-items: center;
     background: #fff;
-    border: 1px solid #f0f0f0;
+    border: 1px solid #dee2e6;
     border-radius: 8px;
     overflow: hidden;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
     text-decoration: none;
     height: 100%;
-    padding: 8px; /* Reduced padding */
+    padding: 8px;
 }
 
-    .rv-card:hover {
-        border-color: var(--bs-primary, #0d6efd);
-        transform: translateY(-3px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        background-color: #fff;
-        z-index: 1; /* Ensure hover state sits on top */
-    }
+.rv-card:hover {
+    border-color: var(--bs-primary, #0d6efd);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    background-color: #fff;
+    z-index: 1;
+}
 
-/* COMPACT IMAGE WRAPPER */
+/* ── Image ───────────────────────────────────────────────── */
 .rv-img-wrapper {
-    flex: 0 0 60px; /* Reduced from 80px to 60px */
+    flex: 0 0 60px;
     height: 60px;
     border-radius: 6px;
     overflow: hidden;
     position: relative;
     background-color: #f8f9fa;
-    margin-right: 10px; /* Reduced margin */
+    margin-right: 10px;
     flex-shrink: 0;
 }
 
-    .rv-img-wrapper img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.3s ease;
-    }
+.rv-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
 
 .rv-card:hover .rv-img-wrapper img {
     transform: scale(1.08);
 }
 
+/* ── Content ─────────────────────────────────────────────── */
 .rv-content {
     flex: 1;
     min-width: 0;
@@ -60,35 +101,35 @@
     justify-content: center;
 }
 
-/* COMPACT TEXT SIZES */
 .rv-title {
     color: #333;
     font-weight: 600;
-    font-size: 0.8rem; /* Smaller font */
+    font-size: 0.8rem;
     margin-bottom: 3px;
     line-height: 1.2;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    height: 32px; /* Enforce height for alignment */
+    height: 32px;
 }
 
 .rv-card:hover .rv-title {
     color: var(--bs-primary, #0d6efd);
 }
 
+/* ── Pricing ─────────────────────────────────────────────── */
 .rv-price-group {
     display: flex;
     align-items: baseline;
     flex-wrap: wrap;
-    gap: 4px; /* Consistent spacing */
+    gap: 4px;
 }
 
 .rv-price-current {
     color: #dc3545;
     font-weight: 700;
-    font-size: 0.85rem; /* Smaller font */
+    font-size: 0.85rem;
 }
 
 .rv-price-old {
@@ -97,7 +138,7 @@
     font-size: 0.7rem;
 }
 
-/* COMPACT BADGE */
+/* ── Badges ──────────────────────────────────────────────── */
 .rv-discount-badge {
     background-color: #fff1f2;
     color: #dc3545;

@@ -92,10 +92,10 @@ namespace Acme.ProductSelling.Products.Services
 
                 var products = await AsyncExecuter.ToListAsync(
                     query
-                    .AsNoTracking() // No change tracking needed
-                    .Include(p => p.StoreInventories) // Keep necessary include
+                    .AsNoTracking() 
+                    .Include(p => p.StoreInventories) 
                     .Where(p => targetIds.Contains(p.Id) && p.IsActive)
-                    .Take(MAX_QUERY_BATCH_SIZE) // Additional safety limit
+                    .Take(MAX_QUERY_BATCH_SIZE) 
                 );
 
                 var productDict = products.ToDictionary(p => p.Id);

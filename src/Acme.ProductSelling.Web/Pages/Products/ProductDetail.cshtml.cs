@@ -18,7 +18,6 @@ namespace Acme.ProductSelling.Web.Pages.Products
 
         public ProductDto Product { get; private set; }
 
-
         private readonly IProductLookupAppService _productAppService;
         private readonly ILogger<ProductDetailModel> _logger;
         public ProductDetailModel(IProductLookupAppService productAppService, ILogger<ProductDetailModel> logger)
@@ -44,12 +43,9 @@ namespace Acme.ProductSelling.Web.Pages.Products
                 {
                     return NotFound();
                 }
-                //Product = await _productAppService.GetAsync(Id);
-                //Product = await _productAppService.GetProductBySlug(Slug);
+
                 var product = await _productAppService.GetProductBySlug(Slug);
                 Product = product;
-
-                //Blogs = blogs.shuff;
 
                 return Page();
             }

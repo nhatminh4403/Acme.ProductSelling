@@ -1,10 +1,10 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class HandheldSpecificationDto : EntityDto<Guid>
+    public class HandheldSpecificationDto : SpecificationBaseDto
     {
         public string Processor { get; set; }
         public string Graphics { get; set; }
@@ -21,3 +21,4 @@ namespace Acme.ProductSelling.Specifications
 
 
 }
+

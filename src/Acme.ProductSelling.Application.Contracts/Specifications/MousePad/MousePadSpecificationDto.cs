@@ -1,10 +1,10 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class MousePadSpecificationDto : EntityDto<Guid>
+    public class MousePadSpecificationDto : SpecificationBaseDto
     {
         public int Width { get; set; }
         public int Height { get; set; }
@@ -18,3 +18,4 @@ namespace Acme.ProductSelling.Specifications
     }
 
 }
+

@@ -12,9 +12,6 @@ $(function () {
     let originalLoginButtonHtml;
     let isLoginInProgress = false;
 
-    // -------------------------------------------------------------------------
-    // Form submission
-    // -------------------------------------------------------------------------
     $loginForm.on('submit', function (e) {
         e.preventDefault();
 

@@ -1,15 +1,18 @@
 ﻿using Acme.ProductSelling.Orders.Services;
 using Acme.ProductSelling.PaymentGateway.VnPay.Services;
+using Acme.ProductSelling.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
+using Volo.Abp.AspNetCore.Mvc;
 
 namespace Acme.ProductSelling.Web.Controllers
 {
     [Route("/thanh-toan")]
-    public class PaymentReturnController : Controller
+    [Authorize]
+    public class PaymentReturnController : AbpController
     {
         //private readonly IOrderAppService _orderAppService;
         private readonly IOrderPublicAppService _orderPublicAppService;
@@ -27,102 +30,65 @@ namespace Acme.ProductSelling.Web.Controllers
             _orderPublicAppService = orderPublicAppService;
         }
 
+        [HttpGet("payment-failed")]
+        public IActionResult PaymentFailed()
+        {
+            var model = new PaymentResultViewModel();
+            return View(model);
+        }
         [HttpGet("vnpay-return")]
         [Authorize]
         public async Task<IActionResult> VnPayReturn()
         {
             try
             {
-
-                //var vnp_ResponseCode = Request.Query["vnp_ResponseCode"].ToString();
-
-                //var getTxnRef = Request.Query["vnp_TxnRef"].ToString();
-
-                //var getOrderId = getTxnRef.Contains("_") ? getTxnRef.Split('_')[0] : getTxnRef;
-                //var vnp_TxnRef = getTxnRef.Contains("_") ? getTxnRef.Split('_')[1] : getTxnRef; 
-
-                //_logger.LogInformation(
-                //    "User returned from VNPay. OrderId: {OrderId}, ResponseCode: {Code}",
-                //    vnp_TxnRef, vnp_ResponseCode
-                //);
-                //if (string.IsNullOrEmpty(vnp_TxnRef) || !Guid.TryParse(vnp_TxnRef, out var orderId))
-                //{
-                //    return RedirectToPage("/Error", new { message = "Invalid order reference" });
-                //}
-
-                //var order = await _orderAppService.GetAsync(orderId);
-
-                //if (order == null)
-                //{
-                //    return RedirectToPage("/Error", new { message = "Order not found" });
-                //}
-
                 var response = _vnPayService.PaymentExecute(Request.Query);
-
-                _logger.LogInformation(
-                     "User returned from VNPay. TxnRef: {TxnRef}, ResponseCode: {Code}, Success: {Success}",
-                     Request.Query["vnp_TxnRef"], response.VnPayResponseCode, response.Success
-                );
 
                 if (!response.Success)
                 {
-                    // Có thể sai chữ ký hoặc code != 00
-                    _logger.LogWarning("Thanh toán thất bại hoặc Chữ ký không hợp lệ. Mã lỗi: {Code}", response.VnPayResponseCode);
-
-                    // Xử lý lấy OrderId để redirect đúng trang (nếu parse được)
-                    Guid.TryParse(response.OrderId, out var failOrderId);
-
-                    return RedirectToPage("/Orders/PaymentFailed", new
+                    _logger.LogWarning("VNPay invalid signature. Code: {Code}", response.VnPayResponseCode);
+                    return View("PaymentFailed", new PaymentResultViewModel
                     {
-                        orderId = failOrderId,
-                        errorCode = response.VnPayResponseCode
+                        Message = L["PaymentFailedPleaseTryAgain"],
+                        RedirectUrl = Url.Page("/Orders/Index")
                     });
                 }
-                if (string.IsNullOrEmpty(response.OrderId) || !Guid.TryParse(response.OrderId, out var orderId))
-                {
-                    return RedirectToPage("/Error", new { message = "Invalid order ID format" });
-                }
 
-                //var order = await _orderAppService.GetAsync(orderId);
+                if (!Guid.TryParse(response.OrderId, out var orderId))
+                    return View("PaymentFailed", new PaymentResultViewModel
+                    {
+                        Message = "Mã đơn hàng không hợp lệ.",
+                        RedirectUrl = Url.Page("/Orders/Index")
+                    });
+
                 var order = await _orderPublicAppService.GetAsync(orderId);
 
-                if (order == null)
+                if (response.VnPayResponseCode == "00")
                 {
-                    return RedirectToPage("/Error", new { message = "Order not found" });
-                }
-
-                decimal paidAmount = decimal.Parse(response.Amount);
-                if (order.TotalAmount != paidAmount)
-                {
-                    _logger.LogCritical("Gian lận số tiền! Đơn hàng: {Total}, Thanh toán: {Paid}", order.TotalAmount, paidAmount);
-                    return RedirectToPage("/Error", new { message = "Số tiền thanh toán không khớp" });
-                }
-
-                var vnp_ResponseCode = response.VnPayResponseCode;
-
-                if (vnp_ResponseCode == "00")
-                {
-                    // Payment successful
-                    return RedirectToPage("/Orders/OrderConfirmation", new
+                    return View("PaymentSuccess", new PaymentResultViewModel
                     {
-                        orderId = order.Id,
-                        orderNumber = order.OrderNumber
+                        IsSuccess = true,
+                        Message = L["PaymentSuccessfulThankYou"],
+                        RedirectUrl = Url.Page("/Orders/OrderConfirmation",
+                            new { orderId = order.Id, orderNumber = order.OrderNumber })
                     });
                 }
-                else
+
+                return View("PaymentFailed", new PaymentResultViewModel
                 {
-                    // Payment failed
-                    return RedirectToPage("/Orders/PaymentFailed", new
-                    {
-                        orderId = order.Id,
-                        errorCode = vnp_ResponseCode
-                    });
-                }
+                    Message = L["PaymentFailedPleaseTryAgain"],
+                    RedirectUrl = Url.Page("/Orders/PaymentFailed",
+                        new { orderId = order.Id, errorCode = response.VnPayResponseCode })
+                });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error processing VNPay return");
-                return RedirectToPage("/Error");
+                return View("PaymentFailed", new PaymentResultViewModel
+                {
+                    Message = L["AnErrorOccurred"],
+                    RedirectUrl = Url.Page("/Orders/Index")
+                });
             }
         }
 
@@ -134,48 +100,56 @@ namespace Acme.ProductSelling.Web.Controllers
             {
                 var resultCode = int.Parse(Request.Query["resultCode"].ToString());
                 var orderId = Request.Query["orderId"].ToString();
+                long.TryParse(Request.Query["transId"].ToString(), out var transId);
 
-                _logger.LogInformation(
-                    "User returned from MoMo. OrderId: {OrderId}, ResultCode: {Code}",
-                    orderId, resultCode
-                );
-
-                if (string.IsNullOrEmpty(orderId) || !Guid.TryParse(orderId, out var orderIdGuid))
-                {
-                    return RedirectToPage("/Error", new { message = "Invalid order reference" });
-                }
-
-                //var order = await _orderAppService.GetAsync(orderIdGuid);
-                var order = await _orderPublicAppService.GetAsync(orderIdGuid);
-
-                if (order == null)
-                {
-                    return RedirectToPage("/Error", new { message = "Order not found" });
-                }
+                if (!Guid.TryParse(orderId, out var orderGuid))
+                    return View("PaymentFailed", new PaymentResultViewModel
+                    {
+                        Message = "Mã đơn hàng không hợp lệ.",
+                        RedirectUrl = Url.Page("/Orders/OrderHistory")
+                    });
 
                 if (resultCode == 0)
                 {
-                    // Payment successful
-                    return RedirectToPage("/Orders/OrderConfirmation", new
+                    try
                     {
-                        orderId = order.Id,
-                        orderNumber = order.OrderNumber
-                    });
+                        var order = await _orderPublicAppService.ConfirmMoMoOrderAsync(orderGuid, transId);
+                        return View("PaymentSuccess", new PaymentResultViewModel
+                        {
+                            IsSuccess = true,
+                            Message = L["PaymentSuccessfulThankYou"],
+                            RedirectUrl = Url.Page("/Orders/OrderConfirmation",
+                                new { orderId = order.Id, orderNumber = order.OrderNumber })
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to confirm MoMo order {OrderId}", orderId);
+                        // IPN will handle it — still show success
+                        return View("PaymentSuccess", new PaymentResultViewModel
+                        {
+                            IsSuccess = true,
+                            Message = "Thanh toán thành công. Đơn hàng đang được xử lý.",
+                            RedirectUrl = Url.Page("/Orders/OrderHistory")
+                        });
+                    }
                 }
-                else
+
+                return View("PaymentFailed", new PaymentResultViewModel
                 {
-                    // Payment failed
-                    return RedirectToPage("/Orders/PaymentFailed", new
-                    {
-                        orderId = order.Id,
-                        errorCode = resultCode
-                    });
-                }
+                    Message = $"Giao dịch thất bại. Vui lòng thử lại.",
+                    RedirectUrl = Url.Page("/Orders/PaymentFailed",
+                        new { orderId = orderGuid, errorCode = resultCode })
+                });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error processing MoMo callback");
-                return RedirectToPage("/Error");
+                return View("PaymentFailed", new PaymentResultViewModel
+                {
+                    Message = L["AnErrorOccurred"],
+                    RedirectUrl = Url.Page("/Orders/OrderHistory")
+                });
             }
         }
 
@@ -185,34 +159,32 @@ namespace Acme.ProductSelling.Web.Controllers
         {
             try
             {
-                _logger.LogInformation(
-                    "User returned from PayPal. OrderId: {OrderId}, PaymentId: {PaymentId}",
-                    orderId, token
-                );
+                if (string.IsNullOrEmpty(token) || orderId == Guid.Empty)
+                    return View("PaymentFailed", new PaymentResultViewModel
+                    {
+                        Message = L["AnErrorOccurredWhileProcessingPayment"],
+                        RedirectUrl = Url.Page("/Orders/OrderHistory")
+                    });
 
-                if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(PayerID))
+                // ConfirmPayPalOrderAsync handles ExecutePaymentAsync internally — don't call it separately
+                var order = await _orderPublicAppService.ConfirmPayPalOrderAsync(orderId, token);
+
+                return View("PaymentSuccess", new PaymentResultViewModel
                 {
-                    return RedirectToPage("/Error", new { message = "Invalid PayPal response" });
-                }
-
-                // Confirm the PayPal order
-                var order = await _orderPublicAppService.ConfirmPayPalOrderAsync(orderId,token);
-
-                if (order == null)
-                {
-                    return RedirectToPage("/Error", new { message = "Order not found" });
-                }
-
-                return RedirectToPage("/Orders/OrderConfirmation", new
-                {
-                    orderId = order.Id,
-                    orderNumber = order.OrderNumber
+                    IsSuccess = true,
+                    Message = L["PaymentSuccessfulThankYou"],
+                    RedirectUrl = Url.Page("/Orders/OrderConfirmation",
+                        new { orderId = order.Id, orderNumber = order.OrderNumber })
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error processing PayPal success callback");
-                return RedirectToPage("/Error");
+                _logger.LogError(ex, "Error processing PayPal success for orderId: {orderId}", orderId);
+                return View("PaymentFailed", new PaymentResultViewModel
+                {
+                    Message = L["AnErrorOccurredWhileProcessingPayment"],
+                    RedirectUrl = Url.Page("/Orders/OrderDetail", new { id = orderId })
+                });
             }
         }
 
@@ -220,28 +192,15 @@ namespace Acme.ProductSelling.Web.Controllers
         [Authorize]
         public async Task<IActionResult> PayPalCancel([FromQuery] Guid orderId)
         {
-            try
+            _logger.LogInformation("User cancelled PayPal payment. OrderId: {OrderId}", orderId);
+
+            return View("PaymentFailed", new PaymentResultViewModel
             {
-                _logger.LogInformation("User cancelled PayPal payment. OrderId: {OrderId}", orderId);
-
-                var order = await _orderPublicAppService.GetAsync(orderId);
-
-                if (order == null)
-                {
-                    return RedirectToPage("/Error", new { message = "Order not found" });
-                }
-
-                return RedirectToPage("/Orders/PaymentCancelled", new
-                {
-                    orderId = order.Id,
-                    orderNumber = order.OrderNumber
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error processing PayPal cancel callback");
-                return RedirectToPage("/Error");
-            }
+                Message = L["PaymentCancelledByUser"],
+                RedirectUrl = orderId != Guid.Empty
+                    ? Url.Page("/Orders/OrderDetail", new { id = orderId })
+                    : Url.Page("/Orders/OrderHistory")
+            });
         }
     }
 }

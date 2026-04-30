@@ -14,8 +14,8 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Orders.Fulfillment
         [BindProperty(SupportsGet = true)]
         public string Prefix { get; set; }
 
-        private readonly IOrderAppService _orderAppService;
-        public IndexModel(IOrderAppService orderAppService)
+        private readonly IOrderQueryAppService _orderAppService;
+        public IndexModel(IOrderQueryAppService orderAppService)
         {
             _orderAppService = orderAppService;
         }

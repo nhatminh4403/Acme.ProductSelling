@@ -1,6 +1,4 @@
-using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Payments;
-using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

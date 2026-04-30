@@ -39,7 +39,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Shared.Components.Breadcrumb
             if (supportedCultures != null && supportedCultures.Contains(segments[0], StringComparer.OrdinalIgnoreCase))
             {
                 culturePrefix = $"/{segments[0]}";
-                startIndex = 1; 
+                startIndex = 1;
             }
 
             breadcrumbs.Add(new BreadcrumbItem { Text = "Dashboard", Url = $"{culturePrefix}/" });

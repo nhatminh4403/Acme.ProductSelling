@@ -1,5 +1,6 @@
 ﻿using Acme.ProductSelling.EntityFrameworkCore;
 using Acme.ProductSelling.Products.Services;
+using Acme.ProductSelling.Specifications.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -20,14 +21,8 @@ namespace Acme.ProductSelling.Products
         public async Task<Product> FindByNameAsync(string name)
         {
             var products = await GetQueryableAsync();
-            var product = await products.FirstOrDefaultAsync(c => c.ProductName == name);
+            return await products.FirstOrDefaultAsync(c => c.ProductName == name);
 
-            if (product == null)
-            {
-                throw new Exception($"Product with name '{name}' not found");
-            }
-
-            return product;
 
         }
         public async Task<List<Product>> GetListAsync(int skipCount,
@@ -55,14 +50,15 @@ namespace Acme.ProductSelling.Products
                 query = (await GetDbSetAsync()).AsQueryable();
             }
 
-            return await query.FirstOrDefaultAsync(p => p.Id == id, cancellationToken) ?? throw new EntityNotFoundException(typeof(Product),id );
+            return await query.FirstOrDefaultAsync(p => p.Id == id, cancellationToken) ?? throw new EntityNotFoundException(typeof(Product), id);
             //return base.GetAsync(id, includeDetails, cancellationToken);
         }
 
         public async override Task<IQueryable<Product>> GetQueryableAsync()
         {
             var dbSet = await GetDbSetAsync();
-            return dbSet.Include(p => p.Category)
+            return dbSet.AsNoTracking()
+                .Include(p => p.Category)
                 .Include(p => p.Manufacturer)
                 .Include(p => p.StoreInventories)
                 .Include(p => p.SpecificationBase).AsSplitQuery();
@@ -88,7 +84,29 @@ namespace Acme.ProductSelling.Products
         public async Task<Product> GetBySlug(string slug)
         {
             var query = await GetQueryableAsync();
-            return await query.AsNoTracking().FirstOrDefaultAsync(p => p.UrlSlug.ToLower() == slug.ToLower()) ?? throw new EntityNotFoundException(typeof(Product), slug);
+
+            query = query
+                        .Include(p => ((MonitorSpecification)p.SpecificationBase).PanelType)
+                        .Include(p => ((MotherboardSpecification)p.SpecificationBase).Socket)
+                        .Include(p => ((MotherboardSpecification)p.SpecificationBase).Chipset)
+                        .Include(p => ((MotherboardSpecification)p.SpecificationBase).FormFactor)
+                        .Include(p => ((MotherboardSpecification)p.SpecificationBase).SupportedRamTypes)
+                        .Include(p => ((CpuSpecification)p.SpecificationBase).Socket)
+                        .Include(p => ((RamSpecification)p.SpecificationBase).RamType)
+                        .Include(p => ((KeyboardSpecification)p.SpecificationBase).SwitchType)
+
+                        .Include(p => ((CaseSpecification)p.SpecificationBase).FormFactor)
+                        .Include(p => ((CaseSpecification)p.SpecificationBase).Materials)
+                            .ThenInclude(m => m.Material)
+
+                        .Include(p => ((CpuCoolerSpecification)p.SpecificationBase).SupportedSockets)
+                            .ThenInclude(s => s.Socket);
+
+            // Make exactly ONE call to the database.
+            return await query
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.UrlSlug.ToLower() == slug.ToLower())
+                ?? throw new EntityNotFoundException(typeof(Product), slug);
         }
 
         public async Task<IQueryable<Product>> GetQueryableWithoutSpecsAsync()

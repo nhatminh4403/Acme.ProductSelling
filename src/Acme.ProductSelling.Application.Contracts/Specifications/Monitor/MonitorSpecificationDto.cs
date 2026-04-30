@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using Volo.Abp.Application.Dtos;
 namespace Acme.ProductSelling.Specifications
 {
-    public class MonitorSpecificationDto : EntityDto<Guid>
+    public class MonitorSpecificationDto : SpecificationBaseDto
     {
         public int RefreshRate { get; set; }
         public string Resolution { get; set; }
@@ -12,6 +12,7 @@ namespace Acme.ProductSelling.Specifications
         public int ResponseTimeMs { get; set; }
         public string ColorGamut { get; set; }
         public int Brightness { get; set; }
-        public bool VesaMount { get; set; } // Có hỗ trợ VESA không
+        public bool VesaMount { get; set; } // C� h? tr? VESA kh�ng
     }
 }
+

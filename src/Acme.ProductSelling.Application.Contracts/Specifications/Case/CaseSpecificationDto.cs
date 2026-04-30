@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Volo.Abp.Application.Dtos;
 namespace Acme.ProductSelling.Specifications
 {
-    public class CaseSpecificationDto : EntityDto<Guid>
+    public class CaseSpecificationDto : SpecificationBaseDto
     {
         public string SupportedMbFormFactorName { get; set; }
         public List<string> MaterialNames { get; set; } = new();
@@ -13,3 +13,4 @@ namespace Acme.ProductSelling.Specifications
         public int IncludedFans { get; set; }
     }
 }
+

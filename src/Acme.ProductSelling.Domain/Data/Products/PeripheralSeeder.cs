@@ -9,7 +9,6 @@ using Acme.ProductSelling.Specifications.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Volo.Abp.Domain.Repositories;
 
 namespace Acme.ProductSelling.Data.Products
 {

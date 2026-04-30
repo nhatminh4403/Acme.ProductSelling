@@ -1,10 +1,10 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class MemoryCardSpecificationDto : EntityDto<Guid>
+    public class MemoryCardSpecificationDto : SpecificationBaseDto
     {
         public int Capacity { get; set; }
         public CardType CardType { get; set; }
@@ -16,3 +16,4 @@ namespace Acme.ProductSelling.Specifications
         public bool Shockproof { get; set; }
     }
 }
+

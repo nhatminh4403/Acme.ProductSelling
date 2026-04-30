@@ -8,7 +8,6 @@ using Acme.ProductSelling.Specifications.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Volo.Abp.Domain.Repositories;
 
 namespace Acme.ProductSelling.Data.Products
 {
@@ -24,7 +23,7 @@ namespace Acme.ProductSelling.Data.Products
         private Dictionary<string, Manufacturer> _manufacturers;
 
         public GamingSeeder(
-            IProductRepository productRepository,     
+            IProductRepository productRepository,
             ProductManager productManager,
 
             //IRepository<LaptopSpecification, Guid> laptopSpecRepository,

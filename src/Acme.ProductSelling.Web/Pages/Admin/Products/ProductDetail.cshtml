@@ -2,6 +2,7 @@
 @using Acme.ProductSelling.Categories
 @using Microsoft.AspNetCore.Authorization
 @using Acme.ProductSelling.Permissions
+@using Acme.ProductSelling.Specifications
 @model Acme.ProductSelling.Web.Pages.Admin.Products.ProductDetailModel
 
 @{
@@ -52,7 +53,7 @@
                 </tr>
                 <tr>
                     <th>@L["Product:OriginalPrice"]</th>
-                    <td>@Model.Product.OriginalPrice.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                    <td>@Model.Product.OriginalPrice.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</td>
                 </tr>
                 <tr>
                     <th>@L["Product:DiscountPercent"]</th>
@@ -72,185 +73,115 @@
 
     <div class="row mt-4">
         <div class="col-md-12">
-            @switch (Model.Product.CategorySpecificationType)
+            @switch (Model.Product.SpecificationBase)
             {
-                case SpecificationType.Monitor:
-                    if (Model.Product.MonitorSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_MonitorSpecsPartial.cshtml" model="Model.Product.MonitorSpecification" />
-                    }
+                // --- Core Components ---
+                case CpuSpecificationDto cpuSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_CpuSpecsPartial.cshtml" model="cpuSpec" />
                     break;
-                case SpecificationType.Mouse:
-                    if (Model.Product.MouseSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_MouseSpecsPartial.cshtml" model="Model.Product.MouseSpecification" />
-                    }
+                case GpuSpecificationDto gpuSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_GpuSpecsPartial.cshtml" model="gpuSpec" />
                     break;
-                case SpecificationType.CPU:
-                    if (Model.Product.CpuSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_CpuSpecsPartial.cshtml" model="Model.Product.CpuSpecification" />
-                    }
+                case RamSpecificationDto ramSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_RamSpecsPartial.cshtml" model="ramSpec" />
                     break;
-                case SpecificationType.GPU:
-                    if (Model.Product.GpuSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_GpuSpecsPartial.cshtml" model="Model.Product.GpuSpecification" />
-                    }
+                case MotherboardSpecificationDto mbSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_MotherboardSpecsPartial.cshtml" model="mbSpec" />
                     break;
-                case SpecificationType.RAM:
-                    if (Model.Product.RamSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_RamSpecsPartial.cshtml" model="Model.Product.RamSpecification" />
-                    }
+                case StorageSpecificationDto storageSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_StorageSpecsPartial.cshtml" model="storageSpec" />
                     break;
-                case SpecificationType.Motherboard:
-                    if (Model.Product.MotherboardSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_MotherboardSpecsPartial.cshtml" model="Model.Product.MotherboardSpecification" />
-                    }
+                case MemoryCardSpecificationDto memCardSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_MemoryCardSpecsPartial.cshtml" model="memCardSpec" />
                     break;
-                case SpecificationType.Storage:
-                    if (Model.Product.StorageSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_StorageSpecsPartial.cshtml" model="Model.Product.StorageSpecification" />
-                    }
+
+                // --- Cooling & Power ---
+                case PsuSpecificationDto psuSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_PsuSpecsPartial.cshtml" model="psuSpec" />
                     break;
-                case SpecificationType.PSU:
-                    if (Model.Product.PsuSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_PsuSpecsPartial.cshtml" model="Model.Product.PsuSpecification" />
-                    }
+                case CaseSpecificationDto caseSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_CaseSpecsPartial.cshtml" model="caseSpec" />
                     break;
-                case SpecificationType.Case:
-                    if (Model.Product.CaseSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_CaseSpecsPartial.cshtml" model="Model.Product.CaseSpecification" />
-                    }
+                case CpuCoolerSpecificationDto coolerSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_CpuCoolerSpecsPartial.cshtml" model="coolerSpec" />
                     break;
-                case SpecificationType.CPUCooler:
-                    if (Model.Product.CpuCoolerSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_CpuCoolerSpecsPartial.cshtml" model="Model.Product.CpuCoolerSpecification" />
-                    }
+                case CaseFanSpecificationDto caseFanSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_CaseFanSpecsPartial.cshtml" model="caseFanSpec" />
                     break;
-                case SpecificationType.Keyboard:
-                    if (Model.Product.KeyboardSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_KeyboardSpecsPartial.cshtml" model="Model.Product.KeyboardSpecification" />
-                    }
+
+                // --- Computers ---
+                case LaptopSpecificationDto laptopSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_LaptopSpecsPartial.cshtml" model="laptopSpec" />
                     break;
-                case SpecificationType.Headset:
-                    if (Model.Product.HeadsetSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_HeadsetSpecsPartial.cshtml" model="Model.Product.HeadsetSpecification" />
-                    }
+                case HandheldSpecificationDto handheldSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_HandheldSpecsPartial.cshtml" model="handheldSpec" />
                     break;
-                case SpecificationType.Laptop:
-                    if (Model.Product.LaptopSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_LaptopSpecsPartial.cshtml" model="Model.Product.LaptopSpecification" />
-                    }
+                case ConsoleSpecificationDto consoleSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_ConsoleSpecsPartial.cshtml" model="consoleSpec" />
                     break;
-                case SpecificationType.Cable:
-                    if (Model.Product.CableSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_CableSpecsPartial.cshtml" model="Model.Product.CableSpecification" />
-                    }
+
+                // --- Peripherals ---
+                case MonitorSpecificationDto monitorSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_MonitorSpecsPartial.cshtml" model="monitorSpec" />
                     break;
-                case SpecificationType.CaseFan:
-                    if (Model.Product.CaseFanSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_CaseFanPartial.cshtml" model="Model.Product.CaseFanSpecification" />
-                    }
+                case KeyboardSpecificationDto kbSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_KeyboardSpecsPartial.cshtml" model="kbSpec" />
                     break;
-                case SpecificationType.Chair:
-                    if (Model.Product.ChairSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_ChairPartial.cshtml" model="Model.Product.ChairSpecification" />
-                    }
+                case MouseSpecificationDto mouseSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_MouseSpecsPartial.cshtml" model="mouseSpec" />
                     break;
-                case SpecificationType.Charger:
-                    if (Model.Product.ChargerSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_ChargerPartial.cshtml" model="Model.Product.ChargerSpecification" />
-                    }
+                case MousePadSpecificationDto padSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_MousePadPartial.cshtml" model="padSpec" />
                     break;
-                case SpecificationType.Console:
-                    if (Model.Product.ConsoleSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_ConsolePartial.cshtml" model="Model.Product.ConsoleSpecification" />
-                    }
+
+                // --- Audio & Video ---
+                case HeadsetSpecificationDto headsetSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_HeadsetSpecsPartial.cshtml" model="headsetSpec" />
                     break;
-                case SpecificationType.Desk:
-                    if (Model.Product.DeskSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_DeskPartial.cshtml" model="Model.Product.DeskSpecification" />
-                    }
+                case SpeakerSpecificationDto speakerSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_SpeakerSpecsPartial.cshtml" model="speakerSpec" />
                     break;
-                case SpecificationType.Handheld:
-                    if (Model.Product.HandheldSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_HandheldPartial.cshtml" model="Model.Product.HandheldSpecification" />
-                    }
+                case MicrophoneSpecificationDto micSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_MicrophoneSpecsPartial.cshtml" model="micSpec" />
                     break;
-                case SpecificationType.Hub:
-                    if (Model.Product.HubSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_HubPartial.cshtml" model="Model.Product.HubSpecification" />
-                    }
+                case WebcamSpecificationDto webcamSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_WebcamSpecsPartial.cshtml" model="webcamSpec" />
                     break;
-                case SpecificationType.MemoryCard:
-                    if (Model.Product.MemoryCardSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_MemoryCardPartial.cshtml" model="Model.Product.MemoryCardSpecification" />
-                    }
+
+                // --- Furniture ---
+                case ChairSpecificationDto chairSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_ChairSpecsPartial.cshtml" model="chairSpec" />
                     break;
-                case SpecificationType.Microphone:
-                    if (Model.Product.MicrophoneSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_MicrophonePartial.cshtml" model="Model.Product.MicrophoneSpecification" />
-                    }
+                case DeskSpecificationDto deskSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_DeskSpecsPartial.cshtml" model="deskSpec" />
                     break;
-                case SpecificationType.MousePad:
-                    if (Model.Product.MousepadSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_MousePadPartial.cshtml" model="Model.Product.MousepadSpecification" />
-                    }
+
+                // --- Networking & Software ---
+                case NetworkHardwareSpecificationDto netSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_NetworkHardwareSpecsPartial.cshtml" model="netSpec" />
                     break;
-                case SpecificationType.NetworkHardware:
-                    if (Model.Product.NetworkHardwareSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_NetworkHardwarePartial.cshtml" model="Model.Product.NetworkHardwareSpecification" />
-                    }
+                case SoftwareSpecificationDto softwareSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_SoftwareSpecsPartial.cshtml" model="softwareSpec" />
                     break;
-                case SpecificationType.PowerBank:
-                    if (Model.Product.PowerBankSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_PowerBankPartial.cshtml" model="Model.Product.PowerBankSpecification" />
-                    }
+
+                // --- Accessories ---
+                case HubSpecificationDto hubSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_HubSpecsPartial.cshtml" model="hubSpec" />
                     break;
-                case SpecificationType.Software:
-                    if (Model.Product.SoftwareSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_SoftwarePartial.cshtml" model="Model.Product.SoftwareSpecification" />
-                    }
+                case CableSpecificationDto cableSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_CableSpecsPartial.cshtml" model="cableSpec" />
                     break;
-                case SpecificationType.Webcam:
-                    if (Model.Product.WebcamSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_WebcamPartial.cshtml" model="Model.Product.WebcamSpecification" />
-                    }
+                case ChargerSpecificationDto chargerSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_ChargerSpecsPartial.cshtml" model="chargerSpec" />
                     break;
-                 case SpecificationType.Speaker:
-                     if (Model.Product.SpeakerSpecification != null)
-                    {
-                        <partial name="/Pages/Components/ProductSpecs/_SpeakerSpecsPartial.cshtml" model="Model.Product.SpeakerSpecification" />
-                     }
-                     break;
+                case PowerBankSpecificationDto powerBankSpec:
+                    <partial name="~/Pages/Components/ProductSpecs/_PowerBankSpecsPartial.cshtml" model="powerBankSpec" />
+                    break;
+
+                // --- Fallback ---
+                case null:
                 default:
-                    <p>@L["Product:NoSpecificSpecifications"]</p>
-                    <p>@Model.Product.CategorySpecificationType</p>
+                    <p class="text-muted">@L["Product:NoSpecificSpecifications"]</p>
                     break;
             }
         </div>

@@ -2,7 +2,6 @@
 using Acme.ProductSelling.Categories.Dtos;
 using Acme.ProductSelling.Products.Caching;
 using Acme.ProductSelling.Products.Dtos;
-using Acme.ProductSelling.Products.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using System;
@@ -111,7 +110,7 @@ namespace Acme.ProductSelling.Products.Services
             if (cached != null)
                 return cached;
 
-           
+
             var product = await _productRepository.GetBySlug(slug);
 
             if (product == null)
@@ -181,7 +180,7 @@ namespace Acme.ProductSelling.Products.Services
             // 2. Get Categories (Lightweight query)
             foreach (var category in categoriesToFeature)
             {
-                var query = await _productRepository.GetQueryableAsync();
+                var query = await _productRepository.GetQueryableWithoutSpecsAsync();
 
                 var rawProducts = await query
                     .AsNoTracking()
@@ -201,9 +200,6 @@ namespace Acme.ProductSelling.Products.Services
                               //    ManufacturerName = p.Manufacturer.Name,
                               //    p.StockCount
                               //})
-                              
-                    .Include(p => p.Category)
-                    .Include(p => p.Manufacturer)
                     .Include(p => p.StoreInventories)
                     .ToListAsync();
 

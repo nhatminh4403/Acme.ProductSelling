@@ -41,6 +41,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Content Remove="C:\Users\NotAdmin\.nuget\packages\vnpay.net\2.1.0\contentFiles\any\netstandard2.1\Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Data\Dto.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -120,11 +123,14 @@
     <None Include="wwwroot\Pages\Admin\Stores\Index.js" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Data\" />
     <Folder Include="Pages\Admin\Products\Components\" />
     <Folder Include="Pages\Components\Shared\" />
+    <Folder Include="wwwroot\css\" />
+    <Folder Include="wwwroot\images\" />
+    <Folder Include="wwwroot\js\" />
+    <Folder Include="wwwroot\js\admin\orders\" />
     <Folder Include="wwwroot\lib\bootstrap\" />
-    <Folder Include="wwwroot\lib\bootstrap\dist\css\" />
-    <Folder Include="wwwroot\lib\bootstrap\dist\js\" />
     <Folder Include="wwwroot\lib\jquery-validation-unobtrusive\" />
     <Folder Include="wwwroot\lib\jquery-validation\" />
     <Folder Include="wwwroot\lib\jquery-validation\dist\" />

@@ -1,10 +1,10 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class WebcamSpecificationDto : EntityDto<Guid>
+    public class WebcamSpecificationDto : SpecificationBaseDto
     {
         public string Resolution { get; set; }
         public int FrameRate { get; set; }
@@ -19,3 +19,4 @@ namespace Acme.ProductSelling.Specifications
     }
 
 }
+

@@ -4,7 +4,6 @@ using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products.BackgroundJobs.ProductRelease;
 using Acme.ProductSelling.Products.Caching;
 using Acme.ProductSelling.Products.Dtos;
-using Acme.ProductSelling.Products.Helpers;
 using Acme.ProductSelling.Products.Specification;
 using Acme.ProductSelling.Specifications.Junctions;
 using Acme.ProductSelling.Specifications.Models;
@@ -12,7 +11,6 @@ using Acme.ProductSelling.StoreInventories;
 using Acme.ProductSelling.Stores;
 using Acme.ProductSelling.Utils;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
@@ -107,8 +105,8 @@ namespace Acme.ProductSelling.Products.Services
         [Authorize(ProductSellingPermissions.Products.Default)]
         public override async Task<PagedResultDto<ProductDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
-            var query = await Repository.GetQueryableAsync();
-            query = query.AsNoTracking();
+            var query = await _productRepository.GetQueryableAsync();
+
             var totalCount = await AsyncExecuter.CountAsync(query);
             query = query.OrderBy(input.Sorting ?? nameof(Product.ProductName));
             query = query.PageBy(input);
@@ -201,6 +199,7 @@ namespace Acme.ProductSelling.Products.Services
                     HandleManyToManyAsync(product.Id, input)
                 );
 
+                await InvalidateProductCacheAsync(product.Id, product.UrlSlug);
                 await InvalidateFeaturedCacheAsync();
 
                 await ScheduleProductReleaseJobAsync(product);
@@ -417,7 +416,8 @@ namespace Acme.ProductSelling.Products.Services
                     })
                     .ToList();
             }
-            else if(CurrentUser.IsInRole(IdentityRoleConsts.Admin)) {
+            else if (CurrentUser.IsInRole(IdentityRoleConsts.Admin))
+            {
                 var products = await _productRepository.GetQueryableAsync();
 
                 return products

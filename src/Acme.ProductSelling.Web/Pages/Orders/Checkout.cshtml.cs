@@ -1,4 +1,5 @@
-﻿using Acme.ProductSelling.Carts;
+﻿using Acme.ProductSelling.Account;
+using Acme.ProductSelling.Carts;
 using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Orders.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Users;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Acme.ProductSelling.Web.Pages.Checkout
 {
@@ -21,15 +23,15 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
         public CartDto CurrentCart { get; private set; }
 
         private readonly ICartAppService _cartAppService;
-        private readonly IOrderAppService _orderAppService;
-        private readonly ICurrentUser _currentUser;
+
         private readonly IOrderPublicAppService _orderPublicAppService;
-        public CheckoutModel(IOrderAppService orderAppService, ICartAppService cartService, ICurrentUser currentUser, IOrderPublicAppService orderPublicAppService)
+        private readonly IProfileAppService _profileAppService;
+        public CheckoutModel(ICartAppService cartService,
+
+                             IOrderPublicAppService orderPublicAppService)
         {
-            _orderAppService = orderAppService;
             _cartAppService = cartService;
             OrderInput = new CreateOrderDto();
-            _currentUser = currentUser;
             _orderPublicAppService = orderPublicAppService;
         }
 
@@ -38,13 +40,23 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
             CurrentCart = await _cartAppService.GetUserCartAsync();
             if (CurrentCart == null || !CurrentCart.CartItems.Any())
             {
-                return RedirectToPage("/" + "Cart".ToLower());
+                return RedirectToPage("/cart");
             }
+
 
             if (CurrentUser.IsAuthenticated)
             {
-                OrderInput.CustomerName = CurrentUser.Name ?? CurrentUser.UserName;
-                OrderInput.CustomerPhone = CurrentUser.PhoneNumber;
+                var currentProfile = await _profileAppService.GetAsync();
+                if (currentProfile == null)
+                {
+                    throw new Exception($"there is no {currentProfile} profile in db");
+                }
+
+                OrderInput.CustomerName = currentProfile.Name ?? CurrentUser.UserName;
+                OrderInput.CustomerPhone = currentProfile.PhoneNumber;
+                OrderInput.ShippingAddress = currentProfile.ShippingAddress;
+
+                OrderInput.ShippingAddress = currentProfile.ShippingAddress;
             }
             return Page();
         }

@@ -29,7 +29,7 @@ $(function () {
         const confirmPassword = $('#registerConfirmPassword').val();
         const phoneNumber = $('#registerPhone').val();
 
-        if (!name || !surname || !email || !password || !confirmPassword || !phoneNumber) {
+        if (!name || !surname || !email || !password || !confirmPassword ) {
             showNotification('Vui lòng điền đầy đủ thông tin bắt buộc.', L('Validation:ErrorTitle'), 'error');
             return;
         }

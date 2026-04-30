@@ -61,7 +61,7 @@ namespace Acme.ProductSelling.PaymentGateway.MoMo.Configurations.Services
 
                 request.ExtraData = request.ExtraData ?? string.Empty;
                 request.PartnerCode = _momoOption.PartnerCode;
-                request.RequestId = request.OrderId;
+                //request.RequestId = request.OrderId;
                 request.AccessKey = _momoOption.AccessKey;
                 request.RequestType = _momoOption.RequestType;
 

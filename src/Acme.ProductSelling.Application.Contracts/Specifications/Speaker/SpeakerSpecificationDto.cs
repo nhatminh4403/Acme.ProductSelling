@@ -1,10 +1,10 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class SpeakerSpecificationDto : EntityDto<Guid>
+    public class SpeakerSpecificationDto : SpecificationBaseDto
     {
         public SpeakerType SpeakerType { get; set; }
         public int TotalWattage { get; set; }
@@ -15,3 +15,4 @@ namespace Acme.ProductSelling.Specifications
     }
 
 }
+

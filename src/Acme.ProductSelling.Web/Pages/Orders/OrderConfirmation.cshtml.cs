@@ -13,11 +13,9 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
     {
         public OrderDto Order { get; private set; }
 
-        private readonly IOrderAppService _orderAppService;
         private readonly IOrderPublicAppService _orderPublicAppService;
-        public OrderConfirmationModel(IOrderAppService orderAppService, IOrderPublicAppService orderPublicAppService)
+        public OrderConfirmationModel(IOrderPublicAppService orderPublicAppService)
         {
-            _orderAppService = orderAppService;
             _orderPublicAppService = orderPublicAppService;
         }
 
@@ -32,13 +30,11 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
             {
                 if (orderId != Guid.Empty)
                 {
-                    //Order = await _orderAppService.GetAsync(orderId);
                     Order = await _orderPublicAppService.GetAsync(orderId);
                 }
                 else
                 {
                     Order = await _orderPublicAppService.GetByOrderNumberAsync(orderNumber);
-                    //Order = await _orderAppService.GetByOrderNumberAsync(orderNumber);
                 }
 
                 return Page();

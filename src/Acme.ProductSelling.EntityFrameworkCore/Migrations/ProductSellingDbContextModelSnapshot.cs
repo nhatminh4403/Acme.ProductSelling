@@ -19,7 +19,7 @@ namespace Acme.ProductSelling.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("_Abp_DatabaseProvider", EfCoreDatabaseProvider.SqlServer)
-                .HasAnnotation("ProductVersion", "10.0.2")
+                .HasAnnotation("ProductVersion", "10.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -817,11 +817,6 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("SpecType")
-                        .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("nvarchar(21)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId")
@@ -829,9 +824,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.ToTable("AppSpecifications", (string)null);
 
-                    b.HasDiscriminator<string>("SpecType").HasValue("SpecificationBase");
-
-                    b.UseTphMappingStrategy();
+                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.StoreInventories.StoreInventory", b =>
@@ -1323,8 +1316,8 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("EntityTypeFullName")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)")
                         .HasColumnName("EntityTypeFullName");
 
                     b.Property<string>("ExtraProperties")
@@ -1371,8 +1364,8 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("PropertyTypeFullName")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)")
                         .HasColumnName("PropertyTypeFullName");
 
                     b.Property<Guid?>("TenantId")
@@ -2029,6 +2022,15 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<DateTimeOffset?>("LastPasswordChangeTime")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<DateTimeOffset?>("LastSignInTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("Leaved")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("Leaved");
+
                     b.Property<bool>("LockoutEnabled")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -2226,6 +2228,47 @@ namespace Acme.ProductSelling.Migrations
                     b.HasIndex("UserId", "OrganizationUnitId");
 
                     b.ToTable("AbpUserOrganizationUnits", (string)null);
+                });
+
+            modelBuilder.Entity("Volo.Abp.Identity.IdentityUserPasskey", b =>
+                {
+                    b.Property<byte[]>("CredentialId")
+                        .HasMaxLength(1024)
+                        .HasColumnType("varbinary(1024)");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("TenantId");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("CredentialId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AbpUserPasskeys", (string)null);
+                });
+
+            modelBuilder.Entity("Volo.Abp.Identity.IdentityUserPasswordHistory", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Password")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("TenantId");
+
+                    b.HasKey("UserId", "Password");
+
+                    b.ToTable("AbpUserPasswordHistories", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUserRole", b =>
@@ -2695,12 +2738,15 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnName("ExtraProperties");
 
                     b.Property<string>("GroupName")
-                        .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("bit");
+
+                    b.Property<string>("ManagementPermissionName")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<byte>("MultiTenancySide")
                         .HasColumnType("tinyint");
@@ -2718,6 +2764,10 @@ namespace Acme.ProductSelling.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
+                    b.Property<string>("ResourceName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<string>("StateCheckers")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -2726,8 +2776,9 @@ namespace Acme.ProductSelling.Migrations
 
                     b.HasIndex("GroupName");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
+                    b.HasIndex("ResourceName", "Name")
+                        .IsUnique()
+                        .HasFilter("[ResourceName] IS NOT NULL");
 
                     b.ToTable("AbpPermissions", (string)null);
                 });
@@ -2792,6 +2843,50 @@ namespace Acme.ProductSelling.Migrations
                         .IsUnique();
 
                     b.ToTable("AbpPermissionGroups", (string)null);
+                });
+
+            modelBuilder.Entity("Volo.Abp.PermissionManagement.ResourcePermissionGrant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("ProviderKey")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("ProviderName")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<string>("ResourceKey")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("ResourceName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("TenantId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "Name", "ResourceName", "ResourceKey", "ProviderName", "ProviderKey")
+                        .IsUnique()
+                        .HasFilter("[TenantId] IS NOT NULL");
+
+                    b.ToTable("AbpResourcePermissionGrants", (string)null);
                 });
 
             modelBuilder.Entity("Volo.Abp.SettingManagement.Setting", b =>
@@ -3017,8 +3112,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("CableColor");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Connector1")
                         .IsRequired()
@@ -3044,10 +3138,9 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Warranty")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("CableWarranty");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasDiscriminator().HasValue("Cable");
+                    b.ToTable("AppCableSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CaseFanSpecification", b =>
@@ -3062,32 +3155,28 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("CaseFanColor");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Connector")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("FanSize")
-                        .HasColumnType("int")
-                        .HasColumnName("CaseFanFanSize");
+                        .HasColumnType("int");
 
                     b.Property<bool>("HasRgb")
-                        .HasColumnType("bit")
-                        .HasColumnName("CaseFanHasRgb");
+                        .HasColumnType("bit");
 
                     b.Property<int>("MaxRpm")
                         .HasColumnType("int");
 
                     b.Property<float>("NoiseLevel")
-                        .HasColumnType("real")
-                        .HasColumnName("CaseFanNoiseLevel");
+                        .HasColumnType("real");
 
                     b.Property<float>("StaticPressure")
                         .HasColumnType("real");
 
-                    b.HasDiscriminator().HasValue("CaseFan");
+                    b.ToTable("AppCaseFanSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CaseSpecification", b =>
@@ -3096,8 +3185,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("CaseColor");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CoolingSupport")
                         .IsRequired()
@@ -3112,8 +3200,7 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("FormFactorId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("CaseFormFactorId");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("FrontPanelPorts")
                         .IsRequired()
@@ -3134,7 +3221,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.HasIndex("FormFactorId");
 
-                    b.HasDiscriminator().HasValue("Case");
+                    b.ToTable("AppCaseSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.ChairSpecification", b =>
@@ -3150,8 +3237,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("BaseType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ChairBaseType");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ChairType")
                         .IsRequired()
@@ -3159,8 +3245,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ChairColor");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("HasHeadrest")
                         .HasColumnType("bit");
@@ -3169,12 +3254,10 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("bit");
 
                     b.Property<int>("Material")
-                        .HasColumnType("int")
-                        .HasColumnName("ChairMaterial");
+                        .HasColumnType("int");
 
                     b.Property<int>("MaxWeight")
-                        .HasColumnType("int")
-                        .HasColumnName("ChairMaxWeight");
+                        .HasColumnType("int");
 
                     b.Property<string>("SeatHeight")
                         .IsRequired()
@@ -3184,7 +3267,7 @@ namespace Acme.ProductSelling.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasDiscriminator().HasValue("Chair");
+                    b.ToTable("AppChairSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.ChargerSpecification", b =>
@@ -3199,43 +3282,36 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ChargerColor");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FastChargingProtocols")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ChargerFastChargingProtocols");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("HasFoldablePlug")
                         .HasColumnType("bit");
 
                     b.Property<string>("MaxOutputPerPort")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ChargerMaxOutputPerPort");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PortCount")
-                        .HasColumnType("int")
-                        .HasColumnName("ChargerPortCount");
+                        .HasColumnType("int");
 
                     b.Property<string>("Technology")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TotalWattage")
-                        .HasColumnType("int")
-                        .HasColumnName("ChargerTotalWattage");
+                        .HasColumnType("int");
 
                     b.Property<int>("UsbAPorts")
-                        .HasColumnType("int")
-                        .HasColumnName("ChargerUsbAPorts");
+                        .HasColumnType("int");
 
                     b.Property<int>("UsbCPorts")
-                        .HasColumnType("int")
-                        .HasColumnName("ChargerUsbCPorts");
+                        .HasColumnType("int");
 
-                    b.HasDiscriminator().HasValue("Charger");
+                    b.ToTable("AppChargerSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.ConsoleSpecification", b =>
@@ -3244,17 +3320,14 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("BluetoothVersion")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ConsoleBluetoothVersion");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Connectivity")
-                        .HasColumnType("int")
-                        .HasColumnName("ConsoleConnectivity");
+                        .HasColumnType("int");
 
                     b.Property<string>("Graphics")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ConsoleGraphics");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("HDRSupport")
                         .HasColumnType("bit");
@@ -3268,33 +3341,28 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("MaxResolution")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ConsoleMaxResolution");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("OpticalDrive")
                         .HasColumnType("int");
 
                     b.Property<string>("Processor")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ConsoleProcessor");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RAM")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ConsoleRAM");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Storage")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ConsoleStorage");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WifiVersion")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("ConsoleWifiVersion");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasDiscriminator().HasValue("Console");
+                    b.ToTable("AppConsoleSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CpuCoolerSpecification", b =>
@@ -3303,28 +3371,24 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("CpuCoolerColor");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CoolerType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("FanSize")
-                        .HasColumnType("int")
-                        .HasColumnName("CpuCoolerFanSize");
+                        .HasColumnType("int");
 
                     b.Property<float?>("Height")
-                        .HasColumnType("real")
-                        .HasColumnName("CpuCoolerHeight");
+                        .HasColumnType("real");
 
                     b.Property<string>("LedLighting")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("NoiseLevel")
-                        .HasColumnType("int")
-                        .HasColumnName("CpuCoolerNoiseLevel");
+                        .HasColumnType("int");
 
                     b.Property<int?>("RadiatorSize")
                         .HasColumnType("int");
@@ -3332,7 +3396,7 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<int?>("TdpSupport")
                         .HasColumnType("int");
 
-                    b.HasDiscriminator().HasValue("CPUCooler");
+                    b.ToTable("AppCpuCoolerSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CpuSpecification", b =>
@@ -3343,8 +3407,7 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("real");
 
                     b.Property<float>("BoostClock")
-                        .HasColumnType("real")
-                        .HasColumnName("CpuBoostClock");
+                        .HasColumnType("real");
 
                     b.Property<int>("CoreCount")
                         .HasColumnType("int");
@@ -3356,8 +3419,7 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("int");
 
                     b.Property<Guid>("SocketId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("CpuSocketId");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Tdp")
                         .HasColumnType("int");
@@ -3367,7 +3429,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.HasIndex("SocketId");
 
-                    b.HasDiscriminator().HasValue("CPU");
+                    b.ToTable("AppCpuSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.DeskSpecification", b =>
@@ -3376,8 +3438,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("DeskColor");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Depth")
                         .HasColumnType("int");
@@ -3392,30 +3453,25 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("bit");
 
                     b.Property<float>("Height")
-                        .HasColumnType("real")
-                        .HasColumnName("DeskHeight");
+                        .HasColumnType("real");
 
                     b.Property<bool>("IsHeightAdjustable")
                         .HasColumnType("bit");
 
                     b.Property<int>("Material")
-                        .HasColumnType("int")
-                        .HasColumnName("DeskMaterial");
+                        .HasColumnType("int");
 
                     b.Property<int>("MaxWeight")
-                        .HasColumnType("int")
-                        .HasColumnName("DeskMaxWeight");
+                        .HasColumnType("int");
 
                     b.Property<string>("SurfaceType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("DeskSurfaceType");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Width")
-                        .HasColumnType("int")
-                        .HasColumnName("DeskWidth");
+                        .HasColumnType("int");
 
-                    b.HasDiscriminator().HasValue("Desk");
+                    b.ToTable("AppDeskSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.GpuSpecification", b =>
@@ -3423,8 +3479,7 @@ namespace Acme.ProductSelling.Migrations
                     b.HasBaseType("Acme.ProductSelling.Specifications.SpecificationBase");
 
                     b.Property<float>("BoostClock")
-                        .HasColumnType("real")
-                        .HasColumnName("GpuBoostClock");
+                        .HasColumnType("real");
 
                     b.Property<string>("Chipset")
                         .IsRequired()
@@ -3432,12 +3487,10 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Interface")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("GpuInterface");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Length")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("GpuLength");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("MemorySize")
                         .HasColumnType("int");
@@ -3449,7 +3502,7 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<int>("RecommendedPsu")
                         .HasColumnType("int");
 
-                    b.HasDiscriminator().HasValue("GPU");
+                    b.ToTable("AppGpuSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.HandheldSpecification", b =>
@@ -3458,59 +3511,48 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("BatteryLife")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("HandheldBatteryLife");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BluetoothVersion")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("HandheldBluetoothVersion");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Connectivity")
-                        .HasColumnType("int")
-                        .HasColumnName("HandheldConnectivity");
+                        .HasColumnType("int");
 
                     b.Property<string>("Display")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("HandheldDisplay");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Graphics")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("HandheldGraphics");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OperatingSystem")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("HandheldOperatingSystem");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Processor")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("HandheldProcessor");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RAM")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("HandheldRAM");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Storage")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("HandheldStorage");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Weight")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("HandheldWeight");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WifiVersion")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("HandheldWifiVersion");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasDiscriminator().HasValue("Handheld");
+                    b.ToTable("AppHandheldSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.HeadsetSpecification", b =>
@@ -3519,12 +3561,10 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("HeadsetColor");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Connectivity")
-                        .HasColumnType("int")
-                        .HasColumnName("HeadsetConnectivity");
+                        .HasColumnType("int");
 
                     b.Property<int>("DriverSize")
                         .HasColumnType("int");
@@ -3534,8 +3574,7 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("HasMicrophone")
-                        .HasColumnType("bit")
-                        .HasColumnName("HeadsetHasMicrophone");
+                        .HasColumnType("bit");
 
                     b.Property<int>("Impedance")
                         .HasColumnType("int");
@@ -3548,14 +3587,12 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("MicrophoneType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("HeadsetMicrophoneType");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Sensitivity")
-                        .HasColumnType("int")
-                        .HasColumnName("HeadsetSensitivity");
+                        .HasColumnType("int");
 
-                    b.HasDiscriminator().HasValue("Headset");
+                    b.ToTable("AppHeadsetSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.HubSpecification", b =>
@@ -3567,8 +3604,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("HubColor");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DisplayPorts")
                         .HasColumnType("int");
@@ -3587,12 +3623,10 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("MaxResolution")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("HubMaxResolution");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PortCount")
-                        .HasColumnType("int")
-                        .HasColumnName("HubPortCount");
+                        .HasColumnType("int");
 
                     b.Property<string>("PowerDelivery")
                         .IsRequired()
@@ -3603,15 +3637,13 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("UsbAPorts")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("HubUsbAPorts");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UsbCPorts")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("HubUsbCPorts");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasDiscriminator().HasValue("Hub");
+                    b.ToTable("AppHubSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.KeyboardSpecification", b =>
@@ -3623,8 +3655,7 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Connectivity")
-                        .HasColumnType("int")
-                        .HasColumnName("KeyboardConnectivity");
+                        .HasColumnType("int");
 
                     b.Property<string>("KeyboardType")
                         .IsRequired()
@@ -3638,7 +3669,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.HasIndex("SwitchTypeId");
 
-                    b.HasDiscriminator().HasValue("Keyboard");
+                    b.ToTable("AppKeyboardSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.LaptopSpecification", b =>
@@ -3647,8 +3678,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("BatteryLife")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("LaptopBatteryLife");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CPU")
                         .IsRequired()
@@ -3656,8 +3686,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Display")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("LaptopDisplay");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("GraphicsCard")
                         .IsRequired()
@@ -3668,29 +3697,25 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("OperatingSystem")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("LaptopOperatingSystem");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RAM")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("LaptopRAM");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Storage")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("LaptopStorage");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Warranty")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("LaptopWarranty");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Weight")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasDiscriminator().HasValue("Laptop");
+                    b.ToTable("AppLaptopSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MemoryCardSpecification", b =>
@@ -3698,15 +3723,13 @@ namespace Acme.ProductSelling.Migrations
                     b.HasBaseType("Acme.ProductSelling.Specifications.SpecificationBase");
 
                     b.Property<int>("Capacity")
-                        .HasColumnType("int")
-                        .HasColumnName("MemoryCardCapacity");
+                        .HasColumnType("int");
 
                     b.Property<int>("CardType")
                         .HasColumnType("int");
 
                     b.Property<int>("ReadSpeed")
-                        .HasColumnType("int")
-                        .HasColumnName("MemoryCardReadSpeed");
+                        .HasColumnType("int");
 
                     b.Property<bool>("Shockproof")
                         .HasColumnType("bit");
@@ -3717,17 +3740,15 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Warranty")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("MemoryCardWarranty");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Waterproof")
                         .HasColumnType("bit");
 
                     b.Property<int>("WriteSpeed")
-                        .HasColumnType("int")
-                        .HasColumnName("MemoryCardWriteSpeed");
+                        .HasColumnType("int");
 
-                    b.HasDiscriminator().HasValue("MemoryCard");
+                    b.ToTable("AppMemoryCardSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MicrophoneSpecification", b =>
@@ -3736,36 +3757,30 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("MicrophoneColor");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Connection")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("MicrophoneConnection");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Connectivity")
-                        .HasColumnType("int")
-                        .HasColumnName("MicrophoneConnectivity");
+                        .HasColumnType("int");
 
                     b.Property<string>("Frequency")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("MicrophoneFrequency");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("HasPopFilter")
                         .HasColumnType("bit");
 
                     b.Property<bool>("HasRgb")
-                        .HasColumnType("bit")
-                        .HasColumnName("MicrophoneHasRgb");
+                        .HasColumnType("bit");
 
                     b.Property<bool>("HasShockMount")
                         .HasColumnType("bit");
 
                     b.Property<int>("MicrophoneType")
-                        .HasColumnType("int")
-                        .HasColumnName("MicrophoneMicrophoneType");
+                        .HasColumnType("int");
 
                     b.Property<string>("PolarPattern")
                         .IsRequired()
@@ -3777,10 +3792,9 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Sensitivity")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("MicrophoneSensitivity");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasDiscriminator().HasValue("Microphone");
+                    b.ToTable("AppMicrophoneSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MonitorSpecification", b =>
@@ -3802,8 +3816,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Resolution")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("MonitorResolution");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ResponseTime")
                         .HasColumnType("int");
@@ -3819,7 +3832,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.HasIndex("PanelTypeId");
 
-                    b.HasDiscriminator().HasValue("Monitor");
+                    b.ToTable("AppMonitorSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MotherboardSpecification", b =>
@@ -3830,8 +3843,7 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("FormFactorId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("MotherboardFormFactorId");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("HasWifi")
                         .HasColumnType("bit");
@@ -3846,15 +3858,13 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("int");
 
                     b.Property<Guid>("RamTypeId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("MotherboardRamTypeId");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("SataPorts")
                         .HasColumnType("int");
 
                     b.Property<Guid>("SocketId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("MotherboardSocketId");
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasIndex("ChipsetId");
 
@@ -3864,7 +3874,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.HasIndex("SocketId");
 
-                    b.HasDiscriminator().HasValue("Motherboard");
+                    b.ToTable("AppMotherboardSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MousePadSpecification", b =>
@@ -3873,41 +3883,34 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("BaseType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("MousePadBaseType");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("PadColor");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("HasRgb")
-                        .HasColumnType("bit")
-                        .HasColumnName("MousePadHasRgb");
+                        .HasColumnType("bit");
 
                     b.Property<int>("Height")
-                        .HasColumnType("int")
-                        .HasColumnName("MousePadHeight");
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsWashable")
                         .HasColumnType("bit");
 
                     b.Property<int>("Material")
-                        .HasColumnType("int")
-                        .HasColumnName("MousePadMaterial");
+                        .HasColumnType("int");
 
                     b.Property<int>("SurfaceType")
-                        .HasColumnType("int")
-                        .HasColumnName("MousePadSurfaceType");
+                        .HasColumnType("int");
 
                     b.Property<float>("Thickness")
                         .HasColumnType("real");
 
                     b.Property<int>("Width")
-                        .HasColumnType("int")
-                        .HasColumnName("MousePadWidth");
+                        .HasColumnType("int");
 
-                    b.HasDiscriminator().HasValue("MousePad");
+                    b.ToTable("AppMousePadSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MouseSpecification", b =>
@@ -3923,12 +3926,10 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("MouseColor");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Connectivity")
-                        .HasColumnType("int")
-                        .HasColumnName("MouseConnectivity");
+                        .HasColumnType("int");
 
                     b.Property<int>("Dpi")
                         .HasColumnType("int");
@@ -3941,10 +3942,9 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Weight")
-                        .HasColumnType("int")
-                        .HasColumnName("MouseWeight");
+                        .HasColumnType("int");
 
-                    b.HasDiscriminator().HasValue("Mouse");
+                    b.ToTable("AppMouseSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.NetworkHardwareSpecification", b =>
@@ -3967,8 +3967,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Frequency")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("NetworkFrequency");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("HasUsb")
                         .HasColumnType("bit");
@@ -3984,7 +3983,7 @@ namespace Acme.ProductSelling.Migrations
                     b.Property<int>("WifiStandard")
                         .HasColumnType("int");
 
-                    b.HasDiscriminator().HasValue("NetworkHardware");
+                    b.ToTable("AppNetworkHardwareSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.PowerBankSpecification", b =>
@@ -3992,8 +3991,7 @@ namespace Acme.ProductSelling.Migrations
                     b.HasBaseType("Acme.ProductSelling.Specifications.SpecificationBase");
 
                     b.Property<int>("Capacity")
-                        .HasColumnType("int")
-                        .HasColumnName("PowerBankCapacity");
+                        .HasColumnType("int");
 
                     b.Property<string>("Color")
                         .IsRequired()
@@ -4001,47 +3999,39 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("FastChargingProtocols")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("PowerBankFastChargingProtocols");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("HasDisplay")
                         .HasColumnType("bit");
 
                     b.Property<string>("InputPorts")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("PowerBankInputPorts");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MaxOutputPerPort")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("PowerBankMaxOutputPerPort");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PortCount")
-                        .HasColumnType("int")
-                        .HasColumnName("PowerBankPortCount");
+                        .HasColumnType("int");
 
                     b.Property<string>("RechargingTime")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TotalWattage")
-                        .HasColumnType("int")
-                        .HasColumnName("PowerBankTotalWattage");
+                        .HasColumnType("int");
 
                     b.Property<int>("UsbAPorts")
-                        .HasColumnType("int")
-                        .HasColumnName("PowerBankUsbAPorts");
+                        .HasColumnType("int");
 
                     b.Property<int>("UsbCPorts")
-                        .HasColumnType("int")
-                        .HasColumnName("PowerBankUsbCPorts");
+                        .HasColumnType("int");
 
                     b.Property<int>("Weight")
-                        .HasColumnType("int")
-                        .HasColumnName("PowerBankWeight");
+                        .HasColumnType("int");
 
-                    b.HasDiscriminator().HasValue("PowerBank");
+                    b.ToTable("AppPowerBankSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.PsuSpecification", b =>
@@ -4053,8 +4043,7 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("FormFactorId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("PsuFormFactorId");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Modularity")
                         .HasColumnType("int");
@@ -4064,7 +4053,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.HasIndex("FormFactorId");
 
-                    b.HasDiscriminator().HasValue("PSU");
+                    b.ToTable("AppPsuSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.RamSpecification", b =>
@@ -4072,12 +4061,10 @@ namespace Acme.ProductSelling.Migrations
                     b.HasBaseType("Acme.ProductSelling.Specifications.SpecificationBase");
 
                     b.Property<int>("Capacity")
-                        .HasColumnType("int")
-                        .HasColumnName("RamCapacity");
+                        .HasColumnType("int");
 
                     b.Property<bool>("HasRgb")
-                        .HasColumnType("bit")
-                        .HasColumnName("RamHasRgb");
+                        .HasColumnType("bit");
 
                     b.Property<int>("ModuleCount")
                         .HasColumnType("int");
@@ -4086,8 +4073,7 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("int");
 
                     b.Property<Guid>("RamTypeId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("RamRamTypeId");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Speed")
                         .HasColumnType("int");
@@ -4101,7 +4087,7 @@ namespace Acme.ProductSelling.Migrations
 
                     b.HasIndex("RamTypeId");
 
-                    b.HasDiscriminator().HasValue("RAM");
+                    b.ToTable("AppRamSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.SoftwareSpecification", b =>
@@ -4136,7 +4122,7 @@ namespace Acme.ProductSelling.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasDiscriminator().HasValue("Software");
+                    b.ToTable("AppSoftwareSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.SpeakerSpecification", b =>
@@ -4145,17 +4131,14 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("SpeakerColor");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Connectivity")
-                        .HasColumnType("int")
-                        .HasColumnName("SpeakerConnectivity");
+                        .HasColumnType("int");
 
                     b.Property<string>("Frequency")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("SpeakerFrequency");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("HasBluetooth")
                         .HasColumnType("bit");
@@ -4165,17 +4148,15 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("InputPorts")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("SpeakerInputPorts");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SpeakerType")
                         .HasColumnType("int");
 
                     b.Property<int>("TotalWattage")
-                        .HasColumnType("int")
-                        .HasColumnName("SpeakerTotalWattage");
+                        .HasColumnType("int");
 
-                    b.HasDiscriminator().HasValue("Speaker");
+                    b.ToTable("AppSpeakerSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.StorageSpecification", b =>
@@ -4183,17 +4164,14 @@ namespace Acme.ProductSelling.Migrations
                     b.HasBaseType("Acme.ProductSelling.Specifications.SpecificationBase");
 
                     b.Property<int>("Capacity")
-                        .HasColumnType("int")
-                        .HasColumnName("StorageCapacity");
+                        .HasColumnType("int");
 
                     b.Property<string>("Interface")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("StorageInterface");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ReadSpeed")
-                        .HasColumnType("int")
-                        .HasColumnName("StorageReadSpeed");
+                        .HasColumnType("int");
 
                     b.Property<int?>("Rpm")
                         .HasColumnType("int");
@@ -4205,10 +4183,9 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("WriteSpeed")
-                        .HasColumnType("int")
-                        .HasColumnName("StorageWriteSpeed");
+                        .HasColumnType("int");
 
-                    b.HasDiscriminator().HasValue("Storage");
+                    b.ToTable("AppStorageSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.WebcamSpecification", b =>
@@ -4217,17 +4194,14 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("WebcamColor");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Connection")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Webcam_Connection");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Connectivity")
-                        .HasColumnType("int")
-                        .HasColumnName("WebcamConnectivity");
+                        .HasColumnType("int");
 
                     b.Property<int>("FieldOfView")
                         .HasColumnType("int");
@@ -4239,8 +4213,7 @@ namespace Acme.ProductSelling.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("HasMicrophone")
-                        .HasColumnType("bit")
-                        .HasColumnName("WebcamHasMicrophone");
+                        .HasColumnType("bit");
 
                     b.Property<bool>("HasPrivacyShutter")
                         .HasColumnType("bit");
@@ -4251,10 +4224,9 @@ namespace Acme.ProductSelling.Migrations
 
                     b.Property<string>("Resolution")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("WebcamResolution");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasDiscriminator().HasValue("Webcam");
+                    b.ToTable("AppWebcamSpecifications", (string)null);
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Users.AppUser", b =>
@@ -4484,6 +4456,62 @@ namespace Acme.ProductSelling.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Volo.Abp.Identity.IdentityUserPasskey", b =>
+                {
+                    b.HasOne("Volo.Abp.Identity.IdentityUser", null)
+                        .WithMany("Passkeys")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Volo.Abp.Identity.IdentityPasskeyData", "Data", b1 =>
+                        {
+                            b1.Property<byte[]>("IdentityUserPasskeyCredentialId");
+
+                            b1.Property<byte[]>("AttestationObject");
+
+                            b1.Property<byte[]>("ClientDataJson");
+
+                            b1.Property<DateTimeOffset>("CreatedAt");
+
+                            b1.Property<bool>("IsBackedUp");
+
+                            b1.Property<bool>("IsBackupEligible");
+
+                            b1.Property<bool>("IsUserVerified");
+
+                            b1.Property<string>("Name");
+
+                            b1.Property<byte[]>("PublicKey");
+
+                            b1.Property<long>("SignCount");
+
+                            b1.PrimitiveCollection<string>("Transports");
+
+                            b1.HasKey("IdentityUserPasskeyCredentialId");
+
+                            b1.ToTable("AbpUserPasskeys");
+
+                            b1
+                                .ToJson("Data")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.WithOwner()
+                                .HasForeignKey("IdentityUserPasskeyCredentialId");
+                        });
+
+                    b.Navigation("Data");
+                });
+
+            modelBuilder.Entity("Volo.Abp.Identity.IdentityUserPasswordHistory", b =>
+                {
+                    b.HasOne("Volo.Abp.Identity.IdentityUser", null)
+                        .WithMany("PasswordHistories")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUserRole", b =>
                 {
                     b.HasOne("Volo.Abp.Identity.IdentityRole", null)
@@ -4557,6 +4585,24 @@ namespace Acme.ProductSelling.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CableSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.CableSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CaseFanSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.CaseFanSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CaseSpecification", b =>
                 {
                     b.HasOne("Acme.ProductSelling.Products.Lookups.FormFactor", "FormFactor")
@@ -4565,11 +4611,59 @@ namespace Acme.ProductSelling.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.CaseSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("FormFactor");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.ChairSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.ChairSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.ChargerSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.ChargerSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.ConsoleSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.ConsoleSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CpuCoolerSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.CpuCoolerSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.CpuSpecification", b =>
                 {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.CpuSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Acme.ProductSelling.Products.Lookups.CpuSocket", "Socket")
                         .WithMany()
                         .HasForeignKey("SocketId")
@@ -4579,8 +4673,59 @@ namespace Acme.ProductSelling.Migrations
                     b.Navigation("Socket");
                 });
 
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.DeskSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.DeskSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.GpuSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.GpuSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.HandheldSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.HandheldSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.HeadsetSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.HeadsetSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.HubSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.HubSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.KeyboardSpecification", b =>
                 {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.KeyboardSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Acme.ProductSelling.Products.Lookups.SwitchType", "SwitchType")
                         .WithMany()
                         .HasForeignKey("SwitchTypeId")
@@ -4590,8 +4735,41 @@ namespace Acme.ProductSelling.Migrations
                     b.Navigation("SwitchType");
                 });
 
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.LaptopSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.LaptopSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MemoryCardSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.MemoryCardSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MicrophoneSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.MicrophoneSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MonitorSpecification", b =>
                 {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.MonitorSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Acme.ProductSelling.Products.Lookups.PanelType", "PanelType")
                         .WithMany()
                         .HasForeignKey("PanelTypeId")
@@ -4615,6 +4793,12 @@ namespace Acme.ProductSelling.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.MotherboardSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Acme.ProductSelling.Products.Lookups.RamType", "SupportedRamTypes")
                         .WithMany()
                         .HasForeignKey("RamTypeId")
@@ -4636,6 +4820,42 @@ namespace Acme.ProductSelling.Migrations
                     b.Navigation("SupportedRamTypes");
                 });
 
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MousePadSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.MousePadSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.MouseSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.MouseSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.NetworkHardwareSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.NetworkHardwareSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.PowerBankSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.PowerBankSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.PsuSpecification", b =>
                 {
                     b.HasOne("Acme.ProductSelling.Products.Lookups.FormFactor", "FormFactor")
@@ -4644,11 +4864,23 @@ namespace Acme.ProductSelling.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.PsuSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("FormFactor");
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.RamSpecification", b =>
                 {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.RamSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Acme.ProductSelling.Products.Lookups.RamType", "RamType")
                         .WithMany()
                         .HasForeignKey("RamTypeId")
@@ -4656,6 +4888,42 @@ namespace Acme.ProductSelling.Migrations
                         .IsRequired();
 
                     b.Navigation("RamType");
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.SoftwareSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.SoftwareSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.SpeakerSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.SpeakerSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.StorageSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.StorageSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Acme.ProductSelling.Specifications.Models.WebcamSpecification", b =>
+                {
+                    b.HasOne("Acme.ProductSelling.Specifications.SpecificationBase", null)
+                        .WithOne()
+                        .HasForeignKey("Acme.ProductSelling.Specifications.Models.WebcamSpecification", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Acme.ProductSelling.Carts.Cart", b =>
@@ -4712,6 +4980,10 @@ namespace Acme.ProductSelling.Migrations
                     b.Navigation("Logins");
 
                     b.Navigation("OrganizationUnits");
+
+                    b.Navigation("Passkeys");
+
+                    b.Navigation("PasswordHistories");
 
                     b.Navigation("Roles");
 

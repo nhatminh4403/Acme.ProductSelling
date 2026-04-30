@@ -34,6 +34,18 @@ public class Program
 #endif
                         .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                         .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
+                         .MinimumLevel.Override("OpenIddict", LogEventLevel.Warning)
+                        .MinimumLevel.Override("OpenIddict.Validation", LogEventLevel.Warning)
+                        .MinimumLevel.Override("OpenIddict.Server", LogEventLevel.Warning)
+                        // Suppress HealthCheck polling
+                        .MinimumLevel.Override("Microsoft.Extensions.Diagnostics.HealthChecks", LogEventLevel.Warning)
+                        .MinimumLevel.Override("HealthChecks.UI", LogEventLevel.Warning)
+                        // Suppress ABP tenant resolution per-request noise
+                        .MinimumLevel.Override("Volo.Abp.MultiTenancy", LogEventLevel.Warning)
+                        // Suppress static file serving
+                        .MinimumLevel.Override("Microsoft.AspNetCore.StaticFiles", LogEventLevel.Warning)
+                        // Suppress routing/endpoint selection details
+                        .MinimumLevel.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Warning)
                         .Enrich.FromLogContext()
                         .WriteTo.Async(c => c.File("Logs/logs.txt"))
                         .WriteTo.Async(c => c.Console())

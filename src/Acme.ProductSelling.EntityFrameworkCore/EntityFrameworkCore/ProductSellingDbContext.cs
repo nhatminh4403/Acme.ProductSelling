@@ -295,453 +295,10 @@ public class ProductSellingDbContext :
         });
         #region Specifications
 
+        // 0. Base Table Configuration
         builder.Entity<SpecificationBase>(b =>
         {
             b.ToTable(tablePrefix + "Specifications");
-            b.HasDiscriminator<string>("SpecType")
-                .HasValue<MonitorSpecification>("Monitor")//1
-                .HasValue<MouseSpecification>("Mouse")
-                .HasValue<LaptopSpecification>("Laptop")
-                .HasValue<CpuSpecification>("CPU")
-                .HasValue<GpuSpecification>("GPU")//5
-                .HasValue<RamSpecification>("RAM")
-                .HasValue<MotherboardSpecification>("Motherboard")
-                .HasValue<StorageSpecification>("Storage")
-                .HasValue<PsuSpecification>("PSU")
-                .HasValue<CaseSpecification>("Case")//10
-                .HasValue<CpuCoolerSpecification>("CPUCooler")
-                .HasValue<KeyboardSpecification>("Keyboard")
-                .HasValue<HeadsetSpecification>("Headset")
-                .HasValue<SpeakerSpecification>("Speaker")
-                .HasValue<WebcamSpecification>("Webcam")//15
-                .HasValue<CableSpecification>("Cable")
-                .HasValue<SoftwareSpecification>("Software")
-                .HasValue<CaseFanSpecification>("CaseFan")
-                .HasValue<ChairSpecification>("Chair")
-                .HasValue<DeskSpecification>("Desk")//20
-                .HasValue<ChargerSpecification>("Charger")
-                .HasValue<ConsoleSpecification>("Console")
-                .HasValue<HandheldSpecification>("Handheld")
-                .HasValue<HubSpecification>("Hub")
-                .HasValue<MemoryCardSpecification>("MemoryCard")//25
-                .HasValue<MicrophoneSpecification>("Microphone")
-                .HasValue<MousePadSpecification>("MousePad")
-                .HasValue<NetworkHardwareSpecification>("NetworkHardware")
-                .HasValue<PowerBankSpecification>("PowerBank");//29
-
-
-            builder.Entity<MonitorSpecification>()
-                .HasOne(s => s.PanelType).WithMany()
-                .HasForeignKey(s => s.PanelTypeId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<CpuSpecification>()
-                .HasOne(s => s.Socket).WithMany()
-                .HasForeignKey(s => s.SocketId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<RamSpecification>()
-                .HasOne(s => s.RamType).WithMany()
-                .HasForeignKey(s => s.RamTypeId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<MotherboardSpecification>()
-                .HasOne(s => s.Socket).WithMany()
-                .HasForeignKey(s => s.SocketId)
-                .OnDelete(DeleteBehavior.Restrict);
-            builder.Entity<MotherboardSpecification>()
-                .HasOne(s => s.Chipset).WithMany()
-                .HasForeignKey(s => s.ChipsetId)
-                .OnDelete(DeleteBehavior.Restrict);
-            builder.Entity<MotherboardSpecification>()
-                .HasOne(s => s.FormFactor).WithMany()
-                .HasForeignKey(s => s.FormFactorId)
-                .OnDelete(DeleteBehavior.Restrict);
-            builder.Entity<MotherboardSpecification>()
-                .HasOne(s => s.SupportedRamTypes).WithMany()
-                .HasForeignKey(s => s.RamTypeId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<PsuSpecification>()
-                .HasOne(s => s.FormFactor).WithMany()
-                .HasForeignKey(s => s.FormFactorId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<CaseSpecification>()
-                .HasOne(s => s.FormFactor).WithMany()
-                .HasForeignKey(s => s.FormFactorId)
-                .OnDelete(DeleteBehavior.Restrict);
-            builder.Entity<CaseSpecification>()
-                .HasMany(cs => cs.Materials)
-                .WithOne(cm => cm.CaseSpecification)
-                .HasForeignKey(cm => cm.CaseSpecificationId)
-                .IsRequired();
-
-            builder.Entity<CpuCoolerSpecification>()
-                .HasMany(ccs => ccs.SupportedSockets)
-                .WithOne(css => css.CpuCoolerSpecification)
-                .HasForeignKey(css => css.CpuCoolerSpecificationId)
-                .IsRequired();
-
-            builder.Entity<KeyboardSpecification>()
-                .HasOne(s => s.SwitchType).WithMany()
-                .HasForeignKey(s => s.SwitchTypeId)
-                .OnDelete(DeleteBehavior.Restrict);
-            builder.Entity<GpuSpecification>()
-                .Property(s => s.Length).HasColumnType("decimal(18,2)");
-            builder.Entity<CableSpecification>()
-                .Property(s => s.Length).HasColumnType("decimal(18,2)");
-
-            //descriminater 
-            // ============================================================
-            // Full HasColumnName fix for AppSpecifications TPH table
-            // Add all of the following inside OnModelCreating, after the
-            // main SpecificationBase block.
-            //
-            // Rule: every property that exists in 2+ spec types gets an
-            // explicit column name on EVERY type that owns it, so there
-            // are no silent case-insensitive collisions and no surprises
-            // when new spec types are added later.
-            // ============================================================
-
-            // ── HasRGB / HasRgb (the actual crash) ──────────────────────
-            // SQL Server is case-insensitive: HasRGB == HasRgb
-            builder.Entity<RamSpecification>()
-                .Property(s => s.HasRgb).HasColumnName("RamHasRgb");
-            builder.Entity<CaseFanSpecification>()
-                .Property(s => s.HasRgb).HasColumnName("CaseFanHasRgb");
-            builder.Entity<MicrophoneSpecification>()
-                .Property(s => s.HasRgb).HasColumnName("MicrophoneHasRgb");
-            builder.Entity<MousePadSpecification>()
-                .Property(s => s.HasRgb).HasColumnName("MousePadHasRgb");
-
-            // ── Color (14 spec types) ────────────────────────────────────
-            builder.Entity<CaseSpecification>()
-                .Property(s => s.Color).HasColumnName("CaseColor");
-            builder.Entity<CaseFanSpecification>()
-                .Property(s => s.Color).HasColumnName("CaseFanColor");
-            builder.Entity<ChairSpecification>()
-                .Property(s => s.Color).HasColumnName("ChairColor");
-            builder.Entity<ChargerSpecification>()
-                .Property(s => s.Color).HasColumnName("ChargerColor");
-            builder.Entity<CpuCoolerSpecification>()
-                .Property(s => s.Color).HasColumnName("CpuCoolerColor");
-            builder.Entity<HeadsetSpecification>()
-                .Property(s => s.Color).HasColumnName("HeadsetColor");
-            builder.Entity<HubSpecification>()
-                .Property(s => s.Color).HasColumnName("HubColor");
-            builder.Entity<MicrophoneSpecification>()
-                .Property(s => s.Color).HasColumnName("MicrophoneColor");
-            builder.Entity<MouseSpecification>()
-                .Property(s => s.Color).HasColumnName("MouseColor");
-            builder.Entity<MousePadSpecification>()
-                .Property(s => s.Color).HasColumnName("PadColor");
-            builder.Entity<SpeakerSpecification>()
-                .Property(s => s.Color).HasColumnName("SpeakerColor");
-            builder.Entity<CableSpecification>()
-                .Property(s => s.Color).HasColumnName("CableColor");
-            builder.Entity<WebcamSpecification>()
-                .Property(s => s.Color).HasColumnName("WebcamColor");
-            builder.Entity<DeskSpecification>()
-                .Property(s => s.Color).HasColumnName("DeskColor");
-
-            // ── Connectivity (8 spec types) ─────────────────────────────
-            builder.Entity<KeyboardSpecification>()
-                .Property(s => s.Connectivity).HasColumnName("KeyboardConnectivity");
-            builder.Entity<HeadsetSpecification>()
-                .Property(s => s.Connectivity).HasColumnName("HeadsetConnectivity");
-            builder.Entity<MouseSpecification>()
-                .Property(s => s.Connectivity).HasColumnName("MouseConnectivity");
-            builder.Entity<MicrophoneSpecification>()
-                .Property(s => s.Connectivity).HasColumnName("MicrophoneConnectivity");
-            builder.Entity<ConsoleSpecification>()
-                .Property(s => s.Connectivity).HasColumnName("ConsoleConnectivity");
-            builder.Entity<HandheldSpecification>()
-                .Property(s => s.Connectivity).HasColumnName("HandheldConnectivity");
-            builder.Entity<SpeakerSpecification>()
-                .Property(s => s.Connectivity).HasColumnName("SpeakerConnectivity");
-            builder.Entity<WebcamSpecification>()
-                .Property(s => s.Connectivity).HasColumnName("WebcamConnectivity");
-
-            // ── Frequency (3 spec types) ────────────────────────────────
-            builder.Entity<MicrophoneSpecification>()
-                .Property(s => s.Frequency).HasColumnName("MicrophoneFrequency");
-            builder.Entity<SpeakerSpecification>()
-                .Property(s => s.Frequency).HasColumnName("SpeakerFrequency");
-            builder.Entity<NetworkHardwareSpecification>()
-                .Property(s => s.Frequency).HasColumnName("NetworkFrequency");
-
-            // ── Sensitivity (Headset=int, Microphone=string) ────────────
-            builder.Entity<HeadsetSpecification>()
-                .Property(s => s.Sensitivity).HasColumnName("HeadsetSensitivity");
-            builder.Entity<MicrophoneSpecification>()
-                .Property(s => s.Sensitivity).HasColumnName("MicrophoneSensitivity");
-
-            // ── MicrophoneType (Headset=string, Microphone=enum) ────────
-            builder.Entity<HeadsetSpecification>()
-                .Property(s => s.MicrophoneType).HasColumnName("HeadsetMicrophoneType");
-            builder.Entity<MicrophoneSpecification>()
-                .Property(s => s.MicrophoneType).HasColumnName("MicrophoneMicrophoneType");
-
-            // ── HasMicrophone (Headset, Webcam) ─────────────────────────
-            builder.Entity<HeadsetSpecification>()
-                .Property(s => s.HasMicrophone).HasColumnName("HeadsetHasMicrophone");
-            builder.Entity<WebcamSpecification>()
-                .Property(s => s.HasMicrophone).HasColumnName("WebcamHasMicrophone");
-
-            // ── Resolution (Monitor=string, Webcam=string) ───────────────
-            builder.Entity<MonitorSpecification>()
-                .Property(s => s.Resolution).HasColumnName("MonitorResolution");
-            builder.Entity<WebcamSpecification>()
-                .Property(s => s.Resolution).HasColumnName("WebcamResolution");
-
-            // ── Connection (Microphone, Webcam) ─────────────────────────
-            builder.Entity<MicrophoneSpecification>()
-                .Property(s => s.Connection).HasColumnName("MicrophoneConnection");
-            builder.Entity<WebcamSpecification>()
-                .Property(s => s.Connection).HasColumnName("Webcam_Connection");
-
-            // ── Interface (Gpu=string, Storage=string) ───────────────────
-            builder.Entity<GpuSpecification>()
-                .Property(s => s.Interface).HasColumnName("GpuInterface");
-            builder.Entity<StorageSpecification>()
-                .Property(s => s.Interface).HasColumnName("StorageInterface");
-
-            // ── Capacity (MemoryCard, PowerBank, Ram, Storage) ──────────
-            builder.Entity<MemoryCardSpecification>()
-                .Property(s => s.Capacity).HasColumnName("MemoryCardCapacity");
-            builder.Entity<PowerBankSpecification>()
-                .Property(s => s.Capacity).HasColumnName("PowerBankCapacity");
-            builder.Entity<RamSpecification>()
-                .Property(s => s.Capacity).HasColumnName("RamCapacity");
-            builder.Entity<StorageSpecification>()
-                .Property(s => s.Capacity).HasColumnName("StorageCapacity");
-
-            // ── TotalWattage (Charger, PowerBank, Speaker) ───────────────
-            builder.Entity<ChargerSpecification>()
-                .Property(s => s.TotalWattage).HasColumnName("ChargerTotalWattage");
-            builder.Entity<PowerBankSpecification>()
-                .Property(s => s.TotalWattage).HasColumnName("PowerBankTotalWattage");
-            builder.Entity<SpeakerSpecification>()
-                .Property(s => s.TotalWattage).HasColumnName("SpeakerTotalWattage");
-
-            // ── PortCount (Charger, Hub, PowerBank) ─────────────────────
-            builder.Entity<ChargerSpecification>()
-                .Property(s => s.PortCount).HasColumnName("ChargerPortCount");
-            builder.Entity<HubSpecification>()
-                .Property(s => s.PortCount).HasColumnName("HubPortCount");
-            builder.Entity<PowerBankSpecification>()
-                .Property(s => s.PortCount).HasColumnName("PowerBankPortCount");
-
-            // ── UsbCPorts (Charger, Hub, PowerBank) ─────────────────────
-            builder.Entity<ChargerSpecification>()
-                .Property(s => s.UsbCPorts).HasColumnName("ChargerUsbCPorts");
-            builder.Entity<HubSpecification>()
-                .Property(s => s.UsbCPorts).HasColumnName("HubUsbCPorts");
-            builder.Entity<PowerBankSpecification>()
-                .Property(s => s.UsbCPorts).HasColumnName("PowerBankUsbCPorts");
-
-            // ── UsbAPorts (Charger, Hub, PowerBank) ─────────────────────
-            builder.Entity<ChargerSpecification>()
-                .Property(s => s.UsbAPorts).HasColumnName("ChargerUsbAPorts");
-            builder.Entity<HubSpecification>()
-                .Property(s => s.UsbAPorts).HasColumnName("HubUsbAPorts");
-            builder.Entity<PowerBankSpecification>()
-                .Property(s => s.UsbAPorts).HasColumnName("PowerBankUsbAPorts");
-
-            // ── InputPorts (PowerBank, Speaker) ─────────────────────────
-            builder.Entity<PowerBankSpecification>()
-                .Property(s => s.InputPorts).HasColumnName("PowerBankInputPorts");
-            builder.Entity<SpeakerSpecification>()
-                .Property(s => s.InputPorts).HasColumnName("SpeakerInputPorts");
-
-            // ── MaxOutputPerPort (Charger, PowerBank) ───────────────────
-            builder.Entity<ChargerSpecification>()
-                .Property(s => s.MaxOutputPerPort).HasColumnName("ChargerMaxOutputPerPort");
-            builder.Entity<PowerBankSpecification>()
-                .Property(s => s.MaxOutputPerPort).HasColumnName("PowerBankMaxOutputPerPort");
-
-            // ── FastChargingProtocols (Charger, PowerBank) ──────────────
-            builder.Entity<ChargerSpecification>()
-                .Property(s => s.FastChargingProtocols).HasColumnName("ChargerFastChargingProtocols");
-            builder.Entity<PowerBankSpecification>()
-                .Property(s => s.FastChargingProtocols).HasColumnName("PowerBankFastChargingProtocols");
-
-            // ── Weight (Mouse=int, Handheld=string, PowerBank=int) ───────
-            builder.Entity<MouseSpecification>()
-                .Property(s => s.Weight).HasColumnName("MouseWeight");
-            builder.Entity<HandheldSpecification>()
-                .Property(s => s.Weight).HasColumnName("HandheldWeight");
-            builder.Entity<PowerBankSpecification>()
-                .Property(s => s.Weight).HasColumnName("PowerBankWeight");
-
-            // ── Material (Chair=enum, Desk=enum, MousePad=enum) ─────────
-            builder.Entity<ChairSpecification>()
-                .Property(s => s.Material).HasColumnName("ChairMaterial");
-            builder.Entity<DeskSpecification>()
-                .Property(s => s.Material).HasColumnName("DeskMaterial");
-            builder.Entity<MousePadSpecification>()
-                .Property(s => s.Material).HasColumnName("MousePadMaterial");
-
-            // ── SurfaceType (Desk=string, MousePad=enum) ─────────────────
-            builder.Entity<DeskSpecification>()
-                .Property(s => s.SurfaceType).HasColumnName("DeskSurfaceType");
-            builder.Entity<MousePadSpecification>()
-                .Property(s => s.SurfaceType).HasColumnName("MousePadSurfaceType");
-
-            // ── BaseType (Chair=string, MousePad=string) ─────────────────
-            builder.Entity<ChairSpecification>()
-                .Property(s => s.BaseType).HasColumnName("ChairBaseType");
-            builder.Entity<MousePadSpecification>()
-                .Property(s => s.BaseType).HasColumnName("MousePadBaseType");
-
-            // ── MaxWeight (Chair=int, Desk=int) ─────────────────────────
-            builder.Entity<ChairSpecification>()
-                .Property(s => s.MaxWeight).HasColumnName("ChairMaxWeight");
-            builder.Entity<DeskSpecification>()
-                .Property(s => s.MaxWeight).HasColumnName("DeskMaxWeight");
-
-            // ── Height (CpuCooler=float?, Desk=float, MousePad=int) ──────
-            builder.Entity<CpuCoolerSpecification>()
-                .Property(s => s.Height).HasColumnName("CpuCoolerHeight");
-            builder.Entity<DeskSpecification>()
-                .Property(s => s.Height).HasColumnName("DeskHeight");
-            builder.Entity<MousePadSpecification>()
-                .Property(s => s.Height).HasColumnName("MousePadHeight");
-
-            // ── Width (Desk=int, MousePad=int) ───────────────────────────
-            builder.Entity<DeskSpecification>()
-                .Property(s => s.Width).HasColumnName("DeskWidth");
-            builder.Entity<MousePadSpecification>()
-                .Property(s => s.Width).HasColumnName("MousePadWidth");
-
-            // ── Processor (Console, Handheld) ───────────────────────────
-            builder.Entity<ConsoleSpecification>()
-                .Property(s => s.Processor).HasColumnName("ConsoleProcessor");
-            builder.Entity<HandheldSpecification>()
-                .Property(s => s.Processor).HasColumnName("HandheldProcessor");
-
-            // ── Graphics (Console, Handheld) ────────────────────────────
-            builder.Entity<ConsoleSpecification>()
-                .Property(s => s.Graphics).HasColumnName("ConsoleGraphics");
-            builder.Entity<HandheldSpecification>()
-                .Property(s => s.Graphics).HasColumnName("HandheldGraphics");
-
-            // ── RAM (Console, Handheld, Laptop) ─────────────────────────
-            builder.Entity<ConsoleSpecification>()
-                .Property(s => s.RAM).HasColumnName("ConsoleRAM");
-            builder.Entity<HandheldSpecification>()
-                .Property(s => s.RAM).HasColumnName("HandheldRAM");
-            builder.Entity<LaptopSpecification>()
-                .Property(s => s.RAM).HasColumnName("LaptopRAM");
-
-            // ── Storage (Console, Handheld, Laptop) ─────────────────────
-            builder.Entity<ConsoleSpecification>()
-                .Property(s => s.Storage).HasColumnName("ConsoleStorage");
-            builder.Entity<HandheldSpecification>()
-                .Property(s => s.Storage).HasColumnName("HandheldStorage");
-            builder.Entity<LaptopSpecification>()
-                .Property(s => s.Storage).HasColumnName("LaptopStorage");
-
-            // ── Display (Handheld, Laptop) ───────────────────────────────
-            builder.Entity<HandheldSpecification>()
-                .Property(s => s.Display).HasColumnName("HandheldDisplay");
-            builder.Entity<LaptopSpecification>()
-                .Property(s => s.Display).HasColumnName("LaptopDisplay");
-
-            // ── BatteryLife (Handheld, Laptop) ──────────────────────────
-            builder.Entity<HandheldSpecification>()
-                .Property(s => s.BatteryLife).HasColumnName("HandheldBatteryLife");
-            builder.Entity<LaptopSpecification>()
-                .Property(s => s.BatteryLife).HasColumnName("LaptopBatteryLife");
-
-            // ── OperatingSystem (Handheld, Laptop) ──────────────────────
-            builder.Entity<HandheldSpecification>()
-                .Property(s => s.OperatingSystem).HasColumnName("HandheldOperatingSystem");
-            builder.Entity<LaptopSpecification>()
-                .Property(s => s.OperatingSystem).HasColumnName("LaptopOperatingSystem");
-
-            // ── WifiVersion (Console, Handheld) ─────────────────────────
-            builder.Entity<ConsoleSpecification>()
-                .Property(s => s.WifiVersion).HasColumnName("ConsoleWifiVersion");
-            builder.Entity<HandheldSpecification>()
-                .Property(s => s.WifiVersion).HasColumnName("HandheldWifiVersion");
-
-            // ── BluetoothVersion (Console, Handheld) ────────────────────
-            builder.Entity<ConsoleSpecification>()
-                .Property(s => s.BluetoothVersion).HasColumnName("ConsoleBluetoothVersion");
-            builder.Entity<HandheldSpecification>()
-                .Property(s => s.BluetoothVersion).HasColumnName("HandheldBluetoothVersion");
-
-            // ── MaxResolution (Console, Hub) ────────────────────────────
-            builder.Entity<ConsoleSpecification>()
-                .Property(s => s.MaxResolution).HasColumnName("ConsoleMaxResolution");
-            builder.Entity<HubSpecification>()
-                .Property(s => s.MaxResolution).HasColumnName("HubMaxResolution");
-
-            // ── Warranty (Cable, MemoryCard, Laptop) ────────────────────
-            builder.Entity<CableSpecification>()
-                .Property(s => s.Warranty).HasColumnName("CableWarranty");
-            builder.Entity<MemoryCardSpecification>()
-                .Property(s => s.Warranty).HasColumnName("MemoryCardWarranty");
-            builder.Entity<LaptopSpecification>()
-                .Property(s => s.Warranty).HasColumnName("LaptopWarranty");
-
-            // ── BoostClock (Cpu=float, Gpu=float) ───────────────────────
-            builder.Entity<CpuSpecification>()
-                .Property(s => s.BoostClock).HasColumnName("CpuBoostClock");
-            builder.Entity<GpuSpecification>()
-                .Property(s => s.BoostClock).HasColumnName("GpuBoostClock");
-
-            // ── FanSize (CaseFan=int, CpuCooler=int) ────────────────────
-            builder.Entity<CaseFanSpecification>()
-                .Property(s => s.FanSize).HasColumnName("CaseFanFanSize");
-            builder.Entity<CpuCoolerSpecification>()
-                .Property(s => s.FanSize).HasColumnName("CpuCoolerFanSize");
-
-            // ── NoiseLevel (CaseFan=float, CpuCooler=int) ───────────────
-            builder.Entity<CaseFanSpecification>()
-                .Property(s => s.NoiseLevel).HasColumnName("CaseFanNoiseLevel");
-            builder.Entity<CpuCoolerSpecification>()
-                .Property(s => s.NoiseLevel).HasColumnName("CpuCoolerNoiseLevel");
-
-            // ── ReadSpeed (MemoryCard, Storage) ─────────────────────────
-            builder.Entity<MemoryCardSpecification>()
-                .Property(s => s.ReadSpeed).HasColumnName("MemoryCardReadSpeed");
-            builder.Entity<StorageSpecification>()
-                .Property(s => s.ReadSpeed).HasColumnName("StorageReadSpeed");
-
-            // ── WriteSpeed (MemoryCard, Storage) ────────────────────────
-            builder.Entity<MemoryCardSpecification>()
-                .Property(s => s.WriteSpeed).HasColumnName("MemoryCardWriteSpeed");
-            builder.Entity<StorageSpecification>()
-                .Property(s => s.WriteSpeed).HasColumnName("StorageWriteSpeed");
-
-            // ── FormFactorId (Case, Motherboard, Psu) ───────────────────
-            builder.Entity<CaseSpecification>()
-                .Property(s => s.FormFactorId).HasColumnName("CaseFormFactorId");
-            builder.Entity<MotherboardSpecification>()
-                .Property(s => s.FormFactorId).HasColumnName("MotherboardFormFactorId");
-            builder.Entity<PsuSpecification>()
-                .Property(s => s.FormFactorId).HasColumnName("PsuFormFactorId");
-
-            // ── SocketId (Cpu, Motherboard) ──────────────────────────────
-            builder.Entity<CpuSpecification>()
-                .Property(s => s.SocketId).HasColumnName("CpuSocketId");
-            builder.Entity<MotherboardSpecification>()
-                .Property(s => s.SocketId).HasColumnName("MotherboardSocketId");
-
-            // ── RamTypeId (Ram, Motherboard) ────────────────────────────
-            builder.Entity<RamSpecification>()
-                .Property(s => s.RamTypeId).HasColumnName("RamRamTypeId");
-            builder.Entity<MotherboardSpecification>()
-                .Property(s => s.RamTypeId).HasColumnName("MotherboardRamTypeId");
-
-            // ── GpuSpecification.Length (decimal) ───────────────────────
-            // Only one spec has Length as decimal — explicit type needed
-            builder.Entity<GpuSpecification>()
-                .Property(s => s.Length).HasColumnName("GpuLength").HasColumnType("decimal(18,2)");
-
 
             // Product relationship
             b.HasOne(s => s.Product)
@@ -750,12 +307,176 @@ public class ProductSellingDbContext :
                 .OnDelete(DeleteBehavior.Cascade);
 
             b.HasQueryFilter(s => !s.Product.IsDeleted);
-
-            //// Columns that need explicit type mapping
-            //b.Property<decimal>("Length").HasColumnType("decimal(18,2)").IsRequired(false);
         });
-        #endregion
 
+        // 1. Monitor
+        builder.Entity<MonitorSpecification>(b =>
+        {
+            b.ToTable(tablePrefix + "MonitorSpecifications");
+
+            b.HasOne(s => s.PanelType).WithMany()
+                .HasForeignKey(s => s.PanelTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // 2. Mouse
+        builder.Entity<MouseSpecification>(b => b.ToTable(tablePrefix + "MouseSpecifications"));
+
+        // 3. Laptop
+        builder.Entity<LaptopSpecification>(b => b.ToTable(tablePrefix + "LaptopSpecifications"));
+
+        // 4. CPU
+        builder.Entity<CpuSpecification>(b =>
+        {
+            b.ToTable(tablePrefix + "CpuSpecifications");
+
+            b.HasOne(s => s.Socket).WithMany()
+                .HasForeignKey(s => s.SocketId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // 5. GPU
+        builder.Entity<GpuSpecification>(b =>
+        {
+            b.ToTable(tablePrefix + "GpuSpecifications");
+
+            b.Property(s => s.Length).HasColumnType("decimal(18,2)");
+        });
+
+        // 6. RAM
+        builder.Entity<RamSpecification>(b =>
+        {
+            b.ToTable(tablePrefix + "RamSpecifications");
+
+            b.HasOne(s => s.RamType).WithMany()
+                .HasForeignKey(s => s.RamTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // 7. Motherboard
+        builder.Entity<MotherboardSpecification>(b =>
+        {
+            b.ToTable(tablePrefix + "MotherboardSpecifications");
+
+            b.HasOne(s => s.Socket).WithMany()
+                .HasForeignKey(s => s.SocketId)
+                .OnDelete(DeleteBehavior.Restrict);
+            b.HasOne(s => s.Chipset).WithMany()
+                .HasForeignKey(s => s.ChipsetId)
+                .OnDelete(DeleteBehavior.Restrict);
+            b.HasOne(s => s.FormFactor).WithMany()
+                .HasForeignKey(s => s.FormFactorId)
+                .OnDelete(DeleteBehavior.Restrict);
+            b.HasOne(s => s.SupportedRamTypes).WithMany()
+                .HasForeignKey(s => s.RamTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // 8. Storage
+        builder.Entity<StorageSpecification>(b => b.ToTable(tablePrefix + "StorageSpecifications"));
+
+        // 9. PSU
+        builder.Entity<PsuSpecification>(b =>
+        {
+            b.ToTable(tablePrefix + "PsuSpecifications");
+
+            b.HasOne(s => s.FormFactor).WithMany()
+                .HasForeignKey(s => s.FormFactorId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // 10. Case
+        builder.Entity<CaseSpecification>(b =>
+        {
+            b.ToTable(tablePrefix + "CaseSpecifications");
+
+            b.HasOne(s => s.FormFactor).WithMany()
+                .HasForeignKey(s => s.FormFactorId)
+                .OnDelete(DeleteBehavior.Restrict);
+            b.HasMany(cs => cs.Materials)
+                .WithOne(cm => cm.CaseSpecification)
+                .HasForeignKey(cm => cm.CaseSpecificationId)
+                .IsRequired();
+        });
+
+        // 11. CPU Cooler
+        builder.Entity<CpuCoolerSpecification>(b =>
+        {
+            b.ToTable(tablePrefix + "CpuCoolerSpecifications");
+
+            b.HasMany(ccs => ccs.SupportedSockets)
+                .WithOne(css => css.CpuCoolerSpecification)
+                .HasForeignKey(css => css.CpuCoolerSpecificationId)
+                .IsRequired();
+        });
+
+        // 12. Keyboard
+        builder.Entity<KeyboardSpecification>(b =>
+        {
+            b.ToTable(tablePrefix + "KeyboardSpecifications");
+
+            b.HasOne(s => s.SwitchType).WithMany()
+                .HasForeignKey(s => s.SwitchTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // 13. Headset
+        builder.Entity<HeadsetSpecification>(b => b.ToTable(tablePrefix + "HeadsetSpecifications"));
+
+        // 14. Speaker
+        builder.Entity<SpeakerSpecification>(b => b.ToTable(tablePrefix + "SpeakerSpecifications"));
+
+        // 15. Webcam
+        builder.Entity<WebcamSpecification>(b => b.ToTable(tablePrefix + "WebcamSpecifications"));
+
+        // 16. Cable
+        builder.Entity<CableSpecification>(b =>
+        {
+            b.ToTable(tablePrefix + "CableSpecifications");
+
+            b.Property(s => s.Length).HasColumnType("decimal(18,2)");
+        });
+
+        // 17. Software
+        builder.Entity<SoftwareSpecification>(b => b.ToTable(tablePrefix + "SoftwareSpecifications"));
+
+        // 18. Case Fan
+        builder.Entity<CaseFanSpecification>(b => b.ToTable(tablePrefix + "CaseFanSpecifications"));
+
+        // 19. Chair
+        builder.Entity<ChairSpecification>(b => b.ToTable(tablePrefix + "ChairSpecifications"));
+
+        // 20. Desk
+        builder.Entity<DeskSpecification>(b => b.ToTable(tablePrefix + "DeskSpecifications"));
+
+        // 21. Charger
+        builder.Entity<ChargerSpecification>(b => b.ToTable(tablePrefix + "ChargerSpecifications"));
+
+        // 22. Console
+        builder.Entity<ConsoleSpecification>(b => b.ToTable(tablePrefix + "ConsoleSpecifications"));
+
+        // 23. Handheld
+        builder.Entity<HandheldSpecification>(b => b.ToTable(tablePrefix + "HandheldSpecifications"));
+
+        // 24. Hub
+        builder.Entity<HubSpecification>(b => b.ToTable(tablePrefix + "HubSpecifications"));
+
+        // 25. Memory Card
+        builder.Entity<MemoryCardSpecification>(b => b.ToTable(tablePrefix + "MemoryCardSpecifications"));
+
+        // 26. Microphone
+        builder.Entity<MicrophoneSpecification>(b => b.ToTable(tablePrefix + "MicrophoneSpecifications"));
+
+        // 27. Mouse Pad
+        builder.Entity<MousePadSpecification>(b => b.ToTable(tablePrefix + "MousePadSpecifications"));
+
+        // 28. Network Hardware
+        builder.Entity<NetworkHardwareSpecification>(b => b.ToTable(tablePrefix + "NetworkHardwareSpecifications"));
+
+        // 29. Power Bank
+        builder.Entity<PowerBankSpecification>(b => b.ToTable(tablePrefix + "PowerBankSpecifications"));
+
+        #endregion
         #region Orders and Carts
         builder.Entity<Order>(b =>
         {

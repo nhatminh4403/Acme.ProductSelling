@@ -10,14 +10,14 @@ namespace Acme.ProductSelling.Web.Controllers
 {
     [Route("api/payment")]
     [ApiController]
-    public class PaymentCallbackController : ControllerBase
+    public class IPNController : ControllerBase
     {
         private readonly IPaymentCallbackAppService _callbackAppService;
-        private readonly ILogger<PaymentCallbackController> _logger;
+        private readonly ILogger<IPNController> _logger;
 
-        public PaymentCallbackController(
+        public IPNController(
             IPaymentCallbackAppService callbackAppService,
-            ILogger<PaymentCallbackController> logger)
+            ILogger<IPNController> logger)
         {
             _callbackAppService = callbackAppService;
             _logger = logger;
@@ -25,7 +25,7 @@ namespace Acme.ProductSelling.Web.Controllers
 
 
         [HttpGet("vnpay-ipn")]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> VnPayIpn()
         {
@@ -104,8 +104,8 @@ namespace Acme.ProductSelling.Web.Controllers
         }
 
 
-        [HttpPost("momo-ipn")] 
-        [AllowAnonymous]
+        [HttpPost("momo-ipn")]
+        //[AllowAnonymous]
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> MoMoIpn([FromBody] MomoIPNRequest request)
         {
@@ -157,7 +157,7 @@ namespace Acme.ProductSelling.Web.Controllers
         }
 
         [HttpPost("paypal-ipn")]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> PayPalIpn()
         {

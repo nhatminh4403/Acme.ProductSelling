@@ -1,4 +1,5 @@
 ﻿using Acme.ProductSelling.Users;
+using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ using Volo.Abp.Users;
 
 namespace Acme.ProductSelling.Account
 {
+    [Authorize]
     public class ProfileAppService : ApplicationService, IProfileAppService, ITransientDependency
     {
         private readonly IRepository<IdentityUser, Guid> _identityUserRepository;
@@ -64,7 +66,7 @@ namespace Acme.ProductSelling.Account
 
             if (user.IsCustomer())
             {
-                var customer = await _customerRepository.FindAsync(user.Customer.Id);
+                var customer = await _customerRepository.FindAsync(c => c.AppUserId == _currentUser.GetId());
                 if (customer != null)
                 {
                     profileDto.ShippingAddress = customer.ShippingAddress;

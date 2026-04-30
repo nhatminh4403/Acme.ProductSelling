@@ -8,7 +8,6 @@ using Acme.ProductSelling.Specifications.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Volo.Abp.Domain.Repositories;
 
 namespace Acme.ProductSelling.Data.Products
 {
@@ -18,14 +17,14 @@ namespace Acme.ProductSelling.Data.Products
         //private readonly IRepository<MicrophoneSpecification, Guid> _microphoneSpecRepository;
         //private readonly IRepository<WebcamSpecification, Guid> _webcamSpecRepository;
 
-        private readonly ISpecificationRepository _specificationRepository; 
+        private readonly ISpecificationRepository _specificationRepository;
 
         private Dictionary<string, Category> _categories;
         private Dictionary<string, Manufacturer> _manufacturers;
 
         public AudioVideoSeeder(
             IProductRepository productRepository,
-            ProductManager productManager,   
+            ProductManager productManager,
             //IRepository<SpeakerSpecification, Guid> speakerSpecRepository,
             //IRepository<MicrophoneSpecification, Guid> microphoneSpecRepository,
             //IRepository<WebcamSpecification, Guid> webcamSpecRepository,

@@ -1,9 +1,9 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using Volo.Abp.Application.Dtos;
 namespace Acme.ProductSelling.Specifications
 {
-    public class RamSpecificationDto : EntityDto<Guid>
+    public class RamSpecificationDto : SpecificationBaseDto
     {
         public string RamTypeName { get; set; }
         public int Capacity { get; set; }
@@ -15,3 +15,4 @@ namespace Acme.ProductSelling.Specifications
         public RamFormFactor RamFormFactor { get; set; }
     }
 }
+

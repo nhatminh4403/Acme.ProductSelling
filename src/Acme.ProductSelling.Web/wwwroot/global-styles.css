@@ -4,7 +4,13 @@
     --lpx-logo-icon: url('/images/logo/leptonxlite/logo-light-thumbnail.png');
 }
 
+#toast-container {
+    z-index: 999999 !important;
+}
 
+    #toast-container > .toast {
+        z-index: 999999 !important;
+    }
 /* Login */
 @keyframes fadeIn {
     from {

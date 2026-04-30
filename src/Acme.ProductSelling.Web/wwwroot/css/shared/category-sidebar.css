@@ -15,7 +15,6 @@
     margin: 0.9rem 0 0;
 }
 .category-item {
-    margin-bottom: 0.6rem;
 }
 .category-menu-item {
     cursor: pointer;
@@ -161,7 +160,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.5rem 1rem;
+    padding: 1.3rem 1rem;
     color: var(--text-main);
     text-decoration: none;
     border-radius: 0.5rem;

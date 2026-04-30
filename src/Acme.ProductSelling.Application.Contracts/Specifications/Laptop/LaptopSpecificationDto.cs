@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using Volo.Abp.Application.Dtos;
 namespace Acme.ProductSelling.Specifications
 {
-    public class LaptopSpecificationDto : EntityDto<Guid>
+    public class LaptopSpecificationDto : SpecificationBaseDto
     {
         public string CPU { get; set; }
         public string RAM { get; set; }
@@ -16,3 +16,4 @@ namespace Acme.ProductSelling.Specifications
         public bool IsForGaming { get; set; }
     }
 }
+

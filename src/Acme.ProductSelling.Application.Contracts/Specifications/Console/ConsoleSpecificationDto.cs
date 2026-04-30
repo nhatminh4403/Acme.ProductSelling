@@ -1,10 +1,10 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class ConsoleSpecificationDto : EntityDto<Guid>
+    public class ConsoleSpecificationDto : SpecificationBaseDto
     {
         public string Processor { get; set; }
         public string Graphics { get; set; }
@@ -20,3 +20,4 @@ namespace Acme.ProductSelling.Specifications
         public string BluetoothVersion { get; set; }
     }
 }
+

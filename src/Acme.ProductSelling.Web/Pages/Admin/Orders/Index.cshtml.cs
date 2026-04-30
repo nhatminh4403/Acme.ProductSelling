@@ -9,11 +9,11 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Orders
 
     public class IndexModel : AdminPageModelBase
     {
-        private readonly IOrderAppService _orderAppService;
+        private readonly IOrderQueryAppService _orderAppService;
 
         [BindProperty(SupportsGet = true)]
         public string Prefix { get; set; }
-        public IndexModel(IOrderAppService orderAppService)
+        public IndexModel(IOrderQueryAppService orderAppService)
         {
             _orderAppService = orderAppService;
         }

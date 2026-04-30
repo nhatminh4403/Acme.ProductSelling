@@ -1,10 +1,10 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class ChargerSpecificationDto : EntityDto<Guid>
+    public class ChargerSpecificationDto : SpecificationBaseDto
     {
         public ChargerType ChargerType { get; set; }
         public int TotalWattage { get; set; }
@@ -19,3 +19,4 @@ namespace Acme.ProductSelling.Specifications
         public string Color { get; set; }
     }
 }
+

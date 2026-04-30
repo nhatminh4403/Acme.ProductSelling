@@ -11,7 +11,8 @@
         orderStatus: null
     };
     var prefix = window.location.pathname.split('/')[1];
-
+    var rolePrefix = window.rolePrefix || prefix; // Fallback to URL prefix if rolePrefix not set
+    console.log('URL Prefix:', prefix, 'Role Prefix:', rolePrefix);
     let isAdminOrManager;
     if (prefix === 'admin' || prefix === 'manager') {
         isAdminOrManager = true;
@@ -69,7 +70,7 @@
                             {
                                 text: l('View'),
                                 action: function (data) {
-                                    window.location.href = `/${prefix}/orders/details/${data.record.orderNumber}`;
+                                    window.location.href = `/${rolePrefix}/orders/details/${data.record.orderNumber}`;
                                 }
                             },
                             {
@@ -151,7 +152,7 @@
                     title: l('Order:Number'),
                     data: "orderNumber",
                     render: function (data, type, row) {
-                        return `<a href="/${prefix}/orders/details/${data}">${data}</a>`;
+                        return `<a href="/${rolePrefix}/orders/details/${data}">${data}</a>`;
                     }
                 },
                 {

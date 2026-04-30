@@ -1,10 +1,10 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class NetworkHardwareSpecificationDto : EntityDto<Guid>
+    public class NetworkHardwareSpecificationDto : SpecificationBaseDto
     {
         public NetworkDeviceType DeviceType { get; set; }
         public WifiStandard WifiStandard { get; set; }
@@ -19,3 +19,4 @@ namespace Acme.ProductSelling.Specifications
 
 
 }
+

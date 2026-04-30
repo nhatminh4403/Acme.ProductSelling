@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using Volo.Abp.Application.Dtos;
 namespace Acme.ProductSelling.Specifications
 {
-    public class MotherboardSpecificationDto : EntityDto<Guid>
+    public class MotherboardSpecificationDto : SpecificationBaseDto
     {
         public string SocketName { get; set; }
         public string ChipsetName { get; set; }
@@ -15,3 +15,4 @@ namespace Acme.ProductSelling.Specifications
         public bool HasWifi { get; set; }
     }
 }
+

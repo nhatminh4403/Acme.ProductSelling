@@ -1,6 +1,7 @@
-﻿@model Acme.ProductSelling.Web.Models.RecentlyViewedViewModel
+@model Acme.ProductSelling.Web.Models.RecentlyViewedViewModel
 
-<div class="recently-viewed-wrapper rounded "
+@* The wrapper starts hidden; JS removes this inline style when products are available *@
+<div class="recently-viewed-wrapper rounded"
      id="recently-viewed-section"
      style="display: none;"
      data-max-count="@Model.MaxCount"
@@ -21,18 +22,16 @@
         </div>
 
         <div id="recently-viewed-container">
-            <!-- Updated Skeleton to be LANDSCAPE -->
-            <div class="row g-2" id="recently-viewed-skeleton">
-                @for (int i = 0; i < 6; i++)
+
+            @* Skeleton rows — shown while the widget is loading, hidden by JS once data arrives *@
+            <div id="recently-viewed-skeleton">
+                @for (int i = 0; i < Model.MaxCount; i++)
                 {
-                    
-                    <div class="col-12 col-md-6 col-lg-4">
+                    <div class="col">
                         <div class="d-flex align-items-center p-2 border rounded-2 bg-white h-100">
-                            <!-- Left: Image Placeholder -->
-                            <div class="placeholder-glow me-3" style="width: 80px; height: 80px; flex-shrink:0;">
+                            <div class="placeholder-glow me-3" style="width: 60px; height: 60px; flex-shrink:0;">
                                 <span class="placeholder w-100 h-100 rounded"></span>
                             </div>
-                            <!-- Right: Text Placeholder -->
                             <div class="flex-grow-1 py-1">
                                 <div class="placeholder-glow mb-2">
                                     <span class="placeholder col-12"></span>
@@ -47,10 +46,14 @@
                 }
             </div>
 
-            <!-- Actual Products Container -->
-            <div class="row g-2" id="recently-viewed-products" style="display: none;">
-                <!-- Products loaded via JS -->
+            @*
+                Product cards injected here by JS via $container.html(...).
+                Starts hidden via inline style; JS removes the inline style (not sets display:block)
+                so the CSS grid layout defined in recently-viewed.css takes effect.
+            *@
+            <div id="recently-viewed-products" style="display:none;">
             </div>
+
         </div>
     </div>
 </div>

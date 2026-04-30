@@ -34,7 +34,7 @@ namespace Acme.ProductSelling.Data.Products
 
         public CoolingSeeder(
             IProductRepository productRepository,
-            ProductManager productManager,    
+            ProductManager productManager,
             //IRepository<PsuSpecification, Guid> psuSpecRepository,
             //IRepository<CaseSpecification, Guid> caseSpecRepository,
             //IRepository<CpuCoolerSpecification, Guid> cpuCoolerSpecRepository,

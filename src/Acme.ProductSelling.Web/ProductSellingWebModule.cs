@@ -29,7 +29,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
+
+//using Microsoft.OpenApi.Models;
 using OpenIddict.Server.AspNetCore;
 using OpenIddict.Validation.AspNetCore;
 using System;
@@ -47,6 +49,7 @@ using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
 using Volo.Abp.AspNetCore.Mvc.UI.Packages.Bootstrap;
 using Volo.Abp.AspNetCore.Mvc.UI.Packages.DatatablesNet;
 using Volo.Abp.AspNetCore.Mvc.UI.Packages.JQuery;
+using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite.Bundling;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
@@ -99,6 +102,7 @@ namespace Acme.ProductSelling.Web;
     typeof(AbpAspNetCoreMvcModule),
     typeof(AbpAspNetCoreMvcUiModule),
     //typeof(AbpBackgroundJobOptions),
+    typeof(AbpAspNetCoreMvcUiBasicThemeModule),
     typeof(AbpBackgroundJobsHangfireModule),
     typeof(AbpMapperlyModule)
 
@@ -455,7 +459,7 @@ public class ProductSellingWebModule : AbpModule
                     bundle.AddFiles(
                            "/js/global-scripts/localization.js",
                            "/js/global-scripts/notification.js",
-                           "/js/global-scripts/recently-viewed.js",
+                        //    "/js/global-scripts/recently-viewed.js",
                            "/js/global-scripts/session-notification.js",
                            "/js/global-scripts/auth/auth-utils.js",
                            "/js/global-scripts/auth/logout-handler.js",

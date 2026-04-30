@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class PowerBankSpecificationDto : EntityDto<Guid>
+    public class PowerBankSpecificationDto : SpecificationBaseDto
     {
         public int Capacity { get; set; }
         public int TotalWattage { get; set; }
@@ -21,3 +21,4 @@ namespace Acme.ProductSelling.Specifications
 
 
 }
+

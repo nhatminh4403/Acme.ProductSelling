@@ -1,20 +1,32 @@
 ﻿using Acme.ProductSelling.Specifications;
 using Acme.ProductSelling.Specifications.Models;
 using Riok.Mapperly.Abstractions;
+using System;
 using System.Linq;
 using Volo.Abp.Mapperly;
 
 namespace Acme.ProductSelling.Products;
 
 
-#region Existing Specifications - Entity to DTO
+#region Entity to DTO
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public partial class CpuSpecificationToDtoMapper : MapperBase<CpuSpecification, CpuSpecificationDto>
 {
     [MapProperty(nameof(CpuSpecification.Socket.Name), nameof(CpuSpecificationDto.SocketName))]
-    public override partial CpuSpecificationDto Map(CpuSpecification source);
+    public override  CpuSpecificationDto Map(CpuSpecification source)
+    {
+        var destination = new CpuSpecificationDto();
+        Map(source, destination);
+        AfterMap(source, destination);
+        return destination;
+    }
     public override partial void Map(CpuSpecification source, CpuSpecificationDto destination);
+
+    public override void AfterMap(CpuSpecification source, CpuSpecificationDto destination)
+    {
+        destination.SocketName = source.Socket?.Name;
+    }
 }
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
@@ -28,8 +40,21 @@ public partial class GpuSpecificationToDtoMapper : MapperBase<GpuSpecification, 
 public partial class RamSpecificationToDtoMapper : MapperBase<RamSpecification, RamSpecificationDto>
 {
     [MapProperty(nameof(RamSpecification.RamType.Name), nameof(RamSpecificationDto.RamTypeName))]
-    public override partial RamSpecificationDto Map(RamSpecification source);
+    [MapperIgnoreTarget(nameof(RamSpecificationDto.RamTypeName))]
+    public override RamSpecificationDto Map(RamSpecification source)
+    {
+        var destination = new RamSpecificationDto();
+        Map(source, destination);
+        AfterMap(source, destination);
+        return destination;
+    }
+    [MapperIgnoreTarget(nameof(RamSpecificationDto.RamTypeName))]
     public override partial void Map(RamSpecification source, RamSpecificationDto destination);
+
+    public override void AfterMap(RamSpecification source, RamSpecificationDto destination)
+    {
+        destination.RamTypeName = source.RamType?.Name ?? string.Empty;
+    }
 }
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
@@ -39,8 +64,29 @@ public partial class MotherboardSpecificationToDtoMapper : MapperBase<Motherboar
     [MapProperty(nameof(MotherboardSpecification.Chipset.Name), nameof(MotherboardSpecificationDto.ChipsetName))]
     [MapProperty(nameof(MotherboardSpecification.FormFactor.Name), nameof(MotherboardSpecificationDto.FormFactorName))]
     [MapProperty(nameof(MotherboardSpecification.SupportedRamTypes.Name), nameof(MotherboardSpecificationDto.SupportedRamTypeName))]
-    public override partial MotherboardSpecificationDto Map(MotherboardSpecification source);
+    [MapperIgnoreTarget(nameof(MotherboardSpecificationDto.SocketName))]
+    [MapperIgnoreTarget(nameof(MotherboardSpecificationDto.ChipsetName))]
+    [MapperIgnoreTarget(nameof(MotherboardSpecificationDto.FormFactorName))]
+    [MapperIgnoreTarget(nameof(MotherboardSpecificationDto.SupportedRamTypeName))]
+    public override MotherboardSpecificationDto Map(MotherboardSpecification source)
+    {
+        var destination = new MotherboardSpecificationDto();
+        Map(source, destination);
+        AfterMap(source, destination);
+        return destination;
+    }
+    [MapperIgnoreTarget(nameof(MotherboardSpecificationDto.SocketName))]
+    [MapperIgnoreTarget(nameof(MotherboardSpecificationDto.ChipsetName))]
+    [MapperIgnoreTarget(nameof(MotherboardSpecificationDto.FormFactorName))]
+    [MapperIgnoreTarget(nameof(MotherboardSpecificationDto.SupportedRamTypeName))]
     public override partial void Map(MotherboardSpecification source, MotherboardSpecificationDto destination);
+    public override void AfterMap(MotherboardSpecification source, MotherboardSpecificationDto destination)
+    {
+        destination.SocketName = source.Socket?.Name;
+        destination.ChipsetName = source.Chipset?.Name;
+        destination.FormFactorName = source.FormFactor?.Name;
+        destination.SupportedRamTypeName = source.SupportedRamTypes?.Name;
+    }
 }
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
@@ -54,8 +100,21 @@ public partial class StorageSpecificationToDtoMapper : MapperBase<StorageSpecifi
 public partial class PsuSpecificationToDtoMapper : MapperBase<PsuSpecification, PsuSpecificationDto>
 {
     [MapProperty(nameof(PsuSpecification.FormFactor.Name), nameof(PsuSpecificationDto.FormFactorName))]
-    public override partial PsuSpecificationDto Map(PsuSpecification source);
+    [MapperIgnoreTarget(nameof(PsuSpecificationDto.FormFactorName))]
+    public override PsuSpecificationDto Map(PsuSpecification source)
+    {
+        var dest = new PsuSpecificationDto();
+        Map(source, dest);
+        AfterMap(source, dest);
+        return dest;
+    }
+    [MapperIgnoreTarget(nameof(PsuSpecificationDto.FormFactorName))]
     public override partial void Map(PsuSpecification source, PsuSpecificationDto destination);
+
+    public override void AfterMap(PsuSpecification source, PsuSpecificationDto destination)
+    {
+        destination.FormFactorName = source.FormFactor?.Name;
+    }
 }
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
@@ -63,7 +122,13 @@ public partial class CaseSpecificationToDtoMapper : MapperBase<CaseSpecification
 {
     [MapProperty(nameof(CaseSpecification.FormFactor.Name), nameof(CaseSpecificationDto.SupportedMbFormFactorName))]
     [MapperIgnoreTarget(nameof(CaseSpecificationDto.MaterialNames))] // Calculated in AfterMap
-    public override partial CaseSpecificationDto Map(CaseSpecification source);
+    public override CaseSpecificationDto Map(CaseSpecification source)
+    {
+        var destination = new CaseSpecificationDto();
+        Map(source, destination);
+        AfterMap(source, destination);
+        return destination;
+    }
 
     [MapperIgnoreTarget(nameof(CaseSpecificationDto.MaterialNames))]
     public override partial void Map(CaseSpecification source, CaseSpecificationDto destination);
@@ -71,6 +136,7 @@ public partial class CaseSpecificationToDtoMapper : MapperBase<CaseSpecification
     public override void AfterMap(CaseSpecification source, CaseSpecificationDto destination)
     {
         destination.MaterialNames = source.Materials?.Select(m => m.Material?.Name).Where(x => x != null).ToList();
+        destination.SupportedMbFormFactorName = source.FormFactor?.Name;
     }
 }
 
@@ -78,7 +144,13 @@ public partial class CaseSpecificationToDtoMapper : MapperBase<CaseSpecification
 public partial class CpuCoolerSpecificationToDtoMapper : MapperBase<CpuCoolerSpecification, CpuCoolerSpecificationDto>
 {
     [MapperIgnoreTarget(nameof(CpuCoolerSpecificationDto.SupportedSocketNames))] // Calculated in AfterMap
-    public override partial CpuCoolerSpecificationDto Map(CpuCoolerSpecification source);
+    public override CpuCoolerSpecificationDto Map(CpuCoolerSpecification source)
+    {
+        var destination = new CpuCoolerSpecificationDto();
+        Map(source, destination);
+        AfterMap(source, destination);
+        return destination;
+    }
 
     [MapperIgnoreTarget(nameof(CpuCoolerSpecificationDto.SupportedSocketNames))]
     public override partial void Map(CpuCoolerSpecification source, CpuCoolerSpecificationDto destination);
@@ -92,17 +164,46 @@ public partial class CpuCoolerSpecificationToDtoMapper : MapperBase<CpuCoolerSpe
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public partial class KeyboardSpecificationToDtoMapper : MapperBase<KeyboardSpecification, KeyboardSpecificationDto>
 {
-    [MapProperty(nameof(KeyboardSpecification.SwitchType.Name), nameof(KeyboardSpecificationDto.SwitchTypeName))]
-    public override partial KeyboardSpecificationDto Map(KeyboardSpecification source);
+    [MapProperty(nameof(KeyboardSpecification.SwitchType.Name),
+        nameof(KeyboardSpecificationDto.SwitchTypeName))]
+    [MapperIgnoreTarget(nameof(KeyboardSpecificationDto.SwitchTypeName))]
+    public override KeyboardSpecificationDto Map(KeyboardSpecification source)
+    {
+        var destination = new KeyboardSpecificationDto();
+        Map(source, destination);
+        AfterMap(source, destination);
+        return destination;
+    }
+    [MapperIgnoreTarget(nameof(KeyboardSpecificationDto.SwitchTypeName))]
     public override partial void Map(KeyboardSpecification source, KeyboardSpecificationDto destination);
+
+    public override void AfterMap(KeyboardSpecification source, KeyboardSpecificationDto destination)
+    {
+        destination.SwitchTypeName = source.SwitchType?.Name;
+    }
 }
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public partial class MonitorSpecificationToDtoMapper : MapperBase<MonitorSpecification, MonitorSpecificationDto>
 {
-    [MapProperty(nameof(MonitorSpecification.PanelType.Name), nameof(MonitorSpecificationDto.PanelTypeName))]
-    public override partial MonitorSpecificationDto Map(MonitorSpecification source);
+    //[MapProperty(nameof(MonitorSpecification.PanelType.Name), nameof(MonitorSpecificationDto.PanelTypeName))]
+    [MapperIgnoreTarget(nameof(MonitorSpecificationDto.PanelTypeName))]
+
+    public override MonitorSpecificationDto Map(MonitorSpecification source)
+    {
+        var destination = new MonitorSpecificationDto();
+        Map(source, destination);
+        AfterMap(source, destination);
+        return destination;
+    }
+    //[MapProperty(nameof(MonitorSpecification.PanelType.Name), nameof(MonitorSpecificationDto.PanelTypeName))]
+    [MapperIgnoreTarget(nameof(MonitorSpecificationDto.PanelTypeName))]
     public override partial void Map(MonitorSpecification source, MonitorSpecificationDto destination);
+
+    public override void AfterMap(MonitorSpecification source, MonitorSpecificationDto destination)
+    {
+        destination.PanelTypeName = source.PanelType?.Name;
+    }
 }
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
@@ -125,10 +226,6 @@ public partial class HeadsetSpecificationToDtoMapper : MapperBase<HeadsetSpecifi
     public override partial HeadsetSpecificationDto Map(HeadsetSpecification source);
     public override partial void Map(HeadsetSpecification source, HeadsetSpecificationDto destination);
 }
-
-#endregion
-
-#region New Specifications - Entity to DTO
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public partial class CaseFanSpecificationToDtoMapper : MapperBase<CaseFanSpecification, CaseFanSpecificationDto>
@@ -889,4 +986,77 @@ public partial class CreateUpdatePowerBankSpecToEntityMapper : MapperBase<Create
     public override partial void Map(CreateUpdatePowerBankSpecificationDto source, PowerBankSpecification destination);
 }
 
+#endregion
+
+#region Polymorphic Base Coordinator
+[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
+public partial class SpecificationBaseToDtoMapper : MapperBase<SpecificationBase, SpecificationBaseDto>
+{
+    // Inject sub-mappers as fields with [UseMapper]
+    [UseMapper] private readonly MonitorSpecificationToDtoMapper _monitorMapper = new();
+    [UseMapper] private readonly MouseSpecificationToDtoMapper _mouseMapper = new();
+    [UseMapper] private readonly LaptopSpecificationToDtoMapper _laptopMapper = new();
+    [UseMapper] private readonly CpuSpecificationToDtoMapper _cpuMapper = new();
+    [UseMapper] private readonly GpuSpecificationToDtoMapper _gpuMapper = new();
+    [UseMapper] private readonly RamSpecificationToDtoMapper _ramMapper = new();
+    [UseMapper] private readonly MotherboardSpecificationToDtoMapper _motherboardMapper = new();
+    [UseMapper] private readonly StorageSpecificationToDtoMapper _storageMapper = new();
+    [UseMapper] private readonly PsuSpecificationToDtoMapper _psuMapper = new();
+    [UseMapper] private readonly CaseSpecificationToDtoMapper _caseMapper = new();
+    [UseMapper] private readonly CpuCoolerSpecificationToDtoMapper _cpuCoolerMapper = new();
+    [UseMapper] private readonly KeyboardSpecificationToDtoMapper _keyboardMapper = new();
+    [UseMapper] private readonly HeadsetSpecificationToDtoMapper _headsetMapper = new();
+    [UseMapper] private readonly SpeakerSpecificationToDtoMapper _speakerMapper = new();
+    [UseMapper] private readonly WebcamSpecificationToDtoMapper _webcamMapper = new();
+    [UseMapper] private readonly CableSpecificationToDtoMapper _cableMapper = new();
+    [UseMapper] private readonly SoftwareSpecificationToDtoMapper _softwareMapper = new();
+    [UseMapper] private readonly CaseFanSpecificationToDtoMapper _caseFanMapper = new();
+    [UseMapper] private readonly ChairSpecificationToDtoMapper _chairMapper = new();
+    [UseMapper] private readonly DeskSpecificationToDtoMapper _deskMapper = new();
+    [UseMapper] private readonly ChargerSpecificationToDtoMapper _chargerMapper = new();
+    [UseMapper] private readonly ConsoleSpecificationToDtoMapper _consoleMapper = new();
+    [UseMapper] private readonly HandheldSpecificationToDtoMapper _handheldMapper = new();
+    [UseMapper] private readonly HubSpecificationToDtoMapper _hubMapper = new();
+    [UseMapper] private readonly MemoryCardSpecificationToDtoMapper _memoryCardMapper = new();
+    [UseMapper] private readonly MicrophoneSpecificationToDtoMapper _microphoneMapper = new();
+    [UseMapper] private readonly MousePadSpecificationToDtoMapper _mousePadMapper = new();
+    [UseMapper] private readonly NetworkHardwareSpecificationToDtoMapper _networkHardwareMapper = new();
+    [UseMapper] private readonly PowerBankSpecificationToDtoMapper _powerBankMapper = new();
+
+    [MapDerivedType(typeof(MonitorSpecification), typeof(MonitorSpecificationDto))]
+    [MapDerivedType(typeof(MouseSpecification), typeof(MouseSpecificationDto))]
+    [MapDerivedType(typeof(LaptopSpecification), typeof(LaptopSpecificationDto))]
+    [MapDerivedType(typeof(CpuSpecification), typeof(CpuSpecificationDto))]
+    [MapDerivedType(typeof(GpuSpecification), typeof(GpuSpecificationDto))]
+    [MapDerivedType(typeof(RamSpecification), typeof(RamSpecificationDto))]
+    [MapDerivedType(typeof(MotherboardSpecification), typeof(MotherboardSpecificationDto))]
+    [MapDerivedType(typeof(StorageSpecification), typeof(StorageSpecificationDto))]
+    [MapDerivedType(typeof(PsuSpecification), typeof(PsuSpecificationDto))]
+    [MapDerivedType(typeof(CaseSpecification), typeof(CaseSpecificationDto))]
+    [MapDerivedType(typeof(CpuCoolerSpecification), typeof(CpuCoolerSpecificationDto))]
+    [MapDerivedType(typeof(KeyboardSpecification), typeof(KeyboardSpecificationDto))]
+    [MapDerivedType(typeof(HeadsetSpecification), typeof(HeadsetSpecificationDto))]
+    [MapDerivedType(typeof(SpeakerSpecification), typeof(SpeakerSpecificationDto))]
+    [MapDerivedType(typeof(WebcamSpecification), typeof(WebcamSpecificationDto))]
+    [MapDerivedType(typeof(CableSpecification), typeof(CableSpecificationDto))]
+    [MapDerivedType(typeof(SoftwareSpecification), typeof(SoftwareSpecificationDto))]
+    [MapDerivedType(typeof(CaseFanSpecification), typeof(CaseFanSpecificationDto))]
+    [MapDerivedType(typeof(ChairSpecification), typeof(ChairSpecificationDto))]
+    [MapDerivedType(typeof(DeskSpecification), typeof(DeskSpecificationDto))]
+    [MapDerivedType(typeof(ChargerSpecification), typeof(ChargerSpecificationDto))]
+    [MapDerivedType(typeof(ConsoleSpecification), typeof(ConsoleSpecificationDto))]
+    [MapDerivedType(typeof(HandheldSpecification), typeof(HandheldSpecificationDto))]
+    [MapDerivedType(typeof(HubSpecification), typeof(HubSpecificationDto))]
+    [MapDerivedType(typeof(MemoryCardSpecification), typeof(MemoryCardSpecificationDto))]
+    [MapDerivedType(typeof(MicrophoneSpecification), typeof(MicrophoneSpecificationDto))]
+    [MapDerivedType(typeof(MousePadSpecification), typeof(MousePadSpecificationDto))]
+    [MapDerivedType(typeof(NetworkHardwareSpecification), typeof(NetworkHardwareSpecificationDto))]
+    [MapDerivedType(typeof(PowerBankSpecification), typeof(PowerBankSpecificationDto))]
+    public override partial SpecificationBaseDto Map(SpecificationBase source);
+
+    public override void Map(SpecificationBase source, SpecificationBaseDto destination)
+    {
+        throw new NotSupportedException("Cannot map into an already instantiated polymorphic base destination.");
+    }
+}
 #endregion

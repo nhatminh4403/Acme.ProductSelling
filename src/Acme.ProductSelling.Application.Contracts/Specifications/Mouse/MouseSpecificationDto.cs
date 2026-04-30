@@ -1,17 +1,18 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using Volo.Abp.Application.Dtos;
 namespace Acme.ProductSelling.Specifications
 {
-    public class MouseSpecificationDto : EntityDto<Guid>
+    public class MouseSpecificationDto : SpecificationBaseDto
     {
         public int Dpi { get; set; } // DPI
-        public int ButtonCount { get; set; } // Số nút bấm
-        public int PollingRate { get; set; } // Tần số quét
-        public string SensorType { get; set; } // Loại cảm biến
-        public int Weight { get; set; } // Trọng lượng
-        public ConnectivityType Connectivity { get; set; } // Kết nối
-        public string Color { get; set; } // Màu sắc
-        public string BacklightColor { get; set; } // Màu đèn nền
+        public int ButtonCount { get; set; } // S? n�t b?m
+        public int PollingRate { get; set; } // T?n s? qu�t
+        public string SensorType { get; set; } // Lo?i c?m bi?n
+        public int Weight { get; set; } // Tr?ng lu?ng
+        public ConnectivityType Connectivity { get; set; } // K?t n?i
+        public string Color { get; set; } // M�u s?c
+        public string BacklightColor { get; set; } // M�u d�n n?n
     }
 }
+

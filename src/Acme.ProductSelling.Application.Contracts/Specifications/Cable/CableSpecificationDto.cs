@@ -1,10 +1,10 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class CableSpecificationDto : EntityDto<Guid>
+    public class CableSpecificationDto : SpecificationBaseDto
     {
         public CableType CableType { get; set; }
         public float Length { get; set; }
@@ -18,3 +18,4 @@ namespace Acme.ProductSelling.Specifications
     }
 
 }
+

@@ -1,10 +1,10 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class ChairSpecificationDto : EntityDto<Guid>
+    public class ChairSpecificationDto : SpecificationBaseDto
     {
         public string ChairType { get; set; }
         public ChairMaterial Material { get; set; }
@@ -20,3 +20,4 @@ namespace Acme.ProductSelling.Specifications
     }
 
 }
+

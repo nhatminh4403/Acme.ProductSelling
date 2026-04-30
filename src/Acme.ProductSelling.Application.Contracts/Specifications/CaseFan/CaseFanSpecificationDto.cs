@@ -1,10 +1,10 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class CaseFanSpecificationDto : EntityDto<Guid>
+    public class CaseFanSpecificationDto : SpecificationBaseDto
     {
         public int FanSize { get; set; }
         public int MaxRpm { get; set; }
@@ -18,3 +18,4 @@ namespace Acme.ProductSelling.Specifications
     }
 
 }
+

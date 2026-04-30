@@ -46,6 +46,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    /* base appearance */
     padding: 0.625rem 1.25rem;
     background: var(--primary-color);
     color: white;
@@ -53,10 +54,27 @@
     border-radius: 0.5rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all var(--transition-fast);
     white-space: nowrap;
+    /* animation setup */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* hidden state */
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.95);
+    width: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
 }
-
+    .category-btn.show-on-scroll {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: scale(1) !important;
+        width: auto;
+        padding: 0.625rem 1.25rem;
+        margin-left: 0.75rem;
+        overflow: visible;
+    }
     .category-btn:hover {
         background: var(--primary-hover);
         transform: translateY(-1px);
@@ -72,7 +90,15 @@
     flex: 1;
     max-width: 100%;
     margin: 0 auto 0 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Expanded by default since button is hidden */
+    margin-left: 1.5rem;
 }
+
+    /* Shrink search bar when category button slides in */
+    .search-container.shrink {
+        margin-left: 1rem;
+    }
 
 .search-form {
     position: relative;
@@ -1000,40 +1026,9 @@
         opacity: 1;
     }
 }
-/* Category Button - Hidden by default on ALL pages */
-.category-btn {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    /* Hidden state (default) */
-    opacity: 0;
-    visibility: hidden;
-    transform: scale(0.95);
-    width: 0;
-    padding: 0;
-    margin: 0;
-    overflow: hidden;
-}
 
-    /* Visible state — only when .show-on-scroll is added via JS (homepage scroll) */
-    .category-btn.show-on-scroll {
-        opacity: 1 !important;
-        visibility: visible !important;
-        transform: scale(1) !important;
-        width: auto;
-        padding: 0.625rem 1.25rem;
-        margin-left: 0.75rem;
-        overflow: visible;
-    }
 
-.search-container {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    /* Expanded by default since button is hidden */
-    margin-left: 1.5rem;
-}
 
-    /* Shrink search bar when category button slides in */
-    .search-container.shrink {
-        margin-left: 1rem;
-    }
 
 /* Mobile - Always show mobile category button */
 @media (max-width: 991px) {
@@ -1058,4 +1053,14 @@
         body:not(.homepage) .search-container {
             margin-left: 0.5rem;
         }
+
+    body:not(.homepage) .category-btn {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: scale(1) !important;
+        width: auto;
+        padding: 0.625rem 1.25rem;
+        margin-left: 0.75rem;
+        overflow: visible;
+    }
 }

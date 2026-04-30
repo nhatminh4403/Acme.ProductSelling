@@ -1,4 +1,4 @@
-﻿document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
     const megamenu = document.getElementById('categoryMegamenu');
     const overlay = document.getElementById('categoryMegamenuOverlay');
     const closeBtn = document.getElementById('megamenuCloseBtn');
@@ -329,7 +329,7 @@
         // CSS now owns the hidden state
         categoryBtnHomepage.removeAttribute('style');
 
-        if (document.body.classList.contains('homepage') && heroSection) {
+        if (document.documentElement.classList.contains('homepage') && heroSection) {
             // HOMEPAGE: show button only after scrolling past the hero
             function toggleCategoryButtonAndSearch() {
                 const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
@@ -357,14 +357,16 @@
             }, { passive: true });
 
             toggleCategoryButtonAndSearch(); // Initial check on load
+        } else {
+            // ✅ NON-HOMEPAGE: always show the button immediately
+            categoryBtnHomepage.classList.add('show-on-scroll');
+            if (searchContainer) searchContainer.classList.add('shrink');
         }
-        // NON-HOMEPAGE: button stays hidden (CSS default), search stays expanded — no JS needed
     }
 
     //=========================================
     // 6. MODAL SCROLL BEHAVIOR OVERRIDE
     //=========================================
-    // This ensures the page can still scroll even when a Bootstrap modal is open.
     const observer = new MutationObserver(function (mutations) {
         mutations.forEach(function (mutation) {
             if (mutation.attributeName === 'class' && document.body.classList.contains('modal-open')) {
@@ -378,4 +380,5 @@
         attributes: true,
         attributeFilter: ['class']
     });
+
 });

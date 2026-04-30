@@ -1,10 +1,10 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class DeskSpecificationDto : EntityDto<Guid>
+    public class DeskSpecificationDto : SpecificationBaseDto
     {
         public int Width { get; set; }
         public int Depth { get; set; }
@@ -21,3 +21,4 @@ namespace Acme.ProductSelling.Specifications
 
 
 }
+

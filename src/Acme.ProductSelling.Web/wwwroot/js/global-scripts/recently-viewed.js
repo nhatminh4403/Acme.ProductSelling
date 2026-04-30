@@ -1,96 +1,70 @@
-﻿//Depends on: localization.js, notification.js
+/* recently-viewed.js
+ * Manages the "Recently Viewed Products" widget.
+ * Works with ABP's dynamic service proxy (acme.productSelling.products.services.recentlyViewedProduct).
+ * Safe to load at any point in the page lifecycle — handles both "proxy ready" and "proxy not yet ready" cases.
+ */
 const RecentlyViewedManager = (function () {
     'use strict';
 
-    // -------------------------------------------------------------------------
-    // Constants
-    // -------------------------------------------------------------------------
     const STORAGE_KEY = 'Acme_RecentlyViewed_Ids';
     const MAX_GUEST_ITEMS = 10;
-    const REQUEST_COOLDOWN_MS = 1000;   // minimum gap between server requests
-    const SYNC_COOLDOWN_MS = 5000;   // minimum gap between sync attempts
+    const SYNC_COOLDOWN_MS = 5000;
 
-    // -------------------------------------------------------------------------
-    // Private state
-    // -------------------------------------------------------------------------
-    let lastRequestTime = 0;
     let isSyncing = false;
     let lastSyncTime = 0;
-    let pendingRequest = null;         // tracks in-flight loadWidget promise
+    let pendingRequest = null;
 
-    // -------------------------------------------------------------------------
-    // localStorage helpers
-    // -------------------------------------------------------------------------
+    // ─── Local Storage Helpers ────────────────────────────────────────────────
+
     function getGuestIds() {
         try {
             const json = localStorage.getItem(STORAGE_KEY);
             if (!json) return [];
-
             const ids = JSON.parse(json);
             if (!Array.isArray(ids)) {
-                console.warn('[RecentlyViewed] Invalid data structure, resetting');
                 localStorage.removeItem(STORAGE_KEY);
                 return [];
             }
-
-            return ids.slice(0, MAX_GUEST_ITEMS);
+            return ids.filter(function (id) {
+                return id && typeof id === 'string' && id.trim().length > 0;
+            }).slice(0, MAX_GUEST_ITEMS);
         } catch (e) {
-            console.warn('[RecentlyViewed] Failed to read storage:', e);
-            try { localStorage.removeItem(STORAGE_KEY); } catch (_) { /* ignore */ }
+            try { localStorage.removeItem(STORAGE_KEY); } catch (_) { }
             return [];
         }
     }
 
     function saveGuestIds(ids) {
-        if (!Array.isArray(ids)) {
-            console.error('[RecentlyViewed] saveGuestIds expects an array');
-            return;
-        }
+        if (!Array.isArray(ids)) return;
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(ids.slice(0, MAX_GUEST_ITEMS)));
-        } catch (e) {
-            console.warn('[RecentlyViewed] Failed to save storage:', e);
-        }
+        } catch (e) { }
     }
 
     function clearGuestIds() {
-        try { localStorage.removeItem(STORAGE_KEY); } catch (e) {
-            console.warn('[RecentlyViewed] Failed to clear storage:', e);
+        try { localStorage.removeItem(STORAGE_KEY); } catch (e) { }
+    }
+
+    // ─── ABP Helpers ──────────────────────────────────────────────────────────
+
+    function isAuthenticated() {
+        try {
+            return !!(abp && abp.currentUser && abp.currentUser.isAuthenticated);
+        } catch (e) {
+            return false;
         }
     }
 
-    // -------------------------------------------------------------------------
-    // ABP helpers
-    // -------------------------------------------------------------------------
-    function isAuthenticated() {
-        return !!(abp && abp.currentUser && abp.currentUser.isAuthenticated);
-    }
-
-    /**
-     * Returns the ABP dynamic proxy for the RecentlyViewedProduct app service.
-     * The proxy is generated automatically by ABP from the server-side interface.
-     *
-     * @returns {object|null}
-     */
     function getApiProxy() {
-        return (acme &&
-            acme.productSelling &&
-            acme.productSelling.products &&
-            acme.productSelling.products.recentlyViewedProduct)
-            ? acme.productSelling.products.recentlyViewedProduct
-            : null;
+        try {
+            return acme?.productSelling?.products?.services?.recentlyViewedProduct ?? null;
+        } catch (e) {
+            return null;
+        }
     }
 
-    function canMakeRequest() {
-        const now = Date.now();
-        if (now - lastRequestTime < REQUEST_COOLDOWN_MS) return false;
-        lastRequestTime = now;
-        return true;
-    }
+    // ─── Rendering ────────────────────────────────────────────────────────────
 
-    // -------------------------------------------------------------------------
-    // Rendering helpers
-    // -------------------------------------------------------------------------
     function formatCurrency(value) {
         if (typeof value !== 'number' || isNaN(value)) return '0 ₫';
         return new Intl.NumberFormat('vi-VN', {
@@ -108,10 +82,7 @@ const RecentlyViewedManager = (function () {
     }
 
     function renderProductCard(product) {
-        if (!product || !product.productId) {
-            console.warn('[RecentlyViewed] Invalid product data, skipping card');
-            return '';
-        }
+        if (!product || !product.productId) return '';
 
         const hasDiscount = product.discountedPrice && product.discountedPrice < product.originalPrice;
 
@@ -125,12 +96,15 @@ const RecentlyViewedManager = (function () {
                    <span class="rv-price-current text-primary">${formatCurrency(product.originalPrice)}</span>
                </div>`;
 
-        const stockHtml = product.isAvailableForPurchase ? '' : '<div class="rv-stock-badge">Hết hàng</div>';
+        const stockHtml = product.isAvailableForPurchase
+            ? ''
+            : '<div class="rv-stock-badge">Hết hàng</div>';
+
         const safeImgSrc = product.imageUrl || '/images/placeholder.png';
         const urlSlug = product.urlSlug || '#';
 
         return `
-        <div class="col-12 col-md-6 col-lg-3">
+        <div class="col">
             <a href="/products/${urlSlug}" class="rv-card" title="${escapeHtml(product.productName)}">
                 <div class="rv-img-wrapper">
                     ${stockHtml}
@@ -147,22 +121,16 @@ const RecentlyViewedManager = (function () {
         </div>`;
     }
 
-    // -------------------------------------------------------------------------
-    // Public API
-    // -------------------------------------------------------------------------
+    // ─── Public API ───────────────────────────────────────────────────────────
+
     return {
 
         /**
          * Record that the user viewed a product.
-         * Updates localStorage immediately; notifies the server for logged-in users.
-         *
-         * @param {string} productId
+         * Always updates localStorage; also notifies the server for authenticated users.
          */
         trackView: function (productId) {
-            if (!productId || typeof productId !== 'string') {
-                console.warn('[RecentlyViewed] trackView received invalid productId:', productId);
-                return;
-            }
+            if (!productId || typeof productId !== 'string') return;
 
             try {
                 let ids = getGuestIds();
@@ -170,11 +138,11 @@ const RecentlyViewedManager = (function () {
                 ids.unshift(productId);
                 saveGuestIds(ids);
 
-                if (isAuthenticated() && canMakeRequest()) {
+                if (isAuthenticated()) {
                     const api = getApiProxy();
                     if (api && api.trackProductView) {
                         api.trackProductView(productId).catch(function (err) {
-                            console.warn('[RecentlyViewed] Server trackView failed:', err);
+                            console.warn('[RecentlyViewed] trackView server call failed:', err);
                         });
                     }
                 }
@@ -186,21 +154,11 @@ const RecentlyViewedManager = (function () {
         /**
          * Upload guest history to the server after login.
          * Safe to call multiple times — guarded by isSyncing + cooldown.
-         *
-         * @returns {Promise}
          */
         syncWithServer: function () {
             const now = Date.now();
-
-            if (isSyncing) {
-                console.log('[RecentlyViewed] Sync already in progress, skipping');
-                return Promise.resolve();
-            }
-
-            if (now - lastSyncTime < SYNC_COOLDOWN_MS) {
-                console.log('[RecentlyViewed] Sync cooldown active, skipping');
-                return Promise.resolve();
-            }
+            if (isSyncing) return Promise.resolve();
+            if (now - lastSyncTime < SYNC_COOLDOWN_MS) return Promise.resolve();
 
             const guestIds = getGuestIds();
             if (guestIds.length === 0) return Promise.resolve();
@@ -215,7 +173,6 @@ const RecentlyViewedManager = (function () {
             return api.syncGuestHistory({ productIds: guestIds })
                 .then(function () {
                     clearGuestIds();
-                    console.log('[RecentlyViewed] Sync successful');
                     isSyncing = false;
                 })
                 .catch(function (err) {
@@ -225,9 +182,9 @@ const RecentlyViewedManager = (function () {
         },
 
         /**
-         * Load recently-viewed products and render them into a container.
+         * Load recently-viewed products and inject them into a container.
          *
-         * @param {string}   containerId       DOM id of the target element
+         * @param {string}   containerId       DOM id of the product grid element
          * @param {number}   [maxCount=6]
          * @param {string}   [excludeProductId]
          * @param {Function} [callback]        Called with true (has products) or false
@@ -236,7 +193,6 @@ const RecentlyViewedManager = (function () {
             maxCount = Math.min(parseInt(maxCount, 10) || 6, 20);
 
             if (!containerId || typeof containerId !== 'string') {
-                console.error('[RecentlyViewed] loadWidget: invalid containerId');
                 if (callback) callback(false);
                 return;
             }
@@ -247,7 +203,7 @@ const RecentlyViewedManager = (function () {
                 return;
             }
 
-            // Abandon any in-flight request token
+            // Cancel any stale in-flight request token
             pendingRequest = null;
 
             let guestIds = getGuestIds();
@@ -255,6 +211,7 @@ const RecentlyViewedManager = (function () {
                 guestIds = guestIds.filter(function (id) { return id !== excludeProductId; });
             }
 
+            // For unauthenticated users with no local history, nothing to show
             if (guestIds.length === 0 && !isAuthenticated()) {
                 if (callback) callback(false);
                 return;
@@ -267,22 +224,24 @@ const RecentlyViewedManager = (function () {
                 return;
             }
 
-            if (!canMakeRequest()) {
-                console.log('[RecentlyViewed] Request throttled');
-                if (callback) callback(false);
-                return;
-            }
-
-            const requestToken = {};     // identity object used to detect cancellation
+            const requestToken = {};
             pendingRequest = requestToken;
 
-            api.getList({
-                maxCount: maxCount + 1,            // fetch one extra so we can exclude + trim
-                guestProductIds: guestIds.slice(0, 20),
-            })
+            const requestPayload = { maxCount: maxCount + 1 }; // +1 allows filtering excludeProductId server-side
+
+            const slicedIds = guestIds.slice(0, 20);
+            if (slicedIds.length > 0) {
+                requestPayload.guestProductIds = slicedIds;
+            }
+
+            console.log('[RecentlyViewed] Fetching widget, maxCount=%d, guestIds=%d', maxCount, slicedIds.length);
+
+            api.getList(requestPayload)
                 .then(function (products) {
-                    if (pendingRequest !== requestToken) return;  // stale — a newer call cancelled us
+                    if (pendingRequest !== requestToken) return; // Superseded
                     pendingRequest = null;
+
+                    console.log('[RecentlyViewed] Server returned %d products', (products || []).length);
 
                     if (!products || !Array.isArray(products) || products.length === 0) {
                         if (callback) callback(false);
@@ -300,22 +259,16 @@ const RecentlyViewedManager = (function () {
                         return;
                     }
 
-                    // Batch-render to minimise reflows
                     $container.html(filtered.map(renderProductCard).join(''));
                     if (callback) callback(true);
                 })
                 .catch(function (err) {
-                    console.warn('[RecentlyViewed] loadWidget failed:', err);
+                    console.warn('[RecentlyViewed] Fetch error:', err);
                     pendingRequest = null;
                     if (callback) callback(false);
                 });
         },
 
-        /**
-         * Clear all recently-viewed data for the current user.
-         *
-         * @returns {Promise}
-         */
         clear: function () {
             clearGuestIds();
 
@@ -331,7 +284,7 @@ const RecentlyViewedManager = (function () {
             return Promise.resolve();
         },
 
-        /** Exposed for debugging / testing */
+        /** Exposed for debugging */
         getGuestIds: getGuestIds,
     };
 
@@ -339,58 +292,103 @@ const RecentlyViewedManager = (function () {
 
 window.RecentlyViewedManager = RecentlyViewedManager;
 
-// =============================================================================
-// RECENTLY VIEWED WIDGET INIT
-// Runs once on DOMContentLoaded; reads config from data-attributes.
-// =============================================================================
-document.addEventListener('DOMContentLoaded', function () {
-    if (window._recentlyViewedInitialized) return;
-    window._recentlyViewedInitialized = true;
-
+function initRecentlyViewedWidget() {
     const $wrapper = $('#recently-viewed-section');
-    if ($wrapper.length === 0) return;
-
-    if (typeof RecentlyViewedManager === 'undefined') {
-        console.error('[RecentlyViewed] RecentlyViewedManager not loaded');
-        return;
-    }
+    if (!$wrapper || $wrapper.length === 0) return; // Not on a page that has the widget
 
     const maxCount = parseInt($wrapper.data('max-count'), 10) || 6;
+    const excludeId = $wrapper.data('exclude-product-id') || null;
 
     RecentlyViewedManager.loadWidget(
         'recently-viewed-products',
         (maxCount >= 1 && maxCount <= 20) ? maxCount : 6,
-        $wrapper.data('exclude-product-id') || null,
+        excludeId,
         function (hasProducts) {
+            // Always hide the skeleton first
             $('#recently-viewed-skeleton').hide();
+
             if (hasProducts) {
-                $('#recently-viewed-products').show();
-                $wrapper.fadeIn(300);
+
+                $('#recently-viewed-products').removeAttr('style');
+
+                $wrapper.css('display', 'block');
             } else {
                 $wrapper.hide();
             }
         }
     );
 
-    let clearInProgress = false;
-
-    $('#btn-clear-recently-viewed').on('click', function (e) {
+    $('#btn-clear-recently-viewed').off('click.rv').on('click.rv', function (e) {
         e.preventDefault();
-        if (clearInProgress) return;
-        if (!confirm('Bạn có chắc muốn xóa lịch sử sản phẩm đã xem?')) return;
 
-        clearInProgress = true;
+        abp.message.confirm(
+            abp.localization.getResource('ProductSelling')('UI:ConfirmClearRecentlyViewed'),
+            abp.localization.getResource('ProductSelling')('UI:AreYouSure'),
+            function (confirmed) {
+                if (!confirmed) return;
 
-        RecentlyViewedManager.clear()
-            .then(function () {
-                $wrapper.fadeOut(300);
-                showNotification('Đã xóa lịch sử xem sản phẩm', '', 'success');
-                clearInProgress = false;
-            })
-            .catch(function (err) {
-                console.error('[RecentlyViewed] Clear failed:', err);
-                showNotification('Không thể xóa lịch sử', '', 'error');
-                clearInProgress = false;
-            });
+                RecentlyViewedManager.clear()
+                    .then(function () {
+                        $wrapper.fadeOut(300);
+                        if (typeof showNotification === 'function') {
+                            showNotification('Đã xóa lịch sử xem sản phẩm', '', 'success');
+                        }
+                    })
+                    .catch(function (err) {
+                        console.error('[RecentlyViewed] Clear failed:', err);
+                        if (typeof showNotification === 'function') {
+                            showNotification('Không thể xóa lịch sử', '', 'error');
+                        }
+                    });
+            }
+        );
     });
-});
+}
+
+(function () {
+    'use strict';
+
+    var _widgetRan = false;
+
+    function runOnce() {
+        if (_widgetRan) return;
+        _widgetRan = true;
+        initRecentlyViewedWidget();
+    }
+
+    function bootstrap() {
+        if (typeof abp === 'undefined' || !abp.event) {
+            // Case A: No ABP — just run on DOMContentLoaded
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', runOnce);
+            } else {
+                runOnce();
+            }
+            return;
+        }
+
+        // Cases B and C: ABP available. Subscribe to setupComplete first so we
+        // don't miss it, then check if it already fired.
+        abp.event.on('abp.setupComplete', function () {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', runOnce);
+            } else {
+                runOnce();
+            }
+        });
+
+        // If applicationConfiguration is already loaded, abp.appInfo will be set.
+        // That's a reliable signal that setupComplete has already fired.
+        if (abp.appInfo || (abp.currentUser !== undefined)) {
+            // setupComplete already fired — run now (or after DOM is ready)
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', runOnce);
+            } else {
+                runOnce();
+            }
+        }
+    }
+
+    // Run bootstrap immediately since the script is at bottom of body
+    bootstrap();
+}());

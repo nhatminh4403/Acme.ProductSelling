@@ -1,10 +1,10 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class SoftwareSpecificationDto : EntityDto<Guid>
+    public class SoftwareSpecificationDto : SpecificationBaseDto
     {
         public SoftwareType SoftwareType { get; set; }
         public LicenseType LicenseType { get; set; }
@@ -18,3 +18,4 @@ namespace Acme.ProductSelling.Specifications
 
 
 }
+

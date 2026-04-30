@@ -9,7 +9,6 @@ using Acme.ProductSelling.Specifications.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Volo.Abp.Domain.Repositories;
 
 namespace Acme.ProductSelling.Data.Products
 {
@@ -76,11 +75,16 @@ namespace Acme.ProductSelling.Data.Products
         }
         private async Task SeedCPUsAsync()
         {
-            var cpu1 = await CreateProductAsync(
-                _categories["CPUs"].Id, _manufacturers["AMD"].Id, 8500000, 10,
-                "Ryzen 7 7700X", "Powerful 8-core CPU",
-                50, true, DateTime.Now,
-                "https://product.hstatic.net/200000722513/product/ryzen_7_-_1_00957bbe7b8542308c897a90d439b1fd_e1c9a16c537d47bb9768828dddb332d0_grande.jpg");
+            var cpu1 = await CreateProductAsync(categoryId: _categories["CPUs"].Id,
+                                                manufacturerId: _manufacturers["AMD"].Id,
+                                                price: 8500000,
+                                                discount: 10,
+                                                name: "Ryzen 7 7700X",
+                                                description: "Powerful 8-core CPU",
+                                                stock: 50,
+                                                isActive: true,
+                                                releaseDate: DateTime.Now,
+                                                imageUrl: "https://product.hstatic.net/200000722513/product/ryzen_7_-_1_00957bbe7b8542308c897a90d439b1fd_e1c9a16c537d47bb9768828dddb332d0_grande.jpg");
 
             await _specificationRepository.InsertAsync(new CpuSpecification
             {
@@ -117,11 +121,16 @@ namespace Acme.ProductSelling.Data.Products
 
         private async Task SeedGPUsAsync()
         {
-            var gpu1 = await CreateProductAsync(
-                _categories["GPUs"].Id, _manufacturers["ASUS"].Id, 25000000, 5,
-                "ProArt GeForce RTX 4070 Ti SUPER 16GB", "High-end graphics card",
-                20, true, DateTime.Now,
-                "https://product.hstatic.net/200000722513/product/fwebp__10__1d22cf39c094494bb772b5bb1c002172_grande.png");
+            var gpu1 = await CreateProductAsync(_categories["GPUs"].Id,
+                                                _manufacturers["ASUS"].Id,
+                                                25000000,
+                                                5,
+                                                "ProArt GeForce RTX 4070 Ti SUPER 16GB",
+                                                "High-end graphics card",
+                                                20,
+                                                true,
+                                                DateTime.Now,
+                                                "https://product.hstatic.net/200000722513/product/fwebp__10__1d22cf39c094494bb772b5bb1c002172_grande.png");
 
             await _specificationRepository.InsertAsync(new GpuSpecification
             {
@@ -208,6 +217,7 @@ namespace Acme.ProductSelling.Data.Products
                 Interface = "PCIe 3.0 x4",
                 Capacity = 1000,
                 ReadSpeed = 3500,
+                Rpm = null,
                 WriteSpeed = 3300,
                 StorageFormFactor = StorageFormFactor.SsdM2_2280
             }, autoSave: true);

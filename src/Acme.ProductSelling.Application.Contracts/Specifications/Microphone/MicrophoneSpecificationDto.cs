@@ -1,10 +1,10 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class MicrophoneSpecificationDto : EntityDto<Guid>
+    public class MicrophoneSpecificationDto : SpecificationBaseDto
     {
         public MicrophoneType MicrophoneType { get; set; }
         public string PolarPattern { get; set; }
@@ -19,3 +19,4 @@ namespace Acme.ProductSelling.Specifications
         public string Color { get; set; }
     }
 }
+

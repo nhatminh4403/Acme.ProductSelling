@@ -1,10 +1,8 @@
 ﻿using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Products.Dtos;
-using Acme.ProductSelling.Products.Specification.Handler;
 using Acme.ProductSelling.Specifications;
 using Acme.ProductSelling.Specifications.Models;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories;
 // Note: Removed Volo.Abp.ObjectMapping usage

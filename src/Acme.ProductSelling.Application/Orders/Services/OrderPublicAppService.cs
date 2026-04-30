@@ -142,7 +142,39 @@ namespace Acme.ProductSelling.Orders.Services
             }
             return _orderMapper.Map(order);
         }
+        // OrderPublicAppService.cs
+        [RemoteService(false)]
+        public async Task<OrderDto> ConfirmMoMoOrderAsync(Guid id, long transId)
+        {
+            var order = await _orderRepository.GetAsync(id) as OnlineOrder;
+            if (order == null) throw new EntityNotFoundException(typeof(Order), id);
+            if (order.CustomerId != CurrentUser.Id)
+                throw new EntityNotFoundException(typeof(Order), id); // don't leak existence
 
+            // Idempotent: if IPN already marked it paid, nothing to do
+            if (order.PaymentStatus == PaymentStatus.Paid)
+                return _orderMapper.Map(order);
+
+            if (order.PaymentStatus == PaymentStatus.Pending ||
+                order.PaymentStatus == PaymentStatus.Unpaid)
+            {
+                var oldOrderStatus = order.OrderStatus;
+                var oldPaymentStatus = order.PaymentStatus;
+
+                order.MarkAsPaidOnline(); // same domain method used by PayPal
+
+                await _orderRepository.UpdateAsync(order, autoSave: true);
+                await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
+                await _orderHistoryAppService.LogOrderChangeAsync(
+                    order.Id,
+                    oldOrderStatus, order.OrderStatus,
+                    oldPaymentStatus, order.PaymentStatus,
+                    _localizer["Order:PaidViaMoMo"] ?? "Thanh toán thành công qua MoMo"
+                );
+            }
+
+            return _orderMapper.Map(order);
+        }
         public async Task DeleteAsync(Guid id)
         {
             var order = await _orderRepository.GetAsync(id, includeDetails: true) as OnlineOrder;

@@ -72,7 +72,7 @@ namespace Acme.ProductSelling.Chatbot
                     !p.ProductName.ToLower().Contains("pad") &&
                     !p.ProductName.ToLower().Contains("lót") &&
                     !p.Category.Name.ToLower().Contains("pad") &&
-                    p.SpecificationBase is MouseSpecification 
+                    p.SpecificationBase is MouseSpecification
                 );
             }
 

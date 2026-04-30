@@ -19,7 +19,9 @@
         window.isAdminOrManager = @Json.Serialize(Model.IsAdminOrManager());
         window.currentUserStoreId = @Json.Serialize(Model.CurrentUserStoreId);
         window.rolePrefix = "@Model.RoleBasedPrefix";
+        console.log("role prefix", rolePrefix);
     </script>
+
 }
 
 <abp-card>

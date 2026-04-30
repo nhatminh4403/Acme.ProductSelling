@@ -1,10 +1,10 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using System;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.Specifications
 {
-    public class HubSpecificationDto : EntityDto<Guid>
+    public class HubSpecificationDto : SpecificationBaseDto
     {
         public HubType HubType { get; set; }
         public int PortCount { get; set; }
@@ -21,3 +21,4 @@ namespace Acme.ProductSelling.Specifications
         public string Color { get; set; }
     }
 }
+

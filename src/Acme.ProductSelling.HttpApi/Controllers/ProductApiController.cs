@@ -10,13 +10,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Volo.Abp.AspNetCore.Mvc;
 
 namespace Acme.ProductSelling.Controllers
 {
-    [Route("api/products")]
+    [Route("api/app/product")]
     [ApiController]
-    public class ProductApiController : AbpController
+    public class ProductApiController : ProductSellingController
     {
         private readonly IProductLookupAppService _productLookupAppService;
         private readonly ICategoryRepository _categoryRepository;
@@ -33,15 +32,14 @@ namespace Acme.ProductSelling.Controllers
         }
 
         [HttpGet("filter")]
-        public async Task<IActionResult> GetProducts(
-     [FromQuery] string categorySlug = null,
-     [FromQuery] string manufacturerIds = null,
-     [FromQuery] string searchKeyword = null,
-     [FromQuery] decimal? minPrice = null,
-     [FromQuery] decimal? maxPrice = null,
-     [FromQuery] string sortBy = "featured",
-     [FromQuery] int page = 1,
-     [FromQuery] int pageSize = 12)
+        public async Task<IActionResult> GetProducts([FromQuery] string categorySlug = null,
+                                                     [FromQuery] string manufacturerIds = null,
+                                                     [FromQuery] string searchKeyword = null,
+                                                     [FromQuery] decimal? minPrice = null,
+                                                     [FromQuery] decimal? maxPrice = null,
+                                                     [FromQuery] string sortBy = "featured",
+                                                     [FromQuery] int page = 1,
+                                                     [FromQuery] int pageSize = 12)
         {
             try
             {
@@ -148,9 +146,8 @@ namespace Acme.ProductSelling.Controllers
             }
         }
         [HttpGet("price-bounds/{categorySlug}")]
-        public async Task<IActionResult> GetPriceBounds(
-            string categorySlug,
-            [FromQuery] string priceRange = null)
+        public async Task<IActionResult> GetPriceBounds(string categorySlug,
+                                                        [FromQuery] string priceRange = null)
         {
             try
             {
@@ -180,9 +177,8 @@ namespace Acme.ProductSelling.Controllers
 
         #region Private Helper Methods
 
-        private (decimal Min, decimal Max) GetPriceBoundsForRange(
-            SpecificationType specType,
-            string priceRangeUrl)
+        private (decimal Min, decimal Max) GetPriceBoundsForRange(SpecificationType specType,
+                                                                  string priceRangeUrl)
         {
             if (!CategoryPriceRangeConfiguration.HasPriceRanges(specType))
             {

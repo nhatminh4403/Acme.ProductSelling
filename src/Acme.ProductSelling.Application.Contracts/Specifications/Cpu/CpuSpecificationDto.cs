@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using Volo.Abp.Application.Dtos;
 namespace Acme.ProductSelling.Specifications
 {
-    public class CpuSpecificationDto : EntityDto<Guid>
+    public class CpuSpecificationDto : SpecificationBaseDto
     {
         public string SocketName { get; set; }
         public int CoreCount { get; set; }
@@ -14,3 +14,4 @@ namespace Acme.ProductSelling.Specifications
         public bool HasIntegratedGraphics { get; set; }
     }
 }
+

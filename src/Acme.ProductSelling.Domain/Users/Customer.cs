@@ -6,17 +6,14 @@ namespace Acme.ProductSelling.Users
 {
     public class Customer : FullAuditedAggregateRoot<Guid>
     {
-        // Link to AppUser (identity)
         public Guid AppUserId { get; protected set; }
         public virtual AppUser AppUser { get; protected set; }
 
-        // Customer-specific information
         [CanBeNull]
         public string ShippingAddress { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public UserGender Gender { get; set; }
 
-        // Cached identity information (for performance)
         public string FullName { get; set; }
         public string Surname { get; set; }
         public string Name { get; set; }

@@ -15,13 +15,18 @@
 }
 
 @section scripts {
+    <abp-script-bundle name="Shared.Order.SignalR" />
+
+    <abp-script src="/Pages/Admin/Orders/Details.js" />
+
     <script>
         window.orderId = '@Model.Order.Id';
         window.orderNumber = '@Model.Order.OrderNumber';
         window.currentOrderId = '@Model.Order.Id';
+        window.isAdminOrManager = @Json.Serialize(Model.IsAdminOrManager());
+        window.currentUserStoreId = @Json.Serialize(Model.CurrentUserStoreId);
+        window.rolePrefix = "@Model.RoleBasedPrefix";
     </script>
-    <script src="~/js/admin/orders/detail.js"></script>
-    <abp-script-bundle name="Shared.Order.SignalR" />
 }
 
 <!-- Page Header -->

@@ -5,18 +5,9 @@
     const activeNotifications = new Set();
     const DEFAULT_TIMEOUT_MS = 5000;
 
-    /**
-     * Display a notification, suppressing duplicates that are already visible.
-     *
-     * @param {string} message
-     * @param {string} [title]
-     * @param {'success'|'error'|'info'|'warn'} [type]
-     * @param {object} [options]   Passed through to abp.notify
-     */
     function showNotification(message, title, type, options) {
         type = type || 'info';
         options = options || {};
-
         const key = `${type}|${title}|${message}`;
         if (activeNotifications.has(key)) return;
 
@@ -33,15 +24,7 @@
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Patch abp.notify so that ALL callers (including ABP internals) benefit
-    // from deduplication without losing the original implementation.
-    //
-    // Deferred until 'abp.setupComplete' so that ABP's own async bootstrap
-    // cannot overwrite the patch after we apply it. Falls back to immediate
-    // patching on pages where ABP is loaded synchronously and the event will
-    // never fire.
-    // -------------------------------------------------------------------------
+
     global.abp = global.abp || {};
     global.abp.notify = global.abp.notify || {};
     global.abp.message = global.abp.message || {};

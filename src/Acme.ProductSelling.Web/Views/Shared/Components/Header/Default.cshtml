@@ -1,4 +1,4 @@
-﻿@using Acme.ProductSelling.Permissions
+@using Acme.ProductSelling.Permissions
 @using Acme.ProductSelling.Web.Views.Shared.Components.CategorySidebar
 @using Microsoft.AspNetCore.Authorization
 @using Acme.ProductSelling.Identity
@@ -11,22 +11,13 @@
     var title = ViewData["Title"]?.ToString();
     var titleAppName = L["Menu:AppName"].ToString();
     bool checkTitle = title.ToLower().Contains(titleAppName.ToLower());
+    var roleBasedPrefix = ViewData["RoleBasedPrefix"]?.ToString() ?? "admin";
+    // Pre-apply show-on-scroll on the server for non-homepage pages to prevent
+    // the flicker caused by JS adding the class after DOMContentLoaded.
+    var isHomepage = Context.Request.Path == "/" || Context.Request.Path == "";
+    var categoryBtnClass = isHomepage ? "category-btn d-none d-lg-flex ms-3" : "category-btn d-none d-lg-flex ms-3 show-on-scroll";
 }
-<div class="top-bar">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <small>
-                    <i class="fas fa-phone"></i> +1 234 567 890 |
-                    <i class="fas fa-envelope"></i> support@techstore.com
-                </small>
-            </div>
-            <div class="col-md-6 text-end">
-                <small>Free Shipping on Orders Over $50</small>
-            </div>
-        </div>
-    </div>
-</div>
+
 <nav class="modern-header" id="mainHeader">
     <div class="header-container d-flex align-items-center">
         <!-- Logo -->
@@ -40,7 +31,7 @@
         </button>
 
         <!-- Desktop Category Button -->
-        <button class="category-btn d-none d-lg-flex ms-3"
+        <button class="@categoryBtnClass"
                 type="button"
                 id="categoryMenuBtn"
                 aria-label="Categories">
@@ -59,7 +50,16 @@
                 </button>
             </form>
         </div>
-
+        <div class="d-none d-lg-block d-flex ms-1">
+            @if (hasAdminPermission)
+            {
+                <a class="btn btn-light border-1" href="/@roleBasedPrefix">
+                    <i class="bi bi-shield-lock"></i>
+                    @L["Admin:Panel"]
+                </a>
+            }
+            
+        </div>
         <!-- Desktop Actions -->
         <div class="header-actions ms-auto d-none d-lg-flex">
             <a href="#" class="hotline-link">
@@ -89,19 +89,11 @@
                             <i class="bi bi-bag"></i>
                             @L["Order:MyOrders"]
                         </a>
-                        @if (hasAdminPermission)
-                        {
-                            <a class="dropdown-item" asp-page="/Admin/Index" >
-                                <i class="bi bi-shield-lock"></i>
-                                @L["Admin:Panel"]
-                            </a>
-                        }
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/Account/Logout?returnUrl=/" >
+                        <a class="dropdown-item" href="/Account/Logout?returnUrl=/">
                             <i class="bi bi-box-arrow-right"></i>
                             @L["Logout"]
                         </a>
-
                     </div>
                 </div>
             }
@@ -220,7 +212,7 @@
                 <!-- Admin Section -->
                 <div class="mobile-account-section">
                     <h5 class="mobile-account-section-title">@L["Admin"]</h5>
-                    <a class="mobile-account-item" href="@Url.Page("/Admin/Index", new { area = "" })" >
+                    <a class="mobile-account-item" href="@Url.Page($"/{roleBasedPrefix}/Index", new { area = "" })">
                         <i class="bi bi-shield-lock"></i>
                         <span>@L["Admin:Panel"]</span>
                     </a>

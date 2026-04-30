@@ -42,7 +42,12 @@ namespace Acme.ProductSelling.Chatbot
                 var contents = new List<Content>();
                 if (conversationHistory != null)
                 {
-                    foreach (var item in conversationHistory)
+                    // Cap history to avoid bloated context that increases hallucination risk
+                    var cappedHistory = conversationHistory
+                        .TakeLast(_settings.MaxConversationHistory)
+                        .ToList();
+
+                    foreach (var item in cappedHistory)
                     {
                         // Map "user" -> "user", "assistant" -> "model" for Gemini
                         var apiRole = item.role == "user" ? "user" : "model";
@@ -54,16 +59,11 @@ namespace Acme.ProductSelling.Chatbot
                     }
                 }
 
-                var finalMessage = userMessage;
-                if (!string.IsNullOrEmpty(systemContext))
-                {
-                    // Prepended system instruction is standard for one-shot RAG
-                    finalMessage = $"[SYSTEM INSTRUCTION: {systemContext}]\n\n[USER QUERY]: {userMessage}";
-                }
+                // systemContext is passed via SystemInstruction below — do NOT duplicate it here.
                 contents.Add(new Content
                 {
                     Role = "user",
-                    Parts = new List<Part> { new Part { Text = finalMessage } }
+                    Parts = new List<Part> { new Part { Text = userMessage } }
                 });
 
                 // Build the full prompt with context
@@ -100,12 +100,14 @@ namespace Acme.ProductSelling.Chatbot
 
                     var finalText = string.Join("\n", textParts);
 
-                    // Add a tiny footnote if grounding was used (Optional UI touch)
-                    /* 
-                    if (candidate.GroundingMetadata?.SearchEntryPoint != null) {
-                        finalText += "\n\n(Source: Google Search)";
-                    } 
-                    */
+                    // If we offered web search but Gemini chose NOT to use it, warn the user.
+                    // GroundingMetadata is null/empty when no search occurred.
+                    bool offeredSearch = _settings.EnableWebSearch && tools.Any();
+                    bool didSearch = candidate.GroundingMetadata?.SearchEntryPoint != null;
+                    if (offeredSearch && !didSearch)
+                    {
+                        finalText += "\n\n> ⚠️ *This response is based on AI training data and may be outdated or inaccurate for real products and prices. Please verify before purchasing.*";
+                    }
 
                     return finalText;
                 }
@@ -247,4 +249,3 @@ namespace Acme.ProductSelling.Chatbot
         }
     }
 }
-

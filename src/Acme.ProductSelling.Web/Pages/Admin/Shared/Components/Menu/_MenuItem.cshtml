@@ -1,4 +1,4 @@
-﻿@using Volo.Abp.UI.Navigation
+@using Volo.Abp.UI.Navigation
 @model IEnumerable<ApplicationMenuItem>
 
 @{
@@ -37,7 +37,7 @@
         }
         else // This item has a submenu
         {
-            <div class="menu-link @(isBranchActive ? "active" : "")" onclick="toggleSubmenu(this)">
+            <div class="menu-link @(isBranchActive ? "active" : "")" onclick="AdminUI.toggleSubmenu(this)">
                 <span>
                     @if (!string.IsNullOrEmpty(menuItem.Icon))
                     {

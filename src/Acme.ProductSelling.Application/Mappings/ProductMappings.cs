@@ -13,6 +13,12 @@ namespace Acme.ProductSelling.Products;
 [MapExtraProperties]
 public partial class ProductToProductDtoMapper : MapperBase<Product, ProductDto>
 {
+    private readonly SpecificationBaseToDtoMapper _specMapper;
+
+    public ProductToProductDtoMapper(SpecificationBaseToDtoMapper specMapper)
+    {
+        _specMapper = specMapper;
+    }
     public override ProductDto Map(Product source)
     {
         var dto = MapInternal(source);
@@ -37,36 +43,36 @@ public partial class ProductToProductDtoMapper : MapperBase<Product, ProductDto>
     [MapperIgnoreTarget(nameof(ProductDto.IsAvailableForPurchase))]
     [MapperIgnoreTarget(nameof(ProductDto.TotalStockAcrossAllStores))]
     [MapperIgnoreTarget(nameof(ProductDto.StoreAvailability))]
-
-    [MapperIgnoreTarget(nameof(ProductDto.MonitorSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.CpuSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.MotherboardSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.RamSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.PsuSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.KeyboardSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.CaseSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.CpuCoolerSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.GpuSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.StorageSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.MouseSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.LaptopSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.HeadsetSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.SpeakerSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.WebcamSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.CableSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.SoftwareSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.CaseFanSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.ChairSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.DeskSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.ChargerSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.ConsoleSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.HandheldSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.HubSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.MemoryCardSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.MicrophoneSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.MousepadSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.NetworkHardwareSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.PowerBankSpecification))]
+    [MapperIgnoreTarget(nameof(ProductDto.SpecificationBase))]
+    //[MapperIgnoreTarget(nameof(ProductDto.MonitorSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.CpuSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.MotherboardSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.RamSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.PsuSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.KeyboardSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.CaseSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.CpuCoolerSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.GpuSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.StorageSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.MouseSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.LaptopSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.HeadsetSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.SpeakerSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.WebcamSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.CableSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.SoftwareSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.CaseFanSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.ChairSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.DeskSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.ChargerSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.ConsoleSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.HandheldSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.HubSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.MemoryCardSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.MicrophoneSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.MousepadSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.NetworkHardwareSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.PowerBankSpecification))]
     private partial ProductDto MapInternal(Product source);
     [MapProperty(nameof(Product.Category.Name), nameof(ProductDto.CategoryName))]
     [MapProperty(nameof(Product.Manufacturer.Name), nameof(ProductDto.ManufacturerName))]
@@ -74,35 +80,37 @@ public partial class ProductToProductDtoMapper : MapperBase<Product, ProductDto>
     [MapperIgnoreTarget(nameof(ProductDto.IsAvailableForPurchase))]
     [MapperIgnoreTarget(nameof(ProductDto.TotalStockAcrossAllStores))]
     [MapperIgnoreTarget(nameof(ProductDto.StoreAvailability))]
-    [MapperIgnoreTarget(nameof(ProductDto.MonitorSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.CpuSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.MotherboardSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.RamSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.PsuSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.KeyboardSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.CaseSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.CpuCoolerSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.GpuSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.StorageSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.MouseSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.LaptopSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.HeadsetSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.SpeakerSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.WebcamSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.CableSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.SoftwareSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.CaseFanSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.ChairSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.DeskSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.ChargerSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.ConsoleSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.HandheldSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.HubSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.MemoryCardSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.MicrophoneSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.MousepadSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.NetworkHardwareSpecification))]
-    [MapperIgnoreTarget(nameof(ProductDto.PowerBankSpecification))]
+    [MapperIgnoreTarget(nameof(ProductDto.SpecificationBase))]
+
+    //[MapperIgnoreTarget(nameof(ProductDto.MonitorSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.CpuSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.MotherboardSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.RamSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.PsuSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.KeyboardSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.CaseSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.CpuCoolerSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.GpuSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.StorageSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.MouseSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.LaptopSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.HeadsetSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.SpeakerSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.WebcamSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.CableSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.SoftwareSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.CaseFanSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.ChairSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.DeskSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.ChargerSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.ConsoleSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.HandheldSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.HubSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.MemoryCardSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.MicrophoneSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.MousepadSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.NetworkHardwareSpecification))]
+    //[MapperIgnoreTarget(nameof(ProductDto.PowerBankSpecification))]
     private partial void MapInternal(Product source, ProductDto destination);
 
     public override void AfterMap(Product source, ProductDto destination)
@@ -110,125 +118,128 @@ public partial class ProductToProductDtoMapper : MapperBase<Product, ProductDto>
         destination.IsAvailableForPurchase = source.IsAvailableForPurchase();
 
         destination.TotalStockAcrossAllStores = source.StoreInventories?.Sum(x => x.Quantity) ?? 0;
-
-        switch (source.SpecificationBase)
+        if (source.SpecificationBase != null)
         {
-            case MonitorSpecification monitorSpec:
-                destination.MonitorSpecification = MapMonitor(monitorSpec);
-                break;
-
-            case CpuSpecification cpuSpec:
-                destination.CpuSpecification = MapCpu(cpuSpec);
-                break;
-
-            case MotherboardSpecification mbSpec:
-                destination.MotherboardSpecification = MapMb(mbSpec);
-                break;
-
-            case RamSpecification ramSpec:
-                destination.RamSpecification = MapRam(ramSpec);
-                break;
-
-            case PsuSpecification psuSpec:
-                destination.PsuSpecification = MapPsu(psuSpec);
-                break;
-
-            case KeyboardSpecification kbSpec:
-                destination.KeyboardSpecification = MapKb(kbSpec);
-                break;
-
-            case CaseSpecification caseSpec:
-                destination.CaseSpecification = MapCase(caseSpec);
-                break;
-
-            case CpuCoolerSpecification coolerSpec:
-                destination.CpuCoolerSpecification = MapCooler(coolerSpec);
-                break;
-
-            case GpuSpecification gpuSpec:
-                destination.GpuSpecification = MapGpu(gpuSpec);
-                break;
-
-            case StorageSpecification storageSpec:
-                destination.StorageSpecification = MapStorage(storageSpec);
-                break;
-
-            case MouseSpecification mouseSpec:
-                destination.MouseSpecification = MapMouse(mouseSpec);
-                break;
-
-            case LaptopSpecification laptopSpec:
-                destination.LaptopSpecification = MapLaptop(laptopSpec);
-                break;
-
-            case HeadsetSpecification headsetSpec:
-                destination.HeadsetSpecification = MapHeadset(headsetSpec);
-                break;
-
-            case SpeakerSpecification speakerSpec:
-                destination.SpeakerSpecification = MapSpeaker(speakerSpec);
-                break;
-
-            case WebcamSpecification webcamSpec:
-                destination.WebcamSpecification = MapWebcam(webcamSpec);
-                break;
-
-            case CableSpecification cableSpec:
-                destination.CableSpecification = MapCable(cableSpec);
-                break;
-
-            case SoftwareSpecification softwareSpec:
-                destination.SoftwareSpecification = MapSoftware(softwareSpec);
-                break;
-
-            case CaseFanSpecification caseFanSpec:
-                destination.CaseFanSpecification = MapCaseFan(caseFanSpec);
-                break;
-
-            case ChairSpecification chairSpec:
-                destination.ChairSpecification = MapChair(chairSpec);
-                break;
-
-            case DeskSpecification deskSpec:
-                destination.DeskSpecification = MapDesk(deskSpec);
-                break;
-
-            case ChargerSpecification chargerSpec:
-                destination.ChargerSpecification = MapCharger(chargerSpec);
-                break;
-
-            case ConsoleSpecification consoleSpec:
-                destination.ConsoleSpecification = MapConsole(consoleSpec);
-                break;
-
-            case HandheldSpecification handheldSpec:
-                destination.HandheldSpecification = MapHandheld(handheldSpec);
-                break;
-
-            case HubSpecification hubSpec:
-                destination.HubSpecification = MapHub(hubSpec);
-                break;
-
-            case MemoryCardSpecification memoryCardSpec:
-                destination.MemoryCardSpecification = MapMemoryCard(memoryCardSpec);
-                break;
-
-            case MicrophoneSpecification micSpec:
-                destination.MicrophoneSpecification = MapMicrophone(micSpec);
-                break;
-
-            case MousePadSpecification mousepadSpec:
-                destination.MousepadSpecification = MapMousePad(mousepadSpec);
-                break;
-
-            case NetworkHardwareSpecification networkSpec:
-                destination.NetworkHardwareSpecification = MapNetwork(networkSpec);
-                break;
-
-            case PowerBankSpecification powerBankSpec:
-                destination.PowerBankSpecification = MapPowerBank(powerBankSpec);
-                break;
+            destination.SpecificationBase = _specMapper.Map(source.SpecificationBase);
         }
+        //switch (source.SpecificationBase)
+        //{
+        //    case MonitorSpecification monitorSpec:
+        //        destination.MonitorSpecification = MapMonitor(monitorSpec);
+        //        break;
+
+        //    case CpuSpecification cpuSpec:
+        //        destination.CpuSpecification = MapCpu(cpuSpec);
+        //        break;
+
+        //    case MotherboardSpecification mbSpec:
+        //        destination.MotherboardSpecification = MapMb(mbSpec);
+        //        break;
+
+        //    case RamSpecification ramSpec:
+        //        destination.RamSpecification = MapRam(ramSpec);
+        //        break;
+
+        //    case PsuSpecification psuSpec:
+        //        destination.PsuSpecification = MapPsu(psuSpec);
+        //        break;
+
+        //    case KeyboardSpecification kbSpec:
+        //        destination.KeyboardSpecification = MapKb(kbSpec);
+        //        break;
+
+        //    case CaseSpecification caseSpec:
+        //        destination.CaseSpecification = MapCase(caseSpec);
+        //        break;
+
+        //    case CpuCoolerSpecification coolerSpec:
+        //        destination.CpuCoolerSpecification = MapCooler(coolerSpec);
+        //        break;
+
+        //    case GpuSpecification gpuSpec:
+        //        destination.GpuSpecification = MapGpu(gpuSpec);
+        //        break;
+
+        //    case StorageSpecification storageSpec:
+        //        destination.StorageSpecification = MapStorage(storageSpec);
+        //        break;
+
+        //    case MouseSpecification mouseSpec:
+        //        destination.MouseSpecification = MapMouse(mouseSpec);
+        //        break;
+
+        //    case LaptopSpecification laptopSpec:
+        //        destination.LaptopSpecification = MapLaptop(laptopSpec);
+        //        break;
+
+        //    case HeadsetSpecification headsetSpec:
+        //        destination.HeadsetSpecification = MapHeadset(headsetSpec);
+        //        break;
+
+        //    case SpeakerSpecification speakerSpec:
+        //        destination.SpeakerSpecification = MapSpeaker(speakerSpec);
+        //        break;
+
+        //    case WebcamSpecification webcamSpec:
+        //        destination.WebcamSpecification = MapWebcam(webcamSpec);
+        //        break;
+
+        //    case CableSpecification cableSpec:
+        //        destination.CableSpecification = MapCable(cableSpec);
+        //        break;
+
+        //    case SoftwareSpecification softwareSpec:
+        //        destination.SoftwareSpecification = MapSoftware(softwareSpec);
+        //        break;
+
+        //    case CaseFanSpecification caseFanSpec:
+        //        destination.CaseFanSpecification = MapCaseFan(caseFanSpec);
+        //        break;
+
+        //    case ChairSpecification chairSpec:
+        //        destination.ChairSpecification = MapChair(chairSpec);
+        //        break;
+
+        //    case DeskSpecification deskSpec:
+        //        destination.DeskSpecification = MapDesk(deskSpec);
+        //        break;
+
+        //    case ChargerSpecification chargerSpec:
+        //        destination.ChargerSpecification = MapCharger(chargerSpec);
+        //        break;
+
+        //    case ConsoleSpecification consoleSpec:
+        //        destination.ConsoleSpecification = MapConsole(consoleSpec);
+        //        break;
+
+        //    case HandheldSpecification handheldSpec:
+        //        destination.HandheldSpecification = MapHandheld(handheldSpec);
+        //        break;
+
+        //    case HubSpecification hubSpec:
+        //        destination.HubSpecification = MapHub(hubSpec);
+        //        break;
+
+        //    case MemoryCardSpecification memoryCardSpec:
+        //        destination.MemoryCardSpecification = MapMemoryCard(memoryCardSpec);
+        //        break;
+
+        //    case MicrophoneSpecification micSpec:
+        //        destination.MicrophoneSpecification = MapMicrophone(micSpec);
+        //        break;
+
+        //    case MousePadSpecification mousepadSpec:
+        //        destination.MousepadSpecification = MapMousePad(mousepadSpec);
+        //        break;
+
+        //    case NetworkHardwareSpecification networkSpec:
+        //        destination.NetworkHardwareSpecification = MapNetwork(networkSpec);
+        //        break;
+
+        //    case PowerBankSpecification powerBankSpec:
+        //        destination.PowerBankSpecification = MapPowerBank(powerBankSpec);
+        //        break;
+        //}
     }
 
 

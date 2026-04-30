@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "MoMoCallback";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model PaymentResultViewModel
+
+<div class="text-center mt-5">
+    <h3>@Model.Message</h3>
+    <p>Đang chuyển hướng sau <span id="countdown">3</span> giây...</p>
+</div>
+
+@section scripts {
+    <script>
+        let seconds = 3;
+        const el = document.getElementById('countdown');
+        const interval = setInterval(() => {
+        seconds--;
+        el.textContent = seconds;
+        if (seconds <= 0) {
+        clearInterval(interval);
+        window.location.href = '@Model.RedirectUrl';
+        }
+        }, 1000);
+    </script>
+}

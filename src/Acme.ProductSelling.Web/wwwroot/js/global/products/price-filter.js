@@ -8,7 +8,7 @@
         this.searchKeyword = config.searchKeyword || '';
         this.pageSize = config.pageSize || 12;
         this.showManufacturerFilter = config.showManufacturerFilter || false;
-        this.apiEndpoint = config.apiEndpoint || '/api/products/filter';
+        this.apiEndpoint = config.apiEndpoint || '/api/app/product/filter';
         this.onFilter = config.onFilter;
 
         // ✅ LOADING DELAY CONFIGURATION
