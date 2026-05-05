@@ -55,7 +55,7 @@ namespace Acme.ProductSelling.Products
             // Act
             var result = await _productAppService.CreateAsync(new CreateUpdateProductDto 
             {
-                ProductName = "Test Product with Spec",
+                ProductName = "Test Product",
                 Description = "Test Product Description",
                 OriginalPrice = 100m,
                 DiscountedPrice = 90m,
@@ -64,14 +64,6 @@ namespace Acme.ProductSelling.Products
                 CategoryId = categoryId,
                 ManufacturerId = manufacturerId,
                 UrlSlug = "test-product-with-spec",
-                DeskSpecification = new Acme.ProductSelling.Specifications.CreateUpdateDeskSpecificationDto
-                {
-                    Width = 120,
-                    Depth = 60,
-                    Height = 75,
-                    Color = "Black",
-                    IsHeightAdjustable = true
-                }
             });
 
             // Assert

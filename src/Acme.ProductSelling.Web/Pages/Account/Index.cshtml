@@ -1,4 +1,4 @@
-﻿@page "/account"
+@page "/account"
 @model Acme.ProductSelling.Web.Pages.Account.IndexModel
 @{
     Layout = "/Views/Shared/_Layout.cshtml";
@@ -11,142 +11,85 @@
 @section scripts {
     <script src="~/js/global/user/account.js"></script>
 }
+
 <div class="account-management-container">
-    <!-- Header -->
-    <div class="account-header">
-        <h1><i class="fas fa-user-circle"></i> @L["Account:ManageAccount"]</h1>
-        <p>@L["Account:ManageAccountDescription"]</p>
+    <div class="account-header modern-header">
+        <div class="header-content">
+            <h1><i class="fas fa-user-circle"></i> @L["Account:ManageAccount"]</h1>
+            <p>@L["Account:ManageAccountDescription"]</p>
+        </div>
+        <div class="header-decoration"></div>
     </div>
 
-    <!-- Tabs Navigation -->
-    <div class="tabs-container">
-        <ul class="custom-tabs">
-            <li>
-                <button type="button" class="tab-button active" data-tab="profile">
-                    <i class="fas fa-user"></i>
-                    <span>@L["Account:ProfileInformation"]</span>
-                </button>
-            </li>
-            <li>
-                <button type="button" class="tab-button" data-tab="security">
-                    <i class="fas fa-lock"></i>
-                    <span>@L["Account:Security"]</span>
-                </button>
-            </li>
-            <li>
-                <button type="button" class="tab-button" data-tab="addresses">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>@L["Account:Addresses"]</span>
-                </button>
-            </li>
-        </ul>
+    <div class="account-body modern-card">
+        <div class="account-sidebar">
+            <ul class="nav-menu">
+                <li>
+                    <a href="/account" class="nav-item active">
+                        <i class="fas fa-user"></i>
+                        <span>@L["Account:ProfileInformation"]</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/account/security" class="nav-item">
+                        <i class="fas fa-lock"></i>
+                        <span>@L["Account:Security"]</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/account/addresses" class="nav-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>@L["Account:Addresses"]</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
 
-        <!-- Tab Content -->
-        <div class="tabs-content">
-            <!-- Profile Tab -->
-            <div id="profile-tab" class="tab-content active">
+        <div class="account-content">
+            <div class="content-panel fade-in active">
                 <form method="post" asp-page-handler="UpdateProfile" id="profile-form">
-                    <div class="info-card">
+                    <div class="info-alert glass-alert">
                         <i class="fas fa-info-circle"></i>
                         <span>@L["Account:ProfileInfoDescription"]</span>
                     </div>
 
                     <div class="form-section">
-                        <h3 class="form-section-title">
-                            <i class="fas fa-id-card"></i>
+                        <h3 class="section-title">
                             @L["Account:BasicInformation"]
                         </h3>
-                        <div class="form-grid">
-                            <abp-input asp-for="ProfileInput.UserName" />
-                            <abp-input asp-for="ProfileInput.Email" />
-                            <abp-input asp-for="ProfileInput.Name" />
-                            <abp-input asp-for="ProfileInput.Surname" />
-                            <abp-input asp-for="ProfileInput.PhoneNumber" />
-                            <abp-input asp-for="ProfileInput.DateOfBirth" type="date"/>
-                        </div>
-                    </div>
-
-                    <div class="form-actions">
-                        <abp-button button-type="Secondary" type="button" onclick="resetForm('profile-form')">
-                            <i class="fas fa-undo"></i> @L["Account:Reset"]
-                        </abp-button>
-                        <abp-button button-type="Primary" type="submit" busy-text="@L["Account:Saving"]">
-                            <i class="fas fa-save"></i> @L["Account:SaveChanges"]
-                        </abp-button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Security Tab -->
-            <div id="security-tab" class="tab-content">
-                <form method="post" asp-page-handler="ChangePassword" id="password-form">
-                    <div class="info-card">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>@L["Account:SecurityDescription"]</span>
-                    </div>
-
-                    <div class="form-section">
-                        <h3 class="form-section-title">
-                            <i class="fas fa-key"></i>
-                            @L["Account:ChangePassword"]
-                        </h3>
-                        <div class="form-grid">
-                            <div>
-                                <abp-input asp-for="PasswordInput.CurrentPassword" />
+                        <div class="form-grid modern-grid">
+                            <abp-input asp-for="@Model.ProfileInput.UserName" />
+                            <abp-input asp-for="@Model.ProfileInput.Email" />
+                            <abp-input asp-for="@Model.ProfileInput.Name" />
+                            <abp-input asp-for="@Model.ProfileInput.Surname" />
+                            <abp-input asp-for="@Model.ProfileInput.PhoneNumber" />
+                            <div class="mb-3">
+                                <label asp-for="ProfileInput.DateOfBirth" class="form-label"></label>
+                                <input name="ProfileInput.DateOfBirth"
+                                       id="ProfileInput_DateOfBirth"
+                                       type="date"
+                                       class="form-control"
+                                       value="@(Model.ProfileInput.DateOfBirth?.ToString("yyyy-MM-dd"))" />
+                                <span asp-validation-for="ProfileInput.DateOfBirth" class="text-danger"></span>
                             </div>
-                            <div>
-                                <abp-input asp-for="PasswordInput.NewPassword" />
-                                <div class="password-strength">
-                                    <div class="strength-bar">
-                                        <div class="strength-bar-fill" id="password-strength-bar"></div>
-                                    </div>
-                                    <small id="password-strength-text" class="text-muted"></small>
-                                </div>
-                            </div>
-                            <div>
-                                <abp-input asp-for="PasswordInput.ConfirmPassword" />
+                            <div class="mb-3">
+                                <label class="form-label">@L["Account:Gender"]</label>
+                                <gender-select asp-for="@Model.ProfileInput.Gender" />
+                                <span asp-validation-for="@Model.ProfileInput.Gender" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-actions">
-                        <abp-button button-type="Secondary" type="button" onclick="resetForm('password-form')">
+                        <button type="button" class="btn-modern btn-secondary" onclick="resetForm('profile-form')">
                             <i class="fas fa-undo"></i> @L["Account:Reset"]
-                        </abp-button>
-                        <abp-button button-type="Primary" type="submit" busy-text="@L["Account:Changing"]">
-                            <i class="fas fa-lock"></i> @L["Account:ChangePassword"]
-                        </abp-button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Addresses Tab -->
-            <div id="addresses-tab" class="tab-content">
-                <form method="post" asp-page-handler="UpdateProfile" id="address-form">
-                    <div class="info-card">
-                        <i class="fas fa-truck"></i>
-                        <span>@L["Account:AddressInfoDescription"]</span>
-                    </div>
-
-                    <div class="form-section">
-                        <h3 class="form-section-title">
-                            <i class="fas fa-shipping-fast"></i>
-                            @L["Account:ShippingAddress"]
-                        </h3>
-                        <abp-input asp-for="ProfileInput.ShippingAddress" />
-                    </div>
-
-                    <div class="form-actions">
-                        <abp-button button-type="Secondary" type="button" onclick="resetForm('address-form')">
-                            <i class="fas fa-undo"></i> @L["Account:Reset"]
-                        </abp-button>
-                        <abp-button button-type="Primary" type="submit" busy-text="@L["Account:Saving"]">
+                        </button>
+                        <button type="submit" class="btn-modern btn-primary" data-busy-text="@L["Account:Saving"]">
                             <i class="fas fa-save"></i> @L["Account:SaveChanges"]
-                        </abp-button>
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
-

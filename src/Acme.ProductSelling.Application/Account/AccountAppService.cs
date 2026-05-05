@@ -1,4 +1,6 @@
-﻿using Acme.ProductSelling.Users;
+﻿using Acme.ProductSelling.Account.Dtos;
+using Acme.ProductSelling.Account.Services;
+using Acme.ProductSelling.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using System;

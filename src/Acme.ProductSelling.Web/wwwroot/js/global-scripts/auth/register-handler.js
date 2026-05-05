@@ -1,4 +1,4 @@
-﻿// Depends on: localization.js, notification.js, auth/auth-utils.js
+// Depends on: localization.js, notification.js, auth/auth-utils.js
 
 $(function () {
     'use strict';
@@ -113,10 +113,21 @@ $(function () {
             headers: AuthUtils.getABPHeaders(),
             dataType: 'json',
             timeout: 10000,
-            success: function () {
-                sessionStorage.setItem('justRegistered', 'true');
-                showNotification(L('Login:Success'), '', 'success');
-                AuthUtils.syncThenRedirect(1500);
+            success: function (response) {
+                if (response && typeof response.result !== 'undefined') {
+                    if (response.result === 1) { // 1 = Success
+                        sessionStorage.setItem('justRegistered', 'true');
+                        showNotification(L('Login:Success'), '', 'success');
+                        AuthUtils.syncThenRedirect(1500);
+                    } else {
+                        const message = response.description || 'Đăng nhập không thành công.';
+                        showNotification(message, L('AutoLogin:WarnTitle'), 'warn');
+                    }
+                } else {
+                    sessionStorage.setItem('justRegistered', 'true');
+                    showNotification(L('Login:Success'), '', 'success');
+                    AuthUtils.syncThenRedirect(1500);
+                }
             },
             error: function (xhr) {
                 let errorData;

@@ -1,4 +1,4 @@
-﻿@page "/{prefix}/products/create"
+@page "/{prefix}/products/create"
 @model Acme.ProductSelling.Web.Pages.Admin.Products.CreateModel
 
 @using Newtonsoft.Json
@@ -420,24 +420,6 @@
                         </div>
                     </div>
 
-                    @* MemoryCard Specifications *@
-                    <div class="spec-form" id="spec-MemoryCard" style="display:none;">
-                        <h6><i class="fas fa-sd-card"></i> Memory Card Specifications</h6>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <abp-input asp-for="Product.MemoryCardSpecification.Capacity" type="number" label="Capacity (GB)" />
-                                <abp-select asp-for="Product.MemoryCardSpecification.CardType" asp-items="Model.CardTypes" label="Card Type" />
-                                <abp-input asp-for="Product.MemoryCardSpecification.SpeedClass" label="Speed Class (e.g., U3, V30, A2)" />
-                                <abp-input asp-for="Product.MemoryCardSpecification.ReadSpeed" type="number" label="Read Speed (MB/s)" />
-                            </div>
-                            <div class="col-md-6">
-                                <abp-input asp-for="Product.MemoryCardSpecification.WriteSpeed" type="number" label="Write Speed (MB/s)" />
-                                <abp-input asp-for="Product.MemoryCardSpecification.Warranty" label="Warranty" />
-                                <abp-input asp-for="Product.MemoryCardSpecification.Waterproof" type="checkbox" label="Waterproof" />
-                                <abp-input asp-for="Product.MemoryCardSpecification.Shockproof" type="checkbox" label="Shockproof" />
-                            </div>
-                        </div>
-                    </div>
 
                     @* Speaker Specifications *@
                     <div class="spec-form" id="spec-Speaker" style="display:none;">
@@ -519,110 +501,7 @@
                         </div>
 
                     </div>
-                    <div class="spec-form" id="spec-Software" style="display:none;">
-                        <h6><i class="fas fa-code"></i> Software Specifications</h6>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <abp-select asp-for="Product.SoftwareSpecification.SoftwareType" asp-items="Model.SoftwareTypes" label="Software Type" />
-                                <abp-select asp-for="Product.SoftwareSpecification.LicenseType" asp-items="Model.LicenseTypes" label="License Type" />
-                                <abp-select asp-for="Product.SoftwareSpecification.Platform" asp-items="Model.Platforms" label="Platform" />
-                                <abp-input asp-for="Product.SoftwareSpecification.Version" label="Version" />
-                            </div>
-                            <div class="col-md-6">
-                                <abp-input asp-for="Product.SoftwareSpecification.Language" label="Language" />
-                                <abp-input asp-for="Product.SoftwareSpecification.DeliveryMethod" label="Delivery Method" />
-                                <abp-input asp-for="Product.SoftwareSpecification.SystemRequirements" type="textarea" rows="2" label="System Requirements" />
-                                <abp-input asp-for="Product.SoftwareSpecification.IsSubscription" type="checkbox" label="Is Subscription" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="spec-form" id="spec-NetworkHardware" style="display:none;">
-                        <h6><i class="fas fa-network-wired"></i> Network Hardware Specifications</h6>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <abp-select asp-for="Product.NetworkHardwareSpecification.DeviceType" asp-items="Model.NetworkDeviceTypes" label="Device Type" />
-                                <abp-select asp-for="Product.NetworkHardwareSpecification.WifiStandard" asp-items="Model.WifiStandards" label="WiFi Standard" />
-                                <abp-input asp-for="Product.NetworkHardwareSpecification.MaxSpeed" label="Max Speed (e.g., 3000 Mbps)" />
-                                <abp-input asp-for="Product.NetworkHardwareSpecification.Frequency" label="Frequency (e.g., 2.4GHz & 5GHz)" />
-                            </div>
-                            <div class="col-md-6">
-                                <abp-input asp-for="Product.NetworkHardwareSpecification.EthernetPorts" label="Ethernet Ports" />
-                                <abp-input asp-for="Product.NetworkHardwareSpecification.AntennaCount" type="number" label="Antenna Count" />
-                                <abp-input asp-for="Product.NetworkHardwareSpecification.HasUsb" type="checkbox" label="Has USB" />
-                                <abp-input asp-for="Product.NetworkHardwareSpecification.SecurityProtocol" label="Security Protocol" />
-                                <abp-input asp-for="Product.NetworkHardwareSpecification.Coverage" label="Coverage" />
-                            </div>
-                        </div>
-                    </div>
 
-                    @* Handheld Specifications *@
-                    <div class="spec-form" id="spec-Handheld" style="display:none;">
-                        <h6><i class="fas fa-gamepad"></i> Handheld Console Specifications</h6>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <abp-input asp-for="Product.HandheldSpecification.Processor" label="Processor" />
-                                <abp-input asp-for="Product.HandheldSpecification.Graphics" label="Graphics" />
-                                <abp-input asp-for="Product.HandheldSpecification.RAM" label="RAM" />
-                                <abp-input asp-for="Product.HandheldSpecification.Storage" label="Storage" />
-                                <abp-input asp-for="Product.HandheldSpecification.Display" label="Display" />
-                            </div>
-                            <div class="col-md-6">
-                                <abp-input asp-for="Product.HandheldSpecification.BatteryLife" label="Battery Life" />
-                                <abp-input asp-for="Product.HandheldSpecification.Weight" label="Weight" />
-                                <abp-input asp-for="Product.HandheldSpecification.OperatingSystem" label="Operating System" />
-                                <abp-select asp-for="Product.HandheldSpecification.Connectivity" asp-items="Model.ConnectivityTypes" label="Connectivity" />
-                                <abp-input asp-for="Product.HandheldSpecification.WifiVersion" label="WiFi Version" />
-                                <abp-input asp-for="Product.HandheldSpecification.BluetoothVersion" label="Bluetooth Version" />
-                            </div>
-                        </div>
-                    </div>
-
-                    @* Console Specifications *@
-                    <div class="spec-form" id="spec-Console" style="display:none;">
-                        <h6><i class="fas fa-gamepad"></i> Console Specifications</h6>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <abp-input asp-for="Product.ConsoleSpecification.Processor" label="Processor" />
-                                <abp-input asp-for="Product.ConsoleSpecification.Graphics" label="Graphics" />
-                                <abp-input asp-for="Product.ConsoleSpecification.RAM" label="RAM" />
-                                <abp-input asp-for="Product.ConsoleSpecification.Storage" label="Storage" />
-                                <abp-select asp-for="Product.ConsoleSpecification.OpticalDrive" asp-items="Model.OpticalDriveTypes" label="Optical Drive" />
-                            </div>
-                            <div class="col-md-6">
-                                <abp-input asp-for="Product.ConsoleSpecification.MaxResolution" label="Max Resolution" />
-                                <abp-input asp-for="Product.ConsoleSpecification.MaxFrameRate" label="Max Frame Rate" />
-                                <abp-input asp-for="Product.ConsoleSpecification.HDRSupport" type="checkbox" label="HDR Support" />
-                                <abp-select asp-for="Product.ConsoleSpecification.Connectivity" asp-items="Model.ConnectivityTypes" label="Connectivity" />
-                                <abp-input asp-for="Product.ConsoleSpecification.HasEthernet" type="checkbox" label="Has Ethernet" />
-                                <abp-input asp-for="Product.ConsoleSpecification.WifiVersion" label="WiFi Version" />
-                                <abp-input asp-for="Product.ConsoleSpecification.BluetoothVersion" label="Bluetooth Version" />
-                            </div>
-                        </div>
-                    </div>
-
-                    @* Hub Specifications *@
-                    <div class="spec-form" id="spec-Hub" style="display:none;">
-                        <h6><i class="fas fa-plug"></i> Hub/Docking Station Specifications</h6>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <abp-select asp-for="Product.HubSpecification.HubType" asp-items="Model.HubTypes" label="Hub Type" />
-                                <abp-input asp-for="Product.HubSpecification.PortCount" type="number" label="Total Port Count" />
-                                <abp-input asp-for="Product.HubSpecification.UsbAPorts" label="USB-A Ports (e.g., 3x USB-A 3.0)" />
-                                <abp-input asp-for="Product.HubSpecification.UsbCPorts" label="USB-C Ports" />
-                                <abp-input asp-for="Product.HubSpecification.HdmiPorts" type="number" label="HDMI Ports" />
-                                <abp-input asp-for="Product.HubSpecification.DisplayPorts" type="number" label="DisplayPorts" />
-                            </div>
-                            <div class="col-md-6">
-                                <abp-input asp-for="Product.HubSpecification.EthernetPort" type="checkbox" label="Has Ethernet Port" />
-                                <abp-input asp-for="Product.HubSpecification.SdCardReader" type="checkbox" label="Has SD Card Reader" />
-                                <abp-input asp-for="Product.HubSpecification.AudioJack" type="checkbox" label="Has Audio Jack" />
-                                <abp-input asp-for="Product.HubSpecification.MaxDisplays" type="number" label="Max Displays" />
-                                <abp-input asp-for="Product.HubSpecification.MaxResolution" label="Max Resolution" />
-                                <abp-input asp-for="Product.HubSpecification.PowerDelivery" label="Power Delivery (W)" />
-                                <abp-input asp-for="Product.HubSpecification.Color" label="Color" />
-                            </div>
-                        </div>
-                    </div>
 
                     @* Cable Specifications *@
                     <div class="spec-form" id="spec-Cable" style="display:none;">
@@ -644,50 +523,7 @@
                         </div>
                     </div>
 
-                    @* Charger Specifications *@
-                    <div class="spec-form" id="spec-Charger" style="display:none;">
-                        <h6><i class="fas fa-charging-station"></i> Charger Specifications</h6>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <abp-select asp-for="Product.ChargerSpecification.ChargerType" asp-items="Model.ChargerTypes" label="Charger Type" />
-                                <abp-input asp-for="Product.ChargerSpecification.TotalWattage" type="number" label="Total Wattage (W)" />
-                                <abp-input asp-for="Product.ChargerSpecification.PortCount" type="number" label="Total Port Count" />
-                                <abp-input asp-for="Product.ChargerSpecification.UsbCPorts" type="number" label="USB-C Ports" />
-                                <abp-input asp-for="Product.ChargerSpecification.UsbAPorts" type="number" label="USB-A Ports" />
-                            </div>
-                            <div class="col-md-6">
-                                <abp-input asp-for="Product.ChargerSpecification.MaxOutputPerPort" label="Max Output Per Port" />
-                                <abp-input asp-for="Product.ChargerSpecification.FastChargingProtocols" label="Fast Charging Protocols (e.g., PD 3.0, QC)" />
-                                <abp-input asp-for="Product.ChargerSpecification.CableIncluded" type="checkbox" label="Cable Included" />
-                                <abp-input asp-for="Product.ChargerSpecification.HasFoldablePlug" type="checkbox" label="Has Foldable Plug" />
-                                <abp-input asp-for="Product.ChargerSpecification.Technology" label="Technology (e.g., GaN)" />
-                                <abp-input asp-for="Product.ChargerSpecification.Color" label="Color" />
-                            </div>
-                        </div>
-                    </div>
 
-                    @* PowerBank Specifications *@
-                    <div class="spec-form" id="spec-PowerBank" style="display:none;">
-                        <h6><i class="fas fa-battery-full"></i> Power Bank Specifications</h6>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <abp-input asp-for="Product.PowerBankSpecification.Capacity" type="number" label="Capacity (mAh)" />
-                                <abp-input asp-for="Product.PowerBankSpecification.TotalWattage" type="number" label="Total Wattage (W)" />
-                                <abp-input asp-for="Product.PowerBankSpecification.PortCount" type="number" label="Total Port Count" />
-                                <abp-input asp-for="Product.PowerBankSpecification.UsbCPorts" type="number" label="USB-C Ports" />
-                                <abp-input asp-for="Product.PowerBankSpecification.UsbAPorts" type="number" label="USB-A Ports" />
-                                <abp-input asp-for="Product.PowerBankSpecification.InputPorts" label="Input Ports" />
-                            </div>
-                            <div class="col-md-6">
-                                <abp-input asp-for="Product.PowerBankSpecification.MaxOutputPerPort" label="Max Output Per Port" />
-                                <abp-input asp-for="Product.PowerBankSpecification.FastChargingProtocols" label="Fast Charging Protocols" />
-                                <abp-input asp-for="Product.PowerBankSpecification.RechargingTime" label="Recharging Time" />
-                                <abp-input asp-for="Product.PowerBankSpecification.HasDisplay" type="checkbox" label="Has Display" />
-                                <abp-input asp-for="Product.PowerBankSpecification.Weight" type="number" label="Weight (g)" />
-                                <abp-input asp-for="Product.PowerBankSpecification.Color" label="Color" />
-                            </div>
-                        </div>
-                    </div>
 
 
                 </div>

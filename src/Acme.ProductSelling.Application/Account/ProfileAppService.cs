@@ -1,4 +1,6 @@
-﻿using Acme.ProductSelling.Users;
+﻿using Acme.ProductSelling.Account.Dtos;
+using Acme.ProductSelling.Account.Services;
+using Acme.ProductSelling.Users;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
@@ -19,9 +21,10 @@ namespace Acme.ProductSelling.Account
         private readonly IRepository<IdentityUser, Guid> _identityUserRepository;
         private readonly ICurrentUser _currentUser;
         private readonly IdentityUserManager _userManager;
-        private readonly IRepository<Customer, Guid> _customerRepository;
+        private readonly ICustomerRepository _customerRepository;
 
-        public ProfileAppService(IRepository<IdentityUser, Guid> identityUserRepository, ICurrentUser currentUser, IdentityUserManager userManager, IRepository<Customer, Guid> customerRepository)
+        public ProfileAppService(IRepository<IdentityUser, Guid> identityUserRepository,
+            ICurrentUser currentUser, IdentityUserManager userManager, ICustomerRepository customerRepository)
         {
             _identityUserRepository = identityUserRepository;
             _currentUser = currentUser;
@@ -47,7 +50,7 @@ namespace Acme.ProductSelling.Account
             }
         }
 
-        public async Task<UpdateProfileDto> GetAsync()
+        public async Task<CustomerProfileDto> GetAsync()
         {
             var user = await _userManager.GetByIdAsync(_currentUser.GetId()) as AppUser;
             if (user == null)
@@ -55,7 +58,7 @@ namespace Acme.ProductSelling.Account
                 throw new UserFriendlyException("User not found.");
             }
 
-            var profileDto = new UpdateProfileDto
+            var customerdto = new CustomerProfileDto
             {
                 UserName = user.UserName,
                 Email = user.Email,
@@ -64,21 +67,18 @@ namespace Acme.ProductSelling.Account
                 PhoneNumber = user.PhoneNumber
             };
 
-            if (user.IsCustomer())
-            {
-                var customer = await _customerRepository.FindAsync(c => c.AppUserId == _currentUser.GetId());
-                if (customer != null)
-                {
-                    profileDto.ShippingAddress = customer.ShippingAddress;
-                    profileDto.DateOfBirth = customer.DateOfBirth;
-                    profileDto.Gender = customer.Gender;
+            var customer = await _customerRepository.FindAsync(
+                   c => c.AppUserId == _currentUser.GetId());
 
-                    profileDto.Name = customer.Name;
-                    profileDto.Surname = customer.Surname;
-                }
+            if (customer != null)
+            {
+                customerdto.DateOfBirth = customer.DateOfBirth;
+                customerdto.Gender = customer.Gender;
+                customerdto.Name = customer.Name;
+                customerdto.Surname = customer.Surname;
             }
 
-            return profileDto;
+            return customerdto;
         }
 
         public async Task<UpdateProfileDto> UpdateAsync(UpdateProfileDto input)
@@ -97,14 +97,14 @@ namespace Acme.ProductSelling.Account
 
             await _userManager.UpdateAsync(user);
 
-            if (user.IsCustomer())
+            var customer = await _customerRepository.FindAsync(c => c.AppUserId == user.Id);
+
+            if (customer != null)
             {
-                var customer = await _customerRepository.GetAsync(user.Customer.Id);
                 customer.UpdateProfile(
                     input.Name,
                     input.Surname,
                     input.PhoneNumber,
-                    input.ShippingAddress,
                     input.DateOfBirth,
                     input.Gender
                 );
@@ -114,6 +114,23 @@ namespace Acme.ProductSelling.Account
             }
 
             return input;
+        }
+        //Customer
+        public async Task UpdateShippingAddressAsync(UpdateShippingAddressDto input)
+        {
+            var customer = await _customerRepository.FindAsync(c => c.AppUserId == _currentUser.GetId());
+
+            if (customer == null)
+                throw new UserFriendlyException("Only customers have a shipping address.");
+
+            customer.UpdateProfile(
+                customer.Name,
+                customer.Surname,
+                customer.PhoneNumber,
+                customer.DateOfBirth,
+                customer.Gender
+            );
+            await _customerRepository.UpdateAsync(customer, autoSave: true);
         }
     }
 }

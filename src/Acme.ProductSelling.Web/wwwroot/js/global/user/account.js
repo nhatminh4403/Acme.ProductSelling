@@ -1,25 +1,4 @@
-﻿$(document).ready(function () {
-    // Tab switching functionality
-    $('.tab-button').on('click', function () {
-        const tabName = $(this).data('tab');
-
-        // Update active states
-        $('.tab-button').removeClass('active');
-        $(this).addClass('active');
-
-        $('.tab-content').removeClass('active');
-        $(`#${tabName}-tab`).addClass('active');
-
-        // Update URL hash without reload
-        history.pushState(null, null, `#${tabName}`);
-    });
-
-    // Handle initial hash
-    const hash = window.location.hash.substring(1);
-    if (hash) {
-        $(`.tab-button[data-tab="${hash}"]`).click();
-    }
-
+$(document).ready(function () {
     // Password strength indicator
     $('input[name="PasswordInput.NewPassword"]').on('input', function () {
         const password = $(this).val();
@@ -27,10 +6,10 @@
         updatePasswordStrength(strength);
     });
 
-    // Same as shipping checkbox
+    // Same as shipping checkbox (if used anywhere)
     $('#sameAsShipping').on('change', function () {
         if ($(this).is(':checked')) {
-            const shippingAddress = $('textarea[name="ProfileInput.ShippingAddress"]').val();
+            const shippingAddress = $('textarea[name="ShippingAddressInput.ShippingAddress"], textarea[name="ProfileInput.ShippingAddress"]').val();
             $('textarea[name="ProfileInput.BillingAddress"]').val(shippingAddress);
         }
     });
@@ -49,20 +28,24 @@ function calculatePasswordStrength(password) {
 }
 
 function updatePasswordStrength(strength) {
+    const L = abp.localization.getResource('ProductSelling');
     const bar = $('#password-strength-bar');
     const text = $('#password-strength-text');
 
     bar.removeClass('strength-weak strength-medium strength-strong');
 
-    if (strength <= 2) {
+    if (strength === 0) {
+        bar.css('width', '0');
+        text.text('');
+    } else if (strength <= 2) {
         bar.css('width', '33%').addClass('strength-weak');
-        text.text('@L["Account:PasswordStrengthWeak"]').css('color', '#dc3545');
+        text.text(L("Account:PasswordStrengthWeak")).css('color', '#ef4444');
     } else if (strength <= 4) {
         bar.css('width', '66%').addClass('strength-medium');
-        text.text('@L["Account:PasswordStrengthMedium"]').css('color', '#ffc107');
+        text.text(L("Account:PasswordStrengthMedium")).css('color', '#f59e0b');
     } else {
         bar.css('width', '100%').addClass('strength-strong');
-        text.text('@L["Account:PasswordStrengthStrong"]').css('color', '#28a745');
+        text.text(L("Account:PasswordStrengthStrong")).css('color', '#10b981');
     }
 }
 

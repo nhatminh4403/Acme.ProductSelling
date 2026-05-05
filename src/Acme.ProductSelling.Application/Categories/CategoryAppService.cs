@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Categories.Configurations;
+using Acme.ProductSelling.Categories.Configurations;
 using Acme.ProductSelling.Categories.Dtos;
 using Acme.ProductSelling.Categories.Services;
 using Acme.ProductSelling.Localization;
@@ -136,7 +136,7 @@ namespace Acme.ProductSelling.Categories
         {
             var categories = await _categoryRepository.GetListAsync();
             var manufacturersByCategory = await GetCategoryManufacturerLookupAsync();
-            var serviceCategory = categories.FirstOrDefault(c => c.SpecificationType == SpecificationType.Services);
+            // var serviceCategory = categories.FirstOrDefault(c => c.SpecificationType == SpecificationType.Services);
 
             var groupedCategories = categories
                    .Where(c => c.CategoryGroup != CategoryGroup.Individual)
@@ -270,7 +270,7 @@ namespace Acme.ProductSelling.Categories
                 SpecificationType = category.SpecificationType,
                 Manufacturers = manufacturers.Select(m => _manufacturerToDtoMapper.Map(m)).ToList(),
                 PriceRanges = priceRanges,
-                HasMegamenu = category.SpecificationType != SpecificationType.Services
+                HasMegamenu = true
             };
         }
 
@@ -302,9 +302,6 @@ namespace Acme.ProductSelling.Categories
                 CategoryGroup.StorageRamMemory => "CategoryGroup:StorageRamMemory",
                 CategoryGroup.AudioVideo => "CategoryGroup:AudioVideo",
                 CategoryGroup.MouseAndPad => "CategoryGroup:MouseAndPad",
-                CategoryGroup.Furniture => "CategoryGroup:Furniture",
-                CategoryGroup.SoftwareNetwork => "CategoryGroup:SoftwareNetwork",
-                CategoryGroup.HandheldConsole => "CategoryGroup:HandheldConsole",
                 CategoryGroup.Accessories => "CategoryGroup:Accessories",
                 CategoryGroup.Individual => "CategoryGroup:Individual",
                 _ => group.ToString()
@@ -312,7 +309,7 @@ namespace Acme.ProductSelling.Categories
         }
         private List<PriceRangeDto> GeneratePriceRangesForCategory(SpecificationType specificationType)
         {
-            if (specificationType == SpecificationType.Services || !CategoryPriceRangeConfiguration.HasPriceRanges(specificationType))
+            if (!CategoryPriceRangeConfiguration.HasPriceRanges(specificationType))
             {
                 return new List<PriceRangeDto>();
             }

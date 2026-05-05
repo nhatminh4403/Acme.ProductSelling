@@ -56,13 +56,20 @@ namespace Acme.ProductSelling.Chatbot
                 // 2. Build Analyst Prompt (The "Think")
                 var prompt = $@"
                         ROLE: You are an Executive Data Analyst for Acme Corp.
-                        TASK: Interpret the following raw JSON database statistics and write a generic textual report for the {userRole}.
+                        TASK: Interpret the following raw JSON database statistics and write a concise textual report for the {userRole}.
                         CONTEXT: The user asked: '{input.Message}'
                         RAW DATA: {dataJson}
-            
-                        GUIDANCE:
-                        - If revenue is high, be congratulatory.
-                        - If stock alerts exist, recommend ordering immediately.
+
+                        STRICT GROUNDING RULES (follow these exactly):
+                        - ONLY reference numbers and facts that appear verbatim in the RAW DATA above.
+                        - Do NOT calculate, estimate, extrapolate, or infer any figure not present in the JSON.
+                        - Do NOT compare to previous periods unless that data is in the JSON.
+                        - Do NOT say 'revenue grew X%' or 'sales increased' unless the JSON contains the prior period figure.
+                        - If a field is missing or null, say 'data not available' — do not guess.
+
+                        GUIDANCE (only after grounding rules are satisfied):
+                        - If revenue is high, be congratulatory — only if RevenueYesterday is a large number.
+                        - If Alerts contain stock warnings, recommend ordering immediately.
                         - Format with bold headings.
                     ";
 
@@ -84,8 +91,9 @@ namespace Acme.ProductSelling.Chatbot
             //  Build system context based on role
             var systemContext = BuildSystemContext(userRole, products);
 
-            //  Prepare conversation history
+            //  Prepare conversation history (capped — Gemini also caps internally, but guard here too)
             var conversationHistory = input.ConversationHistory?
+                .TakeLast(10)
                 .Select(h => (h.Role, h.Content))
                 .ToList();
 
@@ -102,9 +110,15 @@ namespace Acme.ProductSelling.Chatbot
             }
             else if (_chatbotManager.IsProductQuery(input.Message))
             {
-                // Product query but no results - search web
-                var searchInstructions = $"{systemContext}\n\nIMPORTANT: The internal database found NO products matching this query. " +
-                    $"Please use your Google Search tool to find current real-world information, prices, and reviews for '{input.Message}'.";
+                // Product query but no results found in our database.
+                // Instruct Gemini to search the web AND forbid inventing data.
+                var searchInstructions = $"{systemContext}\n\n" +
+                    $"IMPORTANT: The internal database found NO products matching this query.\n" +
+                    $"You MUST use your Google Search tool to find real, current information for '{input.Message}'.\n" +
+                    $"STRICT RULES:\n" +
+                    $"1. Do NOT invent product names, specifications, or prices from memory.\n" +
+                    $"2. Only state facts you found via Google Search.\n" +
+                    $"3. If you cannot search or find reliable results, say: 'I could not find verified information for this product. Please check our website or contact us directly.'";
                 response.Response = await _geminiApiService.GenerateContentAsync(
                     input.Message,
                     searchInstructions,

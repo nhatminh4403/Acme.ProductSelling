@@ -1,0 +1,77 @@
+@page "/account/addresses"
+@model Acme.ProductSelling.Web.Pages.Account.AddressesModel
+@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = L["Account:Addresses"];
+}
+
+@section styles {
+    <link href="~/css/global/user/account.css" rel="stylesheet" />
+}
+@section scripts {
+    <script src="~/js/global/user/account.js"></script>
+}
+
+<div class="account-management-container">
+    <div class="account-header modern-header">
+        <div class="header-content">
+            <h1><i class="fas fa-map-marker-alt"></i> @L["Account:Addresses"]</h1>
+            <p>@L["Account:AddressInfoDescription"]</p>
+        </div>
+        <div class="header-decoration"></div>
+    </div>
+
+    <div class="account-body modern-card">
+        <div class="account-sidebar">
+            <ul class="nav-menu">
+                <li>
+                    <a href="/account" class="nav-item">
+                        <i class="fas fa-user"></i>
+                        <span>@L["Account:ProfileInformation"]</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/account/security" class="nav-item">
+                        <i class="fas fa-lock"></i>
+                        <span>@L["Account:Security"]</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/account/addresses" class="nav-item active">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>@L["Account:Addresses"]</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="account-content">
+            <div class="content-panel fade-in active">
+                <form method="post" asp-page-handler="UpdateAddress" id="address-form">
+                    <div class="info-alert glass-alert primary-alert">
+                        <i class="fas fa-truck"></i>
+                        <span>@L["Account:AddressInfoDescription"]</span>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            @L["Account:ShippingAddress"]
+                        </h3>
+                        <div class="modern-grid">
+                            <abp-input asp-for="@Model.ShippingAddressInput.FullAddress" />
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-modern btn-secondary" onclick="resetForm('address-form')">
+                            <i class="fas fa-undo"></i> @L["Account:Reset"]
+                        </button>
+                        <button type="submit" class="btn-modern btn-primary" data-busy-text="@L["Account:Saving"]">
+                            <i class="fas fa-save"></i> @L["Account:SaveChanges"]
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

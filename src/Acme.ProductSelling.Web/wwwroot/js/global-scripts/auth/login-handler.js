@@ -1,4 +1,4 @@
-﻿// Depends on: localization.js, notification.js, auth/auth-utils.js
+// Depends on: localization.js, notification.js, auth/auth-utils.js
 
 $(function () {
     'use strict';
@@ -46,8 +46,20 @@ $(function () {
             headers: AuthUtils.getABPHeaders(),
             dataType: 'json',
             timeout: 15000,
-            success: function () {
-                handleLoginSuccess();
+            success: function (response) {
+                if (response && typeof response.result !== 'undefined') {
+                    if (response.result === 1) { // 1 = Success
+                        handleLoginSuccess();
+                    } else {
+                        handleLoginError({
+                            error: {
+                                message: response.description || 'Đăng nhập không thành công.'
+                            }
+                        });
+                    }
+                } else {
+                    handleLoginSuccess();
+                }
             },
             error: function (xhr) {
                 let errorData;

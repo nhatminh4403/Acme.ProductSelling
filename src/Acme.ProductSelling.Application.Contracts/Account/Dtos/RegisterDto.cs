@@ -2,7 +2,7 @@
 using Volo.Abp.Identity;
 using Volo.Abp.Validation;
 
-namespace Acme.ProductSelling.Account
+namespace Acme.ProductSelling.Account.Dtos
 {
     public class RegisterDto : Volo.Abp.Account.RegisterDto
     {

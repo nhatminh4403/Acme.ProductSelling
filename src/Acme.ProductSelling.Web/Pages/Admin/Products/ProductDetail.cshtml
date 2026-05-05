@@ -1,4 +1,4 @@
-﻿@page "/{prefix}/products/detail/{id:Guid}"
+@page "/{prefix}/products/detail/{id:Guid}"
 @using Acme.ProductSelling.Categories
 @using Microsoft.AspNetCore.Authorization
 @using Acme.ProductSelling.Permissions
@@ -91,9 +91,6 @@
                 case StorageSpecificationDto storageSpec:
                     <partial name="~/Pages/Components/ProductSpecs/_StorageSpecsPartial.cshtml" model="storageSpec" />
                     break;
-                case MemoryCardSpecificationDto memCardSpec:
-                    <partial name="~/Pages/Components/ProductSpecs/_MemoryCardSpecsPartial.cshtml" model="memCardSpec" />
-                    break;
 
                 // --- Cooling & Power ---
                 case PsuSpecificationDto psuSpec:
@@ -112,12 +109,6 @@
                 // --- Computers ---
                 case LaptopSpecificationDto laptopSpec:
                     <partial name="~/Pages/Components/ProductSpecs/_LaptopSpecsPartial.cshtml" model="laptopSpec" />
-                    break;
-                case HandheldSpecificationDto handheldSpec:
-                    <partial name="~/Pages/Components/ProductSpecs/_HandheldSpecsPartial.cshtml" model="handheldSpec" />
-                    break;
-                case ConsoleSpecificationDto consoleSpec:
-                    <partial name="~/Pages/Components/ProductSpecs/_ConsoleSpecsPartial.cshtml" model="consoleSpec" />
                     break;
 
                 // --- Peripherals ---
@@ -148,34 +139,11 @@
                     <partial name="~/Pages/Components/ProductSpecs/_WebcamSpecsPartial.cshtml" model="webcamSpec" />
                     break;
 
-                // --- Furniture ---
-                case ChairSpecificationDto chairSpec:
-                    <partial name="~/Pages/Components/ProductSpecs/_ChairSpecsPartial.cshtml" model="chairSpec" />
-                    break;
-                case DeskSpecificationDto deskSpec:
-                    <partial name="~/Pages/Components/ProductSpecs/_DeskSpecsPartial.cshtml" model="deskSpec" />
-                    break;
 
-                // --- Networking & Software ---
-                case NetworkHardwareSpecificationDto netSpec:
-                    <partial name="~/Pages/Components/ProductSpecs/_NetworkHardwareSpecsPartial.cshtml" model="netSpec" />
-                    break;
-                case SoftwareSpecificationDto softwareSpec:
-                    <partial name="~/Pages/Components/ProductSpecs/_SoftwareSpecsPartial.cshtml" model="softwareSpec" />
-                    break;
 
                 // --- Accessories ---
-                case HubSpecificationDto hubSpec:
-                    <partial name="~/Pages/Components/ProductSpecs/_HubSpecsPartial.cshtml" model="hubSpec" />
-                    break;
                 case CableSpecificationDto cableSpec:
                     <partial name="~/Pages/Components/ProductSpecs/_CableSpecsPartial.cshtml" model="cableSpec" />
-                    break;
-                case ChargerSpecificationDto chargerSpec:
-                    <partial name="~/Pages/Components/ProductSpecs/_ChargerSpecsPartial.cshtml" model="chargerSpec" />
-                    break;
-                case PowerBankSpecificationDto powerBankSpec:
-                    <partial name="~/Pages/Components/ProductSpecs/_PowerBankSpecsPartial.cshtml" model="powerBankSpec" />
                     break;
 
                 // --- Fallback ---

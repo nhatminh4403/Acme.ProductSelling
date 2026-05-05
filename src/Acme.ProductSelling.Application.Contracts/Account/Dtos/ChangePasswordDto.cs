@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Acme.ProductSelling.Account
+namespace Acme.ProductSelling.Account.Dtos
 {
     public class ChangePasswordDto
     {

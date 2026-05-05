@@ -1,4 +1,4 @@
-﻿namespace Acme.ProductSelling.Account
+﻿namespace Acme.ProductSelling.Account.Dtos
 {
     public class RolePrefixDto
     {

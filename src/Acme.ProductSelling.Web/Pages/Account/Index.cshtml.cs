@@ -1,7 +1,11 @@
-using Acme.ProductSelling.Account;
+using Acme.ProductSelling.Account.Dtos;
+using Acme.ProductSelling.Account.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Serilog;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Identity;
 
@@ -11,12 +15,12 @@ namespace Acme.ProductSelling.Web.Pages.Account
     public class IndexModel : ProductSellingPageModel
     {
         private readonly IdentityUserManager _userManager;
-        private readonly ProductSelling.Account.IProfileAppService _profileAppService;
-        [BindProperty]
-        public ProductSelling.Account.UpdateProfileDto ProfileInput { get; set; }
+        private readonly IProfileAppService _profileAppService;
 
-        [BindProperty]
-        public ChangePasswordDto PasswordInput { get; set; }
+        public CustomerProfileDto CustomerProfile { get; set; }
+        
+        [BindProperty(Name = "ProfileInput")]   
+        public UpdateProfileDto ProfileInput { get; set; }
 
         [TempData]
         public string SuccessMessage { get; set; }
@@ -24,22 +28,22 @@ namespace Acme.ProductSelling.Web.Pages.Account
         [TempData]
         public string ErrorMessage { get; set; }
 
-
-        public IndexModel(IdentityUserManager userManager, ProductSelling.Account.IProfileAppService iProfileAppService)
+        public IndexModel(IdentityUserManager userManager, IProfileAppService profileAppService)
         {
             _userManager = userManager;
-            _profileAppService = iProfileAppService;
+            _profileAppService = profileAppService;
         }
 
         public async Task OnGetAsync()
         {
-            ProfileInput = await _profileAppService.GetAsync();
+            await HydrateProfileInputAsync();
         }
 
         public async Task<IActionResult> OnPostUpdateProfileAsync()
         {
             if (!ModelState.IsValid)
             {
+                await HydrateProfileInputAsync();
                 return Page();
             }
 
@@ -51,38 +55,26 @@ namespace Acme.ProductSelling.Web.Pages.Account
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
+                await HydrateProfileInputAsync();
+                return Page();
             }
-
-            await _profileAppService.UpdateAsync(ProfileInput);
 
             return RedirectToPage();
         }
-        public async Task<IActionResult> OnPostChangePasswordAsync()
+
+        private async Task HydrateProfileInputAsync()
         {
-            // Clear profile validation errors
-            ModelState.Remove("ProfileInput.UserName");
-            ModelState.Remove("ProfileInput.Email");
-            // ... clear other profile fields
-
-            if (!ModelState.IsValid)
+            var profile = await _profileAppService.GetAsync();
+            ProfileInput = new UpdateProfileDto
             {
-                ProfileInput = await _profileAppService.GetAsync();
-                return Page();
-            }
-
-            try
-            {
-                await _profileAppService.ChangePasswordAsync(PasswordInput);
-                Alerts.Success(L["Account:PasswordChangedSuccessfully"]);
-            }
-            catch (Exception ex)
-            {
-                ErrorMessage = ex.Message;
-                ProfileInput = await _profileAppService.GetAsync();
-                return Page();
-            }
-
-            return RedirectToPage();
+                UserName = profile.UserName,
+                Email = profile.Email,
+                Name = profile.Name,
+                Surname = profile.Surname,
+                PhoneNumber = profile.PhoneNumber,
+                DateOfBirth = profile.DateOfBirth,
+                Gender = profile.Gender
+            };
         }
     }
 }

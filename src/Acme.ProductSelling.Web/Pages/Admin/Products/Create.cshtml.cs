@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Categories.Services;
 using Acme.ProductSelling.Folder;
 using Acme.ProductSelling.Localization;
@@ -46,23 +46,12 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
 
         // Enum-based dropdowns for new specs
         public List<SelectListItem> BearingTypes { get; set; }
-        public List<SelectListItem> CardTypes { get; set; }
         public List<SelectListItem> SpeakerTypes { get; set; }
         public List<SelectListItem> MicrophoneTypes { get; set; }
         public List<SelectListItem> FocusTypes { get; set; }
         public List<SelectListItem> MousePadMaterials { get; set; }
         public List<SelectListItem> SurfaceTypes { get; set; }
-        public List<SelectListItem> ChairMaterials { get; set; }
-        public List<SelectListItem> ArmrestTypes { get; set; }
-        public List<SelectListItem> DeskMaterials { get; set; }
-        public List<SelectListItem> SoftwareTypes { get; set; }
-        public List<SelectListItem> LicenseTypes { get; set; }
-        public List<SelectListItem> Platforms { get; set; }
-        public List<SelectListItem> NetworkDeviceTypes { get; set; }
-        public List<SelectListItem> WifiStandards { get; set; }
-        public List<SelectListItem> HubTypes { get; set; }
         public List<SelectListItem> CableTypes { get; set; }
-        public List<SelectListItem> ChargerTypes { get; set; }
         public List<SelectListItem> OpticalDriveTypes { get; set; }
 
         // Existing enums
@@ -201,21 +190,11 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
 
                 // New specs
                 CaseFanSpecification = new CreateUpdateCaseFanSpecificationDto(),
-                MemoryCardSpecification = new CreateUpdateMemoryCardSpecificationDto(),
                 SpeakerSpecification = new CreateUpdateSpeakerSpecificationDto(),
                 MicrophoneSpecification = new CreateUpdateMicrophoneSpecificationDto(),
                 WebcamSpecification = new CreateUpdateWebcamSpecificationDto(),
                 MousepadSpecification = new CreateUpdateMousePadSpecificationDto(),
-                ChairSpecification = new CreateUpdateChairSpecificationDto(),
-                DeskSpecification = new CreateUpdateDeskSpecificationDto(),
-                SoftwareSpecification = new CreateUpdateSoftwareSpecificationDto(),
-                NetworkHardwareSpecification = new CreateUpdateNetworkHardwareSpecificationDto(),
-                HandheldSpecification = new CreateUpdateHandheldSpecificationDto(),
-                ConsoleSpecification = new CreateUpdateConsoleSpecificationDto(),
-                HubSpecification = new CreateUpdateHubSpecificationDto(),
-                CableSpecification = new CreateUpdateCableSpecificationDto(),
-                ChargerSpecification = new CreateUpdateChargerSpecificationDto(),
-                PowerBankSpecification = new CreateUpdatePowerBankSpecificationDto()
+                CableSpecification = new CreateUpdateCableSpecificationDto()
             };
         }
 
@@ -314,23 +293,12 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
         {
             // New specs enums
             BearingTypes = _localizer.ToLocalizedSelectList<BearingType>();
-            CardTypes = _localizer.ToLocalizedSelectList<CardType>();
             SpeakerTypes = _localizer.ToLocalizedSelectList<SpeakerType>();
             MicrophoneTypes = _localizer.ToLocalizedSelectList<MicrophoneType>();
             FocusTypes = _localizer.ToLocalizedSelectList<FocusType>();
             MousePadMaterials = _localizer.ToLocalizedSelectList<MousePadMaterial>();
             SurfaceTypes = _localizer.ToLocalizedSelectList<SurfaceType>();
-            ChairMaterials = _localizer.ToLocalizedSelectList<ChairMaterial>();
-            ArmrestTypes = _localizer.ToLocalizedSelectList<ArmrestType>();
-            DeskMaterials = _localizer.ToLocalizedSelectList<DeskMaterial>();
-            SoftwareTypes = _localizer.ToLocalizedSelectList<SoftwareType>();
-            LicenseTypes = _localizer.ToLocalizedSelectList<LicenseType>();
-            Platforms = _localizer.ToLocalizedSelectList<Platform>();
-            NetworkDeviceTypes = _localizer.ToLocalizedSelectList<NetworkDeviceType>();
-            WifiStandards = _localizer.ToLocalizedSelectList<WifiStandard>();
-            HubTypes = _localizer.ToLocalizedSelectList<HubType>();
             CableTypes = _localizer.ToLocalizedSelectList<CableType>();
-            ChargerTypes = _localizer.ToLocalizedSelectList<ChargerType>();
             OpticalDriveTypes = _localizer.ToLocalizedSelectList<OpticalDriveType>();
 
             // Existing enums
@@ -427,21 +395,11 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
 
             // New specs
             if (activeSpecType != SpecificationType.CaseFan) Product.CaseFanSpecification = null;
-            if (activeSpecType != SpecificationType.MemoryCard) Product.MemoryCardSpecification = null;
             if (activeSpecType != SpecificationType.Speaker) Product.SpeakerSpecification = null;
             if (activeSpecType != SpecificationType.Microphone) Product.MicrophoneSpecification = null;
             if (activeSpecType != SpecificationType.Webcam) Product.WebcamSpecification = null;
             if (activeSpecType != SpecificationType.MousePad) Product.MousepadSpecification = null;
-            if (activeSpecType != SpecificationType.Chair) Product.ChairSpecification = null;
-            if (activeSpecType != SpecificationType.Desk) Product.DeskSpecification = null;
-            if (activeSpecType != SpecificationType.Software) Product.SoftwareSpecification = null;
-            if (activeSpecType != SpecificationType.NetworkHardware) Product.NetworkHardwareSpecification = null;
-            if (activeSpecType != SpecificationType.Handheld) Product.HandheldSpecification = null;
-            if (activeSpecType != SpecificationType.Console) Product.ConsoleSpecification = null;
-            if (activeSpecType != SpecificationType.Hub) Product.HubSpecification = null;
             if (activeSpecType != SpecificationType.Cable) Product.CableSpecification = null;
-            if (activeSpecType != SpecificationType.Charger) Product.ChargerSpecification = null;
-            if (activeSpecType != SpecificationType.PowerBank) Product.PowerBankSpecification = null;
         }
 
         private void LogModelStateErrors()

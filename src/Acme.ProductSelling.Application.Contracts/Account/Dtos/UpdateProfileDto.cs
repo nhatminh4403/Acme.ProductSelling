@@ -3,7 +3,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Account;
 
-namespace Acme.ProductSelling.Account
+namespace Acme.ProductSelling.Account.Dtos
 {
     public class UpdateProfileDto : ProfileDto
     {

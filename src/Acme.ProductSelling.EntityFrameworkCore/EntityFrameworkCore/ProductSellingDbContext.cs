@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Carts;
+using Acme.ProductSelling.Carts;
 using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Orders;
@@ -33,10 +33,7 @@ namespace Acme.ProductSelling.EntityFrameworkCore;
 [ReplaceDbContext(typeof(IIdentityDbContext))]
 [ReplaceDbContext(typeof(ITenantManagementDbContext))]
 [ConnectionStringName("Default")]
-public class ProductSellingDbContext :
-    AbpDbContext<ProductSellingDbContext>,
-    ITenantManagementDbContext,
-    IIdentityDbContext
+public class ProductSellingDbContext : AbpDbContext<ProductSellingDbContext>, ITenantManagementDbContext, IIdentityDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
 
@@ -73,6 +70,7 @@ public class ProductSellingDbContext :
     //public DbSet<Blog> Blogs { get; set; }
     //public DbSet<Likes> Likes { get; set; }
     public DbSet<Customer> Customers { get; set; }
+    public DbSet<Customer> Addresses { get; set; }
     public DbSet<RecentlyViewedProduct> RecentlyViewedProducts { get; set; }
     #endregion
 
@@ -111,7 +109,7 @@ public class ProductSellingDbContext :
         base.OnModelCreating(builder);
 
         /* Include modules to your migration db context */
-        #region Modules
+        #region Default Modules
         builder.ConfigurePermissionManagement();
         builder.ConfigureSettingManagement();
         builder.ConfigureBackgroundJobs();
@@ -234,7 +232,6 @@ public class ProductSellingDbContext :
         });
 
         #endregion
-
         #region Lookup Tables
         builder.Entity<CpuSocket>(b =>
         {
@@ -278,6 +275,7 @@ public class ProductSellingDbContext :
             b.Property(s => s.Name).IsRequired().HasMaxLength(50);
         });
         #endregion
+        #region Junction Tables
         builder.Entity<CaseMaterial>(b =>
         {
             b.ToTable(tablePrefix + "CaseMaterials");
@@ -293,6 +291,8 @@ public class ProductSellingDbContext :
             b.HasOne(css => css.Socket).WithMany().HasForeignKey(css => css.SocketId);
             b.HasQueryFilter(css => !css.CpuCoolerSpecification.Product.IsDeleted);
         });
+
+        #endregion
         #region Specifications
 
         // 0. Base Table Configuration
@@ -437,32 +437,15 @@ public class ProductSellingDbContext :
             b.Property(s => s.Length).HasColumnType("decimal(18,2)");
         });
 
-        // 17. Software
-        builder.Entity<SoftwareSpecification>(b => b.ToTable(tablePrefix + "SoftwareSpecifications"));
 
         // 18. Case Fan
         builder.Entity<CaseFanSpecification>(b => b.ToTable(tablePrefix + "CaseFanSpecifications"));
 
-        // 19. Chair
-        builder.Entity<ChairSpecification>(b => b.ToTable(tablePrefix + "ChairSpecifications"));
 
-        // 20. Desk
-        builder.Entity<DeskSpecification>(b => b.ToTable(tablePrefix + "DeskSpecifications"));
 
-        // 21. Charger
-        builder.Entity<ChargerSpecification>(b => b.ToTable(tablePrefix + "ChargerSpecifications"));
 
-        // 22. Console
-        builder.Entity<ConsoleSpecification>(b => b.ToTable(tablePrefix + "ConsoleSpecifications"));
 
-        // 23. Handheld
-        builder.Entity<HandheldSpecification>(b => b.ToTable(tablePrefix + "HandheldSpecifications"));
 
-        // 24. Hub
-        builder.Entity<HubSpecification>(b => b.ToTable(tablePrefix + "HubSpecifications"));
-
-        // 25. Memory Card
-        builder.Entity<MemoryCardSpecification>(b => b.ToTable(tablePrefix + "MemoryCardSpecifications"));
 
         // 26. Microphone
         builder.Entity<MicrophoneSpecification>(b => b.ToTable(tablePrefix + "MicrophoneSpecifications"));
@@ -470,11 +453,7 @@ public class ProductSellingDbContext :
         // 27. Mouse Pad
         builder.Entity<MousePadSpecification>(b => b.ToTable(tablePrefix + "MousePadSpecifications"));
 
-        // 28. Network Hardware
-        builder.Entity<NetworkHardwareSpecification>(b => b.ToTable(tablePrefix + "NetworkHardwareSpecifications"));
 
-        // 29. Power Bank
-        builder.Entity<PowerBankSpecification>(b => b.ToTable(tablePrefix + "PowerBankSpecifications"));
 
         #endregion
         #region Orders and Carts
@@ -576,7 +555,6 @@ public class ProductSellingDbContext :
             b.HasIndex(ci => ci.ProductId);
         });
         #endregion
-
         #region Users
         //staff
         builder.Entity<AppUser>(b =>
@@ -599,9 +577,19 @@ public class ProductSellingDbContext :
             b.Property(u => u.DateOfBirth).IsRequired(false);
             b.Property(u => u.Gender).IsRequired().HasDefaultValue(UserGender.NONE);
             b.Property(u => u.PhoneNumber).IsRequired(false);
-            b.Property(u => u.ShippingAddress).IsRequired(false);
             b.HasIndex(c => c.AppUserId).IsUnique();
+        });
+        builder.Entity<Address>(b =>
+        {
+            b.ToTable(tablePrefix + "Addresses");
+            b.ConfigureByConvention();
+            b.HasKey(x => x.Id);
+            b.Property(x => x.FullAddress).IsRequired().HasMaxLength(AddressConsts.MaxAddressLength);
 
+            b.HasOne<Customer>()
+             .WithMany(c => c.ShippingAddresses)
+             .HasForeignKey(a => a.CustomerId)
+             .OnDelete(DeleteBehavior.Cascade);
         });
         #endregion
     }
