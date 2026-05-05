@@ -1,20 +1,14 @@
-﻿
+
 using Acme.ProductSelling.Products;
 using System.Collections.Generic;
 
 namespace Acme.ProductSelling.Categories.Configurations
 {
-    /// <summary>
-    /// Defines price range boundaries for each category that uses price filtering
-    /// </summary>
     public static class CategoryPriceRangeConfiguration
     {
         private const decimal OpenEndedMaxValue = 999_999_999m;
 
-        /// <summary>
-        /// Maps specification types to their price range definitions
-        /// Key: SpecificationType, Value: Dictionary of PriceRangeEnum to (min, max) boundaries
-        /// </summary>
+
         private static readonly Dictionary<SpecificationType, Dictionary<PriceRangeEnum, (decimal Min, decimal Max)>>
             _priceRangesByCategory = new()
             {
@@ -75,13 +69,6 @@ namespace Acme.ProductSelling.Categories.Configurations
                     [PriceRangeEnum.High] = (5000000, OpenEndedMaxValue)
                 },
 
-                // Chair: 5M, 10M+
-                [SpecificationType.Chair] = new Dictionary<PriceRangeEnum, (decimal, decimal)>
-                {
-                    [PriceRangeEnum.Low] = (0, 4999999),
-                    [PriceRangeEnum.Medium] = (5000000, 9999999),
-                    [PriceRangeEnum.High] = (10000000, OpenEndedMaxValue)
-                },
 
                 // Headset: 1M, 2M, 3M, 4M+
                 [SpecificationType.Headset] = new Dictionary<PriceRangeEnum, (decimal, decimal)>
@@ -113,17 +100,11 @@ namespace Acme.ProductSelling.Categories.Configurations
             return _priceRangesByCategory.Keys;
         }
 
-        /// <summary>
-        /// Check if a price range is open-ended (has the max value placeholder)
-        /// </summary>
         public static bool IsOpenEndedRange(decimal maxValue)
         {
             return maxValue >= OpenEndedMaxValue;
         }
 
-        /// <summary>
-        /// Get the placeholder value used for open-ended ranges
-        /// </summary>
         public static decimal GetOpenEndedMaxValue()
         {
             return OpenEndedMaxValue;

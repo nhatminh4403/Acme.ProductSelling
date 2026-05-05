@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Specifications;
+using Acme.ProductSelling.Specifications;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -48,18 +48,8 @@ namespace Acme.ProductSelling.Products.Dtos
         public CreateUpdateSpeakerSpecificationDto? SpeakerSpecification { get; set; }
         public CreateUpdateWebcamSpecificationDto? WebcamSpecification { get; set; }
         public CreateUpdateCableSpecificationDto? CableSpecification { get; set; }
-        public CreateUpdateSoftwareSpecificationDto? SoftwareSpecification { get; set; }
         public CreateUpdateCaseFanSpecificationDto? CaseFanSpecification { get; set; }
-        public CreateUpdateChairSpecificationDto? ChairSpecification { get; set; }
-        public CreateUpdateDeskSpecificationDto? DeskSpecification { get; set; }
-        public CreateUpdateChargerSpecificationDto? ChargerSpecification { get; set; }
-        public CreateUpdateConsoleSpecificationDto? ConsoleSpecification { get; set; }
-        public CreateUpdateHandheldSpecificationDto? HandheldSpecification { get; set; }
-        public CreateUpdateHubSpecificationDto? HubSpecification { get; set; }
-        public CreateUpdateMemoryCardSpecificationDto? MemoryCardSpecification { get; set; }
         public CreateUpdateMicrophoneSpecificationDto? MicrophoneSpecification { get; set; }
         public CreateUpdateMousePadSpecificationDto? MousepadSpecification { get; set; }
-        public CreateUpdateNetworkHardwareSpecificationDto? NetworkHardwareSpecification { get; set; }
-        public CreateUpdatePowerBankSpecificationDto? PowerBankSpecification { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Orders;
+using Acme.ProductSelling.Orders;
 using Acme.ProductSelling.Orders.Services;
 using Acme.ProductSelling.Payments;
 using Acme.ProductSelling.Products;
@@ -36,6 +36,8 @@ namespace Acme.ProductSelling.Chatbot
                 .Include(p => p.Category)
                 .Include(p => p.Manufacturer)
                 .Include(p => p.SpecificationBase)
+                    .ThenInclude(s => (s as CpuCoolerSpecification).SupportedSockets)
+                        .ThenInclude(ss => ss.Socket)
                 .Include(p => p.StoreInventories)
                 .AsQueryable();
 
@@ -122,9 +124,19 @@ namespace Acme.ProductSelling.Chatbot
 
             var productKeywords = new[]
             {
-                "product", "buy", "price", "cost", "laptop", "mouse", "keyboard",
-                "monitor", "cpu", "gpu", "ram", "storage", "available", "stock",
-                "purchase", "gaming", "computer", "pc", "specifications", "specs"
+                // General
+                "product", "buy", "price", "cost", "available", "stock", "purchase", "specifications", "specs",
+                // PC Components
+                "laptop", "computer", "pc", "gaming", "cpu", "gpu", "ram", "storage", "monitor",
+                "motherboard", "psu", "power supply", "case", "cooler", "fan", "ssd", "hdd",
+                // Peripherals
+                "mouse", "keyboard", "headset", "headphone", "speaker", "microphone", "mic",
+                "webcam", "camera", "mousepad", "mouse pad",
+                // Accessories & Devices
+                "cable",
+                // Vietnamese keywords
+                "chuột", "bàn phím", "màn hình", "tai nghe", "loa", "micro",
+                "sạc", "cáp", "hub", "thẻ nhớ", "phần mềm"
             };
 
             var lowerQuery = query.ToLower();
@@ -422,25 +434,71 @@ namespace Acme.ProductSelling.Chatbot
                     sb.AppendLine($"      * Mic: {(s.HasMicrophone ? s.MicrophoneType : "No")} | Sensitivity: {s.Sensitivity}dB");
                     break;
 
-                case ChairSpecification s:
-                    sb.AppendLine($"      * Type: {s.ChairType} | Material: {s.Material}");
-                    sb.AppendLine($"      * Max Load: {s.MaxWeight}kg | Seat Height: {s.SeatHeight}");
-                    sb.AppendLine($"      * Armrests: {s.ArmrestType} | Backrest: {s.BackrestAdjustment}");
-                    sb.AppendLine($"      * Lumbar Support: {(s.HasLumbarSupport ? "Yes" : "No")} | Headrest: {(s.HasHeadrest ? "Yes" : "No")}");
-                    sb.AppendLine($"      * Base: {s.BaseType} | Wheels: {s.WheelType} | Color: {s.Color}");
+
+
+                case MousePadSpecification s:
+                    sb.AppendLine($"      * Size: {s.Width}x{s.Height}mm | Thickness: {s.Thickness}mm");
+                    sb.AppendLine($"      * Material: {s.Material} | Surface: {s.SurfaceType}");
+                    sb.AppendLine($"      * Base: {s.BaseType} | RGB: {(s.HasRgb ? "Yes" : "No")} | Washable: {(s.IsWashable ? "Yes" : "No")}");
+                    sb.AppendLine($"      * Color: {s.Color}");
                     break;
 
-                case DeskSpecification s:
-                    sb.AppendLine($"      * Dimensions: {s.Width}x{s.Depth}cm | Height: {s.Height}cm");
-                    sb.AppendLine($"      * Material: {s.Material} | Surface: {s.SurfaceType} | Max Load: {s.MaxWeight}kg");
-                    sb.AppendLine($"      * Height Adjustable: {(s.IsHeightAdjustable ? "Yes" : "No")} | Cable Mgmt: {(s.HasCableManagement ? "Yes" : "No")}");
+                case CaseFanSpecification s:
+                    sb.AppendLine($"      * Fan Size: {s.FanSize}mm | Max RPM: {s.MaxRpm}");
+                    sb.AppendLine($"      * Noise: {s.NoiseLevel}dB(A) | Airflow: {s.Airflow}CFM | Static Pressure: {s.StaticPressure}mm H2O");
+                    sb.AppendLine($"      * Connector: {s.Connector} | Bearing: {s.BearingType}");
+                    sb.AppendLine($"      * RGB: {(s.HasRgb ? "Yes" : "No")} | Color: {s.Color}");
                     break;
 
-                case PowerBankSpecification s:
-                    sb.AppendLine($"      * Capacity: {s.Capacity}mAh | Total Wattage: {s.TotalWattage}W");
-                    sb.AppendLine($"      * Ports: {s.PortCount} total ({s.UsbCPorts}x USB-C, {s.UsbAPorts}x USB-A)");
-                    sb.AppendLine($"      * Fast Charge: {s.FastChargingProtocols}");
-                    sb.AppendLine($"      * Display: {(s.HasDisplay ? "Yes" : "No")} | Weight: {s.Weight}g | Color: {s.Color}");
+                case CableSpecification s:
+                    sb.AppendLine($"      * Type: {s.CableType} | Length: {s.Length}m");
+                    sb.AppendLine($"      * Connectors: {s.Connector1} ↔ {s.Connector2}");
+                    sb.AppendLine($"      * Max Power: {s.MaxPower} | Data Speed: {s.DataTransferSpeed}");
+                    sb.AppendLine($"      * Braided: {(s.IsBraided ? "Yes" : "No")} | Color: {s.Color} | Warranty: {s.Warranty}");
+                    break;
+
+
+
+                case CpuCoolerSpecification s:
+                    sb.AppendLine($"      * Type: {s.CoolerType}");
+                    if (s.SupportedSockets != null && s.SupportedSockets.Any())
+                    {
+                        var sockets = string.Join(", ", s.SupportedSockets.Select(x => x.Socket?.Name ?? ""));
+                        sb.AppendLine($"      * Socket Support: {sockets}");
+                    }
+                    if (s.RadiatorSize.HasValue)
+                        sb.AppendLine($"      * Radiator: {s.RadiatorSize}mm | Fan: {s.FanSize}mm");
+                    else
+                        sb.AppendLine($"      * Fan: {s.FanSize}mm | Height: {s.Height}mm");
+                    sb.AppendLine($"      * TDP Support: {s.TdpSupport}W | Noise: {s.NoiseLevel}dBA");
+                    sb.AppendLine($"      * LED: {s.LedLighting} | Color: {s.Color}");
+                    break;
+
+
+
+
+                case MicrophoneSpecification s:
+                    sb.AppendLine($"      * Type: {s.MicrophoneType} | Polar Pattern: {s.PolarPattern}");
+                    sb.AppendLine($"      * Connectivity: {s.Connectivity} | Connection: {s.Connection}");
+                    sb.AppendLine($"      * Frequency: {s.Frequency} | Sample Rate: {s.SampleRate} | Sensitivity: {s.Sensitivity}");
+                    sb.AppendLine($"      * Shock Mount: {(s.HasShockMount ? "Yes" : "No")} | Pop Filter: {(s.HasPopFilter ? "Yes" : "No")} | RGB: {(s.HasRgb ? "Yes" : "No")}");
+                    sb.AppendLine($"      * Color: {s.Color}");
+                    break;
+
+
+
+                case SpeakerSpecification s:
+                    sb.AppendLine($"      * Type: {s.SpeakerType} | Power: {s.TotalWattage}W");
+                    sb.AppendLine($"      * Frequency Response: {s.Frequency} | Connectivity: {s.Connectivity}");
+                    sb.AppendLine($"      * Input Ports: {s.InputPorts}");
+                    sb.AppendLine($"      * Bluetooth: {(s.HasBluetooth ? "Yes" : "No")} | Remote: {(s.HasRemote ? "Yes" : "No")} | Color: {s.Color}");
+                    break;
+
+                case WebcamSpecification s:
+                    sb.AppendLine($"      * Resolution: {s.Resolution} @ {s.FrameRate}fps | FOV: {s.FieldOfView}°");
+                    sb.AppendLine($"      * Focus: {s.FocusType} | Connectivity: {s.Connectivity} | Connection: {s.Connection}");
+                    sb.AppendLine($"      * Microphone: {(s.HasMicrophone ? "Yes" : "No")} | Privacy Shutter: {(s.HasPrivacyShutter ? "Yes" : "No")}");
+                    sb.AppendLine($"      * Mount: {s.MountType} | Color: {s.Color}");
                     break;
 
                 default:

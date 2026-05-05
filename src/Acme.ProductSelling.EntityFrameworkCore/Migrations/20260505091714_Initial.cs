@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Acme.ProductSelling.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialDB : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -1081,7 +1081,6 @@ namespace Acme.ProductSelling.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ShippingAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Gender = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -1268,6 +1267,26 @@ namespace Acme.ProductSelling.Migrations
                         name: "FK_AbpEntityPropertyChanges_AbpEntityChanges_EntityChangeId",
                         column: x => x.EntityChangeId,
                         principalTable: "AbpEntityChanges",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppAddresses",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FullAddress = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    IsDefaultAddress = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppAddresses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AppAddresses_AppCustomers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "AppCustomers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -1468,91 +1487,6 @@ namespace Acme.ProductSelling.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AppChairSpecifications",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ChairType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Material = table.Column<int>(type: "int", nullable: false),
-                    MaxWeight = table.Column<int>(type: "int", nullable: false),
-                    ArmrestType = table.Column<int>(type: "int", nullable: false),
-                    BackrestAdjustment = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SeatHeight = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HasLumbarSupport = table.Column<bool>(type: "bit", nullable: false),
-                    HasHeadrest = table.Column<bool>(type: "bit", nullable: false),
-                    BaseType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    WheelType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AppChairSpecifications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AppChairSpecifications_AppSpecifications_Id",
-                        column: x => x.Id,
-                        principalTable: "AppSpecifications",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AppChargerSpecifications",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ChargerType = table.Column<int>(type: "int", nullable: false),
-                    TotalWattage = table.Column<int>(type: "int", nullable: false),
-                    PortCount = table.Column<int>(type: "int", nullable: false),
-                    UsbCPorts = table.Column<int>(type: "int", nullable: false),
-                    UsbAPorts = table.Column<int>(type: "int", nullable: false),
-                    MaxOutputPerPort = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FastChargingProtocols = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CableIncluded = table.Column<bool>(type: "bit", nullable: false),
-                    HasFoldablePlug = table.Column<bool>(type: "bit", nullable: false),
-                    Technology = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AppChargerSpecifications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AppChargerSpecifications_AppSpecifications_Id",
-                        column: x => x.Id,
-                        principalTable: "AppSpecifications",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AppConsoleSpecifications",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Processor = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Graphics = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RAM = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Storage = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OpticalDrive = table.Column<int>(type: "int", nullable: false),
-                    MaxResolution = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MaxFrameRate = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HDRSupport = table.Column<bool>(type: "bit", nullable: false),
-                    Connectivity = table.Column<int>(type: "int", nullable: false),
-                    HasEthernet = table.Column<bool>(type: "bit", nullable: false),
-                    WifiVersion = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BluetoothVersion = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AppConsoleSpecifications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AppConsoleSpecifications_AppSpecifications_Id",
-                        column: x => x.Id,
-                        principalTable: "AppSpecifications",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AppCpuCoolerSpecifications",
                 columns: table => new
                 {
@@ -1609,34 +1543,6 @@ namespace Acme.ProductSelling.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AppDeskSpecifications",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Width = table.Column<int>(type: "int", nullable: false),
-                    Depth = table.Column<int>(type: "int", nullable: false),
-                    Height = table.Column<float>(type: "real", nullable: false),
-                    Material = table.Column<int>(type: "int", nullable: false),
-                    MaxWeight = table.Column<int>(type: "int", nullable: false),
-                    IsHeightAdjustable = table.Column<bool>(type: "bit", nullable: false),
-                    HasCableManagement = table.Column<bool>(type: "bit", nullable: false),
-                    HasCupHolder = table.Column<bool>(type: "bit", nullable: false),
-                    HasHeadphoneHook = table.Column<bool>(type: "bit", nullable: false),
-                    SurfaceType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AppDeskSpecifications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AppDeskSpecifications_AppSpecifications_Id",
-                        column: x => x.Id,
-                        principalTable: "AppSpecifications",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AppGpuSpecifications",
                 columns: table => new
                 {
@@ -1654,34 +1560,6 @@ namespace Acme.ProductSelling.Migrations
                     table.PrimaryKey("PK_AppGpuSpecifications", x => x.Id);
                     table.ForeignKey(
                         name: "FK_AppGpuSpecifications_AppSpecifications_Id",
-                        column: x => x.Id,
-                        principalTable: "AppSpecifications",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AppHandheldSpecifications",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Processor = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Graphics = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RAM = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Storage = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Display = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BatteryLife = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Weight = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OperatingSystem = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Connectivity = table.Column<int>(type: "int", nullable: false),
-                    WifiVersion = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BluetoothVersion = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AppHandheldSpecifications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AppHandheldSpecifications_AppSpecifications_Id",
                         column: x => x.Id,
                         principalTable: "AppSpecifications",
                         principalColumn: "Id",
@@ -1709,36 +1587,6 @@ namespace Acme.ProductSelling.Migrations
                     table.PrimaryKey("PK_AppHeadsetSpecifications", x => x.Id);
                     table.ForeignKey(
                         name: "FK_AppHeadsetSpecifications_AppSpecifications_Id",
-                        column: x => x.Id,
-                        principalTable: "AppSpecifications",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AppHubSpecifications",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    HubType = table.Column<int>(type: "int", nullable: false),
-                    PortCount = table.Column<int>(type: "int", nullable: false),
-                    UsbAPorts = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UsbCPorts = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HdmiPorts = table.Column<int>(type: "int", nullable: false),
-                    DisplayPorts = table.Column<int>(type: "int", nullable: false),
-                    EthernetPort = table.Column<bool>(type: "bit", nullable: false),
-                    SdCardReader = table.Column<bool>(type: "bit", nullable: false),
-                    AudioJack = table.Column<bool>(type: "bit", nullable: false),
-                    MaxDisplays = table.Column<int>(type: "int", nullable: false),
-                    MaxResolution = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PowerDelivery = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AppHubSpecifications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AppHubSpecifications_AppSpecifications_Id",
                         column: x => x.Id,
                         principalTable: "AppSpecifications",
                         principalColumn: "Id",
@@ -1794,31 +1642,6 @@ namespace Acme.ProductSelling.Migrations
                     table.PrimaryKey("PK_AppLaptopSpecifications", x => x.Id);
                     table.ForeignKey(
                         name: "FK_AppLaptopSpecifications_AppSpecifications_Id",
-                        column: x => x.Id,
-                        principalTable: "AppSpecifications",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AppMemoryCardSpecifications",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Capacity = table.Column<int>(type: "int", nullable: false),
-                    CardType = table.Column<int>(type: "int", nullable: false),
-                    SpeedClass = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ReadSpeed = table.Column<int>(type: "int", nullable: false),
-                    WriteSpeed = table.Column<int>(type: "int", nullable: false),
-                    Warranty = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Waterproof = table.Column<bool>(type: "bit", nullable: false),
-                    Shockproof = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AppMemoryCardSpecifications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AppMemoryCardSpecifications_AppSpecifications_Id",
                         column: x => x.Id,
                         principalTable: "AppSpecifications",
                         principalColumn: "Id",
@@ -1987,61 +1810,6 @@ namespace Acme.ProductSelling.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AppNetworkHardwareSpecifications",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DeviceType = table.Column<int>(type: "int", nullable: false),
-                    WifiStandard = table.Column<int>(type: "int", nullable: false),
-                    MaxSpeed = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Frequency = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EthernetPorts = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AntennaCount = table.Column<int>(type: "int", nullable: false),
-                    HasUsb = table.Column<bool>(type: "bit", nullable: false),
-                    SecurityProtocol = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Coverage = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AppNetworkHardwareSpecifications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AppNetworkHardwareSpecifications_AppSpecifications_Id",
-                        column: x => x.Id,
-                        principalTable: "AppSpecifications",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AppPowerBankSpecifications",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Capacity = table.Column<int>(type: "int", nullable: false),
-                    TotalWattage = table.Column<int>(type: "int", nullable: false),
-                    PortCount = table.Column<int>(type: "int", nullable: false),
-                    UsbCPorts = table.Column<int>(type: "int", nullable: false),
-                    UsbAPorts = table.Column<int>(type: "int", nullable: false),
-                    InputPorts = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MaxOutputPerPort = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FastChargingProtocols = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RechargingTime = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HasDisplay = table.Column<bool>(type: "bit", nullable: false),
-                    Weight = table.Column<int>(type: "int", nullable: false),
-                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AppPowerBankSpecifications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AppPowerBankSpecifications_AppSpecifications_Id",
-                        column: x => x.Id,
-                        principalTable: "AppSpecifications",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AppPsuSpecifications",
                 columns: table => new
                 {
@@ -2093,31 +1861,6 @@ namespace Acme.ProductSelling.Migrations
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_AppRamSpecifications_AppSpecifications_Id",
-                        column: x => x.Id,
-                        principalTable: "AppSpecifications",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AppSoftwareSpecifications",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SoftwareType = table.Column<int>(type: "int", nullable: false),
-                    LicenseType = table.Column<int>(type: "int", nullable: false),
-                    Platform = table.Column<int>(type: "int", nullable: false),
-                    Version = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Language = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DeliveryMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SystemRequirements = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsSubscription = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AppSoftwareSpecifications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AppSoftwareSpecifications_AppSpecifications_Id",
                         column: x => x.Id,
                         principalTable: "AppSpecifications",
                         principalColumn: "Id",
@@ -2495,6 +2238,11 @@ namespace Acme.ProductSelling.Migrations
                 column: "UserName");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AppAddresses_CustomerId",
+                table: "AppAddresses",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AppCartItems_CartId",
                 table: "AppCartItems",
                 column: "CartId");
@@ -2832,6 +2580,9 @@ namespace Acme.ProductSelling.Migrations
                 name: "AbpUserTokens");
 
             migrationBuilder.DropTable(
+                name: "AppAddresses");
+
+            migrationBuilder.DropTable(
                 name: "AppCableSpecifications");
 
             migrationBuilder.DropTable(
@@ -2844,46 +2595,22 @@ namespace Acme.ProductSelling.Migrations
                 name: "AppCaseMaterials");
 
             migrationBuilder.DropTable(
-                name: "AppChairSpecifications");
-
-            migrationBuilder.DropTable(
-                name: "AppChargerSpecifications");
-
-            migrationBuilder.DropTable(
-                name: "AppConsoleSpecifications");
-
-            migrationBuilder.DropTable(
                 name: "AppCpuCoolerSocketSupports");
 
             migrationBuilder.DropTable(
                 name: "AppCpuSpecifications");
 
             migrationBuilder.DropTable(
-                name: "AppCustomers");
-
-            migrationBuilder.DropTable(
-                name: "AppDeskSpecifications");
-
-            migrationBuilder.DropTable(
                 name: "AppGpuSpecifications");
 
             migrationBuilder.DropTable(
-                name: "AppHandheldSpecifications");
-
-            migrationBuilder.DropTable(
                 name: "AppHeadsetSpecifications");
-
-            migrationBuilder.DropTable(
-                name: "AppHubSpecifications");
 
             migrationBuilder.DropTable(
                 name: "AppKeyboardSpecifications");
 
             migrationBuilder.DropTable(
                 name: "AppLaptopSpecifications");
-
-            migrationBuilder.DropTable(
-                name: "AppMemoryCardSpecifications");
 
             migrationBuilder.DropTable(
                 name: "AppMicrophoneSpecifications");
@@ -2901,16 +2628,10 @@ namespace Acme.ProductSelling.Migrations
                 name: "AppMouseSpecifications");
 
             migrationBuilder.DropTable(
-                name: "AppNetworkHardwareSpecifications");
-
-            migrationBuilder.DropTable(
                 name: "AppOrderHistories");
 
             migrationBuilder.DropTable(
                 name: "AppOrderItems");
-
-            migrationBuilder.DropTable(
-                name: "AppPowerBankSpecifications");
 
             migrationBuilder.DropTable(
                 name: "AppPsuSpecifications");
@@ -2920,9 +2641,6 @@ namespace Acme.ProductSelling.Migrations
 
             migrationBuilder.DropTable(
                 name: "AppRecentlyViewedProducts");
-
-            migrationBuilder.DropTable(
-                name: "AppSoftwareSpecifications");
 
             migrationBuilder.DropTable(
                 name: "AppSpeakerSpecifications");
@@ -2958,6 +2676,9 @@ namespace Acme.ProductSelling.Migrations
                 name: "AbpRoles");
 
             migrationBuilder.DropTable(
+                name: "AppCustomers");
+
+            migrationBuilder.DropTable(
                 name: "AppCarts");
 
             migrationBuilder.DropTable(
@@ -2968,9 +2689,6 @@ namespace Acme.ProductSelling.Migrations
 
             migrationBuilder.DropTable(
                 name: "AppCpuCoolerSpecifications");
-
-            migrationBuilder.DropTable(
-                name: "AbpUsers");
 
             migrationBuilder.DropTable(
                 name: "AppSwitchTypes");
@@ -2998,6 +2716,9 @@ namespace Acme.ProductSelling.Migrations
 
             migrationBuilder.DropTable(
                 name: "AbpAuditLogs");
+
+            migrationBuilder.DropTable(
+                name: "AbpUsers");
 
             migrationBuilder.DropTable(
                 name: "AppFormFactors");

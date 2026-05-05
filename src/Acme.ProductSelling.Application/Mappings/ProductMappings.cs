@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Products.Dtos;
+using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Specifications;
 using Acme.ProductSelling.Specifications.Models;
 using Riok.Mapperly.Abstractions;
@@ -44,35 +44,6 @@ public partial class ProductToProductDtoMapper : MapperBase<Product, ProductDto>
     [MapperIgnoreTarget(nameof(ProductDto.TotalStockAcrossAllStores))]
     [MapperIgnoreTarget(nameof(ProductDto.StoreAvailability))]
     [MapperIgnoreTarget(nameof(ProductDto.SpecificationBase))]
-    //[MapperIgnoreTarget(nameof(ProductDto.MonitorSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.CpuSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.MotherboardSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.RamSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.PsuSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.KeyboardSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.CaseSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.CpuCoolerSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.GpuSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.StorageSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.MouseSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.LaptopSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.HeadsetSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.SpeakerSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.WebcamSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.CableSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.SoftwareSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.CaseFanSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.ChairSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.DeskSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.ChargerSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.ConsoleSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.HandheldSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.HubSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.MemoryCardSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.MicrophoneSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.MousepadSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.NetworkHardwareSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.PowerBankSpecification))]
     private partial ProductDto MapInternal(Product source);
     [MapProperty(nameof(Product.Category.Name), nameof(ProductDto.CategoryName))]
     [MapProperty(nameof(Product.Manufacturer.Name), nameof(ProductDto.ManufacturerName))]
@@ -81,36 +52,6 @@ public partial class ProductToProductDtoMapper : MapperBase<Product, ProductDto>
     [MapperIgnoreTarget(nameof(ProductDto.TotalStockAcrossAllStores))]
     [MapperIgnoreTarget(nameof(ProductDto.StoreAvailability))]
     [MapperIgnoreTarget(nameof(ProductDto.SpecificationBase))]
-
-    //[MapperIgnoreTarget(nameof(ProductDto.MonitorSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.CpuSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.MotherboardSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.RamSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.PsuSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.KeyboardSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.CaseSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.CpuCoolerSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.GpuSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.StorageSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.MouseSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.LaptopSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.HeadsetSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.SpeakerSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.WebcamSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.CableSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.SoftwareSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.CaseFanSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.ChairSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.DeskSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.ChargerSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.ConsoleSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.HandheldSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.HubSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.MemoryCardSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.MicrophoneSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.MousepadSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.NetworkHardwareSpecification))]
-    //[MapperIgnoreTarget(nameof(ProductDto.PowerBankSpecification))]
     private partial void MapInternal(Product source, ProductDto destination);
 
     public override void AfterMap(Product source, ProductDto destination)
@@ -236,8 +177,6 @@ public partial class ProductToProductDtoMapper : MapperBase<Product, ProductDto>
         //        destination.NetworkHardwareSpecification = MapNetwork(networkSpec);
         //        break;
 
-        //    case PowerBankSpecification powerBankSpec:
-        //        destination.PowerBankSpecification = MapPowerBank(powerBankSpec);
         //        break;
         //}
     }
@@ -441,19 +380,6 @@ public partial class ProductToProductDtoMapper : MapperBase<Product, ProductDto>
         Warranty = s.Warranty
     };
 
-    private SoftwareSpecificationDto MapSoftware(SoftwareSpecification s) => new SoftwareSpecificationDto
-    {
-        Id = s.Id,
-        SoftwareType = s.SoftwareType,
-        LicenseType = s.LicenseType,
-        Platform = s.Platform,
-        Version = s.Version,
-        Language = s.Language,
-        DeliveryMethod = s.DeliveryMethod,
-        SystemRequirements = s.SystemRequirements,
-        IsSubscription = s.IsSubscription
-    };
-
     private CaseFanSpecificationDto MapCaseFan(CaseFanSpecification s) => new CaseFanSpecificationDto
     {
         Id = s.Id,
@@ -466,118 +392,6 @@ public partial class ProductToProductDtoMapper : MapperBase<Product, ProductDto>
         BearingType = s.BearingType,
         HasRgb = s.HasRgb,
         Color = s.Color
-    };
-
-    private ChairSpecificationDto MapChair(ChairSpecification s) => new ChairSpecificationDto
-    {
-        Id = s.Id,
-        ChairType = s.ChairType,
-        Material = s.Material,
-        MaxWeight = s.MaxWeight,
-        ArmrestType = s.ArmrestType,
-        BackrestAdjustment = s.BackrestAdjustment,
-        SeatHeight = s.SeatHeight,
-        HasLumbarSupport = s.HasLumbarSupport,
-        HasHeadrest = s.HasHeadrest,
-        BaseType = s.BaseType,
-        WheelType = s.WheelType,
-        Color = s.Color
-    };
-
-    private DeskSpecificationDto MapDesk(DeskSpecification s) => new DeskSpecificationDto
-    {
-        Id = s.Id,
-        Width = s.Width,
-        Depth = s.Depth,
-        Height = s.Height,
-        Material = s.Material,
-        MaxWeight = s.MaxWeight,
-        IsHeightAdjustable = s.IsHeightAdjustable,
-        HasCableManagement = s.HasCableManagement,
-        HasCupHolder = s.HasCupHolder,
-        HasHeadphoneHook = s.HasHeadphoneHook,
-        SurfaceType = s.SurfaceType,
-        Color = s.Color
-    };
-
-    private ChargerSpecificationDto MapCharger(ChargerSpecification s) => new ChargerSpecificationDto
-    {
-        Id = s.Id,
-        ChargerType = s.ChargerType,
-        TotalWattage = s.TotalWattage,
-        PortCount = s.PortCount,
-        UsbCPorts = s.UsbCPorts,
-        UsbAPorts = s.UsbAPorts,
-        MaxOutputPerPort = s.MaxOutputPerPort,
-        FastChargingProtocols = s.FastChargingProtocols,
-        CableIncluded = s.CableIncluded,
-        HasFoldablePlug = s.HasFoldablePlug,
-        Technology = s.Technology,
-        Color = s.Color
-    };
-
-    private ConsoleSpecificationDto MapConsole(ConsoleSpecification s) => new ConsoleSpecificationDto
-    {
-        Id = s.Id,
-        Processor = s.Processor,
-        Graphics = s.Graphics,
-        RAM = s.RAM,
-        Storage = s.Storage,
-        OpticalDrive = s.OpticalDrive,
-        MaxResolution = s.MaxResolution,
-        MaxFrameRate = s.MaxFrameRate,
-        HDRSupport = s.HDRSupport,
-        Connectivity = s.Connectivity,
-        HasEthernet = s.HasEthernet,
-        WifiVersion = s.WifiVersion,
-        BluetoothVersion = s.BluetoothVersion
-    };
-
-    private HandheldSpecificationDto MapHandheld(HandheldSpecification s) => new HandheldSpecificationDto
-    {
-        Id = s.Id,
-        Processor = s.Processor,
-        Graphics = s.Graphics,
-        RAM = s.RAM,
-        Storage = s.Storage,
-        Display = s.Display,
-        BatteryLife = s.BatteryLife,
-        Weight = s.Weight,
-        OperatingSystem = s.OperatingSystem,
-        Connectivity = s.Connectivity,
-        WifiVersion = s.WifiVersion,
-        BluetoothVersion = s.BluetoothVersion
-    };
-
-    private HubSpecificationDto MapHub(HubSpecification s) => new HubSpecificationDto
-    {
-        Id = s.Id,
-        HubType = s.HubType,
-        PortCount = s.PortCount,
-        UsbAPorts = s.UsbAPorts,
-        UsbCPorts = s.UsbCPorts,
-        HdmiPorts = s.HdmiPorts,
-        DisplayPorts = s.DisplayPorts,
-        EthernetPort = s.EthernetPort,
-        SdCardReader = s.SdCardReader,
-        AudioJack = s.AudioJack,
-        MaxDisplays = s.MaxDisplays,
-        MaxResolution = s.MaxResolution,
-        PowerDelivery = s.PowerDelivery,
-        Color = s.Color
-    };
-
-    private MemoryCardSpecificationDto MapMemoryCard(MemoryCardSpecification s) => new MemoryCardSpecificationDto
-    {
-        Id = s.Id,
-        Capacity = s.Capacity,
-        CardType = s.CardType,
-        SpeedClass = s.SpeedClass,
-        ReadSpeed = s.ReadSpeed,
-        WriteSpeed = s.WriteSpeed,
-        Warranty = s.Warranty,
-        Waterproof = s.Waterproof,
-        Shockproof = s.Shockproof
     };
 
     private MicrophoneSpecificationDto MapMicrophone(MicrophoneSpecification s) => new MicrophoneSpecificationDto
@@ -607,37 +421,6 @@ public partial class ProductToProductDtoMapper : MapperBase<Product, ProductDto>
         BaseType = s.BaseType,
         HasRgb = s.HasRgb,
         IsWashable = s.IsWashable,
-        Color = s.Color
-    };
-
-    private NetworkHardwareSpecificationDto MapNetwork(NetworkHardwareSpecification s) => new NetworkHardwareSpecificationDto
-    {
-        Id = s.Id,
-        DeviceType = s.DeviceType,
-        WifiStandard = s.WifiStandard,
-        MaxSpeed = s.MaxSpeed,
-        Frequency = s.Frequency,
-        EthernetPorts = s.EthernetPorts,
-        AntennaCount = s.AntennaCount,
-        HasUsb = s.HasUsb,
-        SecurityProtocol = s.SecurityProtocol,
-        Coverage = s.Coverage
-    };
-
-    private PowerBankSpecificationDto MapPowerBank(PowerBankSpecification s) => new PowerBankSpecificationDto
-    {
-        Id = s.Id,
-        Capacity = s.Capacity,
-        TotalWattage = s.TotalWattage,
-        PortCount = s.PortCount,
-        UsbCPorts = s.UsbCPorts,
-        UsbAPorts = s.UsbAPorts,
-        InputPorts = s.InputPorts,
-        MaxOutputPerPort = s.MaxOutputPerPort,
-        FastChargingProtocols = s.FastChargingProtocols,
-        RechargingTime = s.RechargingTime,
-        HasDisplay = s.HasDisplay,
-        Weight = s.Weight,
         Color = s.Color
     };
 }

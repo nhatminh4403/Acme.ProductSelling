@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Specifications;
+using Acme.ProductSelling.Specifications;
 using Acme.ProductSelling.Specifications.Models;
 using Riok.Mapperly.Abstractions;
 using System;
@@ -234,12 +234,6 @@ public partial class CaseFanSpecificationToDtoMapper : MapperBase<CaseFanSpecifi
     public override partial void Map(CaseFanSpecification source, CaseFanSpecificationDto destination);
 }
 
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class MemoryCardSpecificationToDtoMapper : MapperBase<MemoryCardSpecification, MemoryCardSpecificationDto>
-{
-    public override partial MemoryCardSpecificationDto Map(MemoryCardSpecification source);
-    public override partial void Map(MemoryCardSpecification source, MemoryCardSpecificationDto destination);
-}
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public partial class SpeakerSpecificationToDtoMapper : MapperBase<SpeakerSpecification, SpeakerSpecificationDto>
@@ -269,54 +263,6 @@ public partial class MousePadSpecificationToDtoMapper : MapperBase<MousePadSpeci
     public override partial void Map(MousePadSpecification source, MousePadSpecificationDto destination);
 }
 
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class ChairSpecificationToDtoMapper : MapperBase<ChairSpecification, ChairSpecificationDto>
-{
-    public override partial ChairSpecificationDto Map(ChairSpecification source);
-    public override partial void Map(ChairSpecification source, ChairSpecificationDto destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class DeskSpecificationToDtoMapper : MapperBase<DeskSpecification, DeskSpecificationDto>
-{
-    public override partial DeskSpecificationDto Map(DeskSpecification source);
-    public override partial void Map(DeskSpecification source, DeskSpecificationDto destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class SoftwareSpecificationToDtoMapper : MapperBase<SoftwareSpecification, SoftwareSpecificationDto>
-{
-    public override partial SoftwareSpecificationDto Map(SoftwareSpecification source);
-    public override partial void Map(SoftwareSpecification source, SoftwareSpecificationDto destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class NetworkHardwareSpecificationToDtoMapper : MapperBase<NetworkHardwareSpecification, NetworkHardwareSpecificationDto>
-{
-    public override partial NetworkHardwareSpecificationDto Map(NetworkHardwareSpecification source);
-    public override partial void Map(NetworkHardwareSpecification source, NetworkHardwareSpecificationDto destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class HandheldSpecificationToDtoMapper : MapperBase<HandheldSpecification, HandheldSpecificationDto>
-{
-    public override partial HandheldSpecificationDto Map(HandheldSpecification source);
-    public override partial void Map(HandheldSpecification source, HandheldSpecificationDto destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class ConsoleSpecificationToDtoMapper : MapperBase<ConsoleSpecification, ConsoleSpecificationDto>
-{
-    public override partial ConsoleSpecificationDto Map(ConsoleSpecification source);
-    public override partial void Map(ConsoleSpecification source, ConsoleSpecificationDto destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class HubSpecificationToDtoMapper : MapperBase<HubSpecification, HubSpecificationDto>
-{
-    public override partial HubSpecificationDto Map(HubSpecification source);
-    public override partial void Map(HubSpecification source, HubSpecificationDto destination);
-}
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public partial class CableSpecificationToDtoMapper : MapperBase<CableSpecification, CableSpecificationDto>
@@ -325,19 +271,6 @@ public partial class CableSpecificationToDtoMapper : MapperBase<CableSpecificati
     public override partial void Map(CableSpecification source, CableSpecificationDto destination);
 }
 
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class ChargerSpecificationToDtoMapper : MapperBase<ChargerSpecification, ChargerSpecificationDto>
-{
-    public override partial ChargerSpecificationDto Map(ChargerSpecification source);
-    public override partial void Map(ChargerSpecification source, ChargerSpecificationDto destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class PowerBankSpecificationToDtoMapper : MapperBase<PowerBankSpecification, PowerBankSpecificationDto>
-{
-    public override partial PowerBankSpecificationDto Map(PowerBankSpecification source);
-    public override partial void Map(PowerBankSpecification source, PowerBankSpecificationDto destination);
-}
 
 #endregion
 
@@ -447,12 +380,6 @@ public partial class CaseFanSpecDtoToCreateUpdateMapper : MapperBase<CaseFanSpec
     public override partial void Map(CaseFanSpecificationDto source, CreateUpdateCaseFanSpecificationDto destination);
 }
 
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class MemoryCardSpecDtoToCreateUpdateMapper : MapperBase<MemoryCardSpecificationDto, CreateUpdateMemoryCardSpecificationDto>
-{
-    public override partial CreateUpdateMemoryCardSpecificationDto Map(MemoryCardSpecificationDto source);
-    public override partial void Map(MemoryCardSpecificationDto source, CreateUpdateMemoryCardSpecificationDto destination);
-}
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public partial class SpeakerSpecDtoToCreateUpdateMapper : MapperBase<SpeakerSpecificationDto, CreateUpdateSpeakerSpecificationDto>
@@ -482,54 +409,6 @@ public partial class MousePadSpecDtoToCreateUpdateMapper : MapperBase<MousePadSp
     public override partial void Map(MousePadSpecificationDto source, CreateUpdateMousePadSpecificationDto destination);
 }
 
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class ChairSpecDtoToCreateUpdateMapper : MapperBase<ChairSpecificationDto, CreateUpdateChairSpecificationDto>
-{
-    public override partial CreateUpdateChairSpecificationDto Map(ChairSpecificationDto source);
-    public override partial void Map(ChairSpecificationDto source, CreateUpdateChairSpecificationDto destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class DeskSpecDtoToCreateUpdateMapper : MapperBase<DeskSpecificationDto, CreateUpdateDeskSpecificationDto>
-{
-    public override partial CreateUpdateDeskSpecificationDto Map(DeskSpecificationDto source);
-    public override partial void Map(DeskSpecificationDto source, CreateUpdateDeskSpecificationDto destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class SoftwareSpecDtoToCreateUpdateMapper : MapperBase<SoftwareSpecificationDto, CreateUpdateSoftwareSpecificationDto>
-{
-    public override partial CreateUpdateSoftwareSpecificationDto Map(SoftwareSpecificationDto source);
-    public override partial void Map(SoftwareSpecificationDto source, CreateUpdateSoftwareSpecificationDto destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class NetworkHardwareSpecDtoToCreateUpdateMapper : MapperBase<NetworkHardwareSpecificationDto, CreateUpdateNetworkHardwareSpecificationDto>
-{
-    public override partial CreateUpdateNetworkHardwareSpecificationDto Map(NetworkHardwareSpecificationDto source);
-    public override partial void Map(NetworkHardwareSpecificationDto source, CreateUpdateNetworkHardwareSpecificationDto destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class HandheldSpecDtoToCreateUpdateMapper : MapperBase<HandheldSpecificationDto, CreateUpdateHandheldSpecificationDto>
-{
-    public override partial CreateUpdateHandheldSpecificationDto Map(HandheldSpecificationDto source);
-    public override partial void Map(HandheldSpecificationDto source, CreateUpdateHandheldSpecificationDto destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class ConsoleSpecDtoToCreateUpdateMapper : MapperBase<ConsoleSpecificationDto, CreateUpdateConsoleSpecificationDto>
-{
-    public override partial CreateUpdateConsoleSpecificationDto Map(ConsoleSpecificationDto source);
-    public override partial void Map(ConsoleSpecificationDto source, CreateUpdateConsoleSpecificationDto destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class HubSpecDtoToCreateUpdateMapper : MapperBase<HubSpecificationDto, CreateUpdateHubSpecificationDto>
-{
-    public override partial CreateUpdateHubSpecificationDto Map(HubSpecificationDto source);
-    public override partial void Map(HubSpecificationDto source, CreateUpdateHubSpecificationDto destination);
-}
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public partial class CableSpecDtoToCreateUpdateMapper : MapperBase<CableSpecificationDto, CreateUpdateCableSpecificationDto>
@@ -538,19 +417,6 @@ public partial class CableSpecDtoToCreateUpdateMapper : MapperBase<CableSpecific
     public override partial void Map(CableSpecificationDto source, CreateUpdateCableSpecificationDto destination);
 }
 
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class ChargerSpecDtoToCreateUpdateMapper : MapperBase<ChargerSpecificationDto, CreateUpdateChargerSpecificationDto>
-{
-    public override partial CreateUpdateChargerSpecificationDto Map(ChargerSpecificationDto source);
-    public override partial void Map(ChargerSpecificationDto source, CreateUpdateChargerSpecificationDto destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class PowerBankSpecDtoToCreateUpdateMapper : MapperBase<PowerBankSpecificationDto, CreateUpdatePowerBankSpecificationDto>
-{
-    public override partial CreateUpdatePowerBankSpecificationDto Map(PowerBankSpecificationDto source);
-    public override partial void Map(PowerBankSpecificationDto source, CreateUpdatePowerBankSpecificationDto destination);
-}
 
 #endregion
 
@@ -776,19 +642,6 @@ public partial class CreateUpdateCaseFanSpecToEntityMapper : MapperBase<CreateUp
     public override partial void Map(CreateUpdateCaseFanSpecificationDto source, CaseFanSpecification destination);
 }
 
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class CreateUpdateMemoryCardSpecToEntityMapper : MapperBase<CreateUpdateMemoryCardSpecificationDto, MemoryCardSpecification>
-{
-    [MapperIgnoreTarget(nameof(MemoryCardSpecification.Id))]
-    [MapperIgnoreTarget(nameof(MemoryCardSpecification.ProductId))]
-    [MapperIgnoreTarget(nameof(MemoryCardSpecification.Product))]
-    public override partial MemoryCardSpecification Map(CreateUpdateMemoryCardSpecificationDto source);
-
-    [MapperIgnoreTarget(nameof(MemoryCardSpecification.Id))]
-    [MapperIgnoreTarget(nameof(MemoryCardSpecification.ProductId))]
-    [MapperIgnoreTarget(nameof(MemoryCardSpecification.Product))]
-    public override partial void Map(CreateUpdateMemoryCardSpecificationDto source, MemoryCardSpecification destination);
-}
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public partial class CreateUpdateSpeakerSpecToEntityMapper : MapperBase<CreateUpdateSpeakerSpecificationDto, SpeakerSpecification>
@@ -846,103 +699,7 @@ public partial class CreateUpdateMousePadSpecToEntityMapper : MapperBase<CreateU
     public override partial void Map(CreateUpdateMousePadSpecificationDto source, MousePadSpecification destination);
 }
 
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class CreateUpdateChairSpecToEntityMapper : MapperBase<CreateUpdateChairSpecificationDto, ChairSpecification>
-{
-    [MapperIgnoreTarget(nameof(ChairSpecification.Id))]
-    [MapperIgnoreTarget(nameof(ChairSpecification.ProductId))]
-    [MapperIgnoreTarget(nameof(ChairSpecification.Product))]
-    public override partial ChairSpecification Map(CreateUpdateChairSpecificationDto source);
 
-    [MapperIgnoreTarget(nameof(ChairSpecification.Id))]
-    [MapperIgnoreTarget(nameof(ChairSpecification.ProductId))]
-    [MapperIgnoreTarget(nameof(ChairSpecification.Product))]
-    public override partial void Map(CreateUpdateChairSpecificationDto source, ChairSpecification destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class CreateUpdateDeskSpecToEntityMapper : MapperBase<CreateUpdateDeskSpecificationDto, DeskSpecification>
-{
-    [MapperIgnoreTarget(nameof(DeskSpecification.Id))]
-    [MapperIgnoreTarget(nameof(DeskSpecification.ProductId))]
-    [MapperIgnoreTarget(nameof(DeskSpecification.Product))]
-    public override partial DeskSpecification Map(CreateUpdateDeskSpecificationDto source);
-
-    [MapperIgnoreTarget(nameof(DeskSpecification.Id))]
-    [MapperIgnoreTarget(nameof(DeskSpecification.ProductId))]
-    [MapperIgnoreTarget(nameof(DeskSpecification.Product))]
-    public override partial void Map(CreateUpdateDeskSpecificationDto source, DeskSpecification destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class CreateUpdateSoftwareSpecToEntityMapper : MapperBase<CreateUpdateSoftwareSpecificationDto, SoftwareSpecification>
-{
-    [MapperIgnoreTarget(nameof(SoftwareSpecification.Id))]
-    [MapperIgnoreTarget(nameof(SoftwareSpecification.ProductId))]
-    [MapperIgnoreTarget(nameof(SoftwareSpecification.Product))]
-    public override partial SoftwareSpecification Map(CreateUpdateSoftwareSpecificationDto source);
-
-    [MapperIgnoreTarget(nameof(SoftwareSpecification.Id))]
-    [MapperIgnoreTarget(nameof(SoftwareSpecification.ProductId))]
-    [MapperIgnoreTarget(nameof(SoftwareSpecification.Product))]
-    public override partial void Map(CreateUpdateSoftwareSpecificationDto source, SoftwareSpecification destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class CreateUpdateNetworkHardwareSpecToEntityMapper : MapperBase<CreateUpdateNetworkHardwareSpecificationDto, NetworkHardwareSpecification>
-{
-    [MapperIgnoreTarget(nameof(NetworkHardwareSpecification.Id))]
-    [MapperIgnoreTarget(nameof(NetworkHardwareSpecification.ProductId))]
-    [MapperIgnoreTarget(nameof(NetworkHardwareSpecification.Product))]
-    public override partial NetworkHardwareSpecification Map(CreateUpdateNetworkHardwareSpecificationDto source);
-
-    [MapperIgnoreTarget(nameof(NetworkHardwareSpecification.Id))]
-    [MapperIgnoreTarget(nameof(NetworkHardwareSpecification.ProductId))]
-    [MapperIgnoreTarget(nameof(NetworkHardwareSpecification.Product))]
-    public override partial void Map(CreateUpdateNetworkHardwareSpecificationDto source, NetworkHardwareSpecification destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class CreateUpdateHandheldSpecToEntityMapper : MapperBase<CreateUpdateHandheldSpecificationDto, HandheldSpecification>
-{
-    [MapperIgnoreTarget(nameof(HandheldSpecification.Id))]
-    [MapperIgnoreTarget(nameof(HandheldSpecification.ProductId))]
-    [MapperIgnoreTarget(nameof(HandheldSpecification.Product))]
-    public override partial HandheldSpecification Map(CreateUpdateHandheldSpecificationDto source);
-
-    [MapperIgnoreTarget(nameof(HandheldSpecification.Id))]
-    [MapperIgnoreTarget(nameof(HandheldSpecification.ProductId))]
-    [MapperIgnoreTarget(nameof(HandheldSpecification.Product))]
-    public override partial void Map(CreateUpdateHandheldSpecificationDto source, HandheldSpecification destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class CreateUpdateConsoleSpecToEntityMapper : MapperBase<CreateUpdateConsoleSpecificationDto, ConsoleSpecification>
-{
-    [MapperIgnoreTarget(nameof(ConsoleSpecification.Id))]
-    [MapperIgnoreTarget(nameof(ConsoleSpecification.ProductId))]
-    [MapperIgnoreTarget(nameof(ConsoleSpecification.Product))]
-    public override partial ConsoleSpecification Map(CreateUpdateConsoleSpecificationDto source);
-
-    [MapperIgnoreTarget(nameof(ConsoleSpecification.Id))]
-    [MapperIgnoreTarget(nameof(ConsoleSpecification.ProductId))]
-    [MapperIgnoreTarget(nameof(ConsoleSpecification.Product))]
-    public override partial void Map(CreateUpdateConsoleSpecificationDto source, ConsoleSpecification destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class CreateUpdateHubSpecToEntityMapper : MapperBase<CreateUpdateHubSpecificationDto, HubSpecification>
-{
-    [MapperIgnoreTarget(nameof(HubSpecification.Id))]
-    [MapperIgnoreTarget(nameof(HubSpecification.ProductId))]
-    [MapperIgnoreTarget(nameof(HubSpecification.Product))]
-    public override partial HubSpecification Map(CreateUpdateHubSpecificationDto source);
-
-    [MapperIgnoreTarget(nameof(HubSpecification.Id))]
-    [MapperIgnoreTarget(nameof(HubSpecification.ProductId))]
-    [MapperIgnoreTarget(nameof(HubSpecification.Product))]
-    public override partial void Map(CreateUpdateHubSpecificationDto source, HubSpecification destination);
-}
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 public partial class CreateUpdateCableSpecToEntityMapper : MapperBase<CreateUpdateCableSpecificationDto, CableSpecification>
@@ -958,33 +715,6 @@ public partial class CreateUpdateCableSpecToEntityMapper : MapperBase<CreateUpda
     public override partial void Map(CreateUpdateCableSpecificationDto source, CableSpecification destination);
 }
 
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class CreateUpdateChargerSpecToEntityMapper : MapperBase<CreateUpdateChargerSpecificationDto, ChargerSpecification>
-{
-    [MapperIgnoreTarget(nameof(ChargerSpecification.Id))]
-    [MapperIgnoreTarget(nameof(ChargerSpecification.ProductId))]
-    [MapperIgnoreTarget(nameof(ChargerSpecification.Product))]
-    public override partial ChargerSpecification Map(CreateUpdateChargerSpecificationDto source);
-
-    [MapperIgnoreTarget(nameof(ChargerSpecification.Id))]
-    [MapperIgnoreTarget(nameof(ChargerSpecification.ProductId))]
-    [MapperIgnoreTarget(nameof(ChargerSpecification.Product))]
-    public override partial void Map(CreateUpdateChargerSpecificationDto source, ChargerSpecification destination);
-}
-
-[Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
-public partial class CreateUpdatePowerBankSpecToEntityMapper : MapperBase<CreateUpdatePowerBankSpecificationDto, PowerBankSpecification>
-{
-    [MapperIgnoreTarget(nameof(PowerBankSpecification.Id))]
-    [MapperIgnoreTarget(nameof(PowerBankSpecification.ProductId))]
-    [MapperIgnoreTarget(nameof(PowerBankSpecification.Product))]
-    public override partial PowerBankSpecification Map(CreateUpdatePowerBankSpecificationDto source);
-
-    [MapperIgnoreTarget(nameof(PowerBankSpecification.Id))]
-    [MapperIgnoreTarget(nameof(PowerBankSpecification.ProductId))]
-    [MapperIgnoreTarget(nameof(PowerBankSpecification.Product))]
-    public override partial void Map(CreateUpdatePowerBankSpecificationDto source, PowerBankSpecification destination);
-}
 
 #endregion
 
@@ -1009,19 +739,8 @@ public partial class SpecificationBaseToDtoMapper : MapperBase<SpecificationBase
     [UseMapper] private readonly SpeakerSpecificationToDtoMapper _speakerMapper = new();
     [UseMapper] private readonly WebcamSpecificationToDtoMapper _webcamMapper = new();
     [UseMapper] private readonly CableSpecificationToDtoMapper _cableMapper = new();
-    [UseMapper] private readonly SoftwareSpecificationToDtoMapper _softwareMapper = new();
-    [UseMapper] private readonly CaseFanSpecificationToDtoMapper _caseFanMapper = new();
-    [UseMapper] private readonly ChairSpecificationToDtoMapper _chairMapper = new();
-    [UseMapper] private readonly DeskSpecificationToDtoMapper _deskMapper = new();
-    [UseMapper] private readonly ChargerSpecificationToDtoMapper _chargerMapper = new();
-    [UseMapper] private readonly ConsoleSpecificationToDtoMapper _consoleMapper = new();
-    [UseMapper] private readonly HandheldSpecificationToDtoMapper _handheldMapper = new();
-    [UseMapper] private readonly HubSpecificationToDtoMapper _hubMapper = new();
-    [UseMapper] private readonly MemoryCardSpecificationToDtoMapper _memoryCardMapper = new();
     [UseMapper] private readonly MicrophoneSpecificationToDtoMapper _microphoneMapper = new();
     [UseMapper] private readonly MousePadSpecificationToDtoMapper _mousePadMapper = new();
-    [UseMapper] private readonly NetworkHardwareSpecificationToDtoMapper _networkHardwareMapper = new();
-    [UseMapper] private readonly PowerBankSpecificationToDtoMapper _powerBankMapper = new();
 
     [MapDerivedType(typeof(MonitorSpecification), typeof(MonitorSpecificationDto))]
     [MapDerivedType(typeof(MouseSpecification), typeof(MouseSpecificationDto))]
@@ -1039,19 +758,8 @@ public partial class SpecificationBaseToDtoMapper : MapperBase<SpecificationBase
     [MapDerivedType(typeof(SpeakerSpecification), typeof(SpeakerSpecificationDto))]
     [MapDerivedType(typeof(WebcamSpecification), typeof(WebcamSpecificationDto))]
     [MapDerivedType(typeof(CableSpecification), typeof(CableSpecificationDto))]
-    [MapDerivedType(typeof(SoftwareSpecification), typeof(SoftwareSpecificationDto))]
-    [MapDerivedType(typeof(CaseFanSpecification), typeof(CaseFanSpecificationDto))]
-    [MapDerivedType(typeof(ChairSpecification), typeof(ChairSpecificationDto))]
-    [MapDerivedType(typeof(DeskSpecification), typeof(DeskSpecificationDto))]
-    [MapDerivedType(typeof(ChargerSpecification), typeof(ChargerSpecificationDto))]
-    [MapDerivedType(typeof(ConsoleSpecification), typeof(ConsoleSpecificationDto))]
-    [MapDerivedType(typeof(HandheldSpecification), typeof(HandheldSpecificationDto))]
-    [MapDerivedType(typeof(HubSpecification), typeof(HubSpecificationDto))]
-    [MapDerivedType(typeof(MemoryCardSpecification), typeof(MemoryCardSpecificationDto))]
     [MapDerivedType(typeof(MicrophoneSpecification), typeof(MicrophoneSpecificationDto))]
     [MapDerivedType(typeof(MousePadSpecification), typeof(MousePadSpecificationDto))]
-    [MapDerivedType(typeof(NetworkHardwareSpecification), typeof(NetworkHardwareSpecificationDto))]
-    [MapDerivedType(typeof(PowerBankSpecification), typeof(PowerBankSpecificationDto))]
     public override partial SpecificationBaseDto Map(SpecificationBase source);
 
     public override void Map(SpecificationBase source, SpecificationBaseDto destination)

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Runtime.Serialization;
 
 namespace Acme.ProductSelling.Categories
@@ -27,7 +27,6 @@ namespace Acme.ProductSelling.Categories
         // Storage, RAM, Memory group
         Storage = 30,
         RAM = 31,
-        MemoryCard = 32,
 
         // Audio/Video group
         Speaker = 40,
@@ -38,26 +37,8 @@ namespace Acme.ProductSelling.Categories
         Mouse = 50,
         MousePad = 51,
 
-        // Furniture group
-        Chair = 60,
-        Desk = 61,
-
-        // Software & Network group
-        Software = 70,
-        NetworkHardware = 71,
-
-        // Handheld & Console group
-        Handheld = 80,
-        Console = 81,
-
         // Accessories group
-        Hub = 90,
         Cable = 91,
-        Charger = 92,
-        PowerBank = 93,
-
-        // Services
-        Services = 100
     }
 
 
@@ -72,17 +53,6 @@ namespace Acme.ProductSelling.Categories
         RifledSSO
     }
 
-    public enum CardType
-    {
-        SD,
-        SDHC,
-        SDXC,
-        MicroSD,
-        MicroSDHC,
-        MicroSDXC,
-        CompactFlash,
-        CFexpress
-    }
 
     public enum SpeakerType
     {
@@ -145,101 +115,9 @@ namespace Acme.ProductSelling.Categories
         Smooth
     }
 
-    public enum ChairMaterial
-    {
-        Fabric,
-        PULeather,
-        GenuineLeather,
-        Mesh,
-        Hybrid
-    }
 
-    public enum ArmrestType
-    {
-        Fixed,
-        Adjustable_1D, // Height only
-        Adjustable_2D, // Height + pivot
-        Adjustable_3D, // Height + pivot + depth
-        Adjustable_4D  // Height + pivot + depth + angle
-    }
 
-    public enum DeskMaterial
-    {
-        Wood,
-        MDF,
-        ParticleBoard,
-        Laminate,
-        Tempered_Glass,
-        Steel,
-        Carbon_Fiber,
-        Bamboo
-    }
 
-    public enum SoftwareType
-    {
-        OperatingSystem,
-        Productivity,
-        Security,
-        Creative,
-        Gaming,
-        Development,
-        Utility,
-        Antivirus
-    }
-
-    public enum LicenseType
-    {
-        Retail,
-        OEM,
-        Volume,
-        Subscription,
-        Perpetual,
-        Trial,
-        Freeware,
-        OpenSource
-    }
-
-    public enum Platform
-    {
-        Windows,
-        MacOS,
-        Linux,
-        Android,
-        iOS,
-        CrossPlatform,
-        Web
-    }
-
-    public enum NetworkDeviceType
-    {
-        Router,
-        Switch,
-        AccessPoint,
-        Modem,
-        NetworkAdapter,
-        Repeater,
-        MeshSystem,
-        Firewall
-    }
-
-    public enum WifiStandard
-    {
-        WiFi4_802_11n,
-        WiFi5_802_11ac,
-        WiFi6_802_11ax,
-        WiFi6E_802_11ax_6GHz,
-        WiFi7_802_11be
-    }
-
-    public enum HubType
-    {
-        USB_Hub,
-        USB_C_Hub,
-        Thunderbolt_3_Dock,
-        Thunderbolt_4_Dock,
-        Universal_Dock,
-        Display_Dock
-    }
 
     public enum CableType
     {
@@ -260,14 +138,6 @@ namespace Acme.ProductSelling.Categories
         Audio_3_5mm
     }
 
-    public enum ChargerType
-    {
-        WallCharger,
-        CarCharger,
-        WirelessCharger,
-        DesktopCharger,
-        TravelAdapter
-    }
 
     public enum ChargingProtocol
     {

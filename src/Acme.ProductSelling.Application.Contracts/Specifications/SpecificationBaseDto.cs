@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -22,19 +22,9 @@ namespace Acme.ProductSelling.Specifications
     [JsonDerivedType(typeof(SpeakerSpecificationDto), "Speaker")]
     [JsonDerivedType(typeof(WebcamSpecificationDto), "Webcam")]
     [JsonDerivedType(typeof(CableSpecificationDto), "Cable")]
-    [JsonDerivedType(typeof(SoftwareSpecificationDto), "Software")]
     [JsonDerivedType(typeof(CaseFanSpecificationDto), "CaseFan")]
-    [JsonDerivedType(typeof(ChairSpecificationDto), "Chair")]
-    [JsonDerivedType(typeof(DeskSpecificationDto), "Desk")]
-    [JsonDerivedType(typeof(ChargerSpecificationDto), "Charger")]
-    [JsonDerivedType(typeof(ConsoleSpecificationDto), "Console")]
-    [JsonDerivedType(typeof(HandheldSpecificationDto), "Handheld")]
-    [JsonDerivedType(typeof(HubSpecificationDto), "Hub")]
-    [JsonDerivedType(typeof(MemoryCardSpecificationDto), "MemoryCard")]
     [JsonDerivedType(typeof(MicrophoneSpecificationDto), "Microphone")]
     [JsonDerivedType(typeof(MousePadSpecificationDto), "MousePad")]
-    [JsonDerivedType(typeof(NetworkHardwareSpecificationDto), "NetworkHardware")]
-    [JsonDerivedType(typeof(PowerBankSpecificationDto), "PowerBank")]
     public abstract class SpecificationBaseDto : EntityDto<Guid>
     {
         public Guid ProductId { get; set; }

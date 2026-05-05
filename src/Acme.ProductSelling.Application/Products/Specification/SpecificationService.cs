@@ -1,11 +1,10 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Specifications;
 using Acme.ProductSelling.Specifications.Models;
 using System;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories;
-// Note: Removed Volo.Abp.ObjectMapping usage
 
 namespace Acme.ProductSelling.Products.Specification
 {
@@ -24,24 +23,14 @@ namespace Acme.ProductSelling.Products.Specification
         private readonly CreateUpdatePsuSpecToEntityMapper _psuMapper;
         private readonly CreateUpdateCaseSpecToEntityMapper _caseMapper;
         private readonly CreateUpdateCpuCoolerSpecToEntityMapper _cpuCoolerMapper;
+        private readonly CreateUpdateCaseFanSpecToEntityMapper _caseFanMapper;
         private readonly CreateUpdateKeyboardSpecToEntityMapper _keyboardMapper;
         private readonly CreateUpdateHeadsetSpecToEntityMapper _headsetMapper;
         private readonly CreateUpdateSpeakerSpecToEntityMapper _speakerMapper;
         private readonly CreateUpdateWebcamSpecToEntityMapper _webcamMapper;
         private readonly CreateUpdateCableSpecToEntityMapper _cableMapper;
-        private readonly CreateUpdateSoftwareSpecToEntityMapper _softwareMapper;
-        private readonly CreateUpdateCaseFanSpecToEntityMapper _caseFanMapper;
-        private readonly CreateUpdateChairSpecToEntityMapper _chairMapper;
-        private readonly CreateUpdateDeskSpecToEntityMapper _deskMapper;
-        private readonly CreateUpdateChargerSpecToEntityMapper _chargerMapper;
-        private readonly CreateUpdateConsoleSpecToEntityMapper _consoleMapper;
-        private readonly CreateUpdateHandheldSpecToEntityMapper _handheldMapper;
-        private readonly CreateUpdateHubSpecToEntityMapper _hubMapper;
-        private readonly CreateUpdateMemoryCardSpecToEntityMapper _memoryCardMapper;
         private readonly CreateUpdateMicrophoneSpecToEntityMapper _microphoneMapper;
         private readonly CreateUpdateMousePadSpecToEntityMapper _mousePadMapper;
-        private readonly CreateUpdateNetworkHardwareSpecToEntityMapper _networkMapper;
-        private readonly CreateUpdatePowerBankSpecToEntityMapper _powerBankMapper;
         private readonly IServiceProvider _serviceProvider;
         //private record HandlerRegistry(Func<IServiceProvider, CreateUpdateProductDto, SpecificationBase> BuildAsync,
         //    Action<IServiceProvider, SpecificationBase, CreateUpdateProductDto> UpdateAsync);
@@ -61,24 +50,14 @@ namespace Acme.ProductSelling.Products.Specification
             CreateUpdatePsuSpecToEntityMapper psuMapper,
             CreateUpdateCaseSpecToEntityMapper caseMapper,
             CreateUpdateCpuCoolerSpecToEntityMapper cpuCoolerMapper,
+            CreateUpdateCaseFanSpecToEntityMapper caseFanMapper,
             CreateUpdateKeyboardSpecToEntityMapper keyboardMapper,
             CreateUpdateHeadsetSpecToEntityMapper headsetMapper,
             CreateUpdateSpeakerSpecToEntityMapper speakerMapper,
             CreateUpdateWebcamSpecToEntityMapper webcamMapper,
             CreateUpdateCableSpecToEntityMapper cableMapper,
-            CreateUpdateSoftwareSpecToEntityMapper softwareMapper,
-            CreateUpdateCaseFanSpecToEntityMapper caseFanMapper,
-            CreateUpdateChairSpecToEntityMapper chairMapper,
-            CreateUpdateDeskSpecToEntityMapper deskMapper,
-            CreateUpdateChargerSpecToEntityMapper chargerMapper,
-            CreateUpdateConsoleSpecToEntityMapper consoleMapper,
-            CreateUpdateHandheldSpecToEntityMapper handheldMapper,
-            CreateUpdateHubSpecToEntityMapper hubMapper,
-            CreateUpdateMemoryCardSpecToEntityMapper memoryCardMapper,
             CreateUpdateMicrophoneSpecToEntityMapper microphoneMapper,
             CreateUpdateMousePadSpecToEntityMapper mousePadMapper,
-            CreateUpdateNetworkHardwareSpecToEntityMapper networkMapper,
-            CreateUpdatePowerBankSpecToEntityMapper powerBankMapper,
             IServiceProvider serviceProvider)
         {
             //_registry = new Dictionary<SpecificationType, HandlerRegistry>();
@@ -95,24 +74,14 @@ namespace Acme.ProductSelling.Products.Specification
             _psuMapper = psuMapper;
             _caseMapper = caseMapper;
             _cpuCoolerMapper = cpuCoolerMapper;
+            _caseFanMapper = caseFanMapper;
             _keyboardMapper = keyboardMapper;
             _headsetMapper = headsetMapper;
             _speakerMapper = speakerMapper;
             _webcamMapper = webcamMapper;
             _cableMapper = cableMapper;
-            _softwareMapper = softwareMapper;
-            _caseFanMapper = caseFanMapper;
-            _chairMapper = chairMapper;
-            _deskMapper = deskMapper;
-            _chargerMapper = chargerMapper;
-            _consoleMapper = consoleMapper;
-            _handheldMapper = handheldMapper;
-            _hubMapper = hubMapper;
-            _memoryCardMapper = memoryCardMapper;
             _microphoneMapper = microphoneMapper;
             _mousePadMapper = mousePadMapper;
-            _networkMapper = networkMapper;
-            _powerBankMapper = powerBankMapper;
             _serviceProvider = serviceProvider;
 
 
@@ -164,29 +133,19 @@ namespace Acme.ProductSelling.Products.Specification
                 SpecificationType.Cable => _cableMapper.Map(dto.CableSpecification),
                 SpecificationType.CaseFan => _caseFanMapper.Map(dto.CaseFanSpecification),
                 SpecificationType.Case => _caseMapper.Map(dto.CaseSpecification),
-                SpecificationType.Chair => _chairMapper.Map(dto.ChairSpecification),
-                SpecificationType.Charger => _chargerMapper.Map(dto.ChargerSpecification),
-                SpecificationType.Console => _consoleMapper.Map(dto.ConsoleSpecification),
                 SpecificationType.CPUCooler => _cpuCoolerMapper.Map(dto.CpuCoolerSpecification),
                 SpecificationType.CPU => _cpuMapper.Map(dto.CpuSpecification),
-                SpecificationType.Desk => _deskMapper.Map(dto.DeskSpecification),
                 SpecificationType.GPU => _gpuMapper.Map(dto.GpuSpecification),
-                SpecificationType.Handheld => _handheldMapper.Map(dto.HandheldSpecification),
                 SpecificationType.Headset => _headsetMapper.Map(dto.HeadsetSpecification),
-                SpecificationType.Hub => _hubMapper.Map(dto.HubSpecification),
                 SpecificationType.Keyboard => _keyboardMapper.Map(dto.KeyboardSpecification),
                 SpecificationType.Laptop => _laptopMapper.Map(dto.LaptopSpecification),
-                SpecificationType.MemoryCard => _memoryCardMapper.Map(dto.MemoryCardSpecification),
                 SpecificationType.Microphone => _microphoneMapper.Map(dto.MicrophoneSpecification),
                 SpecificationType.Monitor => _monitorMapper.Map(dto.MonitorSpecification),
                 SpecificationType.Motherboard => _motherboardMapper.Map(dto.MotherboardSpecification),
                 SpecificationType.MousePad => _mousePadMapper.Map(dto.MousepadSpecification),
                 SpecificationType.Mouse => _mouseMapper.Map(dto.MouseSpecification),
-                SpecificationType.NetworkHardware => _networkMapper.Map(dto.NetworkHardwareSpecification),
-                SpecificationType.PowerBank => _powerBankMapper.Map(dto.PowerBankSpecification),
                 SpecificationType.PSU => _psuMapper.Map(dto.PsuSpecification),
                 SpecificationType.RAM => _ramMapper.Map(dto.RamSpecification),
-                SpecificationType.Software => _softwareMapper.Map(dto.SoftwareSpecification),
                 SpecificationType.Speaker => _speakerMapper.Map(dto.SpeakerSpecification),
                 SpecificationType.Storage => _storageMapper.Map(dto.StorageSpecification),
                 SpecificationType.Webcam => _webcamMapper.Map(dto.WebcamSpecification),
@@ -209,18 +168,6 @@ namespace Acme.ProductSelling.Products.Specification
                     _caseMapper.Map(dto.CaseSpecification, e);
                     break;
 
-                case ChairSpecification e:
-                    _chairMapper.Map(dto.ChairSpecification, e);
-                    break;
-
-                case ChargerSpecification e:
-                    _chargerMapper.Map(dto.ChargerSpecification, e);
-                    break;
-
-                case ConsoleSpecification e:
-                    _consoleMapper.Map(dto.ConsoleSpecification, e);
-                    break;
-
                 case CpuCoolerSpecification e:
                     _cpuCoolerMapper.Map(dto.CpuCoolerSpecification, e);
                     break;
@@ -229,25 +176,16 @@ namespace Acme.ProductSelling.Products.Specification
                     _cpuMapper.Map(dto.CpuSpecification, e);
                     break;
 
-                case DeskSpecification e:
-                    _deskMapper.Map(dto.DeskSpecification, e);
-                    break;
 
                 case GpuSpecification e:
                     _gpuMapper.Map(dto.GpuSpecification, e);
                     break;
 
-                case HandheldSpecification e:
-                    _handheldMapper.Map(dto.HandheldSpecification, e);
-                    break;
 
                 case HeadsetSpecification e:
                     _headsetMapper.Map(dto.HeadsetSpecification, e);
                     break;
 
-                case HubSpecification e:
-                    _hubMapper.Map(dto.HubSpecification, e);
-                    break;
 
                 case KeyboardSpecification e:
                     _keyboardMapper.Map(dto.KeyboardSpecification, e);
@@ -257,9 +195,6 @@ namespace Acme.ProductSelling.Products.Specification
                     _laptopMapper.Map(dto.LaptopSpecification, e);
                     break;
 
-                case MemoryCardSpecification e:
-                    _memoryCardMapper.Map(dto.MemoryCardSpecification, e);
-                    break;
 
                 case MicrophoneSpecification e:
                     _microphoneMapper.Map(dto.MicrophoneSpecification, e);
@@ -281,13 +216,7 @@ namespace Acme.ProductSelling.Products.Specification
                     _mouseMapper.Map(dto.MouseSpecification, e);
                     break;
 
-                case NetworkHardwareSpecification e:
-                    _networkMapper.Map(dto.NetworkHardwareSpecification, e);
-                    break;
 
-                case PowerBankSpecification e:
-                    _powerBankMapper.Map(dto.PowerBankSpecification, e);
-                    break;
 
                 case PsuSpecification e:
                     _psuMapper.Map(dto.PsuSpecification, e);
@@ -297,9 +226,6 @@ namespace Acme.ProductSelling.Products.Specification
                     _ramMapper.Map(dto.RamSpecification, e);
                     break;
 
-                case SoftwareSpecification e:
-                    _softwareMapper.Map(dto.SoftwareSpecification, e);
-                    break;
 
                 case SpeakerSpecification e:
                     _speakerMapper.Map(dto.SpeakerSpecification, e);

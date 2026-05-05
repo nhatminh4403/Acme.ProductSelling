@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Data.BaseSeeder;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -71,9 +71,6 @@ namespace Acme.ProductSelling.Data.Categories
                 "RAMs", "Random Access Memory",
                 SpecificationType.RAM, CategoryGroup.StorageRamMemory, 4, "fas fa-memory");
 
-            SeededCategories["Memory Cards"] = await CreateCategoryAsync(
-                "Memory Cards", "SD and MicroSD Cards",
-                SpecificationType.MemoryCard, CategoryGroup.StorageRamMemory, 4, "fas fa-memory");
 
             // Audio/Video Group
             SeededCategories["Speakers"] = await CreateCategoryAsync(
@@ -112,54 +109,15 @@ namespace Acme.ProductSelling.Data.Categories
                 "Headsets", "Gaming and Office Headsets",
                 SpecificationType.Headset, CategoryGroup.Individual, 9, "fas fa-headphones");
 
-            // Furniture Group
-            SeededCategories["Chairs"] = await CreateCategoryAsync(
-                "Chairs", "Gaming and Office Chairs",
-                SpecificationType.Chair, CategoryGroup.Furniture, 10, "fas fa-chair");
-
-            SeededCategories["Desks"] = await CreateCategoryAsync(
-                "Desks", "Work and Gaming Desks",
-                SpecificationType.Desk, CategoryGroup.Furniture, 10, "fas fa-chair");
-
-            // Software & Network Group
-            SeededCategories["Software"] = await CreateCategoryAsync(
-                "Software", "Software and Licenses",
-                SpecificationType.Software, CategoryGroup.SoftwareNetwork, 11, "fas fa-network-wired");
-
-            SeededCategories["Networking"] = await CreateCategoryAsync(
-                "Networking", "Routers, Switches, Adapters",
-                SpecificationType.NetworkHardware, CategoryGroup.SoftwareNetwork, 11, "fas fa-network-wired");
-
-            // Handheld & Console Group
-            SeededCategories["Handhelds"] = await CreateCategoryAsync(
-                "Handhelds", "Handheld Gaming Consoles",
-                SpecificationType.Handheld, CategoryGroup.HandheldConsole, 12, "fas fa-gamepad");
-
-            SeededCategories["Consoles"] = await CreateCategoryAsync(
-                "Consoles", "Gaming Consoles",
-                SpecificationType.Console, CategoryGroup.HandheldConsole, 12, "fas fa-gamepad");
 
             // Accessories Group
-            SeededCategories["Hubs And Docks"] = await CreateCategoryAsync(
-                "Hubs And Docks", "USB Hubs and Docking Stations",
-                SpecificationType.Hub, CategoryGroup.Accessories, 13, "fas fa-plug");
 
             SeededCategories["Cables"] = await CreateCategoryAsync(
                 "Cables", "HDMI, USB, and Display Cables",
                 SpecificationType.Cable, CategoryGroup.Accessories, 13, "fas fa-plug");
 
-            SeededCategories["Chargers"] = await CreateCategoryAsync(
-                "Chargers", "Adapters and Chargers",
-                SpecificationType.Charger, CategoryGroup.Accessories, 13, "fas fa-plug");
 
-            SeededCategories["Power Banks"] = await CreateCategoryAsync(
-                "Power Banks", "Portable Power Banks",
-                SpecificationType.PowerBank, CategoryGroup.Accessories, 13, "fas fa-plug");
 
-            // Services
-            SeededCategories["Services"] = await CreateCategoryAsync(
-                "Services", "Other Services and Information",
-                SpecificationType.Services, CategoryGroup.Individual, 14, "fas fa-info-circle");
         }
         private async Task<Category> CreateCategoryAsync(
             string name,

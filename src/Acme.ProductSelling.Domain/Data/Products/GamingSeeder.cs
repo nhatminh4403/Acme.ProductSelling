@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Data.BaseSeeder;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products;
@@ -49,8 +49,6 @@ namespace Acme.ProductSelling.Data.Products
         public async Task SeedAsync()
         {
             await SeedLaptopsAsync();
-            await SeedHandheldsAsync();
-            await SeedConsolesAsync();
         }
 
         private async Task SeedLaptopsAsync()
@@ -99,55 +97,5 @@ namespace Acme.ProductSelling.Data.Products
             }, autoSave: true);
         }
 
-        private async Task SeedHandheldsAsync()
-        {
-            var handheld1 = await CreateProductAsync(
-                _categories["Handhelds"].Id, _manufacturers["Valve"].Id, 12000000, 5,
-                "Steam Deck 512GB", "Máy chơi game cầm tay, chạy SteamOS",
-                20, true, DateTime.Now.AddDays(4),
-                "https://cdn.cloudflare.steamstatic.com/steamdeck/images/hero/hero_deck_fullbleed.jpg");
-
-            await _specificationRepository.InsertAsync(new HandheldSpecification
-            {
-                ProductId = handheld1.Id,
-                Processor = "AMD Zen 2 4c/8t",
-                Graphics = "AMD RDNA 2 8 CUs",
-                RAM = "16GB LPDDR5",
-                Storage = "512GB NVMe SSD",
-                Display = "7-inch 1280x800 LCD 60Hz",
-                BatteryLife = "2-8 hours",
-                Weight = "669g",
-                OperatingSystem = "SteamOS 3.0",
-                Connectivity = ConnectivityType.WirelessAndBluetooth,
-                WifiVersion = "WiFi 5 (802.11ac)",
-                BluetoothVersion = "5.0"
-            }, autoSave: true);
-        }
-
-        private async Task SeedConsolesAsync()
-        {
-            var console1 = await CreateProductAsync(
-                _categories["Consoles"].Id, _manufacturers["Sony"].Id, 13000000, 8,
-                "PlayStation 5 Digital Edition", "Máy chơi game thế hệ mới, bản kỹ thuật số",
-                30, true, DateTime.Now.AddDays(6),
-                "https://gmedia.playstation.com/is/image/SIEPDC/ps5-digital-edition-console-image-block-01-en-25jun20");
-
-            await _specificationRepository.InsertAsync(new ConsoleSpecification
-            {
-                ProductId = console1.Id,
-                Processor = "AMD Zen 2 8-core",
-                Graphics = "AMD RDNA 2 10.28 TFLOPS",
-                RAM = "16GB GDDR6",
-                Storage = "825GB SSD",
-                OpticalDrive = OpticalDriveType.None,
-                MaxResolution = "4K UHD",
-                MaxFrameRate = "120fps",
-                HDRSupport = true,
-                Connectivity = ConnectivityType.WiredWirelessAndBluetooth,
-                HasEthernet = true,
-                WifiVersion = "WiFi 6 (802.11ax)",
-                BluetoothVersion = "5.1"
-            }, autoSave: true);
-        }
     }
 }
