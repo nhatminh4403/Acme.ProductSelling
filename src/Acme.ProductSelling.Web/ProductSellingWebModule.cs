@@ -142,10 +142,10 @@ public class ProductSellingWebModule : AbpModule
         //serverBuilder.SetIssuer(new Uri(configuration["AuthServer:Authority"]!));
         if (!hostingEnvironment.IsDevelopment())
         {
-            PreConfigure<AbpOpenIddictAspNetCoreOptions>(options =>
-            {
-                options.AddDevelopmentEncryptionAndSigningCertificate = false;
-            });
+            //PreConfigure<AbpOpenIddictAspNetCoreOptions>(options =>
+            //{
+            //    options.AddDevelopmentEncryptionAndSigningCertificate = false;
+            //});
 
             PreConfigure<OpenIddictServerBuilder>(serverBuilder =>
             {
@@ -197,6 +197,7 @@ public class ProductSellingWebModule : AbpModule
                 }
                 if (!certificateLoaded)
                 {
+                    serverBuilder.AddDevelopmentEncryptionCertificate().AddDevelopmentSigningCertificate();
                     serverBuilder.AddEphemeralEncryptionKey();
                     serverBuilder.AddEphemeralSigningKey();
                 }
