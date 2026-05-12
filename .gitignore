@@ -283,3 +283,4 @@ tempkey.jwk
 /src/Acme.ProductSelling.DbMigrator/appsettings.json
 /src/Acme.ProductSelling.DbMigrator/appsettings.json
 /.kiro/
+/src/Acme.ProductSelling.DbMigrator/appsettings.Production.json

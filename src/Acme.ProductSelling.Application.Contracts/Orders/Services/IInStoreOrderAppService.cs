@@ -11,5 +11,6 @@ namespace Acme.ProductSelling.Orders.Services
         Task<PagedResultDto<OrderDto>> GetListAsync();
         Task<OrderDto> CreateInStoreOrderAsync(CreateInStoreOrderDto input);
         Task<OrderDto> FulfillInStoreOrderAsync(Guid orderId);
+        Task<OrderDto> CompleteInStorePaymentAsync(Guid orderId, CompleteInStorePaymentDto input);
     }
 }

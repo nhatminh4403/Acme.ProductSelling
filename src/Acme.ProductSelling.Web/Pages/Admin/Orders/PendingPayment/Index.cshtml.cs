@@ -3,6 +3,7 @@ using Acme.ProductSelling.Orders.Services;
 using Acme.ProductSelling.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using Volo.Abp;
@@ -34,8 +35,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Orders.PendingPayment
             }
         }
 
-        [Authorize(ProductSellingPermissions.Orders.Complete)]
-        public async Task<IActionResult> OnPostCompletePaymentAsync(Guid orderId, [FromBody] CompleteInStorePaymentDto input)
+        public async Task<IActionResult> OnPostAsync(Guid orderId, [FromBody] CompleteInStorePaymentDto input)
         {
             try
             {

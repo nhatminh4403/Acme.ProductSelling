@@ -26,7 +26,6 @@ namespace Acme.ProductSelling.Orders.Services
         private readonly IOrderRepository _orderRepository;
         private readonly IIdentityUserRepository _userRepository;
         private readonly IAppUserRepository _appUserRepository;
-        //private readonly IOrderNotificationService _orderNotificationService;
         private readonly IStringLocalizer<ProductSellingResource> _localizer;
         private readonly IOrderHistoryAppService _orderHistoryAppService;
         private readonly OrderToOrderDtoMapper _orderMapper;
@@ -36,7 +35,6 @@ namespace Acme.ProductSelling.Orders.Services
             IOrderRepository orderRepository,
             IIdentityUserRepository userRepository,
             IAppUserRepository appUserRepository,
-            //IOrderNotificationService orderNotificationService,
             IStringLocalizer<ProductSellingResource> localizer,
             IOrderHistoryAppService orderHistoryAppService,
             OrderToOrderDtoMapper orderMapper,
@@ -51,15 +49,6 @@ namespace Acme.ProductSelling.Orders.Services
             _orderHistoryAppService = orderHistoryAppService;
             _orderMapper = orderMapper;
             _eventBus = eventBus;
-        }
-        private void CheckForStaff (Guid? guid)
-        {
-            if (!guid.HasValue)
-                throw new UserFriendlyException(ProductSellingDomainErrorCodes.UserNotAssignedToStore);
-            var isAdminOrManager = CurrentUser.IsInRole(ExtendedRoleConsts.Admin) ||
-                       CurrentUser.IsInRole(ExtendedRoleConsts.Manager);
-            if (!isAdminOrManager && guid.HasValue)
-                throw new UserFriendlyException(ProductSellingDomainErrorCodes.NoStoreAccess);
         }
         [Authorize(ProductSellingPermissions.Orders.Create)]
         public async Task<OrderDto> CreateInStoreOrderAsync(CreateInStoreOrderDto input)
@@ -185,23 +174,6 @@ namespace Acme.ProductSelling.Orders.Services
             });
 
             return MapToDto(order);
-        }
-
-        private async Task CheckStoreAccessAsync(Guid storeId)
-        {
-            // Allow Admin/Manager override
-            if (CurrentUser.IsInRole("admin") || CurrentUser.IsInRole("manager")) return;
-
-            var userStoreId = await GetCurrentUserStoreIdAsync();
-            if (userStoreId != storeId)
-                throw new UserFriendlyException(ProductSellingDomainErrorCodes.NoStoreAccess);
-        }
-
-        private async Task<Guid?> GetCurrentUserStoreIdAsync()
-        {
-            if (CurrentUser.Id == null) return null;
-            var user = await _appUserRepository.GetAsync(CurrentUser.Id.Value);
-            return user.AssignedStoreId;
         }
 
         private OrderDto MapToDto(Order order, string storeName = null)

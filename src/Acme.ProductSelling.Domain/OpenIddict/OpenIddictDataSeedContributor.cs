@@ -111,13 +111,6 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                 logoUri: "/images/clients/angular.svg"
             );
         }
-
-
-
-
-
-
-
         // Swagger Client
         var swaggerClientId = configurationSection["ProductSelling_Swagger:ClientId"];
         if (!swaggerClientId.IsNullOrWhiteSpace())

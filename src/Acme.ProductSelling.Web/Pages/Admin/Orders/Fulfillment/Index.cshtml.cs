@@ -2,6 +2,7 @@
 using Acme.ProductSelling.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using Volo.Abp;
@@ -34,9 +35,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Orders.Fulfillment
                 Response.Redirect(GetUrl("/orders/fulfillment"));
             }
         }
-
-        [Authorize(ProductSellingPermissions.Orders.Fulfill)]
-        public async Task<IActionResult> OnPostFulfillAsync(Guid orderId)
+        public async Task<IActionResult> OnPostAsync(Guid orderId)
         {
             try
             {
