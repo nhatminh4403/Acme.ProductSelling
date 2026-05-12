@@ -1,11 +1,6 @@
 ﻿@page "/{prefix}/orders"
 @model Acme.ProductSelling.Web.Pages.Admin.Orders.IndexModel
-@using Acme.ProductSelling.Localization
-@using Microsoft.Extensions.Localization
-@using Microsoft.AspNetCore.Authorization
-@using Acme.ProductSelling.Permissions
-@inject IStringLocalizer<ProductSellingResource> L
-@inject IAuthorizationService AuthorizationService
+
 
 @{
     ViewData["Title"] = L["UI:Title:Admin:Orders"];

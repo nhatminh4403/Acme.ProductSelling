@@ -1,10 +1,13 @@
+using Acme.ProductSelling.Identity;
 using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Payments;
 using Acme.ProductSelling.Permissions;
+using Acme.ProductSelling.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,6 +25,7 @@ namespace Acme.ProductSelling.Orders.Services
         private readonly OrderManager _orderManager;
         private readonly IOrderRepository _orderRepository;
         private readonly IIdentityUserRepository _userRepository;
+        private readonly IAppUserRepository _appUserRepository;
         //private readonly IOrderNotificationService _orderNotificationService;
         private readonly IStringLocalizer<ProductSellingResource> _localizer;
         private readonly IOrderHistoryAppService _orderHistoryAppService;
@@ -31,6 +35,7 @@ namespace Acme.ProductSelling.Orders.Services
             OrderManager orderManager,
             IOrderRepository orderRepository,
             IIdentityUserRepository userRepository,
+            IAppUserRepository appUserRepository,
             //IOrderNotificationService orderNotificationService,
             IStringLocalizer<ProductSellingResource> localizer,
             IOrderHistoryAppService orderHistoryAppService,
@@ -40,31 +45,56 @@ namespace Acme.ProductSelling.Orders.Services
             _orderManager = orderManager;
             _orderRepository = orderRepository;
             _userRepository = userRepository;
+            _appUserRepository = appUserRepository;
             //_orderNotificationService = orderNotificationService;
             _localizer = localizer;
             _orderHistoryAppService = orderHistoryAppService;
             _orderMapper = orderMapper;
             _eventBus = eventBus;
         }
+        private void CheckForStaff (Guid? guid)
+        {
+            if (!guid.HasValue)
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.UserNotAssignedToStore);
+            var isAdminOrManager = CurrentUser.IsInRole(ExtendedRoleConsts.Admin) ||
+                       CurrentUser.IsInRole(ExtendedRoleConsts.Manager);
+            if (!isAdminOrManager && guid.HasValue)
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.NoStoreAccess);
+        }
         [Authorize(ProductSellingPermissions.Orders.Create)]
         public async Task<OrderDto> CreateInStoreOrderAsync(CreateInStoreOrderDto input)
         {
-            var userStoreId = await GetCurrentUserStoreIdAsync();
-            if (!userStoreId.HasValue) throw new UserFriendlyException(ProductSellingDomainErrorCodes.UserNotAssignedToStore);
+
+            if (!input.CurrentUserStoreId.HasValue)
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.UserNotAssignedToStore);
 
             var currentUser = await _userRepository.GetAsync(CurrentUser.Id.Value);
+            if (currentUser == null)
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.StaffNotFound);
+
+            var isAdminOrManager = CurrentUser.IsInRole(ExtendedRoleConsts.Admin) ||
+                                   CurrentUser.IsInRole(ExtendedRoleConsts.Manager);            
+
+            // Non-admin/manager must be creating order for their own assigned store
+            if (!isAdminOrManager)
+            {
+                var appUser = await _appUserRepository.GetAsync(CurrentUser.Id.Value);
+                if (appUser.AssignedStoreId != input.CurrentUserStoreId.Value)
+                    throw new UserFriendlyException(ProductSellingDomainErrorCodes.NoStoreAccess);
+            }
 
             // Delegate to Domain Manager
             var items = input.Items.Select(x => (x.ProductId, x.Quantity)).ToList();
+            
             var order = await _orderManager.CreateInStoreOrderAsync(
-                userStoreId.Value,
+                input.CurrentUserStoreId.Value,
                 currentUser.Id,
                 currentUser.Name ?? currentUser.UserName,
                 input.CustomerName,
                 input.CustomerPhone,
                 input.PaymentMethod,
                 items
-            ) as InStoreOrder;
+            );
 
             await _orderRepository.InsertAsync(order, autoSave: true);
 
@@ -79,9 +109,9 @@ namespace Acme.ProductSelling.Orders.Services
                 IsInStore = order.OrderType == OrderType.InStore
             });
             await _orderHistoryAppService.LogOrderChangeAsync(order.Id, OrderStatus.Pending, order.OrderStatus, PaymentStatus.Unpaid, order.PaymentStatus, _localizer["Order:InStoreCreated"]);
+            Logger.LogInformation("In-store order {OrderId} created successfully for user {UserId} in store {StoreId}", order.Id, CurrentUser.Id, input.CurrentUserStoreId.Value);
 
             return MapToDto(order, "");
-            // We need store name? Fetched later or irrelevant for Create return
         }
 
         [Authorize(ProductSellingPermissions.Orders.Complete)]
@@ -90,14 +120,23 @@ namespace Acme.ProductSelling.Orders.Services
             var order = await _orderRepository.GetAsync(orderId) as InStoreOrder;
             if (order.OrderType != OrderType.InStore) throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderOnlyForInStoreOrders);
 
-            await CheckStoreAccessAsync(order.StoreId.Value);
 
-            var cashier = await _userRepository.GetAsync(CurrentUser.Id.Value);
+            var isAdminOrManager = CurrentUser.IsInRole(ExtendedRoleConsts.Admin) ||
+                                   CurrentUser.IsInRole(ExtendedRoleConsts.Manager);
+
+            if (!isAdminOrManager)
+            {
+                var cashier = await _appUserRepository.GetAsync(CurrentUser.Id.Value);
+                if (cashier.AssignedStoreId != order.StoreId)
+                    throw new UserFriendlyException(ProductSellingDomainErrorCodes.NoStoreAccess);
+            }
+
+            var currentUser = await _userRepository.GetAsync(CurrentUser.Id.Value);
             var oldStatus = order.OrderStatus;
             var oldPayment = order.PaymentStatus;
 
             // Domain Entity Logic
-            order.CompletePaymentInStore(cashier.Id, cashier.Name ?? cashier.UserName, Clock.Now);
+            order.CompletePaymentInStore(currentUser.Id, currentUser.Name ?? currentUser.UserName, Clock.Now);
             await _orderRepository.UpdateAsync(order, autoSave: true);
 
             await _eventBus.PublishAsync(new OrderStatusChangedEto
@@ -118,14 +157,21 @@ namespace Acme.ProductSelling.Orders.Services
         public async Task<OrderDto> FulfillInStoreOrderAsync(Guid orderId)
         {
             var order = await _orderRepository.GetAsync(orderId) as InStoreOrder;
-            if (order.OrderType != OrderType.InStore) throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderOnlyForInStoreOrders);
+            if (order.OrderType != OrderType.InStore)
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderOnlyForInStoreOrders);
 
-            await CheckStoreAccessAsync(order.StoreId.Value);
+            var isAdminOrManager = CurrentUser.IsInRole(ExtendedRoleConsts.Admin) ||
+                                   CurrentUser.IsInRole(ExtendedRoleConsts.Manager);
 
-            var staff = await _userRepository.GetAsync(CurrentUser.Id.Value);
+            if (!isAdminOrManager)
+            {
+                var staff = await _appUserRepository.GetAsync(CurrentUser.Id.Value);
+                if (staff.AssignedStoreId != order.StoreId)
+                    throw new UserFriendlyException(ProductSellingDomainErrorCodes.NoStoreAccess);
+            }
 
-            // Domain Entity Logic
-            order.FulfillInStore(staff.Id, staff.Name ?? staff.UserName, Clock.Now);
+            var currentUser = await _userRepository.GetAsync(CurrentUser.Id.Value);
+            order.FulfillInStore(currentUser.Id, currentUser.Name ?? currentUser.UserName, Clock.Now);
             await _orderRepository.UpdateAsync(order, autoSave: true);
 
             await _eventBus.PublishAsync(new OrderStatusChangedEto
@@ -154,8 +200,8 @@ namespace Acme.ProductSelling.Orders.Services
         private async Task<Guid?> GetCurrentUserStoreIdAsync()
         {
             if (CurrentUser.Id == null) return null;
-            var user = await _userRepository.GetAsync(CurrentUser.Id.Value);
-            return user.GetProperty<Guid?>("AssignedStoreId");
+            var user = await _appUserRepository.GetAsync(CurrentUser.Id.Value);
+            return user.AssignedStoreId;
         }
 
         private OrderDto MapToDto(Order order, string storeName = null)

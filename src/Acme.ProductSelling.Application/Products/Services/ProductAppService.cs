@@ -110,7 +110,7 @@ namespace Acme.ProductSelling.Products.Services
             var totalCount = await AsyncExecuter.CountAsync(query);
             query = query.OrderBy(input.Sorting ?? nameof(Product.ProductName));
             query = query.PageBy(input);
-            var products = await AsyncExecuter.ToListAsync(query);
+            var products = await AsyncExecuter.ToListAsync(queryable: query);
 
             var productDtos = products.Select(p => _productToProductDtoMapper.Map(p)).ToList();
 
@@ -150,12 +150,7 @@ namespace Acme.ProductSelling.Products.Services
                 });
                 return cached;
             }
-
-
-            var query = await Repository.GetQueryableAsync();
-            var product = await query
-                .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.Id == id);
+            var product = await _productRepository.GetAsync(id);
 
             if (product == null)
             {
@@ -219,7 +214,6 @@ namespace Acme.ProductSelling.Products.Services
             await CheckUpdatePolicyAsync();
 
             var product = await (await Repository.GetQueryableAsync())
-                .Include(p => p.Category)
                 .FirstAsync(p => p.Id == id);
 
             var oldReleaseDate = product.ReleaseDate;
@@ -241,7 +235,7 @@ namespace Acme.ProductSelling.Products.Services
 
             await HandleManyToManyAsync(product.Id, input);
 
-            await Repository.UpdateAsync(product, autoSave: true);
+            await _productRepository.UpdateAsync(product, autoSave: true);
             if (oldReleaseDate != product.ReleaseDate)
             {
                 await ScheduleProductReleaseJobAsync(product);
@@ -253,7 +247,7 @@ namespace Acme.ProductSelling.Products.Services
         [Authorize(ProductSellingPermissions.Products.Delete)]
         public override async Task DeleteAsync(Guid id)
         {
-            var product = await Repository.FindAsync(id);
+            var product = await _productRepository.FindAsync(id);
             var slug = product?.UrlSlug;
 
             await base.DeleteAsync(id);
@@ -261,10 +255,7 @@ namespace Acme.ProductSelling.Products.Services
             await InvalidateProductCacheAsync(id, slug);
             await InvalidateFeaturedCacheAsync();
         }
-
-
-        private Task InvalidateFeaturedCacheAsync()
-            => _featuredCache.RemoveAsync(ProductCacheKeys.FeaturedCarousels);
+        private Task InvalidateFeaturedCacheAsync() => _featuredCache.RemoveAsync(ProductCacheKeys.FeaturedCarousels);
         private async Task InvalidateProductCacheAsync(Guid productId, string slug = null)
         {
             await _productDetailCache.RemoveAsync(productId);
@@ -381,13 +372,9 @@ namespace Acme.ProductSelling.Products.Services
                 productDto.TotalStockAcrossAllStores += item.inv.Quantity;
             }
         }
-
-
         [Authorize(ProductSellingPermissions.Inventory.Default)]
         public async Task<List<AvailableProductDto>> LoadAvailableProductsAsync(Guid? currentStoreId)
         {
-            //var currentStoreId = await _storeRepository.FirstOrDefaultAsync(str => str.);
-
 
             if (currentStoreId.HasValue)
             {
@@ -416,7 +403,7 @@ namespace Acme.ProductSelling.Products.Services
                     })
                     .ToList();
             }
-            else if (CurrentUser.IsInRole(IdentityRoleConsts.Admin))
+            else if (CurrentUser.IsInRole(ExtendedRoleConsts.Admin))
             {
                 var products = await _productRepository.GetQueryableAsync();
 

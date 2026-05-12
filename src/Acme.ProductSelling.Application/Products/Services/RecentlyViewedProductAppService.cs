@@ -35,7 +35,7 @@ namespace Acme.ProductSelling.Products.Services
         {
             if (input.MaxCount <= 0 || input.MaxCount > 100)
             {
-                input.MaxCount = 6; // Safe default
+                input.MaxCount = 6; 
             }
 
             var orderedProductIds = new List<Guid>();
@@ -91,9 +91,8 @@ namespace Acme.ProductSelling.Products.Services
                 var query = await _productRepository.GetQueryableAsync();
 
                 var products = await AsyncExecuter.ToListAsync(
-                    query
+                     query
                     .AsNoTracking() 
-                    .Include(p => p.StoreInventories) 
                     .Where(p => targetIds.Contains(p.Id) && p.IsActive)
                     .Take(MAX_QUERY_BATCH_SIZE) 
                 );

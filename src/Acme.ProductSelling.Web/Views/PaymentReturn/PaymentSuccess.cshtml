@@ -1,0 +1,228 @@
+﻿@model Acme.ProductSelling.Web.Models.PaymentResultViewModel
+@{
+    ViewData["Title"] = L["Payment:Success:Title"];
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <style>
+        /* ── Page Shell ─────────────────────────────── */
+        .payment-success-page {
+            min-height: 72vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 1rem;
+            background: radial-gradient(ellipse at 60% 0%, #e8f5e9 0%, transparent 60%),
+                        radial-gradient(ellipse at 20% 100%, #e3f2fd 0%, transparent 55%);
+        }
+
+        /* ── Card ───────────────────────────────────── */
+        .success-card {
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 8px 48px rgba(0,0,0,.09), 0 1px 4px rgba(0,0,0,.04);
+            padding: 3rem 2.5rem;
+            max-width: 520px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-card::before {
+            content: '';
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 4px;
+            background: linear-gradient(90deg, #43a047, #66bb6a, #81c784);
+            border-radius: 24px 24px 0 0;
+        }
+
+        /* ── Animated SVG Checkmark ─────────────────── */
+        .checkmark-wrap {
+            width: 96px;
+            height: 96px;
+            margin: 0 auto 1.75rem;
+        }
+
+        .checkmark-circle {
+            stroke-dasharray: 283;
+            stroke-dashoffset: 283;
+            animation: draw-circle 0.55s cubic-bezier(.65,0,.45,1) 0.1s forwards;
+        }
+
+        .checkmark-tick {
+            stroke-dasharray: 80;
+            stroke-dashoffset: 80;
+            animation: draw-tick 0.35s cubic-bezier(.65,0,.45,1) 0.55s forwards;
+        }
+
+        @@keyframes draw-circle {
+            to { stroke-dashoffset: 0; }
+        }
+
+        @@keyframes draw-tick {
+            to { stroke-dashoffset: 0; }
+        }
+
+        /* circle fill pulse */
+        .checkmark-bg {
+            transform-origin: center;
+            animation: pop-in 0.4s cubic-bezier(.36,.07,.19,.97) 0.85s both;
+        }
+
+        @@keyframes pop-in {
+            0%   { transform: scale(0.8); opacity: 0; }
+            60%  { transform: scale(1.08); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        /* ── Typography ─────────────────────────────── */
+        .success-headline {
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: #1b5e20;
+            letter-spacing: -.02em;
+            margin-bottom: .5rem;
+            opacity: 0;
+            transform: translateY(12px);
+            animation: fade-up 0.45s ease 0.75s forwards;
+        }
+
+        .success-message {
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fade-up 0.45s ease 0.9s forwards;
+        }
+
+        @@keyframes fade-up {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── CTA Button ─────────────────────────────── */
+        .btn-success-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            background: linear-gradient(135deg, #43a047, #2e7d32);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: .75rem 2.25rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform .18s, box-shadow .18s;
+            box-shadow: 0 4px 18px rgba(46,125,50,.28);
+            opacity: 0;
+            animation: fade-up 0.4s ease 1.05s forwards;
+        }
+
+        .btn-success-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 24px rgba(46,125,50,.36);
+            color: #fff;
+        }
+
+        .btn-success-cta:active {
+            transform: translateY(0);
+        }
+
+        /* ── Confetti dots ───────────────────────────── */
+        .confetti-container {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .confetti-dot {
+            position: absolute;
+            top: -10px;
+            border-radius: 50%;
+            animation: confetti-fall linear forwards;
+        }
+
+        @@keyframes confetti-fall {
+            0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110%) rotate(720deg); opacity: 0; }
+        }
+    </style>
+}
+
+<div class="payment-success-page">
+    <div class="success-card">
+
+        <!-- Confetti (JS-generated below) -->
+        <div class="confetti-container" id="confettiContainer"></div>
+
+        <!-- Animated checkmark SVG -->
+        <div class="checkmark-wrap">
+            <svg viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- soft green fill, pops in after stroke -->
+                <circle class="checkmark-bg" cx="48" cy="48" r="44" fill="#e8f5e9"/>
+                <!-- animated circle stroke -->
+                <circle class="checkmark-circle"
+                        cx="48" cy="48" r="45"
+                        stroke="#43a047" stroke-width="5"
+                        stroke-linecap="round"
+                        transform="rotate(-90 48 48)"/>
+                <!-- animated tick -->
+                <polyline class="checkmark-tick"
+                          points="26,50 41,65 70,34"
+                          stroke="#2e7d32" stroke-width="5.5"
+                          stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+
+        <h1 class="success-headline">@L["Payment:Success:Headline"]</h1>
+
+        <p class="success-message">@Model.Message</p>
+
+        @if (!string.IsNullOrEmpty(Model.RedirectUrl))
+        {
+            <a href="@Model.RedirectUrl" class="btn-success-cta">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2.2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 18l6-6-6-6"/>
+                </svg>
+                @L["Payment:Success:ViewOrder"]
+            </a>
+        }
+
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        // Confetti burst — lightweight, no library needed
+        (function () {
+            var colors = ['#43a047','#66bb6a','#fdd835','#1e88e5','#fb8c00','#e53935','#8e24aa'];
+            var container = document.getElementById('confettiContainer');
+            var count = 38;
+
+            for (var i = 0; i < count; i++) {
+                (function (i) {
+                    var dot = document.createElement('div');
+                    dot.className = 'confetti-dot';
+                    var size = Math.random() * 7 + 5;
+                    dot.style.cssText = [
+                        'width:'  + size + 'px',
+                        'height:' + size + 'px',
+                        'left:'   + (Math.random() * 100) + '%',
+                        'background:' + colors[Math.floor(Math.random() * colors.length)],
+                        'animation-duration:' + (Math.random() * 1.4 + 1.1) + 's',
+                        'animation-delay:'    + (Math.random() * 0.6 + 0.9) + 's'
+                    ].join(';');
+                    container.appendChild(dot);
+                })(i);
+            }
+        })();
+    </script>
+}

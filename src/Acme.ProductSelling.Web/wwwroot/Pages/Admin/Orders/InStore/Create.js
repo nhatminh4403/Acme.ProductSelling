@@ -54,7 +54,7 @@
             }
 
             const priceText = selectedOption.data('price');
-            const price = parseFloat(priceText.replace(/[^\d]/g, ''));
+            const price = parseFloat(selectedOption.data('price')) || 0;
             const quantity = parseInt($quantityInput.val()) || 0;
             const total = price * quantity;
 

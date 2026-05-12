@@ -1,5 +1,6 @@
 using Acme.ProductSelling.Permissions;
 using Acme.ProductSelling.Products.Services;
+using Acme.ProductSelling.Users;
 using Acme.ProductSelling.StoreInventories.Dtos;
 using Acme.ProductSelling.StoreInventories.Services;
 using Acme.ProductSelling.Stores;
@@ -266,8 +267,8 @@ namespace Acme.ProductSelling.StoreInventories
             if (!_currentUser.Id.HasValue)
                 return null;
 
-            var user = await _userRepository.GetAsync(_currentUser.Id.Value);
-            return user.GetProperty<Guid?>("AssignedStoreId");
+            var user = await _userRepository.GetAsync(_currentUser.Id.Value) as AppUser;
+            return user?.AssignedStoreId;
         }
 
         private async Task<bool> IsAdminOrManagerAsync()
@@ -278,8 +279,8 @@ namespace Acme.ProductSelling.StoreInventories
             var user = await _userRepository.GetAsync(_currentUser.Id.Value);
             var roles = await _userRepository.GetRolesAsync(user.Id);
             return roles.Any(r =>
-                string.Equals(r.Name, Acme.ProductSelling.Identity.IdentityRoleConsts.Admin, StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(r.Name, Acme.ProductSelling.Identity.IdentityRoleConsts.Manager, StringComparison.OrdinalIgnoreCase));
+                string.Equals(r.Name, Acme.ProductSelling.Identity.ExtendedRoleConsts.Admin, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(r.Name, Acme.ProductSelling.Identity.ExtendedRoleConsts.Manager, StringComparison.OrdinalIgnoreCase));
         }
 
         private async Task CheckStoreAccessAsync(Guid storeId)

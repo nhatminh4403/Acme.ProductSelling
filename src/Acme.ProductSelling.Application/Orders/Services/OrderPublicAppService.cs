@@ -111,35 +111,68 @@ namespace Acme.ProductSelling.Orders.Services
             return new CreateOrderResultDto { Order = _orderMapper.Map(order), RedirectUrl = gatewayResult.RedirectUrl };
         }
         [RemoteService(false)]
-        public async Task<OrderDto> ConfirmPayPalOrderAsync(Guid id, string token)
+        public async Task<OrderDto> ConfirmVnPayOrderAsync(Guid id)
         {
             var order = await _orderRepository.GetAsync(id) as OnlineOrder;
-            if (order.CustomerId != CurrentUser.Id) throw new EntityNotFoundException(typeof(Order), id);
+            if (order == null) throw new EntityNotFoundException(typeof(Order), id);
+            if (order.CustomerId != CurrentUser.Id)
+                throw new EntityNotFoundException(typeof(Order), id); // don't leak existence
 
-            if (order.PaymentStatus == PaymentStatus.Pending || order.PaymentStatus == PaymentStatus.Unpaid)
+            // Idempotent: if IPN already marked it paid, nothing to do
+            if (order.PaymentStatus == PaymentStatus.Paid)
+                return _orderMapper.Map(order);
+
+            if (order.PaymentStatus == PaymentStatus.Pending ||
+                order.PaymentStatus == PaymentStatus.Unpaid)
             {
-                var captureResponse = await _payPalService.ExecutePaymentAsync(token);
-
-                // 6. Verify the payment was successful before giving them the items
-                if (captureResponse == null || captureResponse.Status != PaypalServerSdk.Standard.Models.OrderStatus.Completed)
-                {
-                    throw new UserFriendlyException("Giao dịch PayPal chưa được hoàn tất hoặc bị từ chối.");
-                }
                 var oldOrderStatus = order.OrderStatus;
                 var oldPaymentStatus = order.PaymentStatus;
 
-                order.MarkAsPaidOnline();
+                order.MarkAsPaidOnline(); 
+
                 await _orderRepository.UpdateAsync(order, autoSave: true);
                 await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
-
-                await _orderHistoryAppService.LogOrderChangeAsync(order.Id,
-                                                                  oldOrderStatus,
-                                                                  order.OrderStatus,
-                                                                  oldPaymentStatus,
-                                                                  order.PaymentStatus,
-                                                                  _localizer["Order:PaidViaPayPal"] ?? "Thanh toán thành công qua PayPal");
-
+                await _orderHistoryAppService.LogOrderChangeAsync(
+                    order.Id,
+                    oldOrderStatus, order.OrderStatus,
+                    oldPaymentStatus, order.PaymentStatus,
+                    _localizer["Order:PaidViaVnPay"] ?? "Thanh toán thành công qua VnPay"
+                );
             }
+
+            return _orderMapper.Map(order);
+        }
+
+        [RemoteService(false)]
+        public async Task<OrderDto> ConfirmPayPalOrderAsync(Guid id, string token)
+        {
+            var order = await _orderRepository.GetAsync(id) as OnlineOrder;
+            if (order == null) throw new EntityNotFoundException(typeof(Order), id);
+            if (order.CustomerId != CurrentUser.Id)
+                throw new EntityNotFoundException(typeof(Order), id); // don't leak existence
+
+            // Idempotent: if IPN already marked it paid, nothing to do
+            if (order.PaymentStatus == PaymentStatus.Paid)
+                return _orderMapper.Map(order);
+
+            if (order.PaymentStatus == PaymentStatus.Pending ||
+                order.PaymentStatus == PaymentStatus.Unpaid)
+            {
+                var oldOrderStatus = order.OrderStatus;
+                var oldPaymentStatus = order.PaymentStatus;
+
+                order.MarkAsPaidOnline(); // same domain method used by PayPal
+
+                await _orderRepository.UpdateAsync(order, autoSave: true);
+                await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
+                await _orderHistoryAppService.LogOrderChangeAsync(
+                    order.Id,
+                    oldOrderStatus, order.OrderStatus,
+                    oldPaymentStatus, order.PaymentStatus,
+                    _localizer["Order:PaidViaMoMo"] ?? "Thanh toán thành công qua MoMo"
+                );
+            }
+
             return _orderMapper.Map(order);
         }
         // OrderPublicAppService.cs

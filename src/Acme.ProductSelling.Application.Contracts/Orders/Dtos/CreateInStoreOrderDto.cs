@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Acme.ProductSelling.Orders.Dtos
@@ -12,6 +13,8 @@ namespace Acme.ProductSelling.Orders.Dtos
 
         [Required]
         public string PaymentMethod { get; set; }
+        
+        public Guid? CurrentUserStoreId { get; set; } = Guid.Empty; // Optional, can be set by the system based on current user's store assignment
 
         [Required]
         public List<CreateOrderItemDto> Items { get; set; } = new List<CreateOrderItemDto>();

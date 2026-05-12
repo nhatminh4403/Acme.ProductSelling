@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using Acme.ProductSelling.Products.Services;
+using JetBrains.Annotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using OpenIddict.Abstractions;
@@ -30,7 +31,7 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
     private readonly IOpenIddictScopeManager _scopeManager;
     private readonly IPermissionDataSeeder _permissionDataSeeder;
     private readonly IStringLocalizer<OpenIddictResponse> L;
-
+    private readonly IProductRepository _productRepository;
     public OpenIddictDataSeedContributor(
         IConfiguration configuration,
         IOpenIddictApplicationRepository openIddictApplicationRepository,
@@ -82,7 +83,7 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
 
         var configurationSection = _configuration.GetSection("OpenIddict:Applications");
 
-
+       
         //Console Test / Angular Client
         var consoleAndAngularClientId = configurationSection["ProductSelling_App:ClientId"];
         if (!consoleAndAngularClientId.IsNullOrWhiteSpace())

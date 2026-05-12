@@ -1,5 +1,6 @@
 ﻿using Acme.ProductSelling.Orders.Services;
 using Acme.ProductSelling.PaymentGateway.VnPay.Services;
+using Acme.ProductSelling.Payments;
 using Acme.ProductSelling.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,7 @@ namespace Acme.ProductSelling.Web.Controllers
             _orderPublicAppService = orderPublicAppService;
         }
 
-        [HttpGet("payment-failed")]
+        [HttpGet("that-bai")]
         public IActionResult PaymentFailed()
         {
             var model = new PaymentResultViewModel();
@@ -65,6 +66,9 @@ namespace Acme.ProductSelling.Web.Controllers
 
                 if (response.VnPayResponseCode == "00")
                 {
+                    if (order.PaymentStatus != PaymentStatus.Paid)
+                        order = await _orderPublicAppService.ConfirmVnPayOrderAsync(orderId);
+
                     return View("PaymentSuccess", new PaymentResultViewModel
                     {
                         IsSuccess = true,
@@ -201,6 +205,13 @@ namespace Acme.ProductSelling.Web.Controllers
                     ? Url.Page("/Orders/OrderDetail", new { id = orderId })
                     : Url.Page("/Orders/OrderHistory")
             });
+        }
+
+        [HttpGet("success")]
+        public async Task<IActionResult> PaymentSuccess()
+        {
+            var model = new PaymentResultViewModel();
+            return View(model);
         }
     }
 }

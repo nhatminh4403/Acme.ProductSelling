@@ -43,6 +43,13 @@ namespace Acme.ProductSelling.Account
             await _customerRepository.UpdateAsync(customer, autoSave: true);
         }
 
+        public async Task<AddressDto> GetAsync(Guid id)
+        {
+            var address = await _customerRepository.GetAddressAsync(id);
+
+            return _mapper.Map(address);
+        }
+
         public async Task<List<AddressDto>> GetListAsync()
         {
             var customer = await _customerRepository.GetCurrentCustomerAsync();
@@ -50,7 +57,7 @@ namespace Acme.ProductSelling.Account
                 .Select(a => _mapper.Map(a))
                 .ToList();
         }
-
+        
         public async Task SetDefaultAsync(Guid id)
         {
             var customer = await _customerRepository.GetCurrentCustomerAsync();
@@ -58,7 +65,7 @@ namespace Acme.ProductSelling.Account
             await _customerRepository.UpdateAsync(customer, autoSave: true);
         }
 
-        public async Task<AddressDto> UpdateAsync(CreateAddressDto input)
+        public async Task<AddressDto> UpdateAsync(UpdateShippingAddressDto input)
         {
             var customer = await _customerRepository.GetCurrentCustomerAsync();
             var address = customer.ShippingAddresses.FirstOrDefault(a => a.Id == input.Id)

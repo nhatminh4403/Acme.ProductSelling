@@ -12,80 +12,57 @@
     <script src="~/js/global/user/account.js"></script>
 }
 
-<div class="account-management-container">
-    <div class="account-header modern-header">
-        <div class="header-content">
-            <h1><i class="fas fa-shield-alt"></i> @L["Account:Security"]</h1>
-            <p>@L["Account:SecurityDescription"]</p>
-        </div>
-        <div class="header-decoration"></div>
-    </div>
+<div class="acct-page-wrapper">
+    <!-- Sidebar Navigation -->
+    @await Component.InvokeAsync(typeof(AccountNavComponents), new AccountNavActive { NavActive = "password" })
 
-    <div class="account-body modern-card">
-        <div class="account-sidebar">
-            <ul class="nav-menu">
-                <li>
-                    <a href="/account" class="nav-item">
-                        <i class="fas fa-user"></i>
-                        <span>@L["Account:ProfileInformation"]</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/account/security" class="nav-item active">
-                        <i class="fas fa-lock"></i>
-                        <span>@L["Account:Security"]</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/account/addresses" class="nav-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>@L["Account:Addresses"]</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
 
-        <div class="account-content">
-            <div class="content-panel fade-in active">
-                <form method="post" asp-page-handler="ChangePassword" id="password-form">
-                    <div class="info-alert glass-alert warning-alert">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>@L["Account:SecurityDescription"]</span>
+    <!-- Main Content -->
+    <main class="acct-main-content">
+        <div class="acct-glass-card">
+            <div class="acct-section-header">
+                <h1 class="acct-section-title">@L["Account:Security"]</h1>
+                <p class="acct-section-subtitle">@L["Account:SecurityDescription"]</p>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="acct-alert-box acct-alert-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>@Model.ErrorMessage</span>
+                </div>
+            }
+
+            <form method="post">
+                <div class="acct-info-grid">
+                    <div class="acct-form-row">
+                        <abp-input asp-for="PasswordInput.CurrentPassword" />
                     </div>
-
-                    <div class="form-section">
-                        <h3 class="section-title">
-                            @L["Account:ChangePassword"]
-                        </h3>
-                        <div class="form-grid modern-grid">
-                            <div class="mb-3">
-                                <abp-input asp-for="@Model.PasswordInput.CurrentPassword" />
+                    <div class="acct-form-row" style="grid-column: 1 / -1;">
+                        <abp-input asp-for="PasswordInput.NewPassword" />
+                        <div class="acct-pwd-indicator">
+                            <div class="acct-pwd-bars">
+                                <div class="acct-pwd-bar"></div>
+                                <div class="acct-pwd-bar"></div>
+                                <div class="acct-pwd-bar"></div>
                             </div>
-                            <div class="mb-3">
-                                <abp-input asp-for="@Model.PasswordInput.NewPassword" />
-                                <div class="password-strength-container">
-                                    <div class="strength-bar-track">
-                                        <div class="strength-bar-fill" id="password-strength-bar"></div>
-                                    </div>
-                                    <small id="password-strength-text" class="strength-text text-muted"></small>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <abp-input asp-for="@Model.PasswordInput.ConfirmPassword" />
-                            </div>
+                            <span class="acct-pwd-text"></span>
                         </div>
                     </div>
-
-                    <div class="form-actions">
-                        <button type="button" class="btn-modern btn-secondary" onclick="resetForm('password-form')">
-                            <i class="fas fa-undo"></i> @L["Account:Reset"]
-                        </button>
-                        <button type="submit" class="btn-modern btn-primary" data-busy-text="@L["Account:Changing"]">
-                            <i class="fas fa-lock"></i> @L["Account:ChangePassword"]
-                        </button>
+                    <div class="acct-form-row">
+                        <abp-input asp-for="PasswordInput.ConfirmPassword" />
                     </div>
-                </form>
-            </div>
+                </div>
+
+                <div class="acct-form-actions">
+                    <button type="reset" class="btn btn-secondary">
+                        <i class="fas fa-undo"></i> @L["Account:Reset"]
+                    </button>
+                    <button type="submit" class="btn btn-primary" data-busy-text="@L["Account:Changing"]">
+                        <i class="fas fa-lock"></i> @L["Account:ChangePassword"]
+                    </button>
+                </div>
+            </form>
         </div>
-    </div>
+    </main>
 </div>

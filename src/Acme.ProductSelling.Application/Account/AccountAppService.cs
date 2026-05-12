@@ -46,25 +46,25 @@ public class AccountAppService : ApplicationService, IAccountAppService
         var roles = await _userRepository.GetRolesAsync(user.Id);
         var roleNames = roles.Select(r => r.Name).ToList();
         result.HasAdminAccess = roleNames.Any(r =>
-                       r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Admin, StringComparison.OrdinalIgnoreCase) ||
-                       r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Manager, StringComparison.OrdinalIgnoreCase) ||
-                       r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Seller, StringComparison.OrdinalIgnoreCase) ||
-                       r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Cashier, StringComparison.OrdinalIgnoreCase) ||
-                       r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.WarehouseStaff, StringComparison.OrdinalIgnoreCase)
+                       r.Equals(Acme.ProductSelling.Identity.ExtendedRoleConsts.Admin, StringComparison.OrdinalIgnoreCase) ||
+                       r.Equals(Acme.ProductSelling.Identity.ExtendedRoleConsts.Manager, StringComparison.OrdinalIgnoreCase) ||
+                       r.Equals(Acme.ProductSelling.Identity.ExtendedRoleConsts.Seller, StringComparison.OrdinalIgnoreCase) ||
+                       r.Equals(Acme.ProductSelling.Identity.ExtendedRoleConsts.Cashier, StringComparison.OrdinalIgnoreCase) ||
+                       r.Equals(Acme.ProductSelling.Identity.ExtendedRoleConsts.WarehouseStaff, StringComparison.OrdinalIgnoreCase)
                    );
-        if (roleNames.Any(r => r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Manager, StringComparison.OrdinalIgnoreCase)))
+        if (roleNames.Any(r => r.Equals(Acme.ProductSelling.Identity.ExtendedRoleConsts.Manager, StringComparison.OrdinalIgnoreCase)))
         {
             result.Prefix = "manager";
         }
-        else if (roleNames.Any(r => r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Seller, StringComparison.OrdinalIgnoreCase)))
+        else if (roleNames.Any(r => r.Equals(Acme.ProductSelling.Identity.ExtendedRoleConsts.Seller, StringComparison.OrdinalIgnoreCase)))
         {
             result.Prefix = "seller";
         }
-        else if (roleNames.Any(r => r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.Cashier, StringComparison.OrdinalIgnoreCase)))
+        else if (roleNames.Any(r => r.Equals(Acme.ProductSelling.Identity.ExtendedRoleConsts.Cashier, StringComparison.OrdinalIgnoreCase)))
         {
             result.Prefix = "cashier";
         }
-        else if (roleNames.Any(r => r.Equals(Acme.ProductSelling.Identity.IdentityRoleConsts.WarehouseStaff, StringComparison.OrdinalIgnoreCase)))
+        else if (roleNames.Any(r => r.Equals(Acme.ProductSelling.Identity.ExtendedRoleConsts.WarehouseStaff, StringComparison.OrdinalIgnoreCase)))
         {
             result.Prefix = "warehouse";
         }
@@ -120,7 +120,7 @@ public class AccountAppService : ApplicationService, IAccountAppService
         await _userManager.UpdateAsync(user);
 
         // 4. Assign the "Customer" role
-        await _userManager.AddToRoleAsync(user, Acme.ProductSelling.Identity.IdentityRoleConsts.Customer);
+        await _userManager.AddToRoleAsync(user, Acme.ProductSelling.Identity.ExtendedRoleConsts.Customer);
         Logger.LogInformation(
             "New customer registered: {UserId} ({UserName}), Customer: {CustomerId}",
             user.Id, user.UserName, customer.Id

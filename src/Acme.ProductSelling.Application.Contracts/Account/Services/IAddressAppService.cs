@@ -11,7 +11,8 @@ namespace Acme.ProductSelling.Account.Services
     {
         Task<List<AddressDto>> GetListAsync();
         Task<AddressDto> CreateAsync(CreateAddressDto input);
-        Task<AddressDto> UpdateAsync(CreateAddressDto input);
+        Task<AddressDto> UpdateAsync(UpdateShippingAddressDto input);
+        Task<AddressDto> GetAsync(Guid id);
         Task DeleteAsync(Guid id);
         Task SetDefaultAsync(Guid id);
     }

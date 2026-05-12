@@ -63,6 +63,7 @@ public partial class OrderToOrderDtoMapper : MapperBase<Order, OrderDto>
 
             case InStoreOrder inStore:
                 destination.StoreId = inStore.StoreId;
+                destination.StoreName = inStore.StoreName;
                 destination.SellerId = inStore.SellerId;
                 destination.SellerName = inStore.SellerName;
                 destination.CashierId = inStore.CashierId;

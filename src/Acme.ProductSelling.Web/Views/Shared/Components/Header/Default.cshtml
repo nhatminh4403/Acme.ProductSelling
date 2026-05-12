@@ -7,7 +7,7 @@
 
 @{
     var hasAdminPermission = CurrentUser.IsInRole("Admin") ||
-         CurrentUser.IsInRole("admin") || CurrentUser.IsInRole(IdentityRoleConsts.Admin);
+         CurrentUser.IsInRole("admin") || CurrentUser.IsInRole(ExtendedRoleConsts.Admin);
     var title = ViewData["Title"]?.ToString();
     var titleAppName = L["Menu:AppName"].ToString();
     bool checkTitle = title.ToLower().Contains(titleAppName.ToLower());
@@ -83,7 +83,7 @@
                     <div class="user-dropdown-menu">
                         <a class="dropdown-item" asp-page="/Account/Index">
                             <i class="bi bi-person"></i>
-                            @L["Account:ManageYourProfile"]
+                            @L["Account:ManageYourAccount"]
                         </a>
                         <a class="dropdown-item" asp-page="/Orders/OrderHistory">
                             <i class="bi bi-bag"></i>

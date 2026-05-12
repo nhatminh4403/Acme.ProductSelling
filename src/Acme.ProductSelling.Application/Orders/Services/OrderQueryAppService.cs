@@ -3,6 +3,7 @@ using Acme.ProductSelling.Orders.Dtos;
 using Acme.ProductSelling.Payments;
 using Acme.ProductSelling.Permissions;
 using Microsoft.AspNetCore.Authorization;
+using Acme.ProductSelling.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -132,6 +133,8 @@ namespace Acme.ProductSelling.Orders.Services
         public async Task<OrderDto> UpdateStatusAsync(Guid id, UpdateOrderStatusDto input)
         {
             var order = await _orderRepository.GetAsync(id);
+            if (order == null)
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderNotFound);
             var oldStatus = order.OrderStatus;
             var oldPayment = order.PaymentStatus;
 
@@ -153,6 +156,10 @@ namespace Acme.ProductSelling.Orders.Services
         public async Task ShipOrderAsync(Guid orderId)
         {
             var order = await _orderRepository.GetAsync(orderId) as OnlineOrder;
+            if (order == null)
+                throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderNotFound);
+            var oldStatus = order.OrderStatus;
+            var oldPayment = order.PaymentStatus;
 
             if (order.OrderStatus != OrderStatus.Confirmed && order.OrderStatus != OrderStatus.Processing)
                 throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderCannotShip);
@@ -162,6 +169,13 @@ namespace Acme.ProductSelling.Orders.Services
 
             await _orderRepository.UpdateAsync(order, autoSave: true);
             await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
+            await _orderHistoryAppService.LogOrderChangeAsync(
+                orderId,
+                oldStatus,
+                order.OrderStatus,
+                oldPayment,
+                order.PaymentStatus,
+                _localizer["Order:Shipped"]);
             await _orderCache.RemoveAsync(orderId);
         }
 
@@ -169,7 +183,8 @@ namespace Acme.ProductSelling.Orders.Services
         public async Task DeliverOrderAsync(Guid orderId)
         {
             var order = await _orderRepository.GetAsync(orderId) as OnlineOrder;
-
+            var oldStatus = order.OrderStatus;
+            var oldPayment = order.PaymentStatus;
             if (order == null)
                 throw new UserFriendlyException(ProductSellingDomainErrorCodes.OrderNotFound);
 
@@ -183,6 +198,12 @@ namespace Acme.ProductSelling.Orders.Services
 
             await _orderRepository.UpdateAsync(order, autoSave: true);
             await _orderNotificationService.NotifyOrderStatusChangeAsync(order);
+            await _orderHistoryAppService.LogOrderChangeAsync(orderId,
+                                                              oldStatus,
+                                                              order.OrderStatus,
+                                                              oldPayment,
+                                                              order.PaymentStatus,
+                                                              _localizer["Order:Shipped"]);
             await _orderCache.RemoveAsync(orderId);
         }
 
@@ -297,8 +318,8 @@ namespace Acme.ProductSelling.Orders.Services
                 return null;
             }
 
-            var user = await _userRepository.GetAsync(_currentUser.Id.Value);
-            var storeIdProperty = user.GetProperty<Guid?>("AssignedStoreId");
+            var user = await _userRepository.GetAsync(_currentUser.Id.Value) as AppUser;
+            var storeIdProperty = user?.AssignedStoreId;
 
             Logger.LogDebug("[GetCurrentUserStoreId] UserId: {UserId}, AssignedStoreId: {StoreId}",
                 _currentUser.Id.Value, storeIdProperty?.ToString() ?? "None");

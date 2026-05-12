@@ -61,6 +61,8 @@ public static class ProductSellingDomainErrorCodes
 
     // Users
     public const string StaffUsersCannotHaveCustomerProfiles = "ProductSelling:StaffUsersCannotHaveCustomerProfiles";
+    
+    public const string AddressNotFound = "ProductSelling:AddressNotFound";
 
     // OpenIddict
     public const string NoClientSecretCanBeSetForPublicApplications = "ProductSelling:NoClientSecretCanBeSetForPublicApplications";
@@ -83,7 +85,8 @@ public static class ProductSellingDomainErrorCodes
     public const string IdentityDataSeedingFailed = "ProductSelling:IdentityDataSeedingFailed";
     public const string OpenIddictDataSeedingFailed = "ProductSelling:OpenIddictDataSeedingFailed";
     public const string DatabaseMigrationFailed = "ProductSelling:DatabaseMigrationFailed";
-
+    // Staff
+    public const string StaffNotFound = "ProductSelling:StaffNotFound";
     // Stores
     public const string StoreNotFound = "ProductSelling:StoreNotFound";
 }

@@ -52,7 +52,12 @@ public class ProductSellingPermissionDefinitionProvider : PermissionDefinitionPr
         manufacturersPermission.AddChild(ProductSellingPermissions.Manufacturers.Delete, L("Permission:Manufacturers.Delete"));
         #endregion
 
-
+        #region Inventory Permissions
+        var inventoryPermission = myGroup.AddPermission(ProductSellingPermissions.Inventory.Default, L("Permission:Inventory"));
+        inventoryPermission.AddChild(ProductSellingPermissions.Inventory.Manage, L("Permission:Inventory.Manage"));
+        inventoryPermission.AddChild(ProductSellingPermissions.Inventory.Transfer, L("Permission:Inventory.Transfer"));
+        inventoryPermission.AddChild(ProductSellingPermissions.Inventory.ViewAllStores, L("Permission:Inventory.ViewAllStores"));
+        #endregion
 
         #region Comment Permissions
 

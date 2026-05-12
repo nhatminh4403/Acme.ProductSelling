@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Acme.ProductSelling.Orders.Dtos
@@ -8,5 +8,7 @@ namespace Acme.ProductSelling.Orders.Dtos
         [Required]
         [Range(0.01, double.MaxValue)]
         public decimal PaidAmount { get; set; }
+
+        public Guid? CurrentUserStoreId { get; set; }
     }
 }

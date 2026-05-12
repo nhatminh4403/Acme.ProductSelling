@@ -1,5 +1,5 @@
 ﻿$(function () {
-    var orderService = acme.productSelling.orders.order;
+    var orderService = acme.productSelling.orders.services.orderQuery;
     var l = abp.localization.getResource('ProductSelling');
 
     // Get order ID from page

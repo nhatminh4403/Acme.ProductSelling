@@ -12,11 +12,8 @@ namespace Acme.ProductSelling.Web.Pages.Account
     {
         private readonly IProfileAppService _profileAppService;
 
-        [BindProperty(Name = "PasswordInput")]
+        [BindProperty]
         public ChangePasswordDto PasswordInput { get; set; }
-
-        [TempData]
-        public string SuccessMessage { get; set; }
 
         [TempData]
         public string ErrorMessage { get; set; }
@@ -30,7 +27,7 @@ namespace Acme.ProductSelling.Web.Pages.Account
         {
         }
 
-        public async Task<IActionResult> OnPostChangePasswordAsync()
+        public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
@@ -41,14 +38,13 @@ namespace Acme.ProductSelling.Web.Pages.Account
             {
                 await _profileAppService.ChangePasswordAsync(PasswordInput);
                 Alerts.Success(L["Account:PasswordChangedSuccessfully"]);
+                return RedirectToPage("/Account/Index");
             }
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
                 return Page();
             }
-
-            return RedirectToPage();
         }
     }
 }

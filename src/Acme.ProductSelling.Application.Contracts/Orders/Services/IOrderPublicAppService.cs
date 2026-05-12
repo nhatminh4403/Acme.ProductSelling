@@ -15,6 +15,7 @@ namespace Acme.ProductSelling.Orders.Services
         Task<OrderDto> GetByOrderNumberAsync(string orderNumber);
         Task<PagedResultDto<OrderDto>> GetListForCurrentUserAsync(PagedAndSortedResultRequestDto input);
         Task<OrderDto> ConfirmMoMoOrderAsync(Guid id, long transId);
+        Task<OrderDto> ConfirmVnPayOrderAsync(Guid id);
 
     }
 }

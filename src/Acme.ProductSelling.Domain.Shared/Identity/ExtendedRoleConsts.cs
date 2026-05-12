@@ -1,6 +1,6 @@
 ﻿namespace Acme.ProductSelling.Identity
 {
-    public static class IdentityRoleConsts
+    public static class ExtendedRoleConsts
     {
         public const string Admin = "admin";
         public const string Manager = "manager";

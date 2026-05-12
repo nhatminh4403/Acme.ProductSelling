@@ -25,8 +25,9 @@ namespace Acme.ProductSelling.Orders
         public string FulfillerName { get; protected set; }
         public DateTime? CompletedAt { get; protected set; } // When cashier processed payment
         public DateTime? FulfilledAt { get; protected set; } // When warehouse gave items
-
-
+        [CanBeNull]
+        [StringLength(128)]
+        public string StoreName { get; protected set; }
         protected InStoreOrder() { }
 
         public InStoreOrder(Guid id, string orderNumber, DateTime orderDate,

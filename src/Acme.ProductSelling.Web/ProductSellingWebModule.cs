@@ -47,6 +47,7 @@ using Volo.Abp.AspNetCore.Mvc.UI;
 //using Volo.Abp.AspNetCore.Mvc.UI;
 using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
 using Volo.Abp.AspNetCore.Mvc.UI.Packages.Bootstrap;
+using Volo.Abp.AspNetCore.Mvc.UI.Packages.BootstrapDaterangepicker;
 using Volo.Abp.AspNetCore.Mvc.UI.Packages.DatatablesNet;
 using Volo.Abp.AspNetCore.Mvc.UI.Packages.JQuery;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic;
@@ -426,6 +427,7 @@ public class ProductSellingWebModule : AbpModule
                 bundle =>
                 {
                     bundle.AddContributors(typeof(BootstrapStyleContributor));
+                    bundle.AddContributors(typeof(BootstrapDaterangepickerStyleContributor));
                 }
             );
             options.ScriptBundles.Configure(
@@ -435,6 +437,8 @@ public class ProductSellingWebModule : AbpModule
                     bundle.AddContributors(typeof(JQueryScriptContributor));
                     bundle.AddContributors(typeof(BootstrapScriptContributor));
                     bundle.AddContributors(typeof(DatatablesNetScriptContributor));
+                    bundle.AddContributors(typeof(BootstrapDaterangepickerScriptContributor));
+
 
                     //bundle.AddFiles("/js/shared/culture.js");
                 }

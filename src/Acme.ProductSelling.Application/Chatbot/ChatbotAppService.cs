@@ -146,10 +146,10 @@ namespace Acme.ProductSelling.Chatbot
                 return "anonymous";
             }
 
-            if (_currentUser.IsInRole(IdentityRoleConsts.Admin)) return "admin";
-            if (_currentUser.IsInRole(IdentityRoleConsts.Manager)) return "manager";
-            if (_currentUser.IsInRole(IdentityRoleConsts.WarehouseStaff)) return "warehouse";
-            if (_currentUser.IsInRole(IdentityRoleConsts.Seller) || _currentUser.IsInRole(IdentityRoleConsts.Cashier)) return "sales_agent";
+            if (_currentUser.IsInRole(ExtendedRoleConsts.Admin)) return "admin";
+            if (_currentUser.IsInRole(ExtendedRoleConsts.Manager)) return "manager";
+            if (_currentUser.IsInRole(ExtendedRoleConsts.WarehouseStaff)) return "warehouse";
+            if (_currentUser.IsInRole(ExtendedRoleConsts.Seller) || _currentUser.IsInRole(ExtendedRoleConsts.Cashier)) return "sales_agent";
 
             return "customer";
         }

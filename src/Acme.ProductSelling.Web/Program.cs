@@ -46,6 +46,10 @@ public class Program
                         .MinimumLevel.Override("Microsoft.AspNetCore.StaticFiles", LogEventLevel.Warning)
                         // Suppress routing/endpoint selection details
                         .MinimumLevel.Override("Microsoft.AspNetCore.Routing", LogEventLevel.Warning)
+                        .MinimumLevel.Override("Hangfire", LogEventLevel.Warning)
+//.MinimumLevel.Override("Microsoft.AspNetCore.Hosting", LogEventLevel.Warning)
+//.MinimumLevel.Override("Microsoft.AspNetCore.Mvc", LogEventLevel.Warning)
+.MinimumLevel.Override("Volo.Abp.BackgroundWorkers", LogEventLevel.Warning)
                         .Enrich.FromLogContext()
                         .WriteTo.Async(c => c.File("Logs/logs.txt"))
                         .WriteTo.Async(c => c.Console())

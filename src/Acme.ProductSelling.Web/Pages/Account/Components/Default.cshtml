@@ -1,0 +1,62 @@
+﻿@model AccountNavActive
+@{
+    var navActive = Model.NavActive;
+}
+
+@if (navActive == "info")
+{
+    <aside class="acct-sidebar-nav">
+        <h2 class="acct-sidebar-title">
+            <i class="fas fa-user-circle"></i> @L["Account:ManageYourAccount"]
+        </h2>
+        <nav>
+            <a href="/account" class="acct-nav-link is-active"><i class="fas fa-id-badge"></i>      @L["Account:ProfileInformation"]</a>
+            <a href="/account/editprofile" class="acct-nav-link"><i class="fas fa-user-edit"></i>    @L["Account:EditProfile"]</a>
+            <a href="/account/security" class="acct-nav-link"><i class="fas fa-shield-alt"></i>    @L["Account:Security"]</a>
+            <a href="/account/addresses" class="acct-nav-link "><i class="fas fa-map-marker-alt"></i> @L["Account:Addresses"]</a>
+        </nav>
+    </aside>
+}
+
+@if(navActive == "edit")
+{
+    <aside class="acct-sidebar-nav">
+        <h2 class="acct-sidebar-title">
+            <i class="fas fa-user-circle"></i> @L["Account:ManageYourAccount"]
+        </h2>
+        <nav>
+            <a href="/account" class="acct-nav-link"><i class="fas fa-id-badge"></i>      @L["Account:ProfileInformation"]</a>
+            <a href="/account/editprofile" class="acct-nav-link is-active"><i class="fas fa-user-edit"></i>    @L["Account:EditProfile"]</a>
+            <a href="/account/security" class="acct-nav-link"><i class="fas fa-shield-alt"></i>    @L["Account:Security"]</a>
+            <a href="/account/addresses" class="acct-nav-link"><i class="fas fa-map-marker-alt"></i> @L["Account:Addresses"]</a>
+        </nav>
+    </aside>
+}
+@if(navActive =="password")
+{
+    <aside class="acct-sidebar-nav">
+        <h2 class="acct-sidebar-title">
+            <i class="fas fa-user-circle"></i> @L["Account:ManageYourAccount"]
+        </h2>
+        <nav>
+            <a href="/account" class="acct-nav-link"><i class="fas fa-id-badge"></i>      @L["Account:ProfileInformation"]</a>
+            <a href="/account/editprofile" class="acct-nav-link"><i class="fas fa-user-edit"></i>    @L["Account:EditProfile"]</a>
+            <a href="/account/security" class="acct-nav-link is-active"><i class="fas fa-shield-alt"></i>    @L["Account:Security"]</a>
+            <a href="/account/addresses" class="acct-nav-link"><i class="fas fa-map-marker-alt"></i> @L["Account:Addresses"]</a>
+        </nav>
+    </aside>
+}
+@if (navActive == "addresses")
+{
+    <aside class="acct-sidebar-nav">
+        <h2 class="acct-sidebar-title">
+            <i class="fas fa-user-circle"></i> @L["Account:ManageYourAccount"]
+        </h2>
+        <nav>
+            <a href="/account" class="acct-nav-link"><i class="fas fa-id-badge"></i>      @L["Account:ProfileInformation"]</a>
+            <a href="/account/editprofile" class="acct-nav-link"><i class="fas fa-user-edit"></i>    @L["Account:EditProfile"]</a>
+            <a href="/account/security" class="acct-nav-link"><i class="fas fa-shield-alt"></i>    @L["Account:Security"]</a>
+            <a href="/account/addresses" class="acct-nav-link is-active"><i class="fas fa-map-marker-alt"></i> @L["Account:Addresses"]</a>
+        </nav>
+    </aside>
+}

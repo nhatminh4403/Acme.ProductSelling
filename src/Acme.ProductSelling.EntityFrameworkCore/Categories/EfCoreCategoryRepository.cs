@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
@@ -31,11 +32,12 @@ namespace Acme.ProductSelling.Categories
                 .ToListAsync();
         }
 
-        public async Task<Category> GetByIdAsync(Guid id)
+        public async override Task<Category> GetAsync(Guid id, bool includeDetails = true, CancellationToken cancellationToken = default)
         {
             var dbSet = await GetDbSetAsync();
             return await dbSet.FirstOrDefaultAsync(c => c.Id == id);
         }
+
 
         public async Task<Category> GetBySlugAsync(string slug)
         {

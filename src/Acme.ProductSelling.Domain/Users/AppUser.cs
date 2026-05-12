@@ -72,6 +72,7 @@ namespace Acme.ProductSelling.Users
                 return UserType.Staff;
             return UserType.Admin;
         }
+
     }
 
     public enum UserType

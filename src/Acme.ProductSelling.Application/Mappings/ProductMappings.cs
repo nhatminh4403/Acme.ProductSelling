@@ -7,7 +7,7 @@ using Volo.Abp.Mapperly;
 
 namespace Acme.ProductSelling.Products;
 
-#region Product Mappings (ROBUST FIX)
+#region Product Mappings 
 
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Target)]
 [MapExtraProperties]

@@ -1,12 +1,12 @@
-﻿
+
 :root {
     --header-bg: #4CE1CA;
     --primary-color: #10b981;
     --primary-hover: #059669;
-    --primary-light: #f0fdf4; 
+    --primary-light: #f0fdf4;
     --text-dark: #1f2937;
     --text-muted: #6b7280;
-    --text-light: #9ca3af; 
+    --text-light: #9ca3af;
     --border-color: #e5e7eb;
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -19,11 +19,25 @@
     --login-btn: #1f2937;
     --login-btn-hover: #374151;
     --header-height: 80px;
-
     /* --- Sidebar Specific Variables  --- */
     --sidebar-width: 280px;
     --sidebar-bg: #f9fafb;
     --sidebar-item-padding: 0.5rem 1rem;
     --megamenu-z-index: 9999;
     --overlay-z-index: 9998;
+}
+
+/* --- Preload Transition Disabler --- */
+.preload * {
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -ms-transition: none !important;
+    -o-transition: none !important;
+    transition: none !important;
+}
+
+.footer {
+    position: relative;
+    bottom: 0;
+    left: 0;
 }

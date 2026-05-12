@@ -54,18 +54,18 @@ namespace Acme.ProductSelling.Data.Identity
         {
             // Create roles
             var adminRole = await CreateRoleIfNotExistsAsync(
-                Acme.ProductSelling.Identity.IdentityRoleConsts.Admin);
+                Acme.ProductSelling.Identity.ExtendedRoleConsts.Admin);
             var managerRole = await CreateRoleIfNotExistsAsync(
-                Acme.ProductSelling.Identity.IdentityRoleConsts.Manager);
+                Acme.ProductSelling.Identity.ExtendedRoleConsts.Manager);
 
             var sellerRole = await CreateRoleIfNotExistsAsync(
-                Acme.ProductSelling.Identity.IdentityRoleConsts.Seller);
+                Acme.ProductSelling.Identity.ExtendedRoleConsts.Seller);
             var cashierRole = await CreateRoleIfNotExistsAsync(
-                Acme.ProductSelling.Identity.IdentityRoleConsts.Cashier);
+                Acme.ProductSelling.Identity.ExtendedRoleConsts.Cashier);
             var warehouseRole = await CreateRoleIfNotExistsAsync(
-                Acme.ProductSelling.Identity.IdentityRoleConsts.WarehouseStaff);
+                Acme.ProductSelling.Identity.ExtendedRoleConsts.WarehouseStaff);
             var customerRole = await CreateRoleIfNotExistsAsync(
-                Acme.ProductSelling.Identity.IdentityRoleConsts.Customer, isDefault: true);
+                Acme.ProductSelling.Identity.ExtendedRoleConsts.Customer, isDefault: true,isPublic:true);
 
 
             _seededStores.TryGetValue("ST001", out var store1);
@@ -99,22 +99,39 @@ namespace Acme.ProductSelling.Data.Identity
                 ProductSellingPermissions.Orders.Default,
                 ProductSellingPermissions.Orders.Complete,
                 ProductSellingPermissions.Orders.Edit,
+                ProductSellingPermissions.Orders.ConfirmCodPayment,
+                ProductSellingPermissions.Orders.ViewCompleted,
+                ProductSellingPermissions.Orders.ViewAll,
+                ProductSellingPermissions.Orders.Fulfill,
+                ProductSellingPermissions.Products.Default
             });
 
             await GrantPermissionsToRoleAsync(warehouseRole.Name, new[]
             {
                 ProductSellingPermissions.Orders.Default,
-                ProductSellingPermissions.Orders.ViewCompleted,
                 ProductSellingPermissions.Orders.Fulfill,
+                ProductSellingPermissions.Orders.ShipOrder,
+                ProductSellingPermissions.Orders.ChangeStatus,
                 ProductSellingPermissions.Products.Default,
+                ProductSellingPermissions.Inventory.Default,
+                ProductSellingPermissions.Inventory.Manage,
+                ProductSellingPermissions.Inventory.Transfer,
+                ProductSellingPermissions.Products.Default
             });
 
             await GrantPermissionsToRoleAsync(sellerRole.Name, new[]
             {
                 ProductSellingPermissions.Products.Default,
                 ProductSellingPermissions.Orders.Default,
-                ProductSellingPermissions.Orders.Create,
+                ProductSellingPermissions.Orders.Complete,
                 ProductSellingPermissions.Orders.Edit,
+                ProductSellingPermissions.Inventory.Default,
+                ProductSellingPermissions.Orders.ConfirmCodPayment,
+                ProductSellingPermissions.Orders.ViewCompleted,
+                ProductSellingPermissions.Orders.ViewAll,
+                ProductSellingPermissions.Orders.Fulfill,
+                ProductSellingPermissions.Orders.Create,
+                ProductSellingPermissions.Inventory.Default,
             });
 
             await GrantPermissionsToRoleAsync(customerRole.Name, new[]
@@ -129,14 +146,24 @@ namespace Acme.ProductSelling.Data.Identity
                 ProductSellingPermissions.Comments.Delete,
             });
         }
-
+        //Volo.Abp.Identity
         private async Task<Volo.Abp.Identity.IdentityRole> CreateRoleIfNotExistsAsync(string roleName,
-                                                                                      bool isDefault = false,
-                                                                                      bool isPublic = false)
+                                                                              bool isDefault = false,
+                                                                              bool isPublic = false)
         {
             var normalizedRoleName = _lookupNormalizer.NormalizeName(roleName);
             var existingRole = await _identityRoleRepository.FindByNormalizedNameAsync(normalizedRoleName);
-            if (existingRole != null) return existingRole;
+            if (existingRole != null)
+            {
+                if (existingRole.IsPublic != isPublic || existingRole.IsDefault != isDefault)
+                {
+                    existingRole.IsPublic = isPublic;
+                    existingRole.IsDefault = isDefault;
+                    await _identityRoleRepository.UpdateAsync(existingRole);
+                }
+                return existingRole;
+            }
+
 
             var role = new Volo.Abp.Identity.IdentityRole(_guidGenerator.Create(), roleName)
             {

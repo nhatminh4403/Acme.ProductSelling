@@ -2,7 +2,7 @@
 @model Acme.ProductSelling.Web.Pages.Account.IndexModel
 @{
     Layout = "/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = L["Account:ManageAccount"];
+    ViewData["Title"] = L["Account:ManageYourAccount"];
 }
 
 @section styles {
@@ -12,84 +12,63 @@
     <script src="~/js/global/user/account.js"></script>
 }
 
-<div class="account-management-container">
-    <div class="account-header modern-header">
-        <div class="header-content">
-            <h1><i class="fas fa-user-circle"></i> @L["Account:ManageAccount"]</h1>
-            <p>@L["Account:ManageAccountDescription"]</p>
-        </div>
-        <div class="header-decoration"></div>
-    </div>
+<div class="acct-page-wrapper">
+    <!-- Sidebar Navigation -->
+    @await Component.InvokeAsync(typeof(AccountNavComponents), new AccountNavActive { NavActive = "info" })
 
-    <div class="account-body modern-card">
-        <div class="account-sidebar">
-            <ul class="nav-menu">
-                <li>
-                    <a href="/account" class="nav-item active">
-                        <i class="fas fa-user"></i>
-                        <span>@L["Account:ProfileInformation"]</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/account/security" class="nav-item">
-                        <i class="fas fa-lock"></i>
-                        <span>@L["Account:Security"]</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/account/addresses" class="nav-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>@L["Account:Addresses"]</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
 
-        <div class="account-content">
-            <div class="content-panel fade-in active">
-                <form method="post" asp-page-handler="UpdateProfile" id="profile-form">
-                    <div class="info-alert glass-alert">
-                        <i class="fas fa-info-circle"></i>
-                        <span>@L["Account:ProfileInfoDescription"]</span>
-                    </div>
+    <!-- Main Content -->
+    <main class="acct-main-content">
+        <div class="acct-glass-card">
+            <div class="acct-section-header">
+                <h1 class="acct-section-title">@L["Account:Overview"]</h1>
+                <p class="acct-section-subtitle">@L["Account:ManageAccountDescription"]</p>
+            </div>
 
-                    <div class="form-section">
-                        <h3 class="section-title">
-                            @L["Account:BasicInformation"]
-                        </h3>
-                        <div class="form-grid modern-grid">
-                            <abp-input asp-for="@Model.ProfileInput.UserName" />
-                            <abp-input asp-for="@Model.ProfileInput.Email" />
-                            <abp-input asp-for="@Model.ProfileInput.Name" />
-                            <abp-input asp-for="@Model.ProfileInput.Surname" />
-                            <abp-input asp-for="@Model.ProfileInput.PhoneNumber" />
-                            <div class="mb-3">
-                                <label asp-for="ProfileInput.DateOfBirth" class="form-label"></label>
-                                <input name="ProfileInput.DateOfBirth"
-                                       id="ProfileInput_DateOfBirth"
-                                       type="date"
-                                       class="form-control"
-                                       value="@(Model.ProfileInput.DateOfBirth?.ToString("yyyy-MM-dd"))" />
-                                <span asp-validation-for="ProfileInput.DateOfBirth" class="text-danger"></span>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">@L["Account:Gender"]</label>
-                                <gender-select asp-for="@Model.ProfileInput.Gender" />
-                                <span asp-validation-for="@Model.ProfileInput.Gender" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="acct-alert-box acct-alert-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>@Model.ErrorMessage</span>
+                </div>
+            }
 
-                    <div class="form-actions">
-                        <button type="button" class="btn-modern btn-secondary" onclick="resetForm('profile-form')">
-                            <i class="fas fa-undo"></i> @L["Account:Reset"]
-                        </button>
-                        <button type="submit" class="btn-modern btn-primary" data-busy-text="@L["Account:Saving"]">
-                            <i class="fas fa-save"></i> @L["Account:SaveChanges"]
-                        </button>
-                    </div>
-                </form>
+            <div class="acct-info-grid">
+                <div class="acct-info-item">
+                    <div class="acct-info-label">@L["Account:UserName"]</div>
+                    <div class="acct-info-value">@Model.CustomerProfile?.UserName</div>
+                </div>
+                <div class="acct-info-item">
+                    <div class="acct-info-label">@L["Account:Email"]</div>
+                    <div class="acct-info-value">@Model.CustomerProfile?.Email</div>
+                </div>
+                <div class="acct-info-item">
+                    <div class="acct-info-label">@L["Account:Name"]</div>
+                    <div class="acct-info-value">@Model.CustomerProfile?.Name @Model.CustomerProfile?.Surname</div>
+                </div>
+                <div class="acct-info-item">
+                    <div class="acct-info-label">@L["Account:PhoneNumber"]</div>
+                    <div class="acct-info-value">@(string.IsNullOrEmpty(Model.CustomerProfile?.PhoneNumber) ? "-" : Model.CustomerProfile.PhoneNumber)</div>
+                </div>
+                <div class="acct-info-item">
+                    <div class="acct-info-label">@L["Account:DateOfBirth"]</div>
+                    <div class="acct-info-value">@(Model.CustomerProfile?.DateOfBirth?.ToString("yyyy-MM-dd") ?? "-")</div>
+                </div>
+                <div class="acct-info-item">
+                    <div class="acct-info-label">@L["Account:Gender"]</div>
+                    <div class="acct-info-value">@Model.CustomerProfile?.Gender</div>
+                </div>
+                <div class="acct-info-item" style="grid-column: 1 / -1;">
+                    <div class="acct-info-label">@L["Account:ShippingAddress"]</div>
+                    <div class="acct-info-value">@(string.IsNullOrEmpty(Model.CustomerProfile?.ShippingAddress) ? "-" : Model.CustomerProfile.ShippingAddress)</div>
+                </div>
+            </div>
+            
+            <div class="acct-form-actions" style="margin-top: 2rem; border-top: none; padding-top: 0;">
+                <a href="/account/editprofile" class="btn acct-btn-primary btn-primary" style="border-radius: 8px; padding: 0.75rem 1.5rem;">
+                    <i class="fas fa-pen"></i> @L["Account:EditProfile"]
+                </a>
             </div>
         </div>
-    </div>
+    </main>
 </div>

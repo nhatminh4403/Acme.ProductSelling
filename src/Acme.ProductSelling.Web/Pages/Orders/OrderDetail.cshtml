@@ -1,4 +1,4 @@
-﻿@page "/Orders/Details/{id:Guid}"
+@page "/Orders/Details/{id:Guid}"
 @using Acme.ProductSelling.Orders.Dtos
 @model Acme.ProductSelling.Web.Pages.Orders.OrderDetailModel
 @using System.Globalization
@@ -8,8 +8,7 @@
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-4">
-    <!-- Alert Container -->
+<div class="container mt-4" id="orderDetailContainer" data-order-id="@Model.Order.Id">
     <div id="alert-container" style="display: none;">
         <div class="alert alert-dismissible fade show" role="alert" id="alert-message">
             <span id="alert-text"></span>
@@ -174,10 +173,7 @@
                                 <div class="d-flex gap-5 align-items-start">
                                     <div>
                                         <h6 class="mb-1">@history.ChangeDescription</h6>
-                                        <p class="text-muted mb-1">
-                                            <i class="bi bi-person me-1"></i>
-                                            <strong>@history.ChangedBy</strong>
-                                        </p>
+                                        
                                         <p class="text-muted mb-1">
                                             <i class="bi bi-clock me-1"></i>
                                             @history.CreationTime.ToString("dd/MM/yyyy HH:mm:ss")
@@ -275,6 +271,9 @@
 
 @section scripts {
     <abp-script-bundle name="Shared.Order.SignalR" />
+    
+
+
     <script>
         $(document).ready(function() {
             let currentOrderId = null;

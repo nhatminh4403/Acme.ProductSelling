@@ -31,7 +31,7 @@ namespace Acme.ProductSelling.Web.Pages.Admin
                 var user = await UserRepository.GetAsync(CurrentUserService.Id.Value) as AppUser;
                 CurrentUserStoreId = user?.AssignedStoreId;
                 CurrentUserType = user?.GetUserType() ?? UserType.Admin;
-
+                Console.WriteLine($"CurrentUserStoreId: {CurrentUserStoreId}, CurrentUserType: {CurrentUserType}");
                 if (CurrentUserStoreId.HasValue)
                 {
                     var storeRepo = LazyServiceProvider.LazyGetRequiredService<Acme.ProductSelling.Stores.IStoreRepository>();
@@ -58,13 +58,13 @@ namespace Acme.ProductSelling.Web.Pages.Admin
 
             // Priority order
 
-            if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.IdentityRoleConsts.Manager, StringComparison.OrdinalIgnoreCase)))
+            if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.ExtendedRoleConsts.Manager, StringComparison.OrdinalIgnoreCase)))
                 return "manager";
-            if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.IdentityRoleConsts.Seller, StringComparison.OrdinalIgnoreCase)))
+            if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.ExtendedRoleConsts.Seller, StringComparison.OrdinalIgnoreCase)))
                 return "seller";
-            if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.IdentityRoleConsts.Cashier, StringComparison.OrdinalIgnoreCase)))
+            if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.ExtendedRoleConsts.Cashier, StringComparison.OrdinalIgnoreCase)))
                 return "cashier";
-            if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.IdentityRoleConsts.WarehouseStaff, StringComparison.OrdinalIgnoreCase)))
+            if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.ExtendedRoleConsts.WarehouseStaff, StringComparison.OrdinalIgnoreCase)))
                 return "warehouse";
 
             return "admin";

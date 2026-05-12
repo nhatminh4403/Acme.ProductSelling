@@ -267,13 +267,13 @@ namespace Acme.ProductSelling.Web.Menus
             var user = await userRepository.GetAsync(currentUser.Id.Value);
             var roles = await userRepository.GetRolesAsync(user.Id);
 
-            if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.IdentityRoleConsts.Manager, System.StringComparison.OrdinalIgnoreCase)))
+            if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.ExtendedRoleConsts.Manager, System.StringComparison.OrdinalIgnoreCase)))
                 return "manager";
-            if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.IdentityRoleConsts.Seller, System.StringComparison.OrdinalIgnoreCase)))
+            if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.ExtendedRoleConsts.Seller, System.StringComparison.OrdinalIgnoreCase)))
                 return "seller";
-            if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.IdentityRoleConsts.Cashier, System.StringComparison.OrdinalIgnoreCase)))
+            if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.ExtendedRoleConsts.Cashier, System.StringComparison.OrdinalIgnoreCase)))
                 return "cashier";
-            if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.IdentityRoleConsts.WarehouseStaff, System.StringComparison.OrdinalIgnoreCase)))
+            if (roles.Any(r => string.Equals(r.Name, Acme.ProductSelling.Identity.ExtendedRoleConsts.WarehouseStaff, System.StringComparison.OrdinalIgnoreCase)))
                 return "warehouse";
             return "admin";
         }

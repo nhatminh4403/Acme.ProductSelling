@@ -9,5 +9,7 @@ namespace Acme.ProductSelling.Users
     public interface ICustomerRepository : IRepository<Customer, Guid>
     {
         Task<Customer> GetCurrentCustomerAsync();
+
+        Task<Address> GetAddressAsync(Guid id);
     }
 }

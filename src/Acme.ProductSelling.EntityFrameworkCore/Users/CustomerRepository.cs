@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
@@ -30,6 +31,12 @@ namespace Acme.ProductSelling.Users
                     .Where(c => c.AppUserId == _currentUser.GetId()));
 
             return customer ?? throw new UserFriendlyException("Customer not found.");
+        }
+        public async Task<Address> GetAddressAsync(Guid id)
+        {
+            var query = await GetCurrentCustomerAsync();
+            var address = query.ShippingAddresses.FirstOrDefault(a => a.Id == id);
+            return address ?? throw new UserFriendlyException("Address not found.");
         }
     }
 }

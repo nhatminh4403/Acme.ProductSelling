@@ -1,4 +1,5 @@
-﻿using Acme.ProductSelling.Products.Dtos;
+﻿using Acme.ProductSelling.Orders.Dtos;
+using Acme.ProductSelling.Products.Dtos;
 using Riok.Mapperly.Abstractions;
 using System;
 using System.Linq;
@@ -15,7 +16,14 @@ public partial class ProductToRecentlyViewedProductDtoMapper : MapperBase<Produc
     [MapProperty(nameof(Product.Id), nameof(RecentlyViewedProductDto.ProductId))]
     [MapperIgnoreTarget(nameof(RecentlyViewedProductDto.IsAvailableForPurchase))]
     [MapperIgnoreTarget(nameof(RecentlyViewedProductDto.TotalStockAcrossAllStores))]
-    public override partial RecentlyViewedProductDto Map(Product source);
+    public override  RecentlyViewedProductDto Map(Product source)
+    {
+        var destination = new RecentlyViewedProductDto();
+        Map(source, destination);
+        AfterMap(source, destination);
+
+        return destination;
+    }
 
     public override partial void Map(Product source, RecentlyViewedProductDto destination);
 
@@ -24,7 +32,7 @@ public partial class ProductToRecentlyViewedProductDtoMapper : MapperBase<Produc
         destination.IsAvailableForPurchase = source.StockCount > 0 &&
             (!source.ReleaseDate.HasValue || source.ReleaseDate.Value <= DateTime.Now);
         destination.TotalStockAcrossAllStores = source.StoreInventories != null
-            ? source.StoreInventories.Sum(x => x.Quantity) : 0;
+            ? source.StoreInventories.Sum(x => x.Quantity) : source.StockCount;
     }
 }
 
@@ -40,7 +48,14 @@ public partial class RecentlyViewedProductToDtoMapper : MapperBase<RecentlyViewe
     [MapProperty(nameof(RecentlyViewedProduct.Product.DiscountPercent), nameof(RecentlyViewedProductDto.DiscountPercent))]
     [MapperIgnoreTarget(nameof(RecentlyViewedProductDto.IsAvailableForPurchase))]
     [MapperIgnoreTarget(nameof(RecentlyViewedProductDto.TotalStockAcrossAllStores))]
-    public override partial RecentlyViewedProductDto Map(RecentlyViewedProduct source);
+    public override  RecentlyViewedProductDto Map(RecentlyViewedProduct source)
+    {
+        var destination = new RecentlyViewedProductDto();
+        Map(source, destination);
+        AfterMap(source, destination);
+
+        return destination;
+    }
 
     public override partial void Map(RecentlyViewedProduct source, RecentlyViewedProductDto destination);
 

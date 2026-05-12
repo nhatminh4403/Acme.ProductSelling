@@ -1,7 +1,4 @@
 ﻿@page "/{prefix}/orders/details/{OrderNumber}"
-@using Acme.ProductSelling.Orders.Dtos
-@using Acme.ProductSelling.Orders
-@using System.Globalization
 @model Acme.ProductSelling.Web.Pages.Admin.Orders.DetailsModel
 
 @{
@@ -11,7 +8,7 @@
 
 @section styles {
     <link href="~/css/admin/orders/detail.css" rel="stylesheet" />
-    <link href="~/css/shared/order-timeline.css" rel="stylesheet" />
+    <link href="~/css/shared/orders/order-timeline.css" rel="stylesheet" />
 }
 
 @section scripts {
@@ -301,7 +298,6 @@
     </abp-card-body>
 </abp-card>
 
-<!-- Order History Timeline -->
 <abp-card class="mt-3">
     <abp-card-header>
         <abp-card-title>

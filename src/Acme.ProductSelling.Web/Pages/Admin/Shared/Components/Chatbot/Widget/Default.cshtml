@@ -28,7 +28,7 @@
 
             <!-- Quick-action chips-->
             <div class="mb-3 d-flex gap-2 overflow-auto" style="scrollbar-width:thin;">
-                @if (CurrentUser.IsAuthenticated && (CurrentUser.IsInRole(IdentityRoleConsts.Admin) || CurrentUser.IsInRole(IdentityRoleConsts.Manager)))
+                @if (CurrentUser.IsAuthenticated && (CurrentUser.IsInRole(ExtendedRoleConsts.Admin) || CurrentUser.IsInRole(ExtendedRoleConsts.Manager)))
                 {
                 <button class="btn btn-sm btn-outline-warning rounded-pill text-nowrap quick-question"
                         data-question="Sales Report">

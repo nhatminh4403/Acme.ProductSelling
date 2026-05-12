@@ -86,6 +86,7 @@ namespace Acme.ProductSelling.Orders
 
                 // DEDUCT STOCK (Online Logic)
                 product.StockCount -= item.Quantity;
+                await _productRepository.UpdateAsync(product,autoSave :true);
             }
 
             order.CalculateTotals();
@@ -143,7 +144,7 @@ namespace Acme.ProductSelling.Orders
                 if (!product.IsActive) throw new UserFriendlyException(ProductSellingDomainErrorCodes.ProductNotActive)
                     .WithData("Name", product.ProductName);
                 if (product.ReleaseDate.HasValue && product.ReleaseDate.Value > DateTime.Now)
-                    throw new BusinessException(ProductSellingDomainErrorCodes.IdentityDataSeedingFailed)
+                    throw new BusinessException(ProductSellingDomainErrorCodes.ProductNotYetReleased)
                         //.WithData("User", product.)
                         //.WithData("Role", roleNameToAssign)
                         //.WithData("Reason", errorDetails)
@@ -151,9 +152,11 @@ namespace Acme.ProductSelling.Orders
 
                 // Store Stock Check
                 var hasStock = await _storeInventoryRepository.HasSufficientStockAsync(storeId, product.Id, itemDto.Quantity);
+                var inventory = await _storeInventoryRepository.GetByStoreAndProductAsync(storeId, product.Id);
+
                 if (!hasStock)
                 {
-                    var currentStock = (await _storeInventoryRepository.GetByStoreAndProductAsync(storeId, product.Id))?.Quantity ?? 0;
+                    var currentStock = (inventory)?.Quantity ?? 0;
                     throw new UserFriendlyException(ProductSellingDomainErrorCodes.StoreInventoryInsufficientStock)
                         .WithData("Name", product.ProductName)
                         .WithData("StoreName", store.Name)
@@ -169,9 +172,8 @@ namespace Acme.ProductSelling.Orders
                 );
 
                 // DEDUCT STOCK (In-Store Logic)
-                var inventory = await _storeInventoryRepository.GetByStoreAndProductAsync(storeId, product.Id);
                 inventory.RemoveStock(itemDto.Quantity);
-                await _storeInventoryRepository.UpdateAsync(inventory);
+                await _storeInventoryRepository.UpdateAsync(inventory,autoSave: true);
             }
 
             order.CalculateTotals();
@@ -182,9 +184,9 @@ namespace Acme.ProductSelling.Orders
         {
             if (store != null)
             {
-                return $"DH-{Clock.Now:yyyyMMddHHmmss}-ST{store?.Code}-{_guidGenerator.Create().ToString("N").Substring(0, 6)}";
+                return $"DH-{Clock.Now:yyyyMMddHHmmss}-{store?.Code}-{_guidGenerator.Create().ToString("N").Substring(0, 6)}";
             }
-            else return $"DH-{Clock.Now:yyyyMMddHHmmss}-{_guidGenerator.Create().ToString("N").Substring(0, 6)}";
+            else return $"DH-{Clock.Now:yyyyMMddHHmmss}-ONLINE-{_guidGenerator.Create().ToString("N").Substring(0, 6)}";
         }
     }
 }

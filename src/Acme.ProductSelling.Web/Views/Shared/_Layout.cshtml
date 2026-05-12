@@ -15,11 +15,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>@ViewData["Title"]</title>
-
+    <abp-style-bundle name="@LeptonXLiteThemeBundles.Styles.Global" />
     @* <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous"> *@
     
-    <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    @* <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" /> *@
 
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css">
 
@@ -31,7 +31,6 @@
 
     <link href="~/images/monitor.png" rel="shortcut icon" type="image/x-icon" />
 
-    <abp-style-bundle name="@LeptonXLiteThemeBundles.Styles.Global" />
     <abp-style-bundle name="Main.Global" />
     <link href="~/css/shared/header.css" rel="stylesheet" />
     <link href="~/css/shared/chatbot.css" rel="stylesheet" />
@@ -57,6 +56,9 @@
         if (sessionStorage.getItem('appLoaded')) {
             document.documentElement.classList.add('app-loaded');
         }
+        window.addEventListener('load', function() {
+            document.body.classList.remove('preload');
+        });
     </script>
 
     <style>
@@ -70,6 +72,7 @@
             font-size: 90%;
             line-height: 1.6rem;
             box-sizing: border-box;
+            scrollbar-gutter: stable;
         }
         .input-group .form-control:focus {
             box-shadow: none;
@@ -122,7 +125,7 @@
     @await Component.InvokeAsync(typeof(Acme.ProductSelling.Web.Views.Shared.Components.Header.HeaderViewComponent))
    
 
-    <div style="">
+    <div style="" class="flex-grow-1">
         @RenderBody()
     </div>
 
@@ -135,7 +138,7 @@
     <script src="~/libs/abp/core/abp.js"></script>
     <abp-script-bundle name="@LeptonXLiteThemeBundles.Scripts.Global" />
     <!-- The line above contains JQuery that has already been configured in Web Module. NO CHANGES NEEDED -->
-    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    @* <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js" asp-append-version="true"></script> *@
     <script src="~/lib/font-awesome/js/all.min.js" asp-append-version="true"></script>
 
 

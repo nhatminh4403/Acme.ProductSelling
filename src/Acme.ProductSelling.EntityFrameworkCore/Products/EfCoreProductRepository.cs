@@ -53,7 +53,7 @@ namespace Acme.ProductSelling.Products
             return await query.FirstOrDefaultAsync(p => p.Id == id, cancellationToken) ?? throw new EntityNotFoundException(typeof(Product), id);
             //return base.GetAsync(id, includeDetails, cancellationToken);
         }
-
+        
         public async override Task<IQueryable<Product>> GetQueryableAsync()
         {
             var dbSet = await GetDbSetAsync();
@@ -62,7 +62,11 @@ namespace Acme.ProductSelling.Products
                 .Include(p => p.Manufacturer)
                 .Include(p => p.StoreInventories)
                 .Include(p => p.SpecificationBase).AsSplitQuery();
+
+
         }
+
+
 
         public async Task<List<Product>> GetListAsync()
         {

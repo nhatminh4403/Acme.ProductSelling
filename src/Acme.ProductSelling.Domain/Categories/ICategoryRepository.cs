@@ -9,7 +9,6 @@ namespace Acme.ProductSelling.Categories
     {
         Task<Category> FindByNameAsync(string name);
         Task<List<Category>> GetListAsync();
-        Task<Category> GetByIdAsync(Guid id);
         Task<Category> GetBySlugAsync(string slug);
         Task<List<Category>> GetListByGroupAsync(CategoryGroup categoryGroup);
         Task<Dictionary<CategoryGroup, List<Category>>> GetGroupedCategoriesAsync();

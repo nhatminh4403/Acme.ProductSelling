@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "Acme.ProductSelling.DbMigrator.Development": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "Acme.ProductSelling.DbMigrator.Production": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production"
+      }
+    }
+  }
+}

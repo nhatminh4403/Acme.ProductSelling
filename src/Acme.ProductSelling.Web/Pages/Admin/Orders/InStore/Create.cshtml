@@ -23,7 +23,7 @@
         </abp-row>
     </abp-card-header>
     <abp-card-body>
-        <form asp-page="@($"/{Model.Prefix}/orders/in-store/create")" method="post" id="createOrderForm">
+        <form method="post" id="createOrderForm" asp-route-prefix="@Model.Prefix">
             <abp-card class="mb-3">
                 <abp-card-header>
                     <h4>@L["CustomerInformation"]</h4>
@@ -99,7 +99,7 @@
                         <option value="">-- @L["SelectProduct"] --</option>
                         @foreach (var product in Model.AvailableProducts)
                         {
-                            <option value="@product.Value" data-price="@product.Text.Split('-')[1].Split('(')[0].Trim()">
+                            <option value="@product.Id" data-price="@product.Price.ToString(CultureInfo.InvariantCulture)">
                                 @product.Text
                             </option>
                         }

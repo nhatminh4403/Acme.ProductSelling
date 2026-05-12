@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Users;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+//using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Acme.ProductSelling.Web.Pages.Checkout
 {
@@ -26,13 +26,17 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
 
         private readonly IOrderPublicAppService _orderPublicAppService;
         private readonly IProfileAppService _profileAppService;
+        private readonly IAddressAppService _addressAppService;
         public CheckoutModel(ICartAppService cartService,
-
-                             IOrderPublicAppService orderPublicAppService)
+                             IOrderPublicAppService orderPublicAppService,
+                             IAddressAppService addressAppService,
+                             IProfileAppService profileAppService)
         {
             _cartAppService = cartService;
             OrderInput = new CreateOrderDto();
             _orderPublicAppService = orderPublicAppService;
+            _addressAppService = addressAppService;
+            _profileAppService = profileAppService;
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -52,7 +56,9 @@ namespace Acme.ProductSelling.Web.Pages.Checkout
                     throw new Exception($"there is no {currentProfile} profile in db");
                 }
 
-                OrderInput.CustomerName = currentProfile.Name ?? CurrentUser.UserName;
+                var fullName = currentProfile.Surname + " " + currentProfile.Name;
+
+                OrderInput.CustomerName = fullName ?? CurrentUser.UserName;
                 OrderInput.CustomerPhone = currentProfile.PhoneNumber;
                 OrderInput.ShippingAddress = currentProfile.ShippingAddress;
 

@@ -1,0 +1,95 @@
+@page "/account/editprofile"
+@model Acme.ProductSelling.Web.Pages.Account.EditProfileModel
+@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = L["Account:EditProfile"];
+}
+
+@section styles {
+    <link href="~/css/global/user/account.css" rel="stylesheet" />
+    <style>
+        .datepicker {
+            z-index: 2000 !important;
+        }
+
+        .acct-form-row-3col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            grid-column: 1 / -1;
+        }
+    </style>
+}
+@section scripts {
+    <script src="~/js/global/user/account.js"></script>
+}
+
+<div class="acct-page-wrapper">
+    <!-- Sidebar Navigation -->
+    @await Component.InvokeAsync(typeof(AccountNavComponents), new AccountNavActive { NavActive = "edit" })
+
+    <!-- Main Content -->
+    <main class="acct-main-content">
+        <div class="acct-glass-card">
+            <div class="acct-section-header">
+                <h1 class="acct-section-title">@L["Account:EditProfile"]</h1>
+                <p class="acct-section-subtitle">@L["Account:ProfileInfoDescription"]</p>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="acct-alert-box acct-alert-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>@Model.ErrorMessage</span>
+                </div>
+            }
+
+            <form method="post">
+                <div class="acct-info-grid">
+                    <div class="acct-form-row">
+                        <abp-input asp-for="ProfileInput.UserName" form-group-class="mb-1" />
+                    </div>
+                    <div class="acct-form-row">
+                        <abp-input asp-for="ProfileInput.Email" />
+                    </div>
+                    <div class="acct-form-row">
+                        <abp-input asp-for="ProfileInput.Name" />
+                    </div>
+                    <div class="acct-form-row">
+                        <abp-input asp-for="ProfileInput.Surname" />
+                    </div>
+                    <div class="acct-form-row acct-form-row-3col">
+                        <div>
+                            <abp-input asp-for="ProfileInput.PhoneNumber" />
+                        </div>
+
+                        <div>
+                            <label asp-for="ProfileInput.DateOfBirth" class="form-label"></label>
+                            <input name="ProfileInput.DateOfBirth"
+                                   id="ProfileInput_DateOfBirth"
+                                   type="date"
+                                   class="form-control"
+                                   value="@(Model.ProfileInput.DateOfBirth?.ToString("yyyy-MM-dd"))" />
+                            <span asp-validation-for="ProfileInput.DateOfBirth" class="text-danger"></span>
+                        </div>
+
+                        <div>
+                            <label class="form-label">@L["Account:Gender"]</label>
+                            <gender-select asp-for="ProfileInput.Gender" />
+                            <span asp-validation-for="ProfileInput.Gender" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="acct-form-actions">
+                    <button type="reset" class="btn btn-secondary">
+                        <i class="fas fa-undo"></i> @L["Account:Reset"]
+                    </button>
+                    <button type="submit" class="btn btn-primary" data-busy-text="@L["Account:Saving"]">
+                        <i class="fas fa-save"></i> @L["Account:SaveChanges"]
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>

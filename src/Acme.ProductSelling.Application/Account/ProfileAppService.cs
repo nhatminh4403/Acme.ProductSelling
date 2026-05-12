@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Services;
 using Volo.Abp.DependencyInjection;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Identity;
 using Volo.Abp.Users;
@@ -22,14 +23,15 @@ namespace Acme.ProductSelling.Account
         private readonly ICurrentUser _currentUser;
         private readonly IdentityUserManager _userManager;
         private readonly ICustomerRepository _customerRepository;
-
+        private readonly IAddressAppService _addressAppService;
         public ProfileAppService(IRepository<IdentityUser, Guid> identityUserRepository,
-            ICurrentUser currentUser, IdentityUserManager userManager, ICustomerRepository customerRepository)
+            ICurrentUser currentUser, IdentityUserManager userManager, ICustomerRepository customerRepository, IAddressAppService addressAppService)
         {
             _identityUserRepository = identityUserRepository;
             _currentUser = currentUser;
             _userManager = userManager;
             _customerRepository = customerRepository;
+            _addressAppService = addressAppService;
         }
 
         public async Task ChangePasswordAsync(ChangePasswordDto input)
@@ -70,12 +72,20 @@ namespace Acme.ProductSelling.Account
             var customer = await _customerRepository.FindAsync(
                    c => c.AppUserId == _currentUser.GetId());
 
+            var customerAddress = await _addressAppService.GetListAsync();
+            var activeDefaultAddress = customerAddress.FirstOrDefault(addr => addr.IsDefaultAddress == true);
+
+            if(activeDefaultAddress == null)
+            {
+                throw new EntityNotFoundException($"Address {activeDefaultAddress} not found" );
+            }
             if (customer != null)
             {
                 customerdto.DateOfBirth = customer.DateOfBirth;
                 customerdto.Gender = customer.Gender;
                 customerdto.Name = customer.Name;
                 customerdto.Surname = customer.Surname;
+                customerdto.ShippingAddress = activeDefaultAddress.FullAddress;
             }
 
             return customerdto;

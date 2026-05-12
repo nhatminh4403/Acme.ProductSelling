@@ -15,17 +15,7 @@
     z-index: 1;
 }
 
-.section-spacing {
-    margin: 2rem 0;
-}
-
-.container, .container .row {
-    position: relative;
-}
-
-.row.align-items-stretch {
-    min-height: 400px;
-}
+/* .section-spacing and hero structure moved to global-styles.css to prevent shift */
 
 /* ===== Megamenu ===== */
 .megamenu-data-source {
@@ -255,8 +245,6 @@
 
 /* ===== Featured Products Section - REDESIGNED ===== */
 .featured-section {
-    margin: 0.5rem 0;
-    padding: 1rem 1rem 0.75rem;
     background: var(--white);
     border-radius: 16px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
@@ -340,29 +328,7 @@
     transform: translateX(4px);
 }
 
-/* ===== Product Carousel Wrapper - REDESIGNED ===== */
-.product-carousel-wrapper {
-    position: relative;
-    padding: 0;
-    margin: 0;
-}
-
-.product-carousel-container {
-    position: relative;
-    overflow: hidden;
-    padding: 0 0.5rem;
-}
-
-.product-carousel-track {
-    display: flex;
-    gap: 1.25rem;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.product-carousel-item {
-    flex: 0 0 auto;
-    width: 100%;
-}
+/* Structural styles moved to global-styles.css to prevent FOUC */
 
 /* ===== Modern Product Card - REDESIGNED ===== */
 .product-card-modern {
@@ -684,29 +650,7 @@
 }
 
 /* ===== Responsive Design ===== */
-@media (min-width: 576px) {
-    .product-carousel-item {
-        width: calc(50% - 0.625rem);
-    }
-}
-
-@media (min-width: 768px) {
-    .product-carousel-item {
-        width: calc(33.333% - 0.833rem);
-    }
-}
-
-@media (min-width: 992px) {
-    .product-carousel-item {
-        width: calc(25% - 0.9375rem);
-    }
-}
-
-@media (min-width: 1200px) {
-    .product-carousel-item {
-        width: calc(20% - 1rem);
-    }
-}
+/* Responsive Carousel Widths moved to global-styles.css */
 
 @media (max-width: 991px) {
     .featured-section {

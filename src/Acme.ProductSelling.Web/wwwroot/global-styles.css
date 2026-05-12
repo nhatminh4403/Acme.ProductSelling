@@ -1,4 +1,4 @@
-﻿/* Your Global Styles */
+/* Your Global Styles */
 :root .lpx-brand-logo {
     --lpx-logo: url('/images/logo/leptonxlite/logo-light.png');
     --lpx-logo-icon: url('/images/logo/leptonxlite/logo-light-thumbnail.png');
@@ -57,4 +57,43 @@
     .footer-social-icons {
         justify-content: center;
     }
+}
+
+/* --- Critical Layout Styles to prevent FOUC --- */
+.product-carousel-wrapper {
+    position: relative;
+}
+
+.product-carousel-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.product-carousel-track {
+    display: flex;
+    gap: 1.25rem;
+}
+
+.product-carousel-item {
+    flex: 0 0 auto;
+    width: 100%;
+}
+
+@media (min-width: 576px) { .product-carousel-item { width: calc(50% - 0.625rem); } }
+@media (min-width: 768px) { .product-carousel-item { width: calc(33.333% - 0.833rem); } }
+@media (min-width: 992px) { .product-carousel-item { width: calc(25% - 0.9375rem); } }
+@media (min-width: 1200px) { .product-carousel-item { width: calc(20% - 1rem); } }
+
+/* --- Spacing & Hero Structure to prevent shift --- */
+.section-spacing {
+    margin: 2rem 0;
+}
+
+.featured-section {
+    margin: 0.5rem 0;
+    padding: 1rem 1rem 0.75rem;
+}
+
+.row.align-items-stretch {
+    min-height: 400px;
 }

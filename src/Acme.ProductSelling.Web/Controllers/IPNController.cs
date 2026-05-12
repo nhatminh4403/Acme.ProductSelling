@@ -25,7 +25,7 @@ namespace Acme.ProductSelling.Web.Controllers
 
 
         [HttpGet("vnpay-ipn")]
-        //[AllowAnonymous]
+        [AllowAnonymous]
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> VnPayIpn()
         {
@@ -105,7 +105,7 @@ namespace Acme.ProductSelling.Web.Controllers
 
 
         [HttpPost("momo-ipn")]
-        //[AllowAnonymous]
+        [AllowAnonymous]
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> MoMoIpn([FromBody] MomoIPNRequest request)
         {

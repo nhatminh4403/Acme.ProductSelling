@@ -40,35 +40,35 @@ namespace Acme.ProductSelling.Orders.Hubs
                 // Add to role-based groups
                 var roleGroupsAdded = 0;
 
-                if (_currentUser.IsInRole(IdentityRoleConsts.Admin))
+                if (_currentUser.IsInRole(ExtendedRoleConsts.Admin))
                 {
                     await Groups.AddToGroupAsync(Context.ConnectionId, "Admins");
                     roleGroupsAdded++;
                     _logger.LogDebug("[OrderHub-Connect] Added to Admins group");
                 }
 
-                if (_currentUser.IsInRole(IdentityRoleConsts.Manager))
+                if (_currentUser.IsInRole(ExtendedRoleConsts.Manager))
                 {
                     await Groups.AddToGroupAsync(Context.ConnectionId, "Managers");
                     roleGroupsAdded++;
                     _logger.LogDebug("[OrderHub-Connect] Added to Managers group");
                 }
 
-                if (_currentUser.IsInRole(IdentityRoleConsts.Seller))
+                if (_currentUser.IsInRole(ExtendedRoleConsts.Seller))
                 {
                     await Groups.AddToGroupAsync(Context.ConnectionId, "Sellers");
                     roleGroupsAdded++;
                     _logger.LogDebug("[OrderHub-Connect] Added to Sellers group");
                 }
 
-                if (_currentUser.IsInRole(IdentityRoleConsts.WarehouseStaff))
+                if (_currentUser.IsInRole(ExtendedRoleConsts.WarehouseStaff))
                 {
                     await Groups.AddToGroupAsync(Context.ConnectionId, "WarehouseStaffs");
                     roleGroupsAdded++;
                     _logger.LogDebug("[OrderHub-Connect] Added to WarehouseStaffs group");
                 }
 
-                if (_currentUser.IsInRole(IdentityRoleConsts.Cashier))
+                if (_currentUser.IsInRole(ExtendedRoleConsts.Cashier))
                 {
                     await Groups.AddToGroupAsync(Context.ConnectionId, "Cashiers");
                     roleGroupsAdded++;

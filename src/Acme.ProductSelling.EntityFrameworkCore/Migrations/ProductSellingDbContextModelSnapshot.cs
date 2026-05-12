@@ -3110,6 +3110,11 @@ namespace Acme.ProductSelling.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
+                    b.Property<string>("StoreName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
                     b.HasDiscriminator().HasValue(1);
                 });
 
