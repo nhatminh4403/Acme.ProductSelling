@@ -138,6 +138,11 @@ public class ProductSellingWebModule : AbpModule
                 options.UseAspNetCore();
             });
         });
+        PreConfigure<AbpOpenIddictAspNetCoreOptions>(options =>
+        {
+            options.AddDevelopmentEncryptionAndSigningCertificate = false;
+        });
+
         //serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", configuration["AuthServer:CertificatePassPhrase"]!);
         //serverBuilder.SetIssuer(new Uri(configuration["AuthServer:Authority"]!));
         if (!hostingEnvironment.IsDevelopment())
@@ -152,52 +157,39 @@ public class ProductSellingWebModule : AbpModule
                 var certificateLoaded = false;
 
                 var certThumbprint = configuration["AuthServer:CertificateThumbprint"];
-
+                var certPath = Path.Combine(hostingEnvironment.ContentRootPath, "openiddict.pfx");
+                var certPass = configuration["AuthServer:CertificatePassPhrase"];
                 // Priority 1: Certificate store (Azure)
-                if (!string.IsNullOrWhiteSpace(certThumbprint))
+                //if (!string.IsNullOrWhiteSpace(certThumbprint))
+                //{
+                //    try
+                //    {
+                //        var certificate = LoadCertificateFromStore(certThumbprint);
+                //        if (certificate != null)
+                //        {
+                //            serverBuilder.AddSigningCertificate(certificate);
+                //            serverBuilder.AddEncryptionCertificate(certificate);
+                //            certificateLoaded = true;
+                //        }
+                //    }
+                //    catch
+                //    {
+
+                //    }
+                //}
+                if (File.Exists(certPath) && !string.IsNullOrWhiteSpace(certPass))
                 {
                     try
                     {
-                        var certificate = LoadCertificateFromStore(certThumbprint);
-                        if (certificate != null)
-                        {
-                            serverBuilder.AddSigningCertificate(certificate);
-                            serverBuilder.AddEncryptionCertificate(certificate);
-                            certificateLoaded = true;
-                        }
+                        // Use the file if it exists
+                        serverBuilder.AddEncryptionCertificate(new FileStream(certPath, FileMode.Open, FileAccess.Read), certPass);
+                        serverBuilder.AddSigningCertificate(new FileStream(certPath, FileMode.Open, FileAccess.Read), certPass);
+                        certificateLoaded = true;
                     }
-                    catch
-                    {
-
-                    }
+                    catch { /* Log failure if needed */ }
                 }
                 if (!certificateLoaded)
                 {
-                    var certPath = Path.Combine(hostingEnvironment.ContentRootPath, "openiddict.pfx");
-                    var certPass = configuration["AuthServer:CertificatePassPhrase"];
-
-                    if (File.Exists(certPath) && !string.IsNullOrWhiteSpace(certPass))
-                    {
-                        try
-                        {
-                            // Use standard OpenIddict methods to add from file
-                            if (new FileInfo(certPath).Length > 0)
-                            {
-                                // Assuming these keys serve as both
-                                serverBuilder.AddEncryptionCertificate(new FileStream(certPath, FileMode.Open, FileAccess.Read), certPass);
-                                serverBuilder.AddSigningCertificate(new FileStream(certPath, FileMode.Open, FileAccess.Read), certPass);
-                                certificateLoaded = true;
-                            }
-                        }
-                        catch
-                        {
-                            // File read failed
-                        }
-                    }
-                }
-                if (!certificateLoaded)
-                {
-                    serverBuilder.AddDevelopmentEncryptionCertificate().AddDevelopmentSigningCertificate();
                     serverBuilder.AddEphemeralEncryptionKey();
                     serverBuilder.AddEphemeralSigningKey();
                 }
