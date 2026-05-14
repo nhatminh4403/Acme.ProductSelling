@@ -1,7 +1,7 @@
 ﻿(function () {
     const l = abp.localization.getResource('ProductSelling');
-    const inventoryService = acme.productSelling.stores.services.storeInventoryAppService;
-    const storeService = acme.productSelling.stores.services.storeAppService;
+    const inventoryService = acme.productSelling.storeInventories.storeInventory;
+    const storeService = acme.productSelling.stores.store;
 
     let stores = [];
     let currentStoreFilter = window.currentUserStoreId || null;
@@ -130,7 +130,7 @@
             return;
         }
 
-        inventoryService.adjustInventory(currentInventoryId, {
+        inventoryService.adjustQuantity(currentInventoryId, {
             quantityChange: quantityChange,
             reason: reason
         }).then(function () {

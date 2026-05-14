@@ -9,8 +9,8 @@
 }
 .separator-custom {
     width: 100%;
-    border: 8px solid white;
-    margin: 1.5rem 0;
+    border: 4px solid white;
+    margin: 0.5rem 0;
 }
 
 .sticky-sidebar {
@@ -25,12 +25,7 @@
     overflow-y: auto;
 }
 
-/* If you know the exact header height, use this instead: */
-/* For example, if header is 80px tall: */
-.modern-header {
-    /* Add this to your existing header styles */
-    height: 80px; /* or whatever your actual height is */
-}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .sticky-sidebar {

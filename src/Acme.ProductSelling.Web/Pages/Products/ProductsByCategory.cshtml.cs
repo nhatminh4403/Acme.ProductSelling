@@ -7,6 +7,7 @@ using Acme.ProductSelling.Localization;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products.Dtos;
 using Acme.ProductSelling.Products.Services;
+using Acme.ProductSelling.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
@@ -45,23 +46,20 @@ namespace Acme.ProductSelling.Web.Pages.Products
 
         [BindProperty(SupportsGet = true)]
         public string Slug { get; set; }
-
-        //[BindProperty(SupportsGet = true)]
-        //public string PriceRange { get; set; }
-
         public PagedResultDto<ProductDto> Products { get; set; }
         public string CategoryName { get; set; }
         public SpecificationType CategorySpecType { get; set; }
         public Guid CategoryId { get; set; }
         public decimal MinPriceBound { get; set; }
         public decimal MaxPriceBound { get; set; }
-
         public decimal CurrentMinPrice { get; set; }
         public decimal CurrentMaxPrice { get; set; }
         public bool ShowManufacturerFilter { get; set; } = true;
+        public bool HasConfiguredPriceRanges { get; set; }
+        public bool HasAnyProducts { get; set; }
         public List<PriceRangeDto> AvailablePriceRanges { get; set; } = new();
         public List<ManufacturerLookupDto> AvailableManufacturers { get; set; }
-
+        public FilterViewModel FilterVM { get; set; }
         public int PageSize { get; set; } = 12;
         public int CurrentPage { get; set; } = 1;
         public PagerModel PagerModel { get; set; }
@@ -86,8 +84,10 @@ namespace Acme.ProductSelling.Web.Pages.Products
 
             await CalculateActualPriceBoundsAsync(CategoryId);
 
+            HasConfiguredPriceRanges = CategoryPriceRangeConfiguration.HasPriceRanges(CategorySpecType);
+            HasAnyProducts = MaxPriceBound > MinPriceBound;
             // Check if this category supports price filtering
-            if (CategoryPriceRangeConfiguration.HasPriceRanges(CategorySpecType))
+            if (HasConfiguredPriceRanges)
             {
                 AvailablePriceRanges = GeneratePriceRangesForCategory(CategorySpecType);
             }
@@ -128,7 +128,18 @@ namespace Acme.ProductSelling.Web.Pages.Products
             Logger.LogInformation(
                 $"Category '{CategoryName}': Actual price bounds {MinPriceBound:N0} - {MaxPriceBound:N0}"
             );
-
+            var filterViewModel = new FilterViewModel
+            {
+                MinPriceBound = MinPriceBound,
+                MaxPriceBound = MaxPriceBound,
+                HasConfiguredPriceRanges = CategoryPriceRangeConfiguration.HasPriceRanges(CategorySpecType),
+                HasAnyProducts = MaxPriceBound > MinPriceBound,
+                CategorySlug = Slug,
+                ShowManufacturerFilter = ShowManufacturerFilter,
+                Manufacturers = AvailableManufacturers,
+                //ShowManufacturerFilter = true
+            };
+            FilterVM = filterViewModel;
             return Page();
 
 

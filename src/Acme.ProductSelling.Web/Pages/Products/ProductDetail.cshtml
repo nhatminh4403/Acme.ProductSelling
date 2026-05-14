@@ -14,8 +14,6 @@
     <link href="~/css/global/products/recently-viewed.css" rel="stylesheet" />
 }
 @section scripts {
-    @* <script src="~/js/global/cart/add-to-cart-handler.js"></script> *@
-
     <script>
         $(function () {
             RecentlyViewedManager.trackView('@Model.Product.Id');
@@ -91,100 +89,107 @@
 
 
         <div class="row">
-            <!-- Main content -->
+            <!-- Main content - Description -->
             <div class="col-lg-8">
-                    <div class="card h-100" id="leftCard">
-                        <div class="card-header bg-light"><h2>@L["Product:Specification"]</h2></div>
-                        <div class="card-body">
-                            <div>
-                                @switch (Model.Product.SpecificationBase)
-                                {
-                                    // --- Core Components ---
-                                    case CpuSpecificationDto cpuSpec:
-                                        <partial name="~/Pages/Components/ProductSpecs/_CpuSpecsPartial.cshtml" model="cpuSpec" />
-                                        break;
-                                    case GpuSpecificationDto gpuSpec:
-                                        <partial name="~/Pages/Components/ProductSpecs/_GpuSpecsPartial.cshtml" model="gpuSpec" />
-                                        break;
-                                    case RamSpecificationDto ramSpec:
-                                        <partial name="~/Pages/Components/ProductSpecs/_RamSpecsPartial.cshtml" model="ramSpec" />
-                                        break;
-                                    case MotherboardSpecificationDto mbSpec:
-                                        <partial name="~/Pages/Components/ProductSpecs/_MotherboardSpecsPartial.cshtml" model="mbSpec" />
-                                        break;
-                                    case StorageSpecificationDto storageSpec:
-                                        <partial name="~/Pages/Components/ProductSpecs/_StorageSpecsPartial.cshtml" model="storageSpec" />
-                                        break;
-
-                                    // --- Cooling & Power ---
-                                    case PsuSpecificationDto psuSpec:
-                                        <partial name="~/Pages/Components/ProductSpecs/_PsuSpecsPartial.cshtml" model="psuSpec" />
-                                        break;
-                                    case CaseSpecificationDto caseSpec:
-                                        <partial name="~/Pages/Components/ProductSpecs/_CaseSpecsPartial.cshtml" model="caseSpec" />
-                                        break;
-                                    case CpuCoolerSpecificationDto coolerSpec:
-                                        <partial name="~/Pages/Components/ProductSpecs/_CpuCoolerSpecsPartial.cshtml" model="coolerSpec" />
-                                        break;
-                                    case CaseFanSpecificationDto caseFanSpec:
-                                        <partial name="~/Pages/Components/ProductSpecs/_CaseFanSpecsPartial.cshtml" model="caseFanSpec" />
-                                        break;
-
-                                    // --- Computers ---
-                                    case LaptopSpecificationDto laptopSpec:
-                                        <partial name="~/Pages/Components/ProductSpecs/_LaptopSpecsPartial.cshtml" model="laptopSpec" />
-                                        break;
-
-                                    // --- Peripherals ---
-                                    case MonitorSpecificationDto monitorSpec:
-                                        <partial name="~/Pages/Components/ProductSpecs/_MonitorSpecsPartial.cshtml" model="monitorSpec" />
-                                        break;
-                                    case KeyboardSpecificationDto kbSpec:
-                                        <partial name="~/Pages/Components/ProductSpecs/_KeyboardSpecsPartial.cshtml" model="kbSpec" />
-                                        break;
-                                    case MouseSpecificationDto mouseSpec:
-                                        <partial name="~/Pages/Components/ProductSpecs/_MouseSpecsPartial.cshtml" model="mouseSpec" />
-                                        break;
-                                    case MousePadSpecificationDto padSpec:
-                                        <partial name="~/Pages/Components/ProductSpecs/_MousePadPartial.cshtml" model="padSpec" />
-                                        break;
-
-                                    // --- Audio & Video ---
-                                    case HeadsetSpecificationDto headsetSpec:
-                                        <partial name="~/Pages/Components/ProductSpecs/_HeadsetSpecsPartial.cshtml" model="headsetSpec" />
-                                        break;
-                                    case SpeakerSpecificationDto speakerSpec:
-                                        <partial name="~/Pages/Components/ProductSpecs/_SpeakerSpecsPartial.cshtml" model="speakerSpec" />
-                                        break;
-                                    case MicrophoneSpecificationDto micSpec:
-                                        <partial name="~/Pages/Components/ProductSpecs/_MicrophoneSpecsPartial.cshtml" model="micSpec" />
-                                        break;
-                                    case WebcamSpecificationDto webcamSpec:
-                                        <partial name="~/Pages/Components/ProductSpecs/_WebcamSpecsPartial.cshtml" model="webcamSpec" />
-                                        break;
-
-
-
-                                    case CableSpecificationDto cableSpec:
-                                        <partial name="~/Pages/Components/ProductSpecs/_CableSpecsPartial.cshtml" model="cableSpec" />
-                                        break;
-
-                                    // --- Fallback ---
-                                    case null:
-                                    default:
-                                        <p class="text-muted">@L["Product:NoSpecificSpecifications"]</p>
-                                        break;
-                                }
-                            </div>
-                            <hr />
-                        </div>
+                <div class="card h-100" id="leftCard">
+                    <div class="card-header bg-light"><h2>@L["Product:Description"]</h2></div>
+                    <div class="card-body">
+                        @if (!string.IsNullOrWhiteSpace(Model.Product.Description))
+                        {
+                            @Html.Raw(Model.Product.Description)
+                        }
+                        else
+                        {
+                            <p class="text-muted">@L["Product:NoDescription"]</p>
+                        }
                     </div>
                 </div>
+            </div>
 
-            <!-- Sidebar -->
+            <!-- Sidebar - Specifications -->
             <div class="col-lg-4">
                 <div class="sticky-sidebar" id="rightSidebar">
-                    <p>change to @L["Product:Specification"]</p>
+                    <div class="card">
+                        <div class="card-header bg-light"><h5>@L["Product:Specification"]</h5></div>
+                        <div class="card-body">
+                            @switch (Model.Product.SpecificationBase)
+                            {
+                                // --- Core Components ---
+                                case CpuSpecificationDto cpuSpec:
+                                    <partial name="~/Pages/Components/ProductSpecs/_CpuSpecsPartial.cshtml" model="cpuSpec" />
+                                    break;
+                                case GpuSpecificationDto gpuSpec:
+                                    <partial name="~/Pages/Components/ProductSpecs/_GpuSpecsPartial.cshtml" model="gpuSpec" />
+                                    break;
+                                case RamSpecificationDto ramSpec:
+                                    <partial name="~/Pages/Components/ProductSpecs/_RamSpecsPartial.cshtml" model="ramSpec" />
+                                    break;
+                                case MotherboardSpecificationDto mbSpec:
+                                    <partial name="~/Pages/Components/ProductSpecs/_MotherboardSpecsPartial.cshtml" model="mbSpec" />
+                                    break;
+                                case StorageSpecificationDto storageSpec:
+                                    <partial name="~/Pages/Components/ProductSpecs/_StorageSpecsPartial.cshtml" model="storageSpec" />
+                                    break;
+
+                                // --- Cooling & Power ---
+                                case PsuSpecificationDto psuSpec:
+                                    <partial name="~/Pages/Components/ProductSpecs/_PsuSpecsPartial.cshtml" model="psuSpec" />
+                                    break;
+                                case CaseSpecificationDto caseSpec:
+                                    <partial name="~/Pages/Components/ProductSpecs/_CaseSpecsPartial.cshtml" model="caseSpec" />
+                                    break;
+                                case CpuCoolerSpecificationDto coolerSpec:
+                                    <partial name="~/Pages/Components/ProductSpecs/_CpuCoolerSpecsPartial.cshtml" model="coolerSpec" />
+                                    break;
+                                case CaseFanSpecificationDto caseFanSpec:
+                                    <partial name="~/Pages/Components/ProductSpecs/_CaseFanSpecsPartial.cshtml" model="caseFanSpec" />
+                                    break;
+
+                                // --- Computers ---
+                                case LaptopSpecificationDto laptopSpec:
+                                    <partial name="~/Pages/Components/ProductSpecs/_LaptopSpecsPartial.cshtml" model="laptopSpec" />
+                                    break;
+
+                                // --- Peripherals ---
+                                case MonitorSpecificationDto monitorSpec:
+                                    <partial name="~/Pages/Components/ProductSpecs/_MonitorSpecsPartial.cshtml" model="monitorSpec" />
+                                    break;
+                                case KeyboardSpecificationDto kbSpec:
+                                    <partial name="~/Pages/Components/ProductSpecs/_KeyboardSpecsPartial.cshtml" model="kbSpec" />
+                                    break;
+                                case MouseSpecificationDto mouseSpec:
+                                    <partial name="~/Pages/Components/ProductSpecs/_MouseSpecsPartial.cshtml" model="mouseSpec" />
+                                    break;
+                                case MousePadSpecificationDto padSpec:
+                                    <partial name="~/Pages/Components/ProductSpecs/_MousePadPartial.cshtml" model="padSpec" />
+                                    break;
+
+                                // --- Audio & Video ---
+                                case HeadsetSpecificationDto headsetSpec:
+                                    <partial name="~/Pages/Components/ProductSpecs/_HeadsetSpecsPartial.cshtml" model="headsetSpec" />
+                                    break;
+                                case SpeakerSpecificationDto speakerSpec:
+                                    <partial name="~/Pages/Components/ProductSpecs/_SpeakerSpecsPartial.cshtml" model="speakerSpec" />
+                                    break;
+                                case MicrophoneSpecificationDto micSpec:
+                                    <partial name="~/Pages/Components/ProductSpecs/_MicrophoneSpecsPartial.cshtml" model="micSpec" />
+                                    break;
+                                case WebcamSpecificationDto webcamSpec:
+                                    <partial name="~/Pages/Components/ProductSpecs/_WebcamSpecsPartial.cshtml" model="webcamSpec" />
+                                    break;
+
+                                case CableSpecificationDto cableSpec:
+                                    <partial name="~/Pages/Components/ProductSpecs/_CableSpecsPartial.cshtml" model="cableSpec" />
+                                    break;
+
+                                // --- Fallback ---
+                                case null:
+                                default:
+                                    <p class="text-muted">@L["Product:NoSpecificSpecifications"]</p>
+                                    break;
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,7 +1,7 @@
 ﻿$(function () {
     var l = abp.localization.getResource('ProductSelling');
     var prefix = window.location.pathname.split('/')[1];
-
+    // var storeService = acme.
 
     var dataTable = $('#StoresTable').DataTable(
         abp.libs.datatables.normalizeConfiguration({

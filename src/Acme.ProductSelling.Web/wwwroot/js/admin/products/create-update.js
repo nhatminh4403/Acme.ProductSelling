@@ -7,16 +7,12 @@
     });
 
     function initializeProductForm() {
-        // --- Slug Generation ---
         handleSlugGeneration();
 
-        // --- Image Preview and Input Toggling ---
         handleImageInputs();
 
-        // --- Dynamic Specification Form Display ---
         handleSpecificationDisplay();
 
-        // --- Automatic Discount Calculation ---
         handleDiscountCalculation();
     }
 

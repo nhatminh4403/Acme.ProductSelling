@@ -10,11 +10,9 @@
         this.showManufacturerFilter = config.showManufacturerFilter || false;
         this.apiEndpoint = config.apiEndpoint || '/api/app/product/filter';
         this.onFilter = config.onFilter;
-
-        // ✅ LOADING DELAY CONFIGURATION
-        this.minLoadingDelay = config.minLoadingDelay || 2000; // Default: 2 seconds
-        this.maxLoadingDelay = config.maxLoadingDelay || 5000; // Default: 5 seconds
-        this.enableLoadingDelay = config.enableLoadingDelay !== false; // Default: enabled
+        this.minLoadingDelay = config.minLoadingDelay || 2000; 
+        this.maxLoadingDelay = config.maxLoadingDelay || 5000; 
+        this.enableLoadingDelay = config.enableLoadingDelay !== false; 
 
         // State
         this.priceSlider = null;
@@ -22,20 +20,20 @@
         this.sliderTouched = false;
         this.isPriceFiltered = false;
         this.isManufacturerFiltered = false;
-        this.selectedManufacturerIds = []; // ✅ Changed to array for multiple selection
-        this.selectedManufacturerNames = []; // ✅ Changed to array
+        this.selectedManufacturerIds = []; 
+        this.selectedManufacturerNames = [];
         this.manufacturerTouched = false;
-        this.currentSortValue = 'featured'; // ✅ ADD THIS
-        this.currentSortLabel = 'Featured'; // ✅ ADD THIS
+        this.currentSortValue = 'featured'; 
+        this.currentSortLabel = 'Featured'; 
 
         // DOM Elements - Using simplified selectors
         this.priceDropdown = document.getElementById('priceDropdown');
         this.priceToggleBtn = document.getElementById('priceFilterToggle');
         this.manufacturerDropdown = document.getElementById('manufacturerDropdown');
         this.manufacturerToggleBtn = document.getElementById('manufacturerFilterToggle');
-        this.sortDropdown = document.getElementById('sortDropdown'); // ✅ ADD THIS
-        this.sortToggleBtn = document.getElementById('sortFilterToggle'); // ✅ ADD THIS
-        this.sortButtonText = document.getElementById('sortButtonText'); // ✅ ADD THIS
+        this.sortDropdown = document.getElementById('sortDropdown'); 
+        this.sortToggleBtn = document.getElementById('sortFilterToggle');
+        this.sortButtonText = document.getElementById('sortButtonText');
         this.backdrop = document.getElementById('dropdownBackdrop');
 
         // Buttons

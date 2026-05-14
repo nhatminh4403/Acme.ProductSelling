@@ -14,6 +14,7 @@ using Volo.Abp.DependencyInjection;
 using Volo.Abp.Identity;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.TenantManagement;
+using Volo.Abp.Uow;
 namespace Acme.ProductSelling.Data;
 
 public class ProductSellingDbMigrationService : ITransientDependency
@@ -24,13 +25,13 @@ public class ProductSellingDbMigrationService : ITransientDependency
     private readonly IEnumerable<IProductSellingDbSchemaMigrator> _dbSchemaMigrators;
     private readonly ITenantRepository _tenantRepository;
     private readonly ICurrentTenant _currentTenant;
-    //private readonly IUnitOfWorkManager _unitOfWorkManager;
+    private readonly IUnitOfWorkManager _unitOfWorkManager;
     public ProductSellingDbMigrationService(
         IDataSeeder dataSeeder,
         ITenantRepository tenantRepository,
         ICurrentTenant currentTenant,
-        IEnumerable<IProductSellingDbSchemaMigrator> dbSchemaMigrators
-        //,IUnitOfWorkManager unitOfWorkManager
+        IEnumerable<IProductSellingDbSchemaMigrator> dbSchemaMigrators,
+        IUnitOfWorkManager unitOfWorkManager
         )
     {
         _dataSeeder = dataSeeder;
@@ -39,7 +40,7 @@ public class ProductSellingDbMigrationService : ITransientDependency
         _dbSchemaMigrators = dbSchemaMigrators;
 
         Logger = NullLogger<ProductSellingDbMigrationService>.Instance;
-        //_unitOfWorkManager = unitOfWorkManager;
+        _unitOfWorkManager = unitOfWorkManager;
     }
 
     public async Task MigrateAsync()
@@ -108,25 +109,25 @@ public class ProductSellingDbMigrationService : ITransientDependency
     {
         Logger.LogInformation($"Executing {(tenant == null ? "host" : tenant.Name + " tenant")} database seed...");
 
-        //using (_currentTenant.Change(tenant?.Id))
-        //{
-        //    using (var uow = _unitOfWorkManager.Begin(requiresNew: true, isTransactional: false))
-        //    {
-        //        await _dataSeeder.SeedAsync(new DataSeedContext(tenant?.Id)
-        //                               .WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName,
-        //                                   ProductSellingConsts.AdminEmailDefaultValue)
-        //                               .WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName,
-        //                                   ProductSellingConsts.AdminPasswordDefaultValue)
-        //                           );
-        //        await uow.CompleteAsync();
-        //    }
-        //}
-        await _dataSeeder.SeedAsync(new DataSeedContext(tenant?.Id)
-            .WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName,
-                ProductSellingConsts.AdminEmailDefaultValue)
-            .WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName,
-                ProductSellingConsts.AdminPasswordDefaultValue)
-        );
+        using (_currentTenant.Change(tenant?.Id))
+        {
+            using (var uow = _unitOfWorkManager.Begin(requiresNew: true, isTransactional: false))
+            {
+                await _dataSeeder.SeedAsync(new DataSeedContext(tenant?.Id)
+                                       .WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName,
+                                           ProductSellingConsts.AdminEmailDefaultValue)
+                                       .WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName,
+                                           ProductSellingConsts.AdminPasswordDefaultValue)
+                                   );
+                await uow.CompleteAsync();
+            }
+        }
+        //await _dataSeeder.SeedAsync(new DataSeedContext(tenant?.Id)
+        //    .WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName,
+        //        ProductSellingConsts.AdminEmailDefaultValue)
+        //    .WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName,
+        //        ProductSellingConsts.AdminPasswordDefaultValue)
+        //);
     }
 
     private bool AddInitialMigrationIfNotExist()
@@ -233,7 +234,8 @@ public class ProductSellingDbMigrationService : ITransientDependency
         {
             currentDirectory = Directory.GetParent(currentDirectory.FullName);
 
-            if (currentDirectory != null && Directory.GetFiles(currentDirectory.FullName).FirstOrDefault(f => f.EndsWith(".sln")) != null)
+            if (currentDirectory != null
+                && ((Directory.GetFiles(currentDirectory.FullName).FirstOrDefault(f => f.EndsWith(".sln")) != null) || (Directory.GetFiles(currentDirectory.FullName).FirstOrDefault(f => f.EndsWith(".slnx")) != null)))
             {
                 return currentDirectory.FullName;
             }

@@ -14,6 +14,7 @@ namespace Acme.ProductSelling.Products;
 public partial class CpuSpecificationToDtoMapper : MapperBase<CpuSpecification, CpuSpecificationDto>
 {
     [MapProperty(nameof(CpuSpecification.Socket.Name), nameof(CpuSpecificationDto.SocketName))]
+    [MapperIgnoreTarget(nameof(CpuSpecificationDto.SocketName))]
     public override  CpuSpecificationDto Map(CpuSpecification source)
     {
         var destination = new CpuSpecificationDto();
@@ -21,6 +22,7 @@ public partial class CpuSpecificationToDtoMapper : MapperBase<CpuSpecification, 
         AfterMap(source, destination);
         return destination;
     }
+    [MapperIgnoreTarget(nameof(CpuSpecificationDto.SocketName))]
     public override partial void Map(CpuSpecification source, CpuSpecificationDto destination);
 
     public override void AfterMap(CpuSpecification source, CpuSpecificationDto destination)
@@ -741,6 +743,7 @@ public partial class SpecificationBaseToDtoMapper : MapperBase<SpecificationBase
     [UseMapper] private readonly CableSpecificationToDtoMapper _cableMapper = new();
     [UseMapper] private readonly MicrophoneSpecificationToDtoMapper _microphoneMapper = new();
     [UseMapper] private readonly MousePadSpecificationToDtoMapper _mousePadMapper = new();
+    [UseMapper] private readonly CaseFanSpecificationToDtoMapper _caseFanMapper = new();
 
     [MapDerivedType(typeof(MonitorSpecification), typeof(MonitorSpecificationDto))]
     [MapDerivedType(typeof(MouseSpecification), typeof(MouseSpecificationDto))]
@@ -760,6 +763,7 @@ public partial class SpecificationBaseToDtoMapper : MapperBase<SpecificationBase
     [MapDerivedType(typeof(CableSpecification), typeof(CableSpecificationDto))]
     [MapDerivedType(typeof(MicrophoneSpecification), typeof(MicrophoneSpecificationDto))]
     [MapDerivedType(typeof(MousePadSpecification), typeof(MousePadSpecificationDto))]
+    [MapDerivedType(typeof(CaseFanSpecification), typeof(CaseFanSpecificationDto))]
     public override partial SpecificationBaseDto Map(SpecificationBase source);
 
     public override void Map(SpecificationBase source, SpecificationBaseDto destination)

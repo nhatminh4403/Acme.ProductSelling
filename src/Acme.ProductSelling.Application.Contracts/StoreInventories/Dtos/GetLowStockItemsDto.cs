@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using Volo.Abp.Application.Dtos;
 
 namespace Acme.ProductSelling.StoreInventories.Dtos
@@ -7,6 +8,7 @@ namespace Acme.ProductSelling.StoreInventories.Dtos
     {
         public Guid? StoreId { get; set; }
         public bool? CriticalOnly { get; set; }
-        public string Filter { get; set; }
+        [CanBeNull]
+        public string? Filter { get; set; }
     }
 }

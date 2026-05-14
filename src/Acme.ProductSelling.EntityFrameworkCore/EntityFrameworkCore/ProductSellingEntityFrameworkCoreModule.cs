@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Acme.ProductSelling.Strategies;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
@@ -12,7 +14,6 @@ using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
 using Volo.Abp.Studio;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
-
 namespace Acme.ProductSelling.EntityFrameworkCore;
 
 [DependsOn(
@@ -60,6 +61,8 @@ public class ProductSellingEntityFrameworkCoreModule : AbpModule
             //options.UseSqlServer(sqlServerOptions =>
             //{
             //    // THIS is the specific fix for Azure SQL
+            //    //sqlServerOptions.ExecutionStrategy(deps => new AbpSqlServerRetryingExecutionStrategy(deps));
+
             //    sqlServerOptions.EnableRetryOnFailure(
             //        maxRetryCount: 5,
             //        maxRetryDelay: TimeSpan.FromSeconds(30),

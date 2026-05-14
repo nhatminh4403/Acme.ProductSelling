@@ -1,4 +1,5 @@
-﻿using Acme.ProductSelling.Categories;
+﻿
+using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Data.BaseSeeder;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Products;
@@ -13,10 +14,6 @@ namespace Acme.ProductSelling.Data.Products
 {
     public class AudioVideoSeeder : ProductSeederBase, IDataSeederContributor
     {
-        //private readonly IRepository<SpeakerSpecification, Guid> _speakerSpecRepository;
-        //private readonly IRepository<MicrophoneSpecification, Guid> _microphoneSpecRepository;
-        //private readonly IRepository<WebcamSpecification, Guid> _webcamSpecRepository;
-
         private readonly ISpecificationRepository _specificationRepository;
 
         private Dictionary<string, Category> _categories;
@@ -25,15 +22,9 @@ namespace Acme.ProductSelling.Data.Products
         public AudioVideoSeeder(
             IProductRepository productRepository,
             ProductManager productManager,
-            //IRepository<SpeakerSpecification, Guid> speakerSpecRepository,
-            //IRepository<MicrophoneSpecification, Guid> microphoneSpecRepository,
-            //IRepository<WebcamSpecification, Guid> webcamSpecRepository,
             ISpecificationRepository specificationRepository)
             : base(productRepository, productManager)
         {
-            //_speakerSpecRepository = speakerSpecRepository;
-            //_microphoneSpecRepository = microphoneSpecRepository;
-            //_webcamSpecRepository = webcamSpecRepository;
             _specificationRepository = specificationRepository;
         }
 
@@ -56,7 +47,7 @@ namespace Acme.ProductSelling.Data.Products
         {
             var speaker1 = await CreateProductAsync(
                 _categories["Speakers"].Id, _manufacturers["Logitech"].Id, 1500000, 10,
-                "Logitech Z623 2.1", "Loa 2.1 THX công suất 200W, bass mạnh mẽ",
+                "Logitech Z623 2.1", "<p>Hệ thống loa 2.1 THX với công suất <strong>200W</strong> mang đến trải nghiệm âm thanh mạnh mẽ.</p><ul><li>Bass sâu, trầm ấm</li><li>Chứng nhận THX</li><li>Kết nối đa dạng: 3.5mm, RCA</li><li>Phù hợp cho phim ảnh và gaming</li></ul>",
                 45, true, DateTime.Now.AddDays(4),
                 "https://resource.logitech.com/w_800,c_lpad,ar_1:1,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/speakers/z623/gallery/z623-gallery-1.png");
 
@@ -73,7 +64,7 @@ namespace Acme.ProductSelling.Data.Products
 
             var speaker2 = await CreateProductAsync(
                 _categories["Speakers"].Id, _manufacturers["JBL"].Id, 2200000, 15,
-                "JBL Charge 5", "Loa Bluetooth chống nước IP67, pin 20 giờ",
+                "JBL Charge 5", "<p>Loa Bluetooth di động với khả năng <strong>chống nước IP67</strong> và thời lượng pin lên đến <strong>20 giờ</strong>.</p><ul><li>Âm thanh JBL Pro Sound mạnh mẽ</li><li>Chống nước và bụi IP67</li><li>Pin 20 giờ sử dụng liên tục</li><li>Có thể sạc cho thiết bị khác qua USB</li></ul>",
                 70, true, DateTime.Now.AddDays(2),
                 "https://example.com/jbl-charge-5.jpg");
 
@@ -93,7 +84,7 @@ namespace Acme.ProductSelling.Data.Products
         {
             var microphone1 = await CreateProductAsync(
                 _categories["Microphones"].Id, _manufacturers["HyperX"].Id, 1800000, 5,
-                "HyperX QuadCast S", "Micro USB chống rung, RGB, 4 polar pattern",
+                "HyperX QuadCast S", "<p>Micro USB chuyên nghiệp với <strong>4 chế độ thu âm</strong> và hiệu ứng <strong>RGB</strong> đẹp mắt.</p><ul><li>4 polar pattern: Cardioid, Bidirectional, Omnidirectional, Stereo</li><li>Chống rung tích hợp</li><li>Đèn LED RGB tùy chỉnh</li><li>Nút tắt tiếng cảm ứng</li><li>Lý tưởng cho streaming và podcasting</li></ul>",
                 60, true, DateTime.Now.AddDays(3),
                 "https://row.hyperx.com/cdn/shop/files/hyperx_quadcast_s_mic_1_top_down_zm_lg.jpg");
 
@@ -118,7 +109,7 @@ namespace Acme.ProductSelling.Data.Products
         {
             var webcam1 = await CreateProductAsync(
                 _categories["Webcams"].Id, _manufacturers["Logitech"].Id, 2500000, 12,
-                "Logitech StreamCam", "Webcam 1080p 60fps cho streaming, USB-C",
+                "Logitech StreamCam", "<p>Webcam chuyên nghiệp cho streaming với độ phân giải <strong>1080p 60fps</strong> và kết nối <strong>USB-C</strong>.</p><ul><li>Quay video Full HD 1080p ở 60fps</li><li>Lấy nét tự động thông minh</li><li>Góc nhìn 78 độ</li><li>Tương thích với OBS, XSplit, Streamlabs</li><li>Có thể xoay dọc/ngang</li></ul>",
                 50, true, DateTime.Now.AddDays(5),
                 "https://resource.logitech.com/w_800,c_lpad,ar_1:1,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/logitech/en/products/webcams/streamcam/gallery/streamcam-gallery-1-graphite.png");
 

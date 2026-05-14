@@ -186,6 +186,8 @@ namespace Acme.ProductSelling.Categories
         [RemoteService(false)]
         public virtual async Task<List<ManufacturerLookupDto>> GetManufacturersInCategoryAsync(Guid categoryId)
         {
+            var category = await _categoryRepository.GetAsync(categoryId);
+
             try
             {
                 Logger.LogDebug("Loading manufacturers for category: {CategoryId}", categoryId);
@@ -220,14 +222,13 @@ namespace Acme.ProductSelling.Categories
                     Name = m.Name,
                     UrlSlug = m.UrlSlug,
                 }).ToList();
-
-                Logger.LogInformation("Found {Count} manufacturers for category {CategoryId}", result.Count, categoryId);
+                Logger.LogInformation("Found {Count} manufacturers for category {CategoryName}", result.Count, category.Name);
 
                 return result;
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Error loading manufacturers for category {CategoryId}", categoryId);
+                Logger.LogError(ex, "Error loading manufacturers for category {CategoryName}", category.Name);
                 throw;
             }
         }

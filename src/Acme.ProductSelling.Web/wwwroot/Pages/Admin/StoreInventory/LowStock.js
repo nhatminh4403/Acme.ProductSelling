@@ -1,7 +1,7 @@
 ﻿(function () {
     const l = abp.localization.getResource('ProductSelling');
-    const inventoryService = acme.productSelling.products.services.storeInventoryAppService;
-    const storeService = acme.productSelling.stores.services.storeAppService;
+    const inventoryService = acme.productSelling.storeInventories.storeInventory;
+    const storeService = acme.productSelling.stores.store;
 
     let stores = [];
     let currentStoreFilter = window.currentUserStoreId || null;
@@ -23,7 +23,7 @@
             searching: true,
             scrollX: true,
             ajax: abp.libs.datatables.createAjax(inventoryService.getLowStockItems, function () {
-                const params = {};
+                const params = {filter: ''  };
                 if (currentStoreFilter) {
                     params.storeId = currentStoreFilter;
                 }

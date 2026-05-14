@@ -9,9 +9,9 @@ namespace Acme.ProductSelling.Specifications
         public float NoiseLevel { get; set; }
         public float Airflow { get; set; }
         public float StaticPressure { get; set; }
-        public string Connector { get; set; }
+        public string? Connector { get; set; }
         public BearingType BearingType { get; set; }
         public bool HasRgb { get; set; }
-        public string Color { get; set; }
+        public string? Color { get; set; }
     }
 }

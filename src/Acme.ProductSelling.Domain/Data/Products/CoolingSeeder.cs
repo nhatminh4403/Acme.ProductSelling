@@ -14,13 +14,11 @@ using Volo.Abp.Domain.Repositories;
 
 namespace Acme.ProductSelling.Data.Products
 {
+    /// <summary>
+    /// Seeder for cooling and power components
     /// </summary>
     public class CoolingSeeder : ProductSeederBase, IDataSeederContributor
     {
-        //private readonly IRepository<PsuSpecification, Guid> _psuSpecRepository;
-        //private readonly IRepository<CaseSpecification, Guid> _caseSpecRepository;
-        //private readonly IRepository<CpuCoolerSpecification, Guid> _cpuCoolerSpecRepository;
-        //private readonly IRepository<CaseFanSpecification, Guid> _caseFanSpecRepository;
         private readonly IRepository<CpuCoolerSocketSupport> _cpuCoolerSocketSupportRepository;
         private readonly IRepository<CaseMaterial> _caseMaterialRepository;
 
@@ -35,19 +33,11 @@ namespace Acme.ProductSelling.Data.Products
         public CoolingSeeder(
             IProductRepository productRepository,
             ProductManager productManager,
-            //IRepository<PsuSpecification, Guid> psuSpecRepository,
-            //IRepository<CaseSpecification, Guid> caseSpecRepository,
-            //IRepository<CpuCoolerSpecification, Guid> cpuCoolerSpecRepository,
-            //IRepository<CaseFanSpecification, Guid> caseFanSpecRepository,
             IRepository<CpuCoolerSocketSupport> cpuCoolerSocketSupportRepository,
             IRepository<CaseMaterial> caseMaterialRepository,
             ISpecificationRepository specificationRepository)
             : base(productRepository, productManager)
         {
-            //_psuSpecRepository = psuSpecRepository;
-            //_caseSpecRepository = caseSpecRepository;
-            //_cpuCoolerSpecRepository = cpuCoolerSpecRepository;
-            //_caseFanSpecRepository = caseFanSpecRepository;
             _cpuCoolerSocketSupportRepository = cpuCoolerSocketSupportRepository;
             _caseMaterialRepository = caseMaterialRepository;
             _specificationRepository = specificationRepository;
@@ -79,7 +69,7 @@ namespace Acme.ProductSelling.Data.Products
         {
             var psu1 = await CreateProductAsync(
                 _categories["PSUs"].Id, _manufacturers["Corsair"].Id, 2000000, 5,
-                "Corsair RM750x", "750W fully modular power supply",
+                "Corsair RM750x", "<p>Nguồn máy tính <strong>750W</strong> hiệu suất cao với chứng nhận <strong>80 Plus Gold</strong>.</p><ul><li>Công suất 750W ổn định</li><li>Hiệu suất 80 Plus Gold (>90%)</li><li>Fully modular - dễ dàng quản lý dây</li><li>Quạt tản nhiệt 135mm êm ái</li><li>Bảo hành 10 năm</li></ul>",
                 50, true, DateTime.Now,
                 "https://bizweb.dktcdn.net/thumb/grande/100/329/122/products/nguon-may-tinh-corsair-rm750x-shift-750w-80-plus-gold-cp-9020251-na-04-20838ea6-b253-460f-bb0c-ad9327565373.jpg?v=1743639588677");
 
@@ -94,7 +84,7 @@ namespace Acme.ProductSelling.Data.Products
 
             var psu2 = await CreateProductAsync(
                 _categories["PSUs"].Id, _manufacturers["EVGA"].Id, 2200000, 20,
-                "EVGA SuperNOVA 750 G5", "750W gold-rated fully modular PSU",
+                "EVGA SuperNOVA 750 G5", "<p>Nguồn <strong>750W</strong> fully modular với chứng nhận <strong>80 Plus Gold</strong> từ EVGA.</p><ul><li>Công suất 750W</li><li>Hiệu suất 80 Plus Gold</li><li>Fully modular giúp gọn gàng</li><li>Quạt Fluid Dynamic Bearing êm</li><li>Bảo hành 10 năm</li></ul>",
                 35, true, DateTime.Now,
                 "https://tandoanh.vn/wp-content/uploads/2021/10/EVGA-SuperNOVA-750-G1-%E2%80%93-80-GOLD-750W-%E2%80%93-Fully-Modular-h1.jpg");
 
@@ -112,7 +102,7 @@ namespace Acme.ProductSelling.Data.Products
         {
             var case1 = await CreateProductAsync(
                 _categories["Cases"].Id, _manufacturers["NZXT"].Id, 1500000, 5,
-                "NZXT H510", "Mid-tower ATX case with tempered glass",
+                "NZXT H510", "<p>Vỏ case <strong>Mid-tower ATX</strong> với thiết kế tối giản và kính cường lực.</p><ul><li>Thiết kế tối giản, hiện đại</li><li>Kính cường lực tempered glass</li><li>Hỗ trợ lên đến 6 quạt tản nhiệt</li><li>Radiator lên đến 360mm</li><li>Quản lý dây gọn gàng</li><li>Cổng USB 3.0, USB-C phía trước</li></ul>",
                 40, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/4108_be554d73268e3ca69f25d192629df397_b7fd1aebb5f74f50ae18c3b23efb8755_b6d80711bb304b568b03fdcf3e94c1ab_grande.jpg");
 
@@ -140,7 +130,7 @@ namespace Acme.ProductSelling.Data.Products
 
             var case2 = await CreateProductAsync(
                 _categories["Cases"].Id, _manufacturers["Phanteks"].Id, 1800000, 10,
-                "Phanteks Eclipse P400A", "High-airflow mid-tower ATX case",
+                "Phanteks Eclipse P400A", "<p>Vỏ case <strong>Mid-tower ATX</strong> với luồng khí tối ưu cho hiệu năng làm mát tốt nhất.</p><ul><li>Thiết kế high-airflow</li><li>Mặt trước lưới thoáng khí</li><li>Kính cường lực tempered glass</li><li>Hỗ trợ radiator 360mm</li><li>Cổng USB 3.0, USB-C</li><li>Màu trắng sang trọng</li></ul>",
                 45, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/k-_1_65d8edfddc2b4785af9a13f971fc258a_6043347819ed417bb6dd327b41b39b6e_60a930dd805e4bc891b6ea69e7c2d21a_grande.jpg");
 
@@ -171,7 +161,7 @@ namespace Acme.ProductSelling.Data.Products
         {
             var cooler1 = await CreateProductAsync(
                 _categories["CPU Coolers"].Id, _manufacturers["Cooler Master"].Id, 1200000, 5,
-                "Cooler Master Hyper 212", "Air cooler with RGB lighting",
+                "Cooler Master Hyper 212", "<p>Tản nhiệt khí CPU phổ biến với <strong>đèn RGB</strong> và hiệu năng làm mát tốt.</p><ul><li>Quạt 120mm với đèn RGB</li><li>Hỗ trợ TDP lên đến 150W</li><li>Độ ồn thấp chỉ 30dB</li><li>Tương thích socket AM4, LGA1200</li><li>Chiều cao 160mm</li><li>Giá trị tốt nhất trong phân khúc</li></ul>",
                 60, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/hyper-212-argb-gallery-4-image_dc19349414e94e0e869c23e85c70cb49_d2713cd5bac947da94ee34d1456220fe_grande.png");
 
@@ -196,7 +186,7 @@ namespace Acme.ProductSelling.Data.Products
 
             var cooler2 = await CreateProductAsync(
                 _categories["CPU Coolers"].Id, _manufacturers["Noctua"].Id, 4000000, 25,
-                "Noctua NH-D15", "Premium dual-tower air cooler",
+                "Noctua NH-D15", "<p>Tản nhiệt khí cao cấp <strong>dual-tower</strong> với hiệu năng làm mát <strong>vượt trội</strong>.</p><ul><li>Thiết kế dual-tower với 2 quạt 140mm</li><li>Hỗ trợ TDP lên đến 220W</li><li>Cực kỳ êm ái chỉ 24dB</li><li>Chất lượng Noctua hàng đầu</li><li>Tương thích socket AM4, LGA1700</li><li>Bảo hành 6 năm</li></ul>",
                 20, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/noctua_nh-d15_2_75940b3d5fbb485190327d6b592429af_9ad735dcdbb94a71ba171d7d4ae0a326_grande.jpg");
 
@@ -224,7 +214,7 @@ namespace Acme.ProductSelling.Data.Products
         {
             var fan1 = await CreateProductAsync(
                 _categories["Case Fans"].Id, _manufacturers["Noctua"].Id, 450000, 5,
-                "Noctua NF-A12x25 PWM", "Quạt tản nhiệt case 120mm cao cấp, êm ái",
+                "Noctua NF-A12x25 PWM", "<p>Quạt tản nhiệt case <strong>120mm</strong> cao cấp với hiệu năng và độ êm <strong>hàng đầu</strong>.</p><ul><li>Kích thước 120mm chuẩn</li><li>Tốc độ tối đa 2000 RPM</li><li>Độ ồn cực thấp 22.6 dBA</li><li>Lưu lượng gió 102.1 CFM</li><li>Áp suất tĩnh 2.34 mmH₂O</li><li>Ổ trục SSO2 bền bỉ</li><li>Bảo hành 6 năm</li></ul>",
                 100, true, DateTime.Now.AddDays(2),
                 "https://noctua.at/pub/media/catalog/product/cache/74c1057f7991b4edb2bc7bdaa94de933/n/f/nf_a12x25_pwm_1.jpg");
 

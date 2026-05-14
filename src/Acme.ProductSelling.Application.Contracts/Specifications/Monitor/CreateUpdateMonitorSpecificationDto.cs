@@ -8,8 +8,7 @@ namespace Acme.ProductSelling.Specifications
         public string? Resolution { get; set; }
         public float? ScreenSize { get; set; }
         public int? ResponseTime { get; set; }
-        [Required]
-        public Guid PanelTypeId { get; set; }
+        public Guid? PanelTypeId { get; set; }
         public int? ResponseTimeMs { get; set; }
         public string? ColorGamut { get; set; }
         public int? Brightness { get; set; }

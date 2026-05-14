@@ -53,6 +53,7 @@ namespace Acme.ProductSelling.Data.Lookups
 
         public async Task SeedAsync()
         {
+            
             await SeedSocketsAsync();
             await SeedChipsetsAsync();
             await SeedFormFactorsAsync();
@@ -64,6 +65,13 @@ namespace Acme.ProductSelling.Data.Lookups
 
         private async Task SeedSocketsAsync()
         {
+            if (await _socketRepository.GetCountAsync() > 0)
+            {
+                foreach (var s in await _socketRepository.GetListAsync())
+                    Sockets[s.Name] = s;
+                return;
+            }
+
             Sockets["AM4"] = await _socketRepository.InsertAsync(new CpuSocket { Name = "AM4" });
             Sockets["AM5"] = await _socketRepository.InsertAsync(new CpuSocket { Name = "AM5" });
             Sockets["LGA1700"] = await _socketRepository.InsertAsync(new CpuSocket { Name = "LGA1700" });
@@ -73,6 +81,17 @@ namespace Acme.ProductSelling.Data.Lookups
 
         private async Task SeedChipsetsAsync()
         {
+            if (await _chipsetRepository.GetCountAsync() > 0)
+            {
+                foreach (var c in await _chipsetRepository.GetListAsync())
+                {
+                    if (c.Name.Contains("Z790")) Chipsets["Z790"] = c;
+                    else if (c.Name.Contains("Z890")) Chipsets["Z890"] = c;
+                    else if (c.Name.Contains("X670E")) Chipsets["X670E"] = c;
+                }
+                return;
+            }
+
             Chipsets["Z790"] = await _chipsetRepository.InsertAsync(new Chipset { Name = "Intel Z790 Express" });
             Chipsets["Z890"] = await _chipsetRepository.InsertAsync(new Chipset { Name = "Intel Z890" });
             Chipsets["X670E"] = await _chipsetRepository.InsertAsync(new Chipset { Name = "AMD X670E" });
@@ -80,6 +99,13 @@ namespace Acme.ProductSelling.Data.Lookups
 
         private async Task SeedFormFactorsAsync()
         {
+            if (await _formFactorRepository.GetCountAsync() > 0)
+            {
+                foreach (var f in await _formFactorRepository.GetListAsync())
+                    FormFactors[f.Name] = f;
+                return;
+            }
+
             FormFactors["ATX"] = await _formFactorRepository.InsertAsync(new FormFactor { Name = "ATX" });
             FormFactors["E-ATX"] = await _formFactorRepository.InsertAsync(new FormFactor { Name = "E-ATX" });
             FormFactors["ATX Mid Tower"] = await _formFactorRepository.InsertAsync(new FormFactor { Name = "ATX Mid Tower" });
@@ -87,12 +113,25 @@ namespace Acme.ProductSelling.Data.Lookups
 
         private async Task SeedMaterialsAsync()
         {
+            if (await _materialRepository.GetCountAsync() > 0)
+            {
+                foreach (var m in await _materialRepository.GetListAsync())
+                    Materials[m.Name] = m;
+                return;
+            }
+
             Materials["Steel"] = await _materialRepository.InsertAsync(new Material { Name = "Steel" });
             Materials["Tempered Glass"] = await _materialRepository.InsertAsync(new Material { Name = "Tempered Glass" });
         }
-
         private async Task SeedPanelTypesAsync()
         {
+            if (await _panelTypeRepository.GetCountAsync() > 0)
+            {
+                foreach (var p in await _panelTypeRepository.GetListAsync())
+                    PanelTypes[p.Name] = p;
+                return;
+            }
+
             PanelTypes["IPS"] = await _panelTypeRepository.InsertAsync(new PanelType { Name = "IPS" });
             PanelTypes["TN"] = await _panelTypeRepository.InsertAsync(new PanelType { Name = "TN" });
             PanelTypes["OLED"] = await _panelTypeRepository.InsertAsync(new PanelType { Name = "OLED" });
@@ -101,32 +140,50 @@ namespace Acme.ProductSelling.Data.Lookups
 
         private async Task SeedRamTypesAsync()
         {
+            if (await _ramTypeRepository.GetCountAsync() > 0)
+            {
+                foreach (var r in await _ramTypeRepository.GetListAsync())
+                    RamTypes[r.Name] = r;
+                return;
+            }
+
             RamTypes["DDR4"] = await _ramTypeRepository.InsertAsync(new RamType { Name = "DDR4" });
             RamTypes["DDR5"] = await _ramTypeRepository.InsertAsync(new RamType { Name = "DDR5" });
         }
 
         private async Task SeedSwitchTypesAsync()
         {
-            SwitchTypes["Linear Red"] = await _switchTypeRepository.InsertAsync(
-                new SwitchType { Name = "Cherry MX Red (Linear)" });
-            SwitchTypes["Linear Black"] = await _switchTypeRepository.InsertAsync(
-                new SwitchType { Name = "Cherry MX Black (Linear)" });
-            SwitchTypes["Tactile Brown"] = await _switchTypeRepository.InsertAsync(
-                new SwitchType { Name = "Cherry MX Brown (Tactile)" });
-            SwitchTypes["Tactile Clear"] = await _switchTypeRepository.InsertAsync(
-                new SwitchType { Name = "Cherry MX Clear (Tactile)" });
-            SwitchTypes["Clicky Blue"] = await _switchTypeRepository.InsertAsync(
-                new SwitchType { Name = "Cherry MX Blue (Clicky)" });
-            SwitchTypes["Clicky Green"] = await _switchTypeRepository.InsertAsync(
-                new SwitchType { Name = "Cherry MX Green (Clicky)" });
-            SwitchTypes["Silent Red"] = await _switchTypeRepository.InsertAsync(
-                new SwitchType { Name = "Cherry MX Silent Red (Silent Linear)" });
-            SwitchTypes["Low Profile"] = await _switchTypeRepository.InsertAsync(
-                new SwitchType { Name = "Kailh Choc (Low Profile)" });
-            SwitchTypes["Optical Red"] = await _switchTypeRepository.InsertAsync(
-                new SwitchType { Name = "Razer Optical Red (Optical Linear)" });
-            SwitchTypes["Hall Effect"] = await _switchTypeRepository.InsertAsync(
-                new SwitchType { Name = "Wooting Lekker (Hall Effect Analog)" });
+            if (await _switchTypeRepository.GetCountAsync() > 0)
+            {
+                // Map back using the same dictionary keys used by PeripheralSeeder
+                var all = await _switchTypeRepository.GetListAsync();
+                foreach (var sw in all)
+                {
+                    if (sw.Name.Contains("Red") && sw.Name.Contains("Linear") && !sw.Name.Contains("Silent") && !sw.Name.Contains("Optical"))
+                        SwitchTypes["Linear Red"] = sw;
+                    else if (sw.Name.Contains("Black")) SwitchTypes["Linear Black"] = sw;
+                    else if (sw.Name.Contains("Brown")) SwitchTypes["Tactile Brown"] = sw;
+                    else if (sw.Name.Contains("Clear")) SwitchTypes["Tactile Clear"] = sw;
+                    else if (sw.Name.Contains("Blue")) SwitchTypes["Clicky Blue"] = sw;
+                    else if (sw.Name.Contains("Green")) SwitchTypes["Clicky Green"] = sw;
+                    else if (sw.Name.Contains("Silent")) SwitchTypes["Silent Red"] = sw;
+                    else if (sw.Name.Contains("Choc")) SwitchTypes["Low Profile"] = sw;
+                    else if (sw.Name.Contains("Optical")) SwitchTypes["Optical Red"] = sw;
+                    else if (sw.Name.Contains("Lekker")) SwitchTypes["Hall Effect"] = sw;
+                }
+                return;
+            }
+
+            SwitchTypes["Linear Red"] = await _switchTypeRepository.InsertAsync(new SwitchType { Name = "Cherry MX Red (Linear)" });
+            SwitchTypes["Linear Black"] = await _switchTypeRepository.InsertAsync(new SwitchType { Name = "Cherry MX Black (Linear)" });
+            SwitchTypes["Tactile Brown"] = await _switchTypeRepository.InsertAsync(new SwitchType { Name = "Cherry MX Brown (Tactile)" });
+            SwitchTypes["Tactile Clear"] = await _switchTypeRepository.InsertAsync(new SwitchType { Name = "Cherry MX Clear (Tactile)" });
+            SwitchTypes["Clicky Blue"] = await _switchTypeRepository.InsertAsync(new SwitchType { Name = "Cherry MX Blue (Clicky)" });
+            SwitchTypes["Clicky Green"] = await _switchTypeRepository.InsertAsync(new SwitchType { Name = "Cherry MX Green (Clicky)" });
+            SwitchTypes["Silent Red"] = await _switchTypeRepository.InsertAsync(new SwitchType { Name = "Cherry MX Silent Red (Silent Linear)" });
+            SwitchTypes["Low Profile"] = await _switchTypeRepository.InsertAsync(new SwitchType { Name = "Kailh Choc (Low Profile)" });
+            SwitchTypes["Optical Red"] = await _switchTypeRepository.InsertAsync(new SwitchType { Name = "Razer Optical Red (Optical Linear)" });
+            SwitchTypes["Hall Effect"] = await _switchTypeRepository.InsertAsync(new SwitchType { Name = "Wooting Lekker (Hall Effect Analog)" });
         }
 
     }

@@ -10,25 +10,29 @@
     <link href="~/css/global/products/priceFilter.css" rel="stylesheet" />
 }
 
+@section scripts {
+    <script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.0/dist/nouislider.min.js"></script>
+    <script src="~/js/global/products/price-filter.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const priceFilter = new PriceFilter({
+        minBound: @Model.MinPriceBound,
+        maxBound: @Model.MaxPriceBound,
+        categorySlug: '@Model.Slug',
+        pageSize: @Model.PageSize,
+        showManufacturerFilter: @Model.ShowManufacturerFilter.ToString().ToLower(),
+
+        });
+        });
+    </script>
+}
+
 @{
     ViewData["Title"] = HelperMethods.GetCategoryLocalizerName(Model.CategoryName, L);
     Layout = "/Views/Shared/_Layout.cshtml";
 
-    var filterVM = new FilterViewModel();
-
-    if (Model.AvailablePriceRanges != null && Model.AvailablePriceRanges.Any())
-    {
-        filterVM = new FilterViewModel
-        {
-            MinPriceBound = Model.MinPriceBound,
-            MaxPriceBound = Model.MaxPriceBound,
-            CategorySlug = Model.Slug,
-            PageSize = Model.PageSize,
-            ShowManufacturerFilter = true,
-            Manufacturers = Model.AvailableManufacturers
-        };
-
-    }
+    var filterVM = Model.FilterVM;
 }
 
 <div class="container my-2">
@@ -53,10 +57,9 @@
             <span class="visually-hidden">@L["Loading"]...</span>
         </div>
     </div>
-    @if (Model.AvailablePriceRanges != null && Model.AvailablePriceRanges.Any())
+    @if (Model.HasAnyProducts || Model.Products.Items.Any())
     {
         @await Component.InvokeAsync(typeof(FilterViewComponent), filterVM)
-
     }
 
     <div id="productsGrid">
@@ -155,21 +158,3 @@
     </div>
 </div>
 
-
-@section scripts {
-    <script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.0/dist/nouislider.min.js"></script>
-    <script src="~/js/global/products/price-filter.js"></script>
-
-    <script>
-         document.addEventListener('DOMContentLoaded', function() {
-            const priceFilter = new PriceFilter({
-                minBound: @Model.MinPriceBound,
-                maxBound: @Model.MaxPriceBound,
-                categorySlug: '@Model.Slug',
-                pageSize: @Model.PageSize,
-                showManufacturerFilter: @Model.ShowManufacturerFilter.ToString().ToLower(),
-
-            });
-        });
-    </script>
-}

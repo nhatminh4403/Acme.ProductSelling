@@ -15,5 +15,7 @@ namespace Acme.ProductSelling.Web.Models
         public bool ShowManufacturerFilter { get; set; } = false;
         public List<ManufacturerLookupDto> Manufacturers { get; set; }
         public Guid? SelectedManufacturerId { get; set; }
+        public bool HasConfiguredPriceRanges { get; set; }
+        public bool HasAnyProducts { get; set; }
     }
 }

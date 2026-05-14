@@ -40,7 +40,8 @@ namespace Acme.ProductSelling.Data.Stores
         {
             if (await _storeRepository.GetCountAsync() > 0)
             {
-                return; // Already seeded
+                SeededStores = await _storeRepository.GetListAsync();
+                return;
             }
 
             // Create stores

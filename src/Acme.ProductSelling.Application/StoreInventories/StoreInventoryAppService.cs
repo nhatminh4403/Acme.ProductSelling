@@ -93,10 +93,22 @@ namespace Acme.ProductSelling.StoreInventories
 
             var totalCount = await AsyncExecuter.CountAsync(query);
 
-            query = query
-                .OrderBy(input.Sorting ?? "Product.ProductName")
-                .PageBy(input);
+            string sorting = input.Sorting;
 
+            // If sorting by DTO property, map it to Entity property
+            if (string.IsNullOrWhiteSpace(sorting) || sorting.Contains("storeName"))
+            {
+                // Order by Store.Name instead of storeName
+                sorting = sorting?.Replace("storeName", "Store.Name") ?? "Store.Name";
+            }
+            else if (sorting.Contains("productName"))
+            {
+                sorting = sorting.Replace("productName", "Product.ProductName");
+            }
+
+            query = query
+                .OrderBy(sorting)
+                .PageBy(input);
             var inventories = await AsyncExecuter.ToListAsync(query);
 
             var inventoryDtos = new List<StoreInventoryDto>();

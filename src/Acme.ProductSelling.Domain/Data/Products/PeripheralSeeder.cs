@@ -14,11 +14,6 @@ namespace Acme.ProductSelling.Data.Products
 {
     public class PeripheralSeeder : ProductSeederBase, IDataSeederContributor
     {
-        //private readonly IRepository<KeyboardSpecification, Guid> _keyboardSpecRepository;
-        //private readonly IRepository<MouseSpecification, Guid> _mouseSpecRepository;
-        //private readonly IRepository<MonitorSpecification, Guid> _monitorSpecRepository;
-        //private readonly IRepository<HeadsetSpecification, Guid> _headsetSpecRepository;
-
         private readonly ISpecificationRepository _specificationRepository;
 
         private Dictionary<string, Category> _categories;
@@ -29,17 +24,9 @@ namespace Acme.ProductSelling.Data.Products
         public PeripheralSeeder(
             IProductRepository productRepository,
             ProductManager productManager,
-            //IRepository<KeyboardSpecification, Guid> keyboardSpecRepository,
-            //IRepository<MouseSpecification, Guid> mouseSpecRepository,
-            //IRepository<MonitorSpecification, Guid> monitorSpecRepository,
-            //IRepository<HeadsetSpecification, Guid> headsetSpecRepository,
             ISpecificationRepository specificationRepository)
             : base(productRepository, productManager)
         {
-            //_keyboardSpecRepository = keyboardSpecRepository;
-            //_mouseSpecRepository = mouseSpecRepository;
-            //_monitorSpecRepository = monitorSpecRepository;
-            //_headsetSpecRepository = headsetSpecRepository;
             _specificationRepository = specificationRepository;
         }
 
@@ -67,7 +54,7 @@ namespace Acme.ProductSelling.Data.Products
         {
             var kb1 = await CreateProductAsync(
                 _categories["Keyboards"].Id, _manufacturers["Logitech"].Id, 3000000, 7,
-                "Logitech G Pro TKL Keyboard", "Tenkeyless mechanical gaming keyboard",
+                "Logitech G Pro TKL Keyboard", "<p>Bàn phím cơ gaming <strong>Tenkeyless</strong> chuyên nghiệp cho esports.</p><ul><li>Thiết kế TKL gọn gàng, di động</li><li>Switch cơ học Tactile Brown</li><li>Đèn nền RGB tùy chỉnh</li><li>Khung nhôm chắc chắn</li><li>Dây cáp tháo rời</li><li>Lý tưởng cho gaming chuyên nghiệp</li></ul>",
                 80, true, DateTime.Now.AddDays(-10),
                 "https://product.hstatic.net/200000722513/product/1_5b2f7891bf434a7aab9f1abdba56c17e_grande.jpg");
 
@@ -82,7 +69,7 @@ namespace Acme.ProductSelling.Data.Products
 
             var kb2 = await CreateProductAsync(
                 _categories["Keyboards"].Id, _manufacturers["Razer"].Id, 4500000, 5,
-                "Razer Huntsman Elite", "Opto-mechanical gaming keyboard",
+                "Razer Huntsman Elite", "<p>Bàn phím cơ <strong>opto-mechanical</strong> cao cấp với phản hồi cực nhanh.</p><ul><li>Switch opto-mechanical Linear Red</li><li>Phản hồi cực nhanh với ánh sáng</li><li>Đèn RGB Chroma đẹp mắt</li><li>Tựa tay từ tính thoải mái</li><li>Bánh xe điều khiển đa phương tiện</li><li>Full-size với numpad</li></ul>",
                 40, true, DateTime.Now.AddMonths(1),
                 "https://product.hstatic.net/200000722513/product/r3m1_ac3aa0be001640e2873ff732d34617bc_2295901522e24ce399b8f5f07be51467_3ab2e4aca4434a9a84997283b79b5c3c_grande.png");
 
@@ -100,7 +87,7 @@ namespace Acme.ProductSelling.Data.Products
         {
             var mouse1 = await CreateProductAsync(
                 _categories["Mice"].Id, _manufacturers["Logitech"].Id, 1000000, 5,
-                "Logitech G502 HERO", "High-performance gaming mouse",
+                "Logitech G502 HERO", "<p>Chuột gaming hiệu năng cao với cảm biến <strong>HERO 16K</strong> và thiết kế ergonomic.</p><ul><li>Cảm biến HERO 16K DPI</li><li>11 nút lập trình được</li><li>Hệ thống trọng lượng điều chỉnh</li><li>Đèn RGB tùy chỉnh</li><li>Polling rate 1000Hz</li><li>Thiết kế ergonomic thoải mái</li></ul>",
                 150, true, DateTime.Now.AddDays(3),
                 "https://product.hstatic.net/200000722513/product/10001_01736316d2b443d0838e5a0741434420_grande.png");
 
@@ -116,15 +103,13 @@ namespace Acme.ProductSelling.Data.Products
                 BacklightColor = "RGB",
                 Color = "Black"
             }, autoSave: true);
-
-            // Add more mice as needed...
         }
 
         private async Task SeedMonitorsAsync()
         {
             var monitor1 = await CreateProductAsync(
                 _categories["Monitors"].Id, _manufacturers["LG"].Id, 7000000, 6,
-                "UltraGear 27GL850", "27-inch QHD gaming monitor",
+                "UltraGear 27GL850", "<p>Màn hình gaming <strong>27 inch QHD</strong> với tần số quét <strong>144Hz</strong> và tấm nền IPS.</p><ul><li>Kích thước 27 inch lý tưởng</li><li>Độ phân giải 2560x1440 (QHD)</li><li>Tần số quét 144Hz mượt mà</li><li>Tấm nền IPS màu sắc chính xác</li><li>Thời gian phản hồi 1ms</li><li>Hỗ trợ G-Sync/FreeSync</li><li>Gắn VESA tiện lợi</li></ul>",
                 30, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/lg_27gx790a-b_gearvn_18880ec6e5a944c2b29c76d85d44d243_medium.jpg");
 
@@ -146,7 +131,7 @@ namespace Acme.ProductSelling.Data.Products
         {
             var headset1 = await CreateProductAsync(
                 _categories["Headsets"].Id, _manufacturers["Logitech"].Id, 1500000, 5,
-                "Logitech G Pro X", "High-quality gaming headset",
+                "Logitech G Pro X", "<p>Tai nghe gaming chất lượng cao với <strong>micro Blue VO!CE</strong> và driver <strong>PRO-G 50mm</strong>.</p><ul><li>Driver PRO-G 50mm chất lượng cao</li><li>Micro Blue VO!CE chống ồn</li><li>Âm thanh vòm DTS Headphone:X 2.0</li><li>Đệm tai memory foam thoải mái</li><li>Khung nhôm và thép bền bỉ</li><li>Dây cáp tháo rời tiện lợi</li></ul>",
                 70, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/gvn_logitech_prox_79c556630c454086baf1bee06c577ab7_3471d9d886fd4dbe8ab5ae6bed9f4d78_grande.png");
 

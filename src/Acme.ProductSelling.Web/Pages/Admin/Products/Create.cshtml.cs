@@ -404,13 +404,19 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Products
 
         private void LogModelStateErrors()
         {
-            foreach (var error in ModelState)
+            if (!ModelState.IsValid)
             {
-                Logger.LogWarning(
-                    "ModelState Error - Key: {Key}, Errors: {Errors}",
-                    error.Key,
-                    string.Join(", ", error.Value.Errors.Select(e => e.ErrorMessage))
-                );
+                Logger.LogWarning("--- BẮT ĐẦU KIỂM TRA MODELSTATE LỖI ---");
+                foreach (var modelStateKey in ModelState.Keys)
+                {
+                    var modelStateVal = ModelState[modelStateKey];
+                    foreach (var error in modelStateVal.Errors)
+                    {
+                        Logger.LogWarning($"Key: {modelStateKey} | Error: {error.ErrorMessage}");
+                    }
+                }
+                Logger.LogWarning("--- KẾT THÚC KIỂM TRA MODELSTATE LỖI ---");
+
             }
         }
     }

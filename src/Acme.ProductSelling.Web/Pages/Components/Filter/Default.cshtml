@@ -1,44 +1,49 @@
 ﻿@model Acme.ProductSelling.Web.Models.FilterViewModel
-@using Microsoft.Extensions.Localization
-@inject IStringLocalizer<Acme.ProductSelling.Localization.ProductSellingResource> L
 
 <div class="filter-bar">
     @* Price Filter Button with Dropdown *@
-    <div class="filter-wrapper">
-        <button type="button" class="filter-button" id="priceFilterToggle">
-            <i class="bi bi-funnel"></i>
-            <span>@L["UI:Price"]</span>
-            <i class="bi bi-chevron-down ms-1" style="font-size: 12px;"></i>
-        </button>
+    @if (Model.HasConfiguredPriceRanges || Model.HasAnyProducts)
+    {
+        <div class="filter-wrapper">
+            <button type="button" class="filter-button" id="priceFilterToggle">
+                <i class="bi bi-funnel"></i>
+                <span>@L["UI:Price"]</span>
+                <i class="bi bi-chevron-down ms-1" style="font-size: 12px;"></i>
+            </button>
 
-        @* Price Filter Dropdown *@
-        <div class="filter-dropdown price-dropdown" id="priceDropdown">
-            <div id="priceSlider"></div>
-            <div class="price-inputs">
-                <div class="price-input-wrapper">
-                    <input type="text"
-                           id="minPriceInput"
-                           class="form-control"
-                           readonly>
+            @* Price Filter Dropdown *@
+            <div class="filter-dropdown price-dropdown" id="priceDropdown">
+                <div id="priceSlider"
+                     data-min="@Model.MinPriceBound"
+                     data-max="@Model.MaxPriceBound">
                 </div>
-                <div class="price-input-wrapper">
-                    <input type="text"
-                           id="maxPriceInput"
-                           class="form-control"
-                           readonly>
+                <div class="price-inputs">
+                    <div class="price-input-wrapper">
+                        <input type="text"
+                               id="minPriceInput"
+                               class="form-control"
+                               readonly>
+                    </div>
+                    <div class="price-input-wrapper">
+                        <input type="text"
+                               id="maxPriceInput"
+                               class="form-control"
+                               readonly>
+                    </div>
                 </div>
-            </div>
 
-            <div class="dropdown-footer">
-                <button type="button" class="btn-reset" id="resetFilter">
-                    <i class="bi bi-arrow-clockwise me-1"></i>@L["Deselect"]
-                </button>
-                <button type="button" class="btn-apply" id="applyFilter" disabled>
-                    @L["UI:ViewResults"]
-                </button>
+                <div class="dropdown-footer">
+                    <button type="button" class="btn-reset" id="resetFilter">
+                        <i class="bi bi-arrow-clockwise me-1"></i>@L["Deselect"]
+                    </button>
+                    <button type="button" class="btn-apply" id="applyFilter" disabled>
+                        @L["UI:ViewResults"]
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
+    }
+
     @if (Model.ShowManufacturerFilter && Model.Manufacturers != null && Model.Manufacturers.Any())
     {
         <div class="filter-wrapper">
@@ -92,7 +97,7 @@
         </button>
     </div>
     @* Sort Filter Button with Dropdown *@
-   
+
     <div class="filter-wrapper ms-auto">
         <button type="button" class="filter-button" id="sortFilterToggle">
             <i class="bi bi-sort-down"></i>

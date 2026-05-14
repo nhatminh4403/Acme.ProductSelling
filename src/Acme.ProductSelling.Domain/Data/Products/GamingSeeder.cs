@@ -13,10 +13,6 @@ namespace Acme.ProductSelling.Data.Products
 {
     public class GamingSeeder : ProductSeederBase, IDataSeederContributor
     {
-        //private readonly IRepository<LaptopSpecification, Guid> _laptopSpecRepository;
-        //private readonly IRepository<HandheldSpecification, Guid> _handheldSpecRepository;
-        //private readonly IRepository<ConsoleSpecification, Guid> _consoleSpecRepository;
-
         private readonly ISpecificationRepository _specificationRepository;
 
         private Dictionary<string, Category> _categories;
@@ -25,16 +21,9 @@ namespace Acme.ProductSelling.Data.Products
         public GamingSeeder(
             IProductRepository productRepository,
             ProductManager productManager,
-
-            //IRepository<LaptopSpecification, Guid> laptopSpecRepository,
-            //IRepository<HandheldSpecification, Guid> handheldSpecRepository,
-            //IRepository<ConsoleSpecification, Guid> consoleSpecRepository,
             ISpecificationRepository specificationRepository)
             : base(productRepository, productManager)
         {
-            //_laptopSpecRepository = laptopSpecRepository;
-            //_handheldSpecRepository = handheldSpecRepository;
-            //_consoleSpecRepository = consoleSpecRepository;
             _specificationRepository = specificationRepository;
         }
 
@@ -55,7 +44,7 @@ namespace Acme.ProductSelling.Data.Products
         {
             var laptop1 = await CreateProductAsync(
                 _categories["Laptops"].Id, _manufacturers["ASUS"].Id, 25000000, 12,
-                "ASUS ROG Zephyrus G16 GU605CX QR083W", "Powerful gaming laptop",
+                "ASUS ROG Zephyrus G16 GU605CX QR083W", "<p>Laptop gaming cao cấp với hiệu năng <strong>vượt trội</strong> và thiết kế <strong>mỏng nhẹ</strong>.</p><ul><li>CPU Intel® Core™ Ultra 9 thế hệ mới nhất</li><li>RAM 64GB LPDDR5X siêu nhanh</li><li>Màn hình OLED 2.5K 240Hz sống động</li><li>GPU NVIDIA GeForce RTX 4080 mạnh mẽ</li><li>Trọng lượng chỉ 1.95kg</li><li>Bảo hành 2 năm chính hãng</li></ul>",
                 10, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/zephyrus_g16_gu605_grey_03_rgb_1_b58d513a9306445daf2980232fe2544b_grande.png");
 
@@ -77,7 +66,7 @@ namespace Acme.ProductSelling.Data.Products
 
             var laptop2 = await CreateProductAsync(
                 _categories["Laptops"].Id, _manufacturers["Dell"].Id, 60000000, 10,
-                "Dell XPS 13 9310", "Ultra-portable 13\" laptop",
+                "Dell XPS 13 9310", "<p>Laptop siêu di động <strong>13 inch</strong> với thiết kế cao cấp và hiệu năng ổn định.</p><ul><li>CPU Intel® Core™ Ultra 5 tiết kiệm điện</li><li>RAM 16GB LPDDR4x</li><li>Màn hình FHD+ 13.4 inch sắc nét</li><li>Intel Arc Graphics tích hợp</li><li>Pin lên đến 12 giờ</li><li>Trọng lượng siêu nhẹ 1.2kg</li><li>Lý tưởng cho công việc và học tập</li></ul>",
                 8, true, DateTime.Now,
                 "https://product.hstatic.net/200000722513/product/51529_laptop_dell_xps_9350_xps93_1d46c518185a488a92c40932dd4d5cf6_grande.png");
 
