@@ -138,19 +138,16 @@ public class ProductSellingWebModule : AbpModule
                 options.UseAspNetCore();
             });
         });
-        PreConfigure<AbpOpenIddictAspNetCoreOptions>(options =>
-        {
-            options.AddDevelopmentEncryptionAndSigningCertificate = false;
-        });
-
+       
         //serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", configuration["AuthServer:CertificatePassPhrase"]!);
         //serverBuilder.SetIssuer(new Uri(configuration["AuthServer:Authority"]!));
         if (!hostingEnvironment.IsDevelopment())
         {
-            //PreConfigure<AbpOpenIddictAspNetCoreOptions>(options =>
-            //{
-            //    options.AddDevelopmentEncryptionAndSigningCertificate = false;
-            //});
+            PreConfigure<AbpOpenIddictAspNetCoreOptions>(options =>
+            {
+                options.AddDevelopmentEncryptionAndSigningCertificate = false;
+            });
+
 
             PreConfigure<OpenIddictServerBuilder>(serverBuilder =>
             {
