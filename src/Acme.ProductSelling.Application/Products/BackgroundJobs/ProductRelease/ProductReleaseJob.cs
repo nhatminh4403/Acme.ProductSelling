@@ -28,29 +28,22 @@ namespace Acme.ProductSelling.Products.BackgroundJobs.ProductRelease
 
             try
             {
-                // OPTIMIZATION 1: Validate input
                 if (args.ProductId == Guid.Empty)
                 {
-                    _logger.LogWarning("Invalid ProductId (empty GUID) received in ProductReleaseJob");
-                    return;
+                    throw new ArgumentException("Invalid ProductId (empty GUID) received in ProductReleaseJob", nameof(args.ProductId));
                 }
 
                 _logger.LogInformation(
                     "Processing product release for ProductId: {ProductId}",
                     args.ProductId);
 
-                // OPTIMIZATION 2: Use FirstOrDefaultAsync instead of GetAsync (no exception if not found)
                 var product = await _productRepository.FirstOrDefaultAsync(p => p.Id == args.ProductId);
 
                 if (product == null)
                 {
-                    _logger.LogWarning(
-                        "Product {ProductId} not found. May have been deleted.",
-                        args.ProductId);
-                    return;
+                    throw new InvalidOperationException($"Product with Id {args.ProductId} not found. Cannot process release.");
                 }
 
-                // OPTIMIZATION 3: Check if already active (prevent duplicate processing)
                 if (product.IsActive)
                 {
                     _logger.LogInformation(
@@ -60,7 +53,6 @@ namespace Acme.ProductSelling.Products.BackgroundJobs.ProductRelease
                     return;
                 }
 
-                // OPTIMIZATION 4: Validate release date
                 if (!product.ReleaseDate.HasValue)
                 {
                     _logger.LogWarning(
@@ -70,7 +62,6 @@ namespace Acme.ProductSelling.Products.BackgroundJobs.ProductRelease
                     return;
                 }
 
-                // OPTIMIZATION 5: Check if release date has been reached (use UTC)
                 var now = DateTime.UtcNow;
                 if (product.ReleaseDate.Value > now)
                 {

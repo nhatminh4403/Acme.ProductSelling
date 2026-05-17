@@ -31,38 +31,27 @@ namespace Acme.ProductSelling.Orders.BackgroundJobs.OrderCleanup
             {
                 var cutoffDate = _clock.Now.AddMonths(-args.MonthsOld);
 
-                _logger.LogInformation("Starting cleanup of orders older than {CutoffDate}", cutoffDate);
-
                 var oldOrders = await _orderRepository.GetListAsync(o => o.CreationTime < cutoffDate && !o.IsDeleted);
                 var ordersNeededCleanup = oldOrders.Where(o => o.OrderStatus == OrderStatus.Cancelled).ToList();
 
 
                 if (!ordersNeededCleanup.Any())
                 {
-                    _logger.LogInformation("No old orders found to cleanup");
                     return;
                 }
 
-                _logger.LogInformation("Found {Count} orders to cleanup", ordersNeededCleanup.Count);
 
                 // Soft delete each order
                 foreach (var order in ordersNeededCleanup)
                 {
                     await _orderRepository.DeleteAsync(order, autoSave: false);
 
-                    _logger.LogDebug("Soft deleted order {OrderNumber} (ID: {OrderId})",
-                        order.OrderNumber, order.Id);
                 }
 
                 // Save all at once for performance
                 var dbContext = await _orderRepository.GetDbContextAsync();
                 await dbContext.SaveChangesAsync();
 
-                _logger.LogInformation(
-                    "Successfully soft deleted {Count} orders older than {MonthsOld} months",
-                    oldOrders.Count,
-                    args.MonthsOld
-                );
             }
             catch (Exception ex)
             {

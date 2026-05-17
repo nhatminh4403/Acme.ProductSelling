@@ -13,9 +13,9 @@ public class Program
     public async static Task<int> Main(string[] args)
     {
         Log.Logger = new LoggerConfiguration()
-            .WriteTo.Async(c => c.File("Logs/logs.txt"))
-            .WriteTo.Async(c => c.Console())
-            .CreateBootstrapLogger();
+             .WriteTo.Async(c => c.File("Logs/logs.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7)).WriteTo
+                     .Async(c => c.Console())
+                     .CreateBootstrapLogger();
 
         try
         {
@@ -51,9 +51,9 @@ public class Program
 //.MinimumLevel.Override("Microsoft.AspNetCore.Mvc", LogEventLevel.Warning)
 .MinimumLevel.Override("Volo.Abp.BackgroundWorkers", LogEventLevel.Warning)
                         .Enrich.FromLogContext()
-                        .WriteTo.Async(c => c.File("Logs/logs.txt"))
-                        .WriteTo.Async(c => c.Console())
-                        .WriteTo.Async(c => c.AbpStudio(services));
+
+
+                        .WriteTo.Async(c => c.File("Logs/logs.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7));
                 });
             await builder.AddApplicationAsync<ProductSellingWebModule>();
             var app = builder.Build();

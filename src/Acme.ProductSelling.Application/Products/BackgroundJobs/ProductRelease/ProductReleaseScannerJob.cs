@@ -93,9 +93,8 @@ namespace Acme.ProductSelling.Products.BackgroundJobs.ProductRelease
                     }
                 }
 
-                await _productRepository.GetDbContextAsync()
-                    .ContinueWith(async t => await t.Result.SaveChangesAsync());
-
+                var dbContext = await _productRepository.GetDbContextAsync();
+                await dbContext.SaveChangesAsync();
                 stopwatch.Stop();
 
                 _logger.LogInformation(

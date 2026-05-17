@@ -45,19 +45,14 @@ namespace Acme.ProductSelling.Orders.BackgroundJobs.OrderPending
         [UnitOfWork]
         public async Task ExecuteAsync(SetOrderBackgroundJobArgs args)
         {
-            _logger.LogInformation("[SetOrderPendingJob] START - OrderId: {OrderId}, Execution started", args.OrderId);
 
             try
             {
                 var order = await _orderRepository.GetAsync(args.OrderId);
 
-                _logger.LogDebug("[SetOrderPendingJob] Order retrieved - OrderId: {OrderId}, OrderNumber: {OrderNumber}, CurrentStatus: {CurrentStatus}, PaymentStatus: {PaymentStatus}, PaymentMethod: {PaymentMethod}",
-                    order.Id, order.OrderNumber, order.OrderStatus, order.PaymentStatus, order.PaymentMethod);
-
                 if (order == null)
                 {
-                    _logger.LogWarning("[SetOrderPendingJob] SKIP - Order not found. OrderId: {OrderId}", args.OrderId);
-                    return;
+                    throw new EntryPointNotFoundException($"Order {order.Id} not found");
                 }
 
                 if (order.OrderStatus == OrderStatus.Placed)
@@ -65,33 +60,22 @@ namespace Acme.ProductSelling.Orders.BackgroundJobs.OrderPending
                     var oldStatus = order.OrderStatus;
                     order.SetStatus(OrderStatus.Pending);
 
-                    _logger.LogInformation("[SetOrderPendingJob] Status updated - OrderId: {OrderId}, OldStatus: {OldStatus}, NewStatus: {NewStatus}",
-                        order.Id, oldStatus, order.OrderStatus);
-
                     await _orderRepository.UpdateAsync(order, autoSave: true);
-                    _logger.LogDebug("[SetOrderPendingJob] Order saved to database - OrderId: {OrderId}", order.Id);
-
                     await _distributedEventBus.PublishAsync(new OrderStatusChangedEto
                     {
                         OrderId = order.Id,
                         CustomerId = order.CustomerId
                     });
-                    _logger.LogDebug("[SetOrderPendingJob] Distributed event published - OrderId: {OrderId}", order.Id);
-
-                    _logger.LogInformation("[SetOrderPendingJob] COMPLETED successfully - OrderId: {OrderId}, OrderNumber: {OrderNumber}, NewStatus: {NewStatus}",
-                        order.Id, order.OrderNumber, order.OrderStatus);
                 }
                 else
                 {
-                    _logger.LogWarning("[SetOrderPendingJob] SKIP - Order not in 'Placed' status. OrderId: {OrderId}, CurrentStatus: {CurrentStatus}, Expected: Placed",
-                        args.OrderId, order.OrderStatus);
+                    throw new Exception("Order status is not in a valid state to be set to pending. Current status: " + order.OrderStatus);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "[SetOrderPendingJob] FAILED - OrderId: {OrderId}, Error: {ErrorMessage}, StackTrace: {StackTrace}",
-                    args.OrderId, ex.Message, ex.StackTrace);
-                throw;
+                
+                throw new Exception("Failed to set order as pending.", ex);
             }
         }
     }
