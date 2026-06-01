@@ -8,16 +8,17 @@ English | [Tiếng Việt](#tiếng-việt)
 
 ### Project Overview
 
-Acme.ProductSelling is a modern, layered e-commerce solution built on the **ABP Framework** and **.NET 10**. This project follows **Domain-Driven Design (DDD)** principles and provides a robust foundation for building high-performance product selling platforms.
+Acme.ProductSelling is a layered e-commerce solution built on the **ABP Framework** and **.NET 10**. It follows **Domain-Driven Design (DDD)** and is organized around a storefront, admin back office, API layer, background jobs, and payment integrations.
 
 ### Key Features
 
-- 📦 **Product Management**: Manage products, categories, manufacturers, and inventories.
-- 🛒 **Shopping Experience**: Fully functional shopping cart and order processing system.
-- 💳 **Payment Integrations**: Pre-integrated with popular payment gateways: **MoMo, VNPay, and PayPal**.
-- 🤖 **AI Chatbot**: Intelligent assistant powered by **Google Gemini API**, available for both customers and store roles (**Cashier, Manager, Warehouse, Admin**) to assist with operations and inquiries.
-- 🐳 **Docker Ready**: Fully containerized environment using Docker Compose for rapid development and deployment.
-- 🏗️ **Clean Architecture**: Based on DDD patterns for high maintainability and scalability.
+- 📦 **Catalog management**: Products, categories, manufacturers, specifications, and lookup data.
+- 🛒 **Cart and orders**: Customer checkout, order history, in-store orders, fulfillment, and status flows.
+- 🏪 **Multi-store inventory**: Store and inventory tracking with transfer and low-stock workflows.
+- 💳 **Payments**: Payment gateway integrations for **MoMo**, **VNPay**, **PayPal**, and COD handling.
+- 🤖 **AI chatbot**: Gemini-powered assistant for customers and back-office roles.
+- 🔐 **Identity and admin**: ABP Identity/OpenIddict, role-based access, and admin pages.
+- 🐳 **Docker support**: Local environment orchestration with Docker Compose and database migration startup.
 
 ### Pre-requirements
 
@@ -29,14 +30,14 @@ Acme.ProductSelling is a modern, layered e-commerce solution built on the **ABP 
 
 #### 1. Configuration
 
-Check the `ConnectionStrings` in the following files and update them with your database details. You can refer to the `appsettings.example.json` files for the required structure:
+Check `ConnectionStrings` and environment-specific settings in the following files. Use the matching `appsettings.example.json` files as a template:
 
 - `src/Acme.ProductSelling.Web/appsettings.json`
 - `src/Acme.ProductSelling.DbMigrator/appsettings.json`
 
 #### 2. Install Dependencies
 
-Run the following command in the root folder to install client-side libraries:
+Run this from the repository root to install client-side libraries:
 
 ```bash
 abp install-libs
@@ -44,7 +45,7 @@ abp install-libs
 
 #### 3. Database Migration
 
-Run the `DbMigrator` project to create the database and seed initial data:
+Run the `DbMigrator` project to apply migrations and seed initial data:
 
 ```bash
 cd src/Acme.ProductSelling.DbMigrator
@@ -53,7 +54,7 @@ dotnet run
 
 #### 4. Development Certificates
 
-Generate an `openiddict.pfx` for OpenIddict:
+Generate an `openiddict.pfx` for local OpenIddict development:
 
 ```bash
 dotnet dev-certs https -v -ep openiddict.pfx -p 061ebb66-ca81-4cf3-9b06-09065eb6cf4c
@@ -63,7 +64,7 @@ _(Note: Replace the password if necessary.)_
 
 ### Solution Structure
 
-This solution follows the standard Domain-Driven Design (DDD) patterns of the ABP Framework:
+This solution is split into the following modules:
 
 #### Core Projects (`src/`)
 
@@ -87,7 +88,7 @@ This solution follows the standard Domain-Driven Design (DDD) patterns of the AB
 
 ### Core Business Modules
 
-The following business modules are implemented within the `Domain` and `Application` layers:
+The main business modules implemented in `Domain` and `Application` are:
 
 - 🛒 **Carts & Orders**: Full checkout flow and order management.
 - 📦 **Products & Categories**: Product catalog with manufacturer and specification support.
@@ -98,11 +99,11 @@ The following business modules are implemented within the `Domain` and `Applicat
 
 ### Docker Support
 
-The solution includes a `docker-compose.yml` file to quickly spin up the environment:
+The repository includes a `docker-compose.yml` file to spin up the local environment:
 
-- **Database**: SQL Server 2025 (latest).
-- **Automation**: Automatic database migration and seeding on startup.
-  To start the environment, run:
+- **Database**: SQL Server.
+- **Automation**: Database migration and seeding on startup.
+  Start it with:
 
 ```bash
 docker-compose up -d
@@ -127,16 +128,17 @@ Deploying an ABP application follows the same process as deploying any .NET or A
 
 ### Tổng quan dự án
 
-Acme.ProductSelling là một giải pháp thương mại điện tử hiện đại, phân lớp, được xây dựng trên nền tảng **ABP Framework** và **.NET 10**. Dự án tuân thủ các nguyên tắc **Thiết kế hướng tên miền (DDD)**, cung cấp nền tảng vững chắc để xây dựng các hệ thống bán hàng hiệu suất cao.
+Acme.ProductSelling là một giải pháp thương mại điện tử phân lớp, được xây dựng trên **ABP Framework** và **.NET 10**. Dự án tuân theo **Thiết kế hướng tên miền (DDD)** và được tổ chức theo các khối: storefront, khu quản trị, lớp API, job nền và tích hợp thanh toán.
 
 ### Các tính năng chính
 
-- 📦 **Quản lý sản phẩm**: Quản lý danh mục, nhà sản xuất, sản phẩm và kho hàng.
-- 🛒 **Trải nghiệm mua sắm**: Hệ thống giỏ hàng và xử lý đơn hàng hoàn chỉnh.
-- 💳 **Tích hợp thanh toán**: Hỗ trợ sẵn các cổng thanh toán phổ biến: **MoMo, VNPay và PayPal**.
-- 🤖 **Chatbot AI**: Trợ lý thông minh sử dụng **Google Gemini API**, hỗ trợ cả khách hàng và các vai trò cửa hàng (**Thu ngân, Quản lý, Kho, Admin**) trong vận hành và giải đáp thắc mắc.
-- 🐳 **Sẵn sàng cho Docker**: Môi trường được đóng gói hoàn chỉnh bằng Docker Compose giúp phát triển và triển khai nhanh chóng.
-- 🏗️ **Kiến trúc sạch**: Dựa trên các mẫu thiết kế DDD giúp dễ dàng bảo trì và mở rộng.
+- 📦 **Quản lý danh mục**: Sản phẩm, danh mục, nhà sản xuất, đặc tả kỹ thuật và dữ liệu tra cứu.
+- 🛒 **Giỏ hàng và đơn hàng**: Thanh toán cho khách hàng, lịch sử đơn hàng, đơn tại quầy, quy trình xử lý đơn.
+- 🏪 **Kho đa cửa hàng**: Theo dõi cửa hàng, tồn kho, điều chuyển và cảnh báo hàng sắp hết.
+- 💳 **Thanh toán**: Tích hợp **MoMo**, **VNPay**, **PayPal** và luồng xử lý COD.
+- 🤖 **Chatbot AI**: Trợ lý dùng Gemini cho khách hàng và các vai trò nội bộ.
+- 🔐 **Định danh và quản trị**: ABP Identity/OpenIddict, phân quyền theo vai trò và các trang quản trị.
+- 🐳 **Hỗ trợ Docker**: Chạy môi trường local bằng Docker Compose kèm migration database.
 
 ### Yêu cầu hệ thống
 
