@@ -13,7 +13,7 @@
 @{
     var monthlyData = Json.Serialize(Model.MoneyStatisticsList);
     var allYearlyData = Json.Serialize(Model.YearlyStatistics);
-    ViewData["Title"] = L["Admin:Menu:Home"];
+    ViewData["Title"] = L["Admin:Menu:Home"].Value;
     ViewData["IsChatWidgetOnly"] = true;
 
 

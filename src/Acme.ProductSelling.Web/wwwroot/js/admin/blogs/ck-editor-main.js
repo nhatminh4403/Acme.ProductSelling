@@ -1,5 +1,4 @@
-﻿// CKEditor 5 Configuration and Initialization
-const apiUrl = "/api/files/upload-image";
+﻿const apiUrl = "/api/files/upload-image";
 
 const {
     ClassicEditor,
@@ -46,7 +45,6 @@ const {
     LinkImage,
     List,
     ListProperties,
-    Markdown,
     MediaEmbed,
     Mention,
     PageBreak,
@@ -77,152 +75,44 @@ const {
     TableToolbar,
     TextPartLanguage,
     TextTransformation,
-    Title,
     TodoList,
     Underline,
     WordCount
 } = window.CKEDITOR;
 
-const LICENSE_KEY = 'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3ODgxMzQzOTksImp0aSI6IjM2ZmMyZmYzLTQwYzgtNGUzZS1iMzNlLTA5MzQ0ZTc1MTc1YiIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiXSwiZmVhdHVyZXMiOlsiRFJVUCIsIkUyUCIsIkUyVyJdLCJ2YyI6IjE5MjRiNmUwIn0.XNgx0RPpCrovWKqPOHruQ9fn87ddiVSBol-8DFDCp_wufEtbl6RjRMo9ZcPKQrZy3dfYRJziIvGDQSbuv83C6A';
+const LICENSE_KEY = 'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3ODgxMzQzOTksImp0aSI6IjRkMjYzZjhjLTdmZGMtNGM5Yy1iOTdhLTAxY2NlMjJmY2RlZSIsImxpY2Vuc2VkSG9zdHMiOlsiMTI3LjAuMC4xIiwibG9jYWxob3N0IiwiMTkyLjE2OC4qLioiLCIxMC4qLiouKiIsIjE3Mi4qLiouKiIsIioudGVzdCIsIioubG9jYWxob3N0IiwiKi5sb2NhbCJdLCJ1c2FnZUVuZHBvaW50IjoiaHR0cHM6Ly9wcm94eS1ldmVudC5ja2VkaXRvci5jb20iLCJkaXN0cmlidXRpb25DaGFubmVsIjpbImNsb3VkIiwiZHJ1cGFsIl0sImxpY2Vuc2VUeXBlIjoiZGV2ZWxvcG1lbnQiLCJmZWF0dXJlcyI6WyJEUlVQIiwiRTJQIiwiRTJXIl0sInZjIjoiMjg5NjkyYTQifQ.WRH44VEgYYciw0a-A-FOw0VkNc07_s_ClqiD_D8enotxUPM9rZzyZJYZ-cBIaHU5ppL-wds1cyyDyPwhTGvjUA';
 
 const editorConfig = {
     toolbar: {
         items: [
-            'undo',
-            'redo',
-            '|',
-            'sourceEditing',
-            'showBlocks',
-            'findAndReplace',
-            'textPartLanguage',
-            'fullscreen',
-            '|',
-            'heading',
-            'style',
-            '|',
-            'fontSize',
-            'fontFamily',
-            'fontColor',
-            'fontBackgroundColor',
-            '|',
-            'bold',
-            'italic',
-            'underline',
-            'strikethrough',
-            'subscript',
-            'superscript',
-            'code',
-            'removeFormat',
-            '|',
-            'emoji',
-            'specialCharacters',
-            'horizontalLine',
-            'pageBreak',
-            'link',
-            'bookmark',
-            'insertImage',
-            'insertImageViaUrl',
-            'mediaEmbed',
-            'insertTable',
-            'insertTableLayout',
-            'highlight',
-            'blockQuote',
-            'codeBlock',
-            'htmlEmbed',
-            '|',
-            'alignment',
-            '|',
-            'bulletedList',
-            'numberedList',
-            'todoList',
-            'outdent',
-            'indent'
+            'undo', 'redo', '|',
+            'heading', '|',
+            'bold', 'italic', 'underline', 'strikethrough', 'removeFormat', '|',
+            'bulletedList', 'numberedList', '|',
+            'link', 'insertImage', 'blockQuote', '|',
+            'alignment'
         ],
         shouldNotGroupWhenFull: true
     },
     plugins: [
-        Alignment,
-        Autoformat,
-        AutoImage,
-        AutoLink,
-        Autosave,
-        BlockQuote,
-        Bold,
-        Bookmark,
-        CloudServices,
-        Code,
-        CodeBlock,
-        Emoji,
-        Essentials,
-        FindAndReplace,
-        FontBackgroundColor,
-        FontColor,
-        FontFamily,
-        FontSize,
-        FullPage,
-        Fullscreen,
-        GeneralHtmlSupport,
-        Heading,
-        Highlight,
-        HorizontalLine,
-        HtmlComment,
-        HtmlEmbed,
-        ImageBlock,
-        ImageCaption,
-        ImageInline,
-        ImageInsert,
-        ImageInsertViaUrl,
-        ImageResize,
-        ImageStyle,
-        ImageTextAlternative,
-        ImageToolbar,
-        ImageUpload,
-        Indent,
-        IndentBlock,
-        Italic,
-        Link,
-        LinkImage,
-        List,
-        ListProperties,
-        //Markdown,
-        MediaEmbed,
-        Mention,
-        PageBreak,
-        Paragraph,
-        PasteFromOffice,
-        PlainTableOutput,
-        RemoveFormat,
-        ShowBlocks,
-        SimpleUploadAdapter,
-        SourceEditing,
-        SpecialCharacters,
-        SpecialCharactersArrows,
-        SpecialCharactersCurrency,
-        SpecialCharactersEssentials,
-        SpecialCharactersLatin,
-        SpecialCharactersMathematical,
-        SpecialCharactersText,
-        Strikethrough,
-        Style,
-        Subscript,
-        Superscript,
-        Table,
-        TableCaption,
-        TableCellProperties,
-        TableColumnResize,
-        TableLayout,
-        TableProperties,
-        TableToolbar,
-        TextPartLanguage,
-        TextTransformation,
-        Title,
-        TodoList,
-        Underline,
-        WordCount
+        Alignment, Autoformat, AutoImage, AutoLink, Autosave,
+        BlockQuote, Bold, Bookmark, CloudServices, Code, CodeBlock,
+        Emoji, Essentials, FindAndReplace, FontBackgroundColor, FontColor,
+        FontFamily, FontSize, FullPage, Fullscreen, GeneralHtmlSupport,
+        Heading, Highlight, HorizontalLine, HtmlComment, HtmlEmbed,
+        ImageBlock, ImageCaption, ImageInline, ImageInsert, ImageInsertViaUrl,
+        ImageResize, ImageStyle, ImageTextAlternative, ImageToolbar, ImageUpload,
+        Indent, IndentBlock, Italic, Link, LinkImage, List, ListProperties,
+        MediaEmbed, Mention, PageBreak, Paragraph, PasteFromOffice,
+        PlainTableOutput, RemoveFormat, ShowBlocks, SimpleUploadAdapter,
+        SourceEditing, SpecialCharacters, SpecialCharactersArrows,
+        SpecialCharactersCurrency, SpecialCharactersEssentials, SpecialCharactersLatin,
+        SpecialCharactersMathematical, SpecialCharactersText, Strikethrough,
+        Style, Subscript, Superscript, Table, TableCaption, TableCellProperties,
+        TableColumnResize, TableLayout, TableProperties, TableToolbar,
+        TextPartLanguage, TextTransformation, TodoList, Underline, WordCount
     ],
-    fontFamily: {
-        supportAllValues: true
-    },
+    fontFamily: { supportAllValues: true },
     fontSize: {
         options: [10, 12, 14, 'default', 18, 20, 22],
         supportAllValues: true
@@ -240,68 +130,22 @@ const editorConfig = {
     },
     heading: {
         options: [
-            {
-                model: 'paragraph',
-                title: 'Paragraph',
-                class: 'ck-heading_paragraph'
-            },
-            {
-                model: 'heading1',
-                view: 'h1',
-                title: 'Heading 1',
-                class: 'ck-heading_heading1'
-            },
-            {
-                model: 'heading2',
-                view: 'h2',
-                title: 'Heading 2',
-                class: 'ck-heading_heading2'
-            },
-            {
-                model: 'heading3',
-                view: 'h3',
-                title: 'Heading 3',
-                class: 'ck-heading_heading3'
-            },
-            {
-                model: 'heading4',
-                view: 'h4',
-                title: 'Heading 4',
-                class: 'ck-heading_heading4'
-            },
-            {
-                model: 'heading5',
-                view: 'h5',
-                title: 'Heading 5',
-                class: 'ck-heading_heading5'
-            },
-            {
-                model: 'heading6',
-                view: 'h6',
-                title: 'Heading 6',
-                class: 'ck-heading_heading6'
-            }
+            { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+            { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+            { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+            { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
+            { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' },
+            { model: 'heading5', view: 'h5', title: 'Heading 5', class: 'ck-heading_heading5' },
+            { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
         ]
     },
     htmlSupport: {
-        allow: [
-            {
-                name: /^.*$/,
-                styles: true,
-                attributes: true,
-                classes: true
-            }
-        ]
+        allow: [{ name: /^.*$/, styles: true, attributes: true, classes: true }]
     },
     image: {
         toolbar: [
-            'toggleImageCaption',
-            'imageTextAlternative',
-            '|',
-            'imageStyle:inline',
-            'imageStyle:wrapText',
-            'imageStyle:breakText',
-            '|',
+            'toggleImageCaption', 'imageTextAlternative', '|',
+            'imageStyle:inline', 'imageStyle:wrapText', 'imageStyle:breakText', '|',
             'resizeImage'
         ]
     },
@@ -313,73 +157,28 @@ const editorConfig = {
             toggleDownloadable: {
                 mode: 'manual',
                 label: 'Downloadable',
-                attributes: {
-                    download: 'file'
-                }
+                attributes: { download: 'file' }
             }
         }
     },
     list: {
-        properties: {
-            styles: true,
-            startIndex: true,
-            reversed: true
-        }
+        properties: { styles: true, startIndex: true, reversed: true }
     },
     mention: {
-        feeds: [
-            {
-                marker: '@',
-                feed: []
-            }
-        ]
+        feeds: [{ marker: '@', feed: [] }]
     },
-    menuBar: {
-        isVisible: true
-    },
-    placeholder: 'Type or paste your blog content here!',
+    menuBar: { isVisible: true },
+    placeholder: 'Type or paste your product description here!',
     style: {
         definitions: [
-            {
-                name: 'Article category',
-                element: 'h3',
-                classes: ['category']
-            },
-            {
-                name: 'Title',
-                element: 'h2',
-                classes: ['document-title']
-            },
-            {
-                name: 'Subtitle',
-                element: 'h3',
-                classes: ['document-subtitle']
-            },
-            {
-                name: 'Info box',
-                element: 'p',
-                classes: ['info-box']
-            },
-            {
-                name: 'CTA Link Primary',
-                element: 'a',
-                classes: ['button', 'button--green']
-            },
-            {
-                name: 'CTA Link Secondary',
-                element: 'a',
-                classes: ['button', 'button--black']
-            },
-            {
-                name: 'Marker',
-                element: 'span',
-                classes: ['marker']
-            },
-            {
-                name: 'Spoiler',
-                element: 'span',
-                classes: ['spoiler']
-            }
+            { name: 'Article category', element: 'h3', classes: ['category'] },
+            { name: 'Title', element: 'h2', classes: ['document-title'] },
+            { name: 'Subtitle', element: 'h3', classes: ['document-subtitle'] },
+            { name: 'Info box', element: 'p', classes: ['info-box'] },
+            { name: 'CTA Link Primary', element: 'a', classes: ['button', 'button--green'] },
+            { name: 'CTA Link Secondary', element: 'a', classes: ['button', 'button--black'] },
+            { name: 'Marker', element: 'span', classes: ['marker'] },
+            { name: 'Spoiler', element: 'span', classes: ['spoiler'] }
         ]
     },
     table: {
@@ -395,147 +194,27 @@ const editorConfig = {
     }
 };
 
-// Global editor variable
-let ckEditor = null;
+let ckProductDescriptionEditor = null;
 
 document.addEventListener('DOMContentLoaded', function () {
-    ClassicEditor
-        .create(document.querySelector('#editor'), editorConfig)
-        .then(editor => {
-            ckEditor = editor;
-
-            const wordCount = editor.plugins.get('WordCount');
-            const wordCountContainer = document.querySelector('#wordCount');
-            const readingTimeContainer = document.querySelector('#readingTime');
-
-            if (wordCountContainer && readingTimeContainer) {
-                wordCount.on('update', (evt, stats) => {
-                    wordCountContainer.textContent = stats.words;
-                    const readingTime = Math.ceil(stats.words / 200);
-                    readingTimeContainer.textContent = readingTime;
-                });
-            }
-
-            const titleInput = document.querySelector('#Blog_Title');
-            let userHasManuallyEditedTitle = false;
-            let debounceTimeout;
-            const DEBOUNCE_DELAY = 500;
-
-            // Function to extract first heading and get content without it
-            const extractAndRemoveFirstHeading = (htmlContent) => {
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = htmlContent;
-                const firstHeading = tempDiv.querySelector('h1, h2, h3, h4, h5, h6');
-
-                if (firstHeading) {
-                    const headingText = firstHeading.textContent.trim();
-                    // Remove the first heading element
-                    firstHeading.remove();
-                    return {
-                        title: headingText,
-                        contentWithoutHeading: tempDiv.innerHTML
-                    };
-                }
-
-                return {
-                    title: null,
-                    contentWithoutHeading: htmlContent
-                };
-            };
-
-            if (titleInput) {
-                titleInput.addEventListener('input', function () {
-                    const titleValue = this.value.trim();
-                    userHasManuallyEditedTitle = titleValue !== '';
-                });
-            }
-
-            // Listen for changes in the editor content with debouncing
-            editor.model.document.on('change:data', () => {
-                clearTimeout(debounceTimeout);
-
-                debounceTimeout = setTimeout(() => {
-                    const editorData = editor.getData();
-
-                    if (titleInput && !userHasManuallyEditedTitle) {
-                        const result = extractAndRemoveFirstHeading(editorData);
-
-                        if (result.title) {
-                            // Update title field
-                            if (titleInput.value !== result.title) {
-                                titleInput.value = result.title;
-                                titleInput.dispatchEvent(new Event('input', { bubbles: true }));
-                                titleInput.dispatchEvent(new Event('keyup', { bubbles: true }));
-                            }
-
-                            // Update editor content without the heading (only if content changed)
-                            if (editorData !== result.contentWithoutHeading) {
-                                editor.setData(result.contentWithoutHeading);
-                            }
-                        }
-                    }
-
-                    // Always update the hidden content field
-                    document.querySelector('#Blog_Content').value = editor.getData();
-                }, DEBOUNCE_DELAY);
+    const productDescEditorEl = document.querySelector('#productDescriptionEditor');
+    if (productDescEditorEl) {
+        ClassicEditor
+            .create(productDescEditorEl, editorConfig)
+            .then(editor => {
+                ckProductDescriptionEditor = editor;
+            })
+            .catch(error => {
+                console.error('Error initializing CKEditor (product description):', error);
             });
-        })
-        .catch(error => {
-            console.error('Error initializing CKEditor:', error);
-        });
-
-    // Main image upload functionality
-    const uploadMainImageBtn = document.querySelector('#uploadMainImageBtn');
-    const mainImageUpload = document.querySelector('#mainImageUpload');
-    const mainImagePreview = document.querySelector('#mainImagePreview');
-    const mainImageImg = document.querySelector('#mainImageImg');
-    const removeMainImageBtn = document.querySelector('#removeMainImageBtn');
-    const mainImageUrlInput = document.querySelector('#Blog_MainImageUrl');
-    const mainImageIdInput = document.querySelector('#Blog_MainImageId');
-
-    if (uploadMainImageBtn && mainImageUpload) {
-        uploadMainImageBtn.addEventListener('click', () => {
-            mainImageUpload.click();
-        });
-
-        mainImageUpload.addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    mainImageImg.src = e.target.result;
-                    mainImagePreview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        if (removeMainImageBtn) {
-            removeMainImageBtn.addEventListener('click', function () {
-                mainImagePreview.style.display = 'none';
-                mainImageUrlInput.value = '';
-                mainImageIdInput.value = '';
-                mainImageUpload.value = '';
-            });
-        }
     }
 
-    // Form submission handling
-    const blogForm = document.querySelector('#blogForm');
-    const saveBtn = document.querySelector('#saveBtn');
-    const saveBtnText = document.querySelector('#saveBtnText');
-
-    if (blogForm) {
-        blogForm.addEventListener('submit', function (e) {
-            // Ensure editor content is synced before submission
-            if (ckEditor) {
-                document.querySelector('#Blog_Content').value = ckEditor.getData();
-            }
-
-            // Show saving state
-            if (saveBtn && saveBtnText) {
-                saveBtn.disabled = true;
-                saveBtnText.textContent = 'Saving...';
+    const productForm = document.querySelector('#createProductForm');
+    if (productForm) {
+        productForm.addEventListener('submit', function () {
+            if (ckProductDescriptionEditor) {
+                document.querySelector('#productDescriptionEditor').value =
+                    ckProductDescriptionEditor.getData();
             }
         });
     }

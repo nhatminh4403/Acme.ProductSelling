@@ -1,4 +1,4 @@
-﻿@page "/{prefix}/categories"
+@page "/{prefix}/categories"
 @model Acme.ProductSelling.Web.Pages.Admin.Categories.IndexModel
 @using Acme.ProductSelling.Localization
 @using Acme.ProductSelling.Web.Pages.Admin.Categories
@@ -10,7 +10,7 @@
 @inject IAuthorizationService AuthorizationService
 
 @{
-    ViewData["Title"] = L["UI:Title:Admin:Categories"];
+    ViewData["Title"] = L["UI:Title:Admin:Categories"].Value;
     Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
 
 }

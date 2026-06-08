@@ -1,4 +1,4 @@
-﻿@page "/{prefix}/products"
+@page "/{prefix}/products"
 @model Acme.ProductSelling.Web.Pages.Admin.Products.IndexModel
 
 @using Acme.ProductSelling.Permissions
@@ -6,7 +6,7 @@
 @using Newtonsoft.Json
 @inject IAuthorizationService AuthorizationService
 @{
-    ViewData["Title"] = L["UI:Title:Admin:Products"];
+    ViewData["Title"] = L["UI:Title:Admin:Products"].Value;
     Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
 
 }

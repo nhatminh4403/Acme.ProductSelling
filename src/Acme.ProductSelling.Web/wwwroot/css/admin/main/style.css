@@ -383,16 +383,18 @@
 }
 
 /* Submenu Styles */
-.admin-layout .submenu {
-    list-style: none;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-    background-color: #1f1f1f;
-}
+    .admin-layout .submenu {
+        list-style: none;
+        max-height: 0;
+        padding-left: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        background-color: #1f1f1f;
+    }
 
 .admin-layout .submenu.open {
     max-height: 500px;
+    padding-left: 0px;
 }
 
 .admin-layout .submenu-item {

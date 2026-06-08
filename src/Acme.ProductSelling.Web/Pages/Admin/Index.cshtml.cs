@@ -35,6 +35,7 @@ namespace Acme.ProductSelling.Web.Admin.Pages
         //private readonly IOrderAppService _orderAppService;
         private readonly IOrderQueryAppService _orderAppService;
         [BindProperty(SupportsGet = true)]
+
         public string Prefix { get; set; }
 
         private readonly ICurrentUser _currentUser;
@@ -52,7 +53,6 @@ namespace Acme.ProductSelling.Web.Admin.Pages
 
         public async Task OnGetAsync(int? year = null)
         {
-
             if (Prefix != RoleBasedPrefix)
             {
                 Response.Redirect($"/{RoleBasedPrefix}");

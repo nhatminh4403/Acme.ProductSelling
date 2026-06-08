@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Permissions;
+using Acme.ProductSelling.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

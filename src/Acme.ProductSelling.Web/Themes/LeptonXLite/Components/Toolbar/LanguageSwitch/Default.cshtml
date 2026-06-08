@@ -16,12 +16,14 @@
         <ul class="dropdown-menu" aria-labelledby="@dropdownId">
             @foreach (var language in Model.Languages)
             {
-                var isCurrent = language.CultureName == Model.CurrentLanguage.CultureName;
+                var isCurrent = language.CultureName == Model.CurrentLanguage.CultureName || 
+                                language.CultureName == Model.CurrentLanguage.DisplayName ||
+                                language.DisplayName == Model.CurrentLanguage.DisplayName;
                 <li>
                     @if (isCurrent)
                     {
                         <span class="dropdown-item active disabled">
-                            @language.DisplayName
+                            @language.DisplayName <i class="fa-solid fa-check"></i>
                         </span>
                     }
                     else
@@ -30,7 +32,6 @@
                         <a class="dropdown-item language"
                            href="~/Abp/Languages/Switch?culture=@(language.CultureName)&uiCulture=@(language.UiCultureName)&returnUrl=@(WebUtility.UrlEncode(Context.Request.GetEncodedPathAndQuery()))">
                             <span>@language.DisplayName</span>
-
                             <span class="badge bg-secondary-subtle text-secondary border text-uppercase">
                                 @language.TwoLetterISOLanguageName
                             </span>

@@ -1,4 +1,4 @@
-﻿using Acme.ProductSelling.Categories;
+using Acme.ProductSelling.Categories;
 using Acme.ProductSelling.Categories.Services;
 using Acme.ProductSelling.Manufacturers;
 using Acme.ProductSelling.Permissions;

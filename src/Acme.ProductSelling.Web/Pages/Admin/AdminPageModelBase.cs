@@ -18,7 +18,6 @@ namespace Acme.ProductSelling.Web.Pages.Admin
         public Guid? CurrentUserStoreId { get; private set; }
         public string CurrentUserStoreName { get; private set; }
         public UserType CurrentUserType { get; private set; }
-
         public override async Task OnPageHandlerExecutionAsync(PageHandlerExecutingContext context, PageHandlerExecutionDelegate next)
         {
             // Set role-based URL prefix
@@ -31,7 +30,6 @@ namespace Acme.ProductSelling.Web.Pages.Admin
                 var user = await UserRepository.GetAsync(CurrentUserService.Id.Value) as AppUser;
                 CurrentUserStoreId = user?.AssignedStoreId;
                 CurrentUserType = user?.GetUserType() ?? UserType.Admin;
-                Console.WriteLine($"CurrentUserStoreId: {CurrentUserStoreId}, CurrentUserType: {CurrentUserType}");
                 if (CurrentUserStoreId.HasValue)
                 {
                     var storeRepo = LazyServiceProvider.LazyGetRequiredService<Acme.ProductSelling.Stores.IStoreRepository>();

@@ -1379,6 +1379,7 @@
     "UI:Title:Admin:Orders": "Quản lý Đơn hàng",
     "UI:Title:Admin:Products": "Quản lý Sản phẩm",
     "UI:Title:Admin:Products:Details": "Chi tiết sản phẩm",
+    "UI:Title:Admin:OrderFulfillment": "Xử lý đơn hàng",
     "UI:Title:Admin:Reports": "Báo cáo",
     "UI:Title:Admin:RoleManagement": "Quản lý vai trò",
     "UI:Title:Admin:StoreInventory": "Quản lý tồn kho cửa hàng",

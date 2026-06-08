@@ -1,12 +1,9 @@
 @page "/{prefix}/products/create"
 @model Acme.ProductSelling.Web.Pages.Admin.Products.CreateModel
 
-@using Newtonsoft.Json
-@using Acme.ProductSelling.Categories
-@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Form;
 @{
     Layout = "/Pages/Admin/Shared/_AdminLayout.cshtml";
-    ViewData["Title"] = L["Product:CreateProduct"];
+    ViewData["Title"] = L["Product:CreateProduct"].Value;
 }
 
 <abp-card>
@@ -32,8 +29,27 @@
                 <div class="basic-info-section">
                     <h5 class="mb-3 text-primary">Basic Information</h5>
 
-                    <abp-input asp-for="Product.ProductName" />
-                    <abp-input asp-for="Product.Description" type="textarea" rows="3" />
+                    <div class="row">
+                        <div class="col-md-8">
+                            <abp-input asp-for="Product.ProductName" />
+                        </div>
+                        <div class="col-md-4">
+                            <abp-input asp-for="Product.UrlSlug" readonly="true" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <abp-select asp-for="Product.CategoryId"
+                                        asp-items="Model.Categories"
+                                        label="@L["Product:Category"]" />
+                        </div>
+                        <div class="col-md-6">
+                            <abp-select asp-for="Product.ManufacturerId"
+                                        asp-items="Model.Manufacturers"
+                                        label="@L["Product:Manufacturer"]" />
+                        </div>
+                    </div>
 
                     <div class="row">
                         <div class="col-md-6">
@@ -52,64 +68,44 @@
                             <abp-input asp-for="Product.StockCount" type="number" />
                         </div>
                     </div>
+
                     <div class="mb-3 row align-items-center">
                         <label class="col-md-2 col-form-label">@L["Product:ImageSource"]</label>
                         <div class="col-md-3">
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input"
-                                       type="radio"
-                                       name="imageSourceType"
-                                       id="imageSourceUrl"
-                                       value="url"
+                                <input class="form-check-input" type="radio" name="imageSourceType" id="imageSourceUrl" value="url"
                                        checked="@(Model.Product?.ProductImageFile == null || Model.Product.ProductImageFile.Length == 0)">
-                                <label class="form-check-label" for="imageSourceUrl">
-                                    @L["Product:ImageUrlSource.Url"]
-                                </label>
+                                <label class="form-check-label" for="imageSourceUrl">@L["Product:ImageUrlSource.Url"]</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input"
-                                       type="radio"
-                                       name="imageSourceType"
-                                       id="imageSourceUpload"
-                                       value="upload"
+                                <input class="form-check-input" type="radio" name="imageSourceType" id="imageSourceUpload" value="upload"
                                        checked="@(Model.Product?.ProductImageFile != null && Model.Product.ProductImageFile.Length > 0)">
-                                <label class="form-check-label" for="imageSourceUpload">
-                                    @L["Product:ImageUrlSource.Upload"]
-                                </label>
+                                <label class="form-check-label" for="imageSourceUpload">@L["Product:ImageUrlSource.Upload"]</label>
                             </div>
                         </div>
-
                         <div class="col-md-7">
                             <div id="imageUrlInputContainer" style="@((Model.Product?.ProductImageFile == null || Model.Product.ProductImageFile.Length == 0) ? "display:block;" : "display:none;")">
                                 <abp-input asp-for="Product.ImageUrl" label="" suppress-label="true" />
                             </div>
-
                             <div id="imageUploadInputContainer" style="@((Model.Product?.ProductImageFile != null && Model.Product.ProductImageFile.Length > 0) ? "display:block;" : "display:none;")">
                                 <input class="form-control @(ViewData.ModelState.GetFieldValidationState("Product:ProductImageFile") == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Invalid ? "is-invalid" : "")"
                                        type="file" id="productImageFile" name="Product.ProductImageFile" accept="image/*">
-                                <span asp-validation-for="Product.ProductImageFile" class="text-danger d-block"></span> @* d-block để lỗi xuống dòng *@
+                                <span asp-validation-for="Product.ProductImageFile" class="text-danger d-block"></span>
                             </div>
                         </div>
                     </div>
 
                     <div class="mb-3" id="imagePreviewContainer" style="display: none; text-align: center;">
-                        <img id="imagePreview" src="#" alt="Image preview" style="max-height: 150px; max-width: 100%; border: 1px solid #ddd; padding: 5px; margin-top: 5px;" loading="lazy" />
+                        <img id="imagePreview" src="#" alt="Image preview"
+                             style="max-height: 150px; max-width: 100%; border: 1px solid #ddd; padding: 5px; margin-top: 5px;" loading="lazy" />
                     </div>
-                    <abp-input asp-for="Product.UrlSlug" readonly="true"></abp-input>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <abp-select asp-for="Product.CategoryId"
-                                        asp-items="Model.Categories"
-                                        label="@L["Product:Category"]" />
-                        </div>
-                        <div class="col-md-6">
-                            <abp-select asp-for="Product.ManufacturerId"
-                                        asp-items="Model.Manufacturers"
-                                        label="@L["Product:Manufacturer"]" />
-                        </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Product.Description" class="form-label"></label>
+                        <textarea asp-for="Product.Description" id="productDescriptionEditor" class="form-control" rows="5"></textarea>
+                        <span asp-validation-for="Product.Description" class="text-danger"></span>
                     </div>
                 </div>
-
                 <div class="specs-section" id="productSpecsSection" style="display: none;">
                     <h5 class="mb-3 text-secondary">Product Specifications</h5>
 
@@ -559,8 +555,10 @@
             margin-bottom: 0 !important;
         }
     </style>
-
+    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/46.0.3/ckeditor5.css" crossorigin>
 }
 @section scripts {
     <script src="~/js/admin/products/create-update.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/48.2.0/ckeditor5.umd.js" crossorigin=""></script>
+    <script src="~/js/admin/blogs/ck-editor-main.js"></script>
 }

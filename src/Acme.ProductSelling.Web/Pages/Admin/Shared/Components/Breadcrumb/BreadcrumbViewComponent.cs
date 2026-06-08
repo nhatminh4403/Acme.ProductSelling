@@ -15,12 +15,6 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Shared.Components.Breadcrumb
 {
     public class BreadcrumbViewComponent : AbpViewComponent
     {
-        private readonly IOptions<RequestLocalizationOptions> _localizationOptions;
-
-        public BreadcrumbViewComponent(IOptions<RequestLocalizationOptions> localizationOptions)
-        {
-            _localizationOptions = localizationOptions;
-        }
         public async Task<IViewComponentResult> InvokeAsync()
         {
             var breadcrumbs = new List<BreadcrumbItem>();
@@ -32,31 +26,23 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Shared.Components.Breadcrumb
                 return View(breadcrumbs);
             }
 
-            var supportedCultures = _localizationOptions.Value.SupportedCultures?.Select(c => c.Name).ToHashSet();
-            string culturePrefix = string.Empty;
-            int startIndex = 0;
 
-            if (supportedCultures != null && supportedCultures.Contains(segments[0], StringComparer.OrdinalIgnoreCase))
-            {
-                culturePrefix = $"/{segments[0]}";
-                startIndex = 1;
-            }
+            breadcrumbs.Add(new BreadcrumbItem { Text = "Dashboard", Url = $"/" });
+            var currentPath = new StringBuilder();
 
-            breadcrumbs.Add(new BreadcrumbItem { Text = "Dashboard", Url = $"{culturePrefix}/" });
 
-            var currentPath = new StringBuilder(culturePrefix);
-
-            for (int i = startIndex; i < segments.Length; i++)
+            for (int i = 0; i < segments.Length; i++)
             {
                 var segment = segments[i];
 
-                if (Guid.TryParse(segment, out _) || int.TryParse(segment, out _) || IsCommonAction(segment))
+                if (Guid.TryParse(segment, out _) || int.TryParse(segment, out _))
                 {
+                    Console.WriteLine($"Skipping segment: {segment}"); // Debugging output
                     continue;
                 }
 
                 currentPath.Append($"/{segment}");
-
+                Console.WriteLine($"Current Path: {currentPath}"); // Debugging output
                 // The last segment is the active page
                 bool isActive = (i == segments.Length - 1);
 
@@ -78,12 +64,6 @@ namespace Acme.ProductSelling.Web.Pages.Admin.Shared.Components.Breadcrumb
             return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(text);
         }
 
-        private bool IsCommonAction(string segment)
-        {
-            string lowerSegment = segment.ToLowerInvariant();
-            var actions = new[] { "edit", "details", "create", "delete", "index", "update", "manage" };
-            return Array.Exists(actions, action => action == lowerSegment);
-        }
     }
 
 }
